@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Convite Pedro</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #000;
+  overflow: hidden;
+}
+
+.page {
+  display: none;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+.page img,
+.page video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* BOTÕES INVISÍVEIS */
+.hotspot {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  cursor: pointer;
+}
+
+/* BOTÃO VOLTAR */
+.btn-voltar {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<audio id="musica" src="audio.mp3" loop></audio>
+
+<!-- PÁGINA 1 -->
+<div class="page" id="page1" style="display:block;">
+  <img src="pagina1.png">
+  <div class="hotspot" style="top:0;left:0;width:100%;height:100%;" onclick="startInvite()"></div>
+</div>
+
+<!-- PÁGINA 2 -->
+<div class="page" id="page2">
+  <video id="video" src="pagina2.mp4"></video>
+</div>
+
+<!-- PÁGINA 3 -->
+<div class="page" id="page3">
+  <img src="pagina3.jpg">
+
+  <!-- BOTÃO 1 – CONFIRMAR PRESENÇA -->
+  <!-- EDITE SEU NÚMERO AQUI -->
+  <a class="hotspot"
+     style="bottom:18%; left:16%;"
+     href="https://wa.me/5571993233142"
+     target="_blank"></a>
+
+  <!-- BOTÃO 2 – LOCALIZAÇÃO -->
+  <!-- EDITE SEU LINK DO MAPS AQUI -->
+  <a class="hotspot"
+     style="bottom:18%; left:42%;"
+     href="https://maps.app.goo.gl/NfnZSmunPgMdWMoy5"
+     target="_blank"></a>
+
+  <!-- BOTÃO 3 – SUGESTÃO DE PRESENTE -->
+  <div class="hotspot"
+       style="bottom:18%; left:68%;"
+       onclick="goPage(4)"></div>
+</div>
+
+<!-- PÁGINA 4 -->
+<div class="page" id="page4">
+  <img src="pagina4.jpg">
+
+  <!-- BOTÃO VOLTAR -->
+  <div class="btn-voltar" onclick="goPage(3)"></div>
+</div>
+
+<script>
+const musica = document.getElementById('musica');
+const video = document.getElementById('video');
+
+function startInvite() {
+  musica.play();
+  goPage(2);
+  video.play();
+
+  video.onended = () => {
+    goPage(3);
+  };
+}
+
+function goPage(num) {
+  document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+  document.getElementById('page' + num).style.display = 'block';
+}
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
