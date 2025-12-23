@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <title>Câmera Customizada - Molduras Estáticas</title>
+    <style>
+        :root {
+            --accent: #25D366;
+            --record: #ff0000;
+        }
+        
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            margin: 0; background: #000; color: #fff; overflow: hidden;
+            width: 100vw; height: 100dvh;
+            font-family: sans-serif;
+        }
+
+        .frame { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #000; }
+        .stage { position: relative; width: 100%; height: 100%; overflow: hidden; background: #111; }
+
+        #camera {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            object-fit: cover; 
+            transform: scaleX(1); 
+            transform-origin: center center;
+            background: black; 
+            transition: transform 0.3s; 
+        }
+        #camera.mirrored { transform: scaleX(-1); }
+
+        #canvasPreview, #videoPreview {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            object-fit: contain; background: black;
+            display: none; z-index: 6;
+        }
+        
+        #molduraImagePreview {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            object-fit: cover; object-position: bottom; pointer-events: none;
+            z-index: 5; display: none;
+        }
+
+        #canvasFinal { display: none; }
+
+        .ui-layer {
+            position: absolute; inset: 0; pointer-events: none; z-index: 20;
+            display: flex; flex-direction: column; justify-content: space-between; padding: 20px;
+        }
+
+        .top-bar { display: flex; justify-content: space-between; align-items: flex-start; pointer-events: auto; }
+
+        .timer-badge {
+            background: var(--record); padding: 5px 12px; border-radius: 12px;
+            font-weight: bold; font-size: 16px; display: none; animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse { 0%{opacity:1}50%{opacity:.7}100%{opacity:1} }
+
+        .controls-bottom {
+            display: flex; flex-direction: column; align-items: center; gap: 30px;
+            pointer-events: auto; padding-bottom: 20px;
+        }
+
+        .btn {
+            padding: 10px 16px; font-size: 14px; font-weight: 600;
+            border: 2px solid rgba(255,255,255,0.3); border-radius: 20px;
+            background: rgba(0,0,0,0.65); cursor: pointer; color: #fff;
+        }
+
+        .btn-frame { border-color: var(--accent); }
+
+        .frame-selector { display: flex; gap: 10px; }
+
+        .capture-controls { display: flex; gap: 20px; align-items: center; }
+
+        .action-btn-mini {
+            width: 50px; height: 50px; border-radius: 50%; border: 2px solid #fff;
+            background: rgba(255,255,255,0.2); cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 24px;
+        }
+
+        .action-btn-large {
+            width: 80px; height: 80px; border-radius: 50%;
+            border: 4px solid #fff; background: rgba(255,255,255,0.2);
+            cursor: pointer; display: flex; align-items:center; justify-content:center;
+            transition: .2s;
+        }
+
+        .action-btn-large.recording { border-color: var(--record); background: rgba(255,0,0,.5); }
+
+        .stop-icon { display: none; width:30px; height:30px; background:red; border-radius:4px; }
+
+        #startScreen {
+            position: absolute; inset: 0; background: #000;
+            background-image: url('capajpg.jpg'); background-size: cover; background-position: center;
+            display: flex; flex-direction: column; align-items:center; justify-content:center;
+            gap: 20px; text-align:center; z-index: 50;
+        }
+
+        #startBtn { padding:18px 32px; font-size:20px; border:none; background:#FF5722; color:#fff; border-radius:50px; cursor:pointer; }
+
+        #resultUI .actions { display:none; flex-direction:column; gap:12px; width:100%; max-width:300px; pointer-events:auto; }
+
+        .action-btn { padding:14px; border-radius:12px; border:none; font-size:16px; cursor:pointer; }
+
+        .btn-save { background:var(--accent); }
+        .btn-new { background:#555; }
+
+        .flash {
+            position:absolute; inset:0; background:#fff; opacity:0; pointer-events:none;
+            transition:.1s; z-index:10;
+        }
+    </style>
+</head>
+<body>
+
+<div class="frame">
+    <div class="stage" id="stage">
+
+        <video id="camera" autoplay playsinline muted></video>
+        <canvas id="canvasPreview"></canvas> 
+        <canvas id="canvasFinal"></canvas>
+        <video id="videoPreview" playsinline controls></video>
+
+        <img id="molduraImagePreview" src="" />
+
+        <div class="flash" id="flash"></div>
+
+        <div class="ui-layer" id="cameraUI" style="display:none;">
+            <div class="top-bar">
+                <button class="btn" id="switchBtn">🔄 Trocar Câmera</button>
+                <div id="recordingTimer" class="timer-badge">00:00</div>
+            </div>
+
+            <div class="controls-bottom">
+
+                <!-- SÓ 1 MOLDURA -->
+                <div class="frame-selector">
+                    <button class="btn btn-frame" id="m1Btn">Foto 1</button>
+                </div>
+
+                <div class="capture-controls">
+                    <button id="capturePhotoBtn" class="action-btn-mini">📷</button>
+                    <button id="captureVideoBtn" class="action-btn-large">
+                        <svg class="cam-icon" viewBox="0 0 24 24">
+                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L12 15.41l-3.54-3.53z"/>
+                        </svg>
+                        <div class="stop-icon"></div>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="ui-layer" id="resultUI" style="display:none; justify-content:flex-end; align-items:center;">
+            <div class="actions">
+                <a id="downloadBtn" class="action-btn btn-save">📥 Baixar Arquivo</a>
+                <button id="newPhotoBtn" class="action-btn btn-new">🔄 Novo</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="startScreen">
+    <h2 style="margin:0; color:#fff; text-shadow:0 0 5px #000;">Configuração de Câmera</h2>
+    <p style="color:#fff; margin-top:5px; text-shadow:0 0 5px #000;">Permita acesso para iniciar.</p>
+    <button id="startBtn">INICIAR CÂMERA</button>
+    <p id="errorMsg" style="color:red; font-size:12px; margin-top:10px;"></p>
+</div>
+
+<script>
+
+// 🔥 AGORA SÓ EXISTE 1 MOLDURA
+const MOLDURAS = { 
+    'm1': { type:'image', src:'moldura1.png' }
+};
+
+let currentMolduraKey = 'm1';
+let usingFrontCamera = true;
+let stream = null;
+let isRecording = false;
+let mediaRecorder = null;
+let recordedChunks = [];
+let recordingStartTime = 0;
+let animationFrameId = null;
+let finalFileExtension = 'webm';
+let currentDownloadData = { blob:null, filename:null, url:null };
+
+const video = document.getElementById('camera');
+const videoPreview = document.getElementById('videoPreview');
+const canvasPreview = document.getElementById('canvasPreview');
+const ctxPreview = canvasPreview.getContext('2d');
+
+const canvasFinal = document.getElementById('canvasFinal');
+const ctxFinal = canvasFinal.getContext('2d', { alpha:false });
+
+const molduraImagePreview = document.getElementById('molduraImagePreview');
+
+const startScreen = document.getElementById('startScreen');
+const cameraUI = document.getElementById('cameraUI');
+const resultUI = document.getElementById('resultUI');
+
+const recordingTimer = document.getElementById('recordingTimer');
+const errorMsg = document.getElementById('errorMsg');
+
+const downloadBtn = document.getElementById('downloadBtn');
+const capturePhotoBtn = document.getElementById('capturePhotoBtn');
+const captureVideoBtn = document.getElementById('captureVideoBtn');
+
+document.addEventListener('DOMContentLoaded', () => {
+    setMoldura(document.getElementById('m1Btn'), 'm1');
+});
+
+document.getElementById('startBtn').addEventListener('click', () => initCamera(true));
+document.getElementById('switchBtn').addEventListener('click', switchCamera);
+document.getElementById('newPhotoBtn').addEventListener('click', resetCamera);
+
+document.getElementById('m1Btn').addEventListener('click', (e) => setMoldura(e.target, 'm1'));
+
+capturePhotoBtn.addEventListener('click', takePhoto);
+captureVideoBtn.addEventListener('click', () => { isRecording ? stopRecording() : startRecording(); });
+downloadBtn.addEventListener('click', triggerDownload);
+
+function setMoldura(btn, key) {
+    document.querySelectorAll('.frame-selector .btn').forEach(b => b.classList.remove('btn-frame'));
+    btn.classList.add('btn-frame');
+
+    currentMolduraKey = key;
+    const moldura = MOLDURAS[key];
+
+    molduraImagePreview.style.display = 'none';
+    molduraImagePreview.src = moldura.src;
+    molduraImagePreview.style.display = 'block';
+}
+
+function getActiveMolduraElement() {
+    return molduraImagePreview;
+}
+
+function takePhoto() {
+    flashEffect();
+    canvasFinal.width = 1080;
+    canvasFinal.height = 1920;
+
+    drawVideoToCanvas(ctxFinal, 1080, 1920, true);
+    drawImageLayer(ctxFinal, getActiveMolduraElement(), 1080, 1920);
+
+    canvasPreview.width = stage.clientWidth;
+    canvasPreview.height = stage.clientHeight;
+    ctxPreview.drawImage(canvasFinal, 0, 0, canvasPreview.width, canvasPreview.height);
+
+    canvasFinal.toBlob(blob => showResult('image', blob), 'image/png');
+}
+
+function startRecording() {
+    if (isRecording) return;
+    isRecording = true;
+
+    captureVideoBtn.classList.add('recording');
+
+    recordingTimer.style.display = 'block';
+    recordingStartTime = Date.now();
+
+    recordedChunks = [];
+
+    canvasFinal.width = 720;
+    canvasFinal.height = 1280;
+
+    function loop() {
+        if (!isRecording) return;
+
+        drawVideoToCanvas(ctxFinal, 720, 1280, true);
+        drawImageLayer(ctxFinal, getActiveMolduraElement(), 720, 1280);
+        updateTimer();
+
+        animationFrameId = requestAnimationFrame(loop);
+    }
+    loop();
+
+    const canvasStream = canvasFinal.captureStream(30);
+    if (stream.getAudioTracks().length > 0) {
+        canvasStream.addTrack(stream.getAudioTracks()[0]);
+    }
+
+    mediaRecorder = new MediaRecorder(canvasStream, { mimeType:'video/webm' });
+    mediaRecorder.ondataavailable = e => recordedChunks.push(e.data);
+    mediaRecorder.onstop = finishVideo;
+    mediaRecorder.start();
+}
+
+function stopRecording() {
+    isRecording = false;
+    captureVideoBtn.classList.remove('recording');
+    cancelAnimationFrame(animationFrameId);
+
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+
+    recordingTimer.style.display = 'none';
+    recordingTimer.innerText = "00:00";
+}
+
+function finishVideo() {
+    const blob = new Blob(recordedChunks, { type:'video/webm' });
+    const url = URL.createObjectURL(blob);
+
+    videoPreview.src = url;
+    showResult('video', blob);
+}
+
+function drawVideoToCanvas(ctx, w, h, mirror) {
+    const vw = video.videoWidth;
+    const vh = video.videoHeight;
+    if (!vw || !vh) return;
+
+    ctx.clearRect(0,0,w,h);
+    ctx.save();
+
+    ctx.translate(w/2, h/2);
+    if (usingFrontCamera && mirror) ctx.scale(-1, 1);
+
+    const vidRatio = vw / vh;
+    let dw, dh;
+
+    if (vidRatio > w/h) { dh = h; dw = h * vidRatio; }
+    else { dw = w; dh = w / vidRatio; }
+
+    ctx.drawImage(video, -dw/2, -dh/2, dw, dh);
+    ctx.restore();
+}
+
+function drawImageLayer(ctx, img, w, h) {
+    const iw = img.naturalWidth;
+    const ih = img.naturalHeight;
+    if (!iw || !ih) return;
+
+    const ratio = iw / ih;
+    const targetH = w / ratio;
+    const y = h - targetH;
+
+    ctx.drawImage(img, 0, y, w, targetH);
+}
+
+function flashEffect() {
+    const f = document.getElementById('flash');
+    f.style.opacity = '1';
+    setTimeout(() => f.style.opacity = '0', 150);
+}
+
+function showResult(type, blob) {
+
+    video.style.display = 'none';
+    molduraImagePreview.style.display = 'none';
+    cameraUI.style.display = 'none';
+
+    resultUI.style.display = 'flex';
+    resultUI.querySelector('.actions').style.display = 'flex';
+
+    const timestamp = Date.now();
+
+    if (type === 'image') {
+        canvasPreview.style.display = 'block';
+        videoPreview.style.display = 'none';
+
+        const url = URL.createObjectURL(blob);
+        currentDownloadData = {
+            blob,
+            url,
+            filename: `foto_${timestamp}.png`
+        };
+        downloadBtn.innerText = "📥 Baixar Foto (.png)";
+    } else {
+        canvasPreview.style.display = 'none';
+        videoPreview.style.display = 'block';
+
+        const url = videoPreview.src;
+        currentDownloadData = {
+            blob,
+            url,
+            filename: `video_${timestamp}.webm`
+        };
+        downloadBtn.innerText = "📥 Baixar Vídeo (.webm)";
+    }
+}
+
+function resetCamera() {
+    if (currentDownloadData.url?.startsWith("blob:")) {
+        URL.revokeObjectURL(currentDownloadData.url);
+    }
+
+    currentDownloadData = { blob:null, filename:null, url:null };
+    videoPreview.src = ''; videoPreview.pause();
+    canvasPreview.style.display = 'none';
+
+    video.style.display = 'block';
+    molduraImagePreview.style.display = 'block';
+
+    resultUI.style.display = 'none';
+    cameraUI.style.display = 'flex';
+}
+
+async function initCamera(tryAudio = true) {
+    if (stream) stream.getTracks().forEach(t => t.stop());
+
+    const constraints = {
+        video: { facingMode: usingFrontCamera ? 'user' : 'environment' },
+        audio: tryAudio
+    };
+
+    try {
+        stream = await navigator.mediaDevices.getUserMedia(constraints);
+        handleStreamSuccess(stream);
+    } catch (err) {
+        if (tryAudio) initCamera(false);
+        else errorMsg.innerText = "Erro ao acessar câmera!";
+    }
+}
+
+function handleStreamSuccess(newStream) {
+    stream = newStream;
+    video.srcObject = stream;
+
+    if (usingFrontCamera) video.classList.add('mirrored');
+    else video.classList.remove('mirrored');
+
+    video.onloadedmetadata = () => {
+        video.play();
+        startScreen.style.display = 'none';
+        cameraUI.style.display = 'flex';
+
+        setMoldura(document.getElementById('m1Btn'), 'm1');
+    };
+}
+
+async function switchCamera() {
+    if (isRecording) stopRecording();
+    usingFrontCamera = !usingFrontCamera;
+    await initCamera(true);
+}
+
+function updateTimer() {
+    const diff = Math.floor((Date.now() - recordingStartTime) / 1000);
+    const m = String(Math.floor(diff/60)).padStart(2,'0');
+    const s = String(diff % 60).padStart(2,'0');
+    recordingTimer.innerText = `${m}:${s}`;
+}
+
+function triggerDownload() {
+    const { blob, filename, url } = currentDownloadData;
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+}
+
+</script>
+
+</body>
+</html>
