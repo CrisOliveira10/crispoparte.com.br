@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Apresentação</title>
+    <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="expires" content="0">
+    <meta http-equiv="pragma" content="no-cache">
+    
+    <title>Apresentação Interativa</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -39,7 +43,7 @@
             justify-content: center;
         }
 
-        /* Botão ABRIR Customizado */
+        /* Botão ABRIR Customizado (#105d4a) */
         .btn-abrir {
             background-color: #105d4a;
             color: white;
@@ -50,10 +54,11 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
             border: none;
             cursor: pointer;
-            margin-top: 150px;
+            margin-top: 150px; /* Ajuste conforme sua arte */
+            text-transform: uppercase;
         }
 
-        /* Botão Flutuante Superior */
+        /* Botão Flutuante Superior (Play/Pause) */
         #btnAudio {
             position: fixed;
             top: 25px; right: 25px;
@@ -61,7 +66,7 @@
             background-color: white;
             border-radius: 50%;
             border: 2px solid #105d4a;
-            z-index: 6000;
+            z-index: 6000; /* Sempre no topo */
             display: none;
             align-items: center;
             justify-content: center;
@@ -72,7 +77,7 @@
         .icon { width: 32px; height: 32px; fill: #105d4a; }
         .pause-icon { display: none; }
 
-        /* Iframe do PDF */
+        /* Área do PDF Incorporado */
         #pdfArea {
             position: absolute;
             top: 0; left: 0;
@@ -91,12 +96,13 @@
     </div>
 
     <div id="capa1" onclick="ativarAudioEPassar()"></div>
+    
     <div id="capa2">
         <button class="btn-abrir" onclick="abrirDoc()">ABRIR</button>
     </div>
 
     <div id="pdfArea">
-        <iframe src="arquivo.pdf#toolbar=0"></iframe>
+        <iframe src="arquivo.pdf#toolbar=0&navpanes=0"></iframe>
     </div>
 
     <audio id="musica" loop preload="auto">
@@ -107,18 +113,16 @@
         const som = document.getElementById('musica');
         const btnA = document.getElementById('btnAudio');
 
-        // Função crucial para computadores (Chrome/Edge)
         function ativarAudioEPassar() {
-            // Reinicia e toca para forçar a saída de som
+            // Força o carregamento e play no primeiro clique
             som.load(); 
             const playPromise = som.play();
 
             if (playPromise !== undefined) {
                 playPromise.then(_ => {
-                    console.log("Áudio iniciado com sucesso!");
                     atualizarIcones(true);
                 }).catch(error => {
-                    console.log("Erro ao tocar: ", error);
+                    console.log("Aguardando interação: ", error);
                 });
             }
 
@@ -130,10 +134,11 @@
         function abrirDoc() {
             document.getElementById('capa2').style.display = 'none';
             document.getElementById('pdfArea').style.display = 'block';
+            // O botão de áudio continua visível pelo z-index alto
         }
 
         function controlarAudio(e) {
-            e.stopPropagation();
+            e.stopPropagation(); // Impede fechar ou abrir camadas por erro
             if (som.paused) {
                 som.play();
                 atualizarIcones(true);
