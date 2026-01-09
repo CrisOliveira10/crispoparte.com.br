@@ -13,12 +13,12 @@
         
         body, html { 
             height: 100%; width: 100%; 
-            background-color: #fff;
+            background-color: #000;
             overflow: hidden; 
             font-family: sans-serif;
         }
 
-        /* CAPA 1: Aciona o Áudio */
+        /* CAPA 1: Ativação */
         #capa1 {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -29,7 +29,7 @@
             cursor: pointer;
         }
 
-        /* CAPA 2: Fundo da sua Arte */
+        /* CAPA 2: Transição com sua Arte */
         #capa2 {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -54,11 +54,21 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
             border: none;
             cursor: pointer;
-            margin-top: 150px; /* Ajuste conforme sua arte */
+            margin-top: 150px;
             text-transform: uppercase;
         }
 
-        /* Botão Flutuante Superior (Play/Pause) */
+        /* ÁREA DO PDF: Onde o usuário navega */
+        #pdfArea {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: none;
+            z-index: 1000; /* Abaixo do botão flutuante */
+        }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        /* BOTÃO FLUTUANTE: Precisa aparecer NO ARQUIVO (PDF) */
         #btnAudio {
             position: fixed;
             top: 25px; right: 25px;
@@ -66,8 +76,9 @@
             background-color: white;
             border-radius: 50%;
             border: 2px solid #105d4a;
-            z-index: 6000; /* Sempre no topo */
-            display: none;
+            /* Z-INDEX MÁXIMO para flutuar sobre o PDF e Capas */
+            z-index: 9999; 
+            display: none; /* Aparece após o primeiro clique */
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 15px rgba(0,0,0,0.4);
@@ -76,16 +87,6 @@
 
         .icon { width: 32px; height: 32px; fill: #105d4a; }
         .pause-icon { display: none; }
-
-        /* Área do PDF Incorporado */
-        #pdfArea {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            display: none;
-            z-index: 1000;
-        }
-        iframe { width: 100%; height: 100%; border: none; }
     </style>
 </head>
 <body>
@@ -111,34 +112,35 @@
 
     <script>
         const som = document.getElementById('musica');
-        const btnA = document.getElementById('btnAudio');
+        const btnAudioContainer = document.getElementById('btnAudio');
+        const c1 = document.getElementById('capa1');
+        const c2 = document.getElementById('capa2');
+        const areaPdf = document.getElementById('pdfArea');
 
         function ativarAudioEPassar() {
-            // Força o carregamento e play no primeiro clique
+            // Toca o áudio no primeiro toque (requisito do navegador)
             som.load(); 
-            const playPromise = som.play();
+            som.play().catch(e => console.log("Áudio aguardando..."));
 
-            if (playPromise !== undefined) {
-                playPromise.then(_ => {
-                    atualizarIcones(true);
-                }).catch(error => {
-                    console.log("Aguardando interação: ", error);
-                });
-            }
-
-            document.getElementById('capa1').style.display = 'none';
-            document.getElementById('capa2').style.display = 'flex';
-            btnA.style.display = 'flex';
+            c1.style.display = 'none';
+            c2.style.display = 'flex';
+            
+            // O botão flutuante nasce aqui e não morre mais
+            btnAudioContainer.style.display = 'flex';
+            atualizarIcones(true);
         }
 
         function abrirDoc() {
-            document.getElementById('capa2').style.display = 'none';
-            document.getElementById('pdfArea').style.display = 'block';
-            // O botão de áudio continua visível pelo z-index alto
+            // Esconde a capa 2 e revela o PDF
+            c2.style.display = 'none';
+            areaPdf.style.display = 'block';
+            
+            // Note que NÃO escondemos o btnAudioContainer aqui, 
+            // por isso ele continuará aparecendo "dentro" do arquivo (PDF)
         }
 
         function controlarAudio(e) {
-            e.stopPropagation(); // Impede fechar ou abrir camadas por erro
+            e.stopPropagation();
             if (som.paused) {
                 som.play();
                 atualizarIcones(true);
