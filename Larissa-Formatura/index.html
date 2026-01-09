@@ -3,92 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Capa Interativa com Áudio</title>
+    <title>Capa Interativa</title>
     <style>
-        /* Estilos Base */
+        /* Reset para preencher a tela toda */
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body, html { 
             height: 100%; 
             width: 100%; 
             overflow: hidden; 
-            background-color: #000;
+            background-color: #000; 
             font-family: sans-serif;
         }
 
-        /* Capa Editável */
+        /* Capa Invisível que cobre tudo */
         .capa-container {
-            position: relative;
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100vw;
             height: 100vh;
-            background-image: url('capa.jpg'); /* Nome da sua imagem no GitHub */
+            background-image: url('capa.jpg'); /* O arquivo deve ter este nome */
             background-size: cover;
             background-position: center;
             cursor: pointer;
             z-index: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Overlay para escurecer levemente a capa (opcional) */
-        .capa-container::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.1);
-            z-index: 2;
         }
 
         /* Botão Flutuante Superior Circular */
         .audio-btn {
             position: fixed;
-            top: 20px; /* Posicionado no topo */
+            top: 20px;
             right: 20px;
             width: 60px;
             height: 60px;
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 50%; /* Formato circular */
-            border: none;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            background-color: rgba(255, 255, 255, 0.8); /* Branco translúcido */
+            border-radius: 50%; /* Círculo perfeito */
+            border: 2px solid #000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             cursor: pointer;
-            z-index: 100;
+            z-index: 100; /* Sempre acima da capa */
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.2s, background-color 0.3s;
+            transition: all 0.3s ease;
         }
 
-        .audio-btn:hover {
-            transform: scale(1.1);
-            background-color: #fff;
-        }
+        /* Ícones dentro do botão */
+        .icon { width: 30px; height: 30px; fill: #000; }
+        .pause-icon { display: none; } /* Começa escondido */
 
-        /* Ícones Play/Pause */
-        .icon { width: 28px; height: 28px; fill: #7d2ae8; }
-        .pause-icon { display: none; }
-
-        /* Texto Auxiliar na Capa */
-        .instrucao {
-            position: absolute;
-            bottom: 20px;
-            color: white;
-            z-index: 5;
-            font-size: 14px;
-            text-shadow: 1px 1px 5px #000;
-            pointer-events: none;
-        }
+        /* Estilo para quando passar o mouse */
+        .audio-btn:hover { background-color: #fff; transform: scale(1.1); }
     </style>
 </head>
 <body>
 
-    <button class="audio-btn" onclick="toggleAudio()" id="btnAudio">
+    <button class="audio-btn" onclick="toggleAudio(event)" id="btnAudio">
         <svg class="icon play-icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
         <svg class="icon pause-icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
     </button>
 
-    <div class="capa-container" onclick="iniciarTudo()">
-        <p class="instrucao">Clique em qualquer lugar para abrir e ouvir</p>
-    </div>
+    <div class="capa-container" onclick="iniciarSite()"></div>
 
     <audio id="meuAudio" loop>
         <source src="audio.mp3" type="audio/mpeg">
@@ -99,33 +75,35 @@
         const playIcon = document.querySelector('.play-icon');
         const pauseIcon = document.querySelector('.pause-icon');
 
-        // Função disparada ao clicar na capa
-        function iniciarTudo() {
-            // 1. Abre o link do Canva
-            window.open('https://www.canva.com/design/DAG98-e31eE/cqdGiwP9kObF1zOWiz5gWw/view', '_blank');
+        // Função ao clicar na capa
+        function iniciarSite() {
+            // 1. Toca o áudio (necessário interação humana para o navegador permitir)
+            audio.play().catch(e => console.log("Aguardando interação para áudio."));
+            atualizarIcones(true);
             
-            // 2. Toca o áudio
-            tocarAudio();
+            // 2. Abre o link do Canva em nova aba
+            window.open('https://www.canva.com/design/DAG98-e31eE/cqdGiwP9kObF1zOWiz5gWw/view', '_blank');
         }
 
-        function tocarAudio() {
-            audio.play();
-            playIcon.style.display = 'none';
-            pauseIcon.style.display = 'block';
-        }
-
-        function pausarAudio() {
-            audio.pause();
-            playIcon.style.display = 'block';
-            pauseIcon.style.display = 'none';
-        }
-
-        // Função do botão flutuante (Alternar)
-        function toggleAudio() {
+        // Função do botão flutuante
+        function toggleAudio(event) {
+            event.stopPropagation(); // Impede que o clique no botão abra o Canva de novo
             if (audio.paused) {
-                tocarAudio();
+                audio.play();
+                atualizarIcones(true);
             } else {
-                pausarAudio();
+                audio.pause();
+                atualizarIcones(false);
+            }
+        }
+
+        function atualizarIcones(isPlaying) {
+            if (isPlaying) {
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+            } else {
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
             }
         }
     </script>
