@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Apresentação Interativa</title>
+    <title>Apresentação Fluida</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body, html { 
             height: 100%; width: 100%; 
-            background-color: #000;
+            background-color: #fff;
             overflow: hidden; 
             font-family: sans-serif;
         }
@@ -21,42 +21,39 @@
             background-image: url('capa.jpg');
             background-size: cover;
             background-position: center;
-            z-index: 3000;
+            z-index: 5000; /* No topo de tudo */
             cursor: pointer;
         }
 
-        /* CAPA 2: Arte de fundo com o Botão */
+        /* CAPA 2: Sua Arte com botão Abrir */
         #capa2 {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('capa2.jpg'); /* Sua arte que combina */
+            background-image: url('capa2.jpg');
             background-size: cover;
             background-position: center;
-            z-index: 2000;
+            z-index: 4000;
             display: none; 
             flex-direction: column;
             align-items: center;
             justify-content: center;
         }
 
-        /* Botão ABRIR customizado */
+        /* Botão ABRIR (Cor #105d4a) */
         .btn-abrir {
             background-color: #105d4a;
             color: white;
             padding: 18px 50px;
             border-radius: 40px;
-            text-decoration: none;
             font-weight: bold;
             font-size: 20px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            border: 2px solid rgba(255,255,255,0.2);
+            border: none;
             cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 150px; /* Ajuste aqui para posicionar sobre sua arte */
+            margin-top: 150px; /* Ajuste para sua arte */
         }
 
-        /* Botão Flutuante (Sempre visível após o primeiro clique) */
+        /* Botão Flutuante Superior (Play/Pause) */
         #btnAudio {
             position: fixed;
             top: 25px; 
@@ -66,8 +63,7 @@
             background-color: white;
             border-radius: 50%;
             border: 2px solid #105d4a;
-            /* O z-index 5000 garante que ele fique na frente do PDF */
-            z-index: 5000; 
+            z-index: 6000; /* Acima de todas as capas e do PDF */
             display: none;
             align-items: center;
             justify-content: center;
@@ -78,15 +74,13 @@
         .icon { width: 32px; height: 32px; fill: #105d4a; }
         .pause-icon { display: none; }
 
-        /* Área do PDF com Scroll */
+        /* Área do PDF Incorporado (Permite áudio durante navegação) */
         #pdfArea {
             position: absolute;
             top: 0; left: 0;
-            width: 100%; height: 100vh;
+            width: 100%; height: 100%;
             display: none;
             z-index: 1000;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
         }
         
         iframe { width: 100%; height: 100%; border: none; }
@@ -102,7 +96,7 @@
     <div id="capa1" onclick="passarParaCapa2()"></div>
 
     <div id="capa2">
-        <button class="btn-abrir" onclick="abrirPdf()">ABRIR</button>
+        <button class="btn-abrir" onclick="abrirDoc()">ABRIR</button>
     </div>
 
     <div id="pdfArea">
@@ -116,26 +110,26 @@
     <script>
         const som = document.getElementById('musica');
         const btnA = document.getElementById('btnAudio');
-        const capa1 = document.getElementById('capa1');
-        const capa2 = document.getElementById('capa2');
-        const pdfArea = document.getElementById('pdfArea');
+        const c1 = document.getElementById('capa1');
+        const c2 = document.getElementById('capa2');
+        const area = document.getElementById('pdfArea');
 
         function passarParaCapa2() {
-            // Liga o áudio no primeiro toque
-            som.play().catch(e => console.log("Erro áudio"));
+            // LIBERA O ÁUDIO AQUI (Primeiro clique)
+            som.play().catch(e => console.log("Áudio aguardando..."));
             
-            capa1.style.display = 'none';
-            capa2.style.display = 'flex';
+            c1.style.display = 'none';
+            c2.style.display = 'flex';
             
-            // O botão de áudio já aparece aqui e não some mais
+            // O botão de controle aparece e não some mais
             btnA.style.display = 'flex';
             atualizarIcones(true);
         }
 
-        function abrirPdf() {
-            capa2.style.display = 'none';
-            pdfArea.style.display = 'block';
-            // O botão de áudio permanece visível devido ao z-index: 5000
+        function abrirDoc() {
+            // Abre o PDF dentro da mesma página
+            c2.style.display = 'none';
+            area.style.display = 'block';
         }
 
         function controlarAudio(e) {
