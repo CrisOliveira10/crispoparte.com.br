@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Visualizador Fluido</title>
+    <title>Apresentação Mobile</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -12,10 +12,9 @@
             width: 100%; 
             background-color: #fff;
             overflow: hidden; 
-            font-family: sans-serif;
         }
 
-        /* Capa Invisível que cobre toda a tela */
+        /* Capa Invisível */
         #capa {
             position: fixed;
             top: 0;
@@ -25,11 +24,11 @@
             background-image: url('capa.jpg');
             background-size: cover;
             background-position: center;
-            z-index: 999; 
+            z-index: 2000; /* Valor bem alto */
             cursor: pointer;
         }
 
-        /* Container do PDF que permite o Scroll Infinito */
+        /* Container do PDF */
         #pdfArea {
             position: fixed;
             top: 0;
@@ -38,8 +37,8 @@
             height: 100vh;
             display: none;
             z-index: 1;
-            overflow-y: auto; /* Permite rolar */
-            -webkit-overflow-scrolling: touch; /* Scroll suave no iPhone */
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         iframe {
@@ -48,18 +47,18 @@
             border: none;
         }
 
-        /* Botão Flutuante Superior Circular */
+        /* Botão Flutuante (Estilo sua foto) */
         #btnAudio {
             position: fixed;
-            top: 25px;
-            right: 25px;
+            top: 20px;
+            right: 20px;
             width: 65px;
             height: 65px;
             background-color: white;
             border-radius: 50%;
             border: 2px solid #000;
             box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            z-index: 1000; 
+            z-index: 3000; /* Acima de tudo */
             display: none; 
             align-items: center;
             justify-content: center;
@@ -92,29 +91,25 @@
         const capa = document.getElementById('capa');
         const areaDoc = document.getElementById('pdfArea');
         const btn = document.getElementById('btnAudio');
-        const iconPlay = document.querySelector('.play-icon');
-        const iconPause = document.querySelector('.pause-icon');
 
         function ativarTudo() {
-            // Tenta tocar o som imediatamente
-            const playPromise = som.play();
+            // Tocar som imediatamente
+            som.play().then(() => {
+                console.log("Áudio tocando");
+            }).catch(err => {
+                console.log("Erro áudio:", err);
+            });
             
-            if (playPromise !== undefined) {
-                playPromise.then(_ => {
-                    atualizarIcones(true);
-                }).catch(error => {
-                    console.log("Autoplay bloqueado, aguardando clique no botão.");
-                });
-            }
-            
-            // Trocar visibilidade
+            // Trocar telas
             capa.style.display = 'none';
             areaDoc.style.display = 'block';
             btn.style.display = 'flex';
+            
+            atualizarIcones(true);
         }
 
-        function controlarAudio(event) {
-            event.stopPropagation(); // Evita conflitos de clique
+        function controlarAudio(e) {
+            e.stopPropagation();
             if (som.paused) {
                 som.play();
                 atualizarIcones(true);
@@ -125,13 +120,8 @@
         }
 
         function atualizarIcones(tocando) {
-            if (tocando) {
-                iconPlay.style.display = 'none';
-                iconPause.style.display = 'flex';
-            } else {
-                iconPlay.style.display = 'flex';
-                iconPause.style.display = 'none';
-            }
+            document.querySelector('.play-icon').style.display = tocando ? 'none' : 'block';
+            document.querySelector('.pause-icon').style.display = tocando ? 'block' : 'none';
         }
     </script>
 </body>
