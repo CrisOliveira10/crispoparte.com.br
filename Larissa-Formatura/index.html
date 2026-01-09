@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Apresentação Fluida</title>
+    <title>Apresentação</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -14,18 +14,18 @@
             font-family: sans-serif;
         }
 
-        /* CAPA 1: Imagem Principal */
+        /* CAPA 1: Aciona o Áudio */
         #capa1 {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background-image: url('capa.jpg');
             background-size: cover;
             background-position: center;
-            z-index: 5000; /* No topo de tudo */
+            z-index: 5000;
             cursor: pointer;
         }
 
-        /* CAPA 2: Sua Arte com botão Abrir */
+        /* CAPA 2: Fundo da sua Arte */
         #capa2 {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -39,7 +39,7 @@
             justify-content: center;
         }
 
-        /* Botão ABRIR (Cor #105d4a) */
+        /* Botão ABRIR Customizado */
         .btn-abrir {
             background-color: #105d4a;
             color: white;
@@ -50,20 +50,18 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
             border: none;
             cursor: pointer;
-            margin-top: 150px; /* Ajuste para sua arte */
+            margin-top: 150px;
         }
 
-        /* Botão Flutuante Superior (Play/Pause) */
+        /* Botão Flutuante Superior */
         #btnAudio {
             position: fixed;
-            top: 25px; 
-            right: 25px;
-            width: 65px; 
-            height: 65px;
+            top: 25px; right: 25px;
+            width: 65px; height: 65px;
             background-color: white;
             border-radius: 50%;
             border: 2px solid #105d4a;
-            z-index: 6000; /* Acima de todas as capas e do PDF */
+            z-index: 6000;
             display: none;
             align-items: center;
             justify-content: center;
@@ -74,7 +72,7 @@
         .icon { width: 32px; height: 32px; fill: #105d4a; }
         .pause-icon { display: none; }
 
-        /* Área do PDF Incorporado (Permite áudio durante navegação) */
+        /* Iframe do PDF */
         #pdfArea {
             position: absolute;
             top: 0; left: 0;
@@ -82,7 +80,6 @@
             display: none;
             z-index: 1000;
         }
-        
         iframe { width: 100%; height: 100%; border: none; }
     </style>
 </head>
@@ -93,14 +90,13 @@
         <svg class="icon pause-icon" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
     </div>
 
-    <div id="capa1" onclick="passarParaCapa2()"></div>
-
+    <div id="capa1" onclick="ativarAudioEPassar()"></div>
     <div id="capa2">
         <button class="btn-abrir" onclick="abrirDoc()">ABRIR</button>
     </div>
 
     <div id="pdfArea">
-        <iframe src="arquivo.pdf#toolbar=0&navpanes=0"></iframe>
+        <iframe src="arquivo.pdf#toolbar=0"></iframe>
     </div>
 
     <audio id="musica" loop preload="auto">
@@ -110,26 +106,30 @@
     <script>
         const som = document.getElementById('musica');
         const btnA = document.getElementById('btnAudio');
-        const c1 = document.getElementById('capa1');
-        const c2 = document.getElementById('capa2');
-        const area = document.getElementById('pdfArea');
 
-        function passarParaCapa2() {
-            // LIBERA O ÁUDIO AQUI (Primeiro clique)
-            som.play().catch(e => console.log("Áudio aguardando..."));
-            
-            c1.style.display = 'none';
-            c2.style.display = 'flex';
-            
-            // O botão de controle aparece e não some mais
+        // Função crucial para computadores (Chrome/Edge)
+        function ativarAudioEPassar() {
+            // Reinicia e toca para forçar a saída de som
+            som.load(); 
+            const playPromise = som.play();
+
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                    console.log("Áudio iniciado com sucesso!");
+                    atualizarIcones(true);
+                }).catch(error => {
+                    console.log("Erro ao tocar: ", error);
+                });
+            }
+
+            document.getElementById('capa1').style.display = 'none';
+            document.getElementById('capa2').style.display = 'flex';
             btnA.style.display = 'flex';
-            atualizarIcones(true);
         }
 
         function abrirDoc() {
-            // Abre o PDF dentro da mesma página
-            c2.style.display = 'none';
-            area.style.display = 'block';
+            document.getElementById('capa2').style.display = 'none';
+            document.getElementById('pdfArea').style.display = 'block';
         }
 
         function controlarAudio(e) {
