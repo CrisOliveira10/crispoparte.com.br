@@ -1,171 +1,84 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="expires" content="0">
-    <meta http-equiv="pragma" content="no-cache">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Convite Interativo</title>
 
-    <title>Apresentação Interativa</title>
+<style>
+    body {
+        margin: 0;
+        background: #000;
+        overflow: hidden;
+    }
 
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+    .page {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 
-        html, body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            font-family: sans-serif;
-            background: #000;
-        }
-
-        /* ================= CAPA 1 ================= */
-        #capa1 {
-            position: fixed;
-            inset: 0;
-            background: url('capa.jpg') center / cover no-repeat;
-            z-index: 5000;
-            cursor: pointer;
-        }
-
-        /* ================= CAPA 2 ================= */
-        #capa2 {
-            position: fixed;
-            inset: 0;
-            background: url('capa2.jpg') center / cover no-repeat;
-            z-index: 4000;
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-abrir {
-            background-color: #105d4a;
-            color: #fff;
-            padding: 18px 50px;
-            border-radius: 40px;
-            font-size: 20px;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-            text-transform: uppercase;
-            box-shadow: 0 4px 20px rgba(0,0,0,.5);
-        }
-
-        /* ================= ÁREA DO PDF ================= */
-        #pdfArea {
-            position: fixed;
-            inset: 0;
-
-            /* FUNDAMENTAL: fundo com capa2 */
-            background: url('capa2.jpg') center / cover no-repeat;
-
-            display: none;
-            z-index: 1000;
-        }
-
-        #pdfArea iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background: transparent;
-        }
-
-        /* ================= BOTÃO ÁUDIO ================= */
-        #btnAudio {
-            position: fixed;
-            top: 25px;
-            right: 25px;
-            width: 65px;
-            height: 65px;
-            background: #fff;
-            border-radius: 50%;
-            border: 2px solid #105d4a;
-            z-index: 9999;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,.4);
-            cursor: pointer;
-        }
-
-        .icon {
-            width: 32px;
-            height: 32px;
-            fill: #105d4a;
-        }
-
-        .pause-icon { display: none; }
-    </style>
+    .bg {
+        width: 100%;
+        height: 100%;
+        background-image: url('abrir.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        cursor: pointer;
+    }
+</style>
 </head>
 
 <body>
 
-    <!-- BOTÃO FLUTUANTE -->
-    <div id="btnAudio" onclick="controlarAudio(event)">
-        <svg class="icon play-icon" viewBox="0 0 24 24">
-            <path d="M8 5v14l11-7z"/>
-        </svg>
-        <svg class="icon pause-icon" viewBox="0 0 24 24">
-            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
-        </svg>
+    <div style="display: none !important; visibility: hidden; pointer-events: none;" aria-hidden="true">
+        © 2026 Cristiane Oliveira. Todos os direitos reservados. 
+        Este software, design e algoritmos estão protegidos pela Lei de Direitos Autorais (Lei nº 9.610/98). 
+        A extração, cópia ou redistribuição deste código sem autorização expressa da Cristiane Oliveira (crispoparte) é terminantemente proibida.
     </div>
 
-    <!-- CAPA 1 -->
-    <div id="capa1" onclick="ativarAudioEPassar()"></div>
-
-    <!-- CAPA 2 -->
-    <div id="capa2">
-        <button class="btn-abrir" onclick="abrirDoc()">ABRIR</button>
-    </div>
-
-    <!-- PDF -->
-    <div id="pdfArea">
-        <iframe src="arquivo.pdf#toolbar=0&navpanes=0"></iframe>
-    </div>
-
-    <!-- ÁUDIO -->
-    <audio id="musica" preload="auto" loop>
+    <audio id="bgMusic" loop preload="auto">
         <source src="audio.mp3" type="audio/mpeg">
     </audio>
 
+    <div class="page">
+        <div class="bg" id="btnAbrir"></div>
+    </div>
+
     <script>
-        const som = document.getElementById('musica');
-        const btnAudio = document.getElementById('btnAudio');
-        const capa1 = document.getElementById('capa1');
-        const capa2 = document.getElementById('capa2');
-        const pdfArea = document.getElementById('pdfArea');
+        const audio = document.getElementById('bgMusic');
+        const botao = document.getElementById('btnAbrir');
 
-        function ativarAudioEPassar() {
-            som.play().catch(() => {});
-            capa1.style.display = 'none';
-            capa2.style.display = 'flex';
-            btnAudio.style.display = 'flex';
-            atualizarIcones(true);
-        }
+        // Ação principal: Áudio + PDF
+        botao.addEventListener('click', () => {
+            audio.play().catch(error => {
+                console.error("Erro ao tocar áudio:", error);
+            });
+            window.open('pagina3.pdf', '_blank');
+        }, { once: false });
 
-        function abrirDoc() {
-            capa2.style.display = 'none';
-            pdfArea.style.display = 'block';
-        }
+        // Script de Segurança e Direitos Autorais
+        (function() {
+            // Bloqueia clique direito
+            document.addEventListener('contextmenu', e => e.preventDefault());
+            
+            // Bloqueia F12, Ctrl+U, Ctrl+Shift+I, Ctrl+C e Ctrl+S
+            document.addEventListener('keydown', function(e) {
+                if (e.keyCode == 123 || (e.ctrlKey && e.keyCode == 85) || 
+                   (e.ctrlKey && e.shiftKey && e.keyCode == 73) || 
+                   (e.ctrlKey && e.keyCode == 67) || (e.ctrlKey && e.keyCode == 83)) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
 
-        function controlarAudio(e) {
-            e.stopPropagation();
-            if (som.paused) {
-                som.play();
-                atualizarIcones(true);
-            } else {
-                som.pause();
-                atualizarIcones(false);
-            }
-        }
-
-        function atualizarIcones(tocando) {
-            document.querySelector('.play-icon').style.display = tocando ? 'none' : 'block';
-            document.querySelector('.pause-icon').style.display = tocando ? 'block' : 'none';
-        }
+            // Mensagem de alerta no Console
+            console.log("%c Protegido pela Lei 9.610/98 - Autoria: Cristiane Oliveira ", "color: white; background: red; font-weight: bold; font-size: 14px;");
+            console.log("A cópia não autorizada deste código é proibida.");
+        })();
     </script>
-
-</body>
+</body> 
 </html>
