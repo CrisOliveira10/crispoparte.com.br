@@ -56,9 +56,9 @@ video,img{
   right:0;              
   top:55%; 
   transform:translateY(-50%);
-  width: 350px;        
+  width: 350px;         
   z-index:20;
-  display: none;        
+  display: none;         
   flex-direction: column;
   gap: 25px; 
   align-items: flex-end;
@@ -70,7 +70,7 @@ video,img{
 }
 
 .menu-btn{
-  width: 350px;        
+  width: 350px;         
   height: 150px; 
   cursor: pointer;
   display: block;
@@ -156,7 +156,7 @@ video,img{
 </section>
 
 <section id="cena2" class="cena">
-  <video id="video2" src="media/video2.mp4" autoplay muted playsinline></video>
+  <video id="video2" src="media/video2.mp4" playsinline></video>
 
   <div class="top-bar">
     <div class="hotspot hotspot-audio" onclick="toggleAudio()"></div>
@@ -189,11 +189,18 @@ video,img{
 <script>
 // --- FUNÇÕES DO CONVITE ---
 const audio = document.getElementById("bgAudio");
+const video2 = document.getElementById("video2");
 let audioStarted = false;
 
 function iniciarTudo() {
-  audio.play().then(() => { audioStarted = true; }).catch(e => console.log(e));
-  goToCena(2);
+  audio.volume = 1.0;
+  audio.play().then(() => { 
+    audioStarted = true; 
+    goToCena(2);
+  }).catch(e => {
+    console.log("Erro ao iniciar áudio:", e);
+    goToCena(2); // Vai para cena 2 mesmo se o áudio falhar
+  });
 }
 
 function goToCena(n, voltarFinal = false){
@@ -201,33 +208,40 @@ function goToCena(n, voltarFinal = false){
   document.querySelectorAll(".cena").forEach(c => c.classList.remove("active"));
   document.getElementById("cena"+n).classList.add("active");
 
-  const v2 = document.getElementById("video2");
   if(n === 2) {
+    // Abaixa o som do fundo para o personagem falar
+    audio.volume = 0.2; 
+    
     if(voltarFinal) {
-      v2.currentTime = 6; 
+      video2.currentTime = 6; 
       document.getElementById("timer").style.display = "block";
+      audio.volume = 1.0; // Se voltou ao final, o áudio de fundo pode ficar alto
     } else {
-      v2.currentTime = 0;
+      video2.currentTime = 0;
+      video2.play().catch(e => console.log("Erro play vídeo:", e));
     }
-    v2.play();
   } else {
-    v2.pause();
+    video2.pause();
+    audio.volume = 1.0; // Restaura volume nas outras cenas
   }
 }
 
 function toggleMenu(){
   const menu = document.getElementById("menu");
-  if (menu.style.display === "none" || menu.style.display === "") {
-    menu.style.display = "flex";
-  } else {
-    menu.style.display = "none";
-  }
+  menu.style.display = (menu.style.display === "none" || menu.style.display === "") ? "flex" : "none";
 }
 
 function toggleAudio(){
   audio.paused ? audio.play() : audio.pause();
 }
 
+// Quando o vídeo do personagem termina, o som de fundo volta ao normal
+video2.addEventListener("ended", () => {
+  document.getElementById("timer").style.display = "block";
+  audio.volume = 1.0; 
+});
+
+// --- CRONÔMETRO ---
 const eventDate = new Date("2026-01-31T17:00:00");
 const timerDiv = document.getElementById("timer");
 
@@ -245,16 +259,9 @@ setInterval(()=>{
   timerDiv.innerText = `${d}d ${h}h ${m}m ${s}s`;
 }, 1000);
 
-document.getElementById("video2").addEventListener("ended", () => {
-  document.getElementById("timer").style.display = "block";
-});
-
-// --- SCRIPT DE SEGURANÇA E DIREITOS AUTORAIS ---
+// --- SCRIPT DE SEGURANÇA ---
 (function() {
-    // Bloqueia clique direito
     document.addEventListener('contextmenu', e => e.preventDefault());
-    
-    // Bloqueia F12, Ctrl+U, Ctrl+Shift+I, Ctrl+C e Ctrl+S
     document.addEventListener('keydown', function(e) {
         if (e.keyCode == 123 || (e.ctrlKey && e.keyCode == 85) || 
            (e.ctrlKey && e.shiftKey && e.keyCode == 73) || 
@@ -263,10 +270,7 @@ document.getElementById("video2").addEventListener("ended", () => {
             return false;
         }
     });
-
-    // Mensagem de alerta no Console
     console.log("%c Protegido pela Lei 9.610/98 - Autoria: Cristiane Oliveira ", "color: white; background: red; font-weight: bold; font-size: 14px;");
-    console.log("A cópia não autorizada deste código é proibida.");
 })();
 </script>
 
