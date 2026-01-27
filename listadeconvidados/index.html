@@ -37,15 +37,17 @@
         position: relative;
         z-index: 2;
         text-align: center;
-        color: white;
-        padding: 20px;
-        background: rgba(0,0,0,0.45);
-        border-radius: 12px;
+        color: #fff;
+        padding: 20px 30px;
+        background: rgba(0,0,0,0.55);
+        border-radius: 14px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.6);
     }
 
     .mensagem h1 {
         font-size: 32px;
         margin: 0 0 10px;
+        font-weight: bold;
     }
 
     .mensagem p {
@@ -76,74 +78,76 @@
 </audio>
 
 <div class="page">
+
     <div class="mensagem">
         <h1 id="nomeConvidado">Convidado Especial</h1>
         <p>Você é meu convidado(a) especial.</p>
     </div>
 
     <div class="bg" id="btnAbrir"></div>
+
 </div>
 
 <script>
-    /* ================================
-       LISTA FECHADA DE CONVIDADOS
-    ================================== */
-    const convidados = [
-        "Drika",
-        "Andressa",
-        "Ramon",
-        "Myrtes",
-        "Thais",
-        "Marcela",
-        "Tatiane",
-        "Kelly",
-        "Katia",
-        "Aline"
-    ];
+/* ================================
+   LISTA FECHADA DE CONVIDADOS
+================================== */
+const convidados = [
+    "Drika",
+    "Andressa",
+    "Ramon",
+    "Myrtes",
+    "Thais",
+    "Marcela",
+    "Tatiane",
+    "Kelly",
+    "Katia",
+    "Aline"
+];
 
-    /* ================================
-       RECONHECIMENTO DO CONVIDADO
-    ================================== */
-    const params = new URLSearchParams(window.location.search);
-    const nome = params.get("nome");
-    const nomeEl = document.getElementById("nomeConvidado");
+/* ================================
+   RECONHECIMENTO DO CONVIDADO
+================================== */
+const params = new URLSearchParams(window.location.search);
+const nome = params.get("nome");
+const nomeEl = document.getElementById("nomeConvidado");
 
-    if (nome && convidados.includes(nome)) {
-        nomeEl.textContent = nome;
-    } else {
-        nomeEl.textContent = "Convidado Especial";
+if (nome && convidados.includes(nome)) {
+    nomeEl.textContent = nome;
+} else {
+    nomeEl.textContent = "Convidado Especial";
+}
+
+/* ================================
+   AÇÃO PRINCIPAL (ÁUDIO + PDF)
+================================== */
+const audio = document.getElementById("bgMusic");
+const botao = document.getElementById("btnAbrir");
+
+botao.addEventListener("click", () => {
+    audio.play().catch(() => {});
+    window.open("pagina3.pdf", "_blank");
+});
+
+/* ================================
+   PROTEÇÃO BÁSICA
+================================== */
+document.addEventListener("contextmenu", e => e.preventDefault());
+
+document.addEventListener("keydown", e => {
+    if (
+        e.keyCode === 123 ||
+        (e.ctrlKey && e.keyCode === 85) ||
+        (e.ctrlKey && e.shiftKey && e.keyCode === 73)
+    ) {
+        e.preventDefault();
     }
+});
 
-    /* ================================
-       AÇÃO PRINCIPAL (ÁUDIO + PRÓXIMA PÁGINA)
-    ================================== */
-    const audio = document.getElementById("bgMusic");
-    const botao = document.getElementById("btnAbrir");
-
-    botao.addEventListener("click", () => {
-        audio.play().catch(() => {});
-        // você pode trocar para outra página HTML se quiser
-        // window.location.href = "cena2.html";
-    });
-
-    /* ================================
-       PROTEÇÃO BÁSICA
-    ================================== */
-    document.addEventListener("contextmenu", e => e.preventDefault());
-    document.addEventListener("keydown", e => {
-        if (
-            e.keyCode === 123 ||
-            (e.ctrlKey && e.keyCode === 85) ||
-            (e.ctrlKey && e.shiftKey && e.keyCode === 73)
-        ) {
-            e.preventDefault();
-        }
-    });
-
-    console.log(
-        "%cConvite Interativo Protegido – Cristiane Oliveira",
-        "color:white;background:#e60000;padding:6px;font-weight:bold;"
-    );
+console.log(
+    "%cConvite Interativo Protegido – Cristiane Oliveira",
+    "color:white;background:#e60000;padding:6px;font-weight:bold;"
+);
 </script>
 
 </body>
