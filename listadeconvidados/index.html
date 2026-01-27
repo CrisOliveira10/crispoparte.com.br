@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Convite Interativo</title>
+
+<style>
+    body {
+        margin: 0;
+        background: #000;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+    }
+
+    .page {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .bg {
+        position: absolute;
+        inset: 0;
+        background-image: url('abrir.png');
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        cursor: pointer;
+        z-index: 1;
+    }
+
+    .mensagem {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        color: white;
+        padding: 20px;
+        background: rgba(0,0,0,0.45);
+        border-radius: 12px;
+    }
+
+    .mensagem h1 {
+        font-size: 32px;
+        margin: 0 0 10px;
+    }
+
+    .mensagem p {
+        font-size: 18px;
+        margin: 0;
+    }
+
+    @media (max-width: 600px) {
+        .mensagem h1 {
+            font-size: 24px;
+        }
+        .mensagem p {
+            font-size: 16px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<!-- Proteção de autoria -->
+<div style="display:none" aria-hidden="true">
+© 2026 Cristiane Oliveira – Todos os direitos reservados.
+</div>
+
+<audio id="bgMusic" loop preload="auto">
+    <source src="audio.mp3" type="audio/mpeg">
+</audio>
+
+<div class="page">
+    <div class="mensagem">
+        <h1 id="nomeConvidado">Convidado Especial</h1>
+        <p>Você é meu convidado(a) especial.</p>
+    </div>
+
+    <div class="bg" id="btnAbrir"></div>
+</div>
+
+<script>
+    /* ================================
+       LISTA FECHADA DE CONVIDADOS
+    ================================== */
+    const convidados = [
+        "Drika",
+        "Andressa",
+        "Ramon",
+        "Myrtes",
+        "Thais",
+        "Marcela",
+        "Tatiane",
+        "Kelly",
+        "Katia",
+        "Aline"
+    ];
+
+    /* ================================
+       RECONHECIMENTO DO CONVIDADO
+    ================================== */
+    const params = new URLSearchParams(window.location.search);
+    const nome = params.get("nome");
+    const nomeEl = document.getElementById("nomeConvidado");
+
+    if (nome && convidados.includes(nome)) {
+        nomeEl.textContent = nome;
+    } else {
+        nomeEl.textContent = "Convidado Especial";
+    }
+
+    /* ================================
+       AÇÃO PRINCIPAL (ÁUDIO + PRÓXIMA PÁGINA)
+    ================================== */
+    const audio = document.getElementById("bgMusic");
+    const botao = document.getElementById("btnAbrir");
+
+    botao.addEventListener("click", () => {
+        audio.play().catch(() => {});
+        // você pode trocar para outra página HTML se quiser
+        // window.location.href = "cena2.html";
+    });
+
+    /* ================================
+       PROTEÇÃO BÁSICA
+    ================================== */
+    document.addEventListener("contextmenu", e => e.preventDefault());
+    document.addEventListener("keydown", e => {
+        if (
+            e.keyCode === 123 ||
+            (e.ctrlKey && e.keyCode === 85) ||
+            (e.ctrlKey && e.shiftKey && e.keyCode === 73)
+        ) {
+            e.preventDefault();
+        }
+    });
+
+    console.log(
+        "%cConvite Interativo Protegido – Cristiane Oliveira",
+        "color:white;background:#e60000;padding:6px;font-weight:bold;"
+    );
+</script>
+
+</body>
+</html>
