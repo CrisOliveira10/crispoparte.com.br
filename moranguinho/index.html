@@ -43,11 +43,11 @@
         /* Container dos 3 Hotspots no Vídeo */
         .video-controls {
             position: absolute;
-            bottom: 150px; /* Distância exata do rodapé */
+            bottom: 200px; /* Distância exata do rodapé */
             left: 50%;
             transform: translateX(-50%); /* Centraliza na horizontal */
             display: flex;
-            gap: 20px; /* Espaço entre os botões */
+            gap: 30px; /* Espaço entre os botões */
             z-index: 100;
         }
 
@@ -56,21 +56,21 @@
             height: 80px;
             cursor: pointer;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.1); /* Deixe em 0.1 para testar a posição, depois 0.0 para sumir */
+            background: rgba(255, 255, 255, 0.5); /* Deixe em 0.1 para testar a posição, depois 0.0 para sumir */
             transition: background 0.3s;
         }
         
         /* Debug: use esta linha abaixo para enxergar os botões durante os testes */
-        /* .hotspot { background: rgba(255, 255, 255, 0.3); border: 1px solid white; } */
+        /* .hotspot { background: rgba(255, 255, 255, 0.5); border: 1px solid white; } */
 
         /* Botão Voltar na Página (Superior Direito) */
         .btn-back { 
             position: absolute;
             top: 10px; 
             right: 10px; 
-            width: 70px; 
-            height: 70px; 
-            background: rgba(255, 255, 255, 0.1);
+            width: 120px; 
+            height: 120px; 
+            background: rgba(255, 255, 255, 0.5);
             z-index: 100;
         }
 
@@ -81,7 +81,7 @@
             color: white;
             font-size: 14px;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             animation: pulse 2s infinite;
         }
 
