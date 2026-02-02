@@ -20,17 +20,15 @@
             margin: 0; padding: 0; 
             width: 100%; height: 100%; 
             overflow: hidden; 
-            background: #fdf0f3; /* Cor de fundo suave */
-            font-family: 'Arial', sans-serif; 
+            background: #000; 
+            font-family: sans-serif; 
         }
         
-        /* Contêineres de Seção */
         .section { 
             display: none; 
             width: 100%; 
             height: 100vh; 
             position: relative; 
-            flex-direction: column;
             align-items: center;
             justify-content: center;
         }
@@ -39,59 +37,58 @@
         img, video { 
             max-width: 100%; 
             max-height: 100vh; 
-            object-fit: contain;
+            display: block;
         }
 
-        /* Hotspots */
-        .hotspot {
-            position: absolute;
-            cursor: pointer;
-            z-index: 10;
-            border-radius: 50%;
-            /* background: rgba(255, 255, 255, 0.2); Deixe transparente ou com cor para teste */
-        }
-
-        /* Layout dos 3 Hotspots no Vídeo (lado a lado) */
+        /* Container dos 3 Hotspots no Vídeo */
         .video-controls {
             position: absolute;
-            bottom: 120px; /* 120px do rodapé */
+            bottom: 120px; /* Distância exata do rodapé */
+            left: 50%;
+            transform: translateX(-50%); /* Centraliza na horizontal */
             display: flex;
-            gap: 25px;
-            justify-content: center;
-            width: 100%;
+            gap: 20px; /* Espaço entre os botões */
+            z-index: 100;
         }
-        .btn-video { 
-            width: 70px; 
-            height: 70px; 
-            background: rgba(255, 255, 255, 0.1); /* Toque de transparência */
+
+        .hotspot {
+            width: 80px;  /* Tamanho da área de clique */
+            height: 80px;
+            cursor: pointer;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.0); /* Deixe em 0.1 para testar a posição, depois 0.0 para sumir */
+            transition: background 0.3s;
         }
+        
+        /* Debug: use esta linha abaixo para enxergar os botões durante os testes */
+        /* .hotspot { background: rgba(255, 255, 255, 0.3); border: 1px solid white; } */
 
         /* Botão Voltar na Página (Superior Direito) */
         .btn-back { 
-            top: 20px; 
-            right: 20px; 
-            width: 60px; 
-            height: 60px; 
-            background: rgba(255, 0, 0, 0.1); 
+            position: absolute;
+            top: 10px; 
+            right: 10px; 
+            width: 70px; 
+            height: 70px; 
+            background: rgba(255, 255, 255, 0.0);
+            z-index: 100;
         }
 
-        /* Animação para a Capa */
-        .pulse-text {
+        /* Animação de pulsação simples para a capa */
+        .click-hint {
             position: absolute;
-            bottom: 15%;
-            background: rgba(255, 255, 255, 0.7);
-            padding: 10px 20px;
-            border-radius: 20px;
-            color: #d63384;
-            font-weight: bold;
-            animation: pulse 1.5s infinite;
-            pointer-events: none;
+            bottom: 20%;
+            color: white;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.7; }
-            100% { transform: scale(1); opacity: 1; }
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
         }
     </style>
 </head>
@@ -99,7 +96,7 @@
 
     <div id="etapa-capa" class="section active" onclick="iniciarVideo()">
         <img src="capa.png" alt="Capa">
-        <div class="pulse-text">Clique para abrir o convite! 🍓</div>
+        <div class="click-hint">Clique para abrir</div>
     </div>
 
     <div id="etapa-video" class="section">
@@ -108,18 +105,18 @@
         </video>
         
         <div class="video-controls">
-            <a href="https://wa.me/5571993233142" target="_blank" class="hotspot btn-video" title="WhatsApp"></a>
+            <a href="https://api.whatsapp.com/send?phone=5571993233142" target="_blank" class="hotspot"></a>
             
-            <a href="https://maps.app.goo.gl/TY6YvE9iN7LfRTFU7" target="_blank" class="hotspot btn-video" title="Localização"></a>
+            <a href="https://maps.app.goo.gl/TY6YvE9iN7LfRTFU7" target="_blank" class="hotspot"></a>
             
-            <div onclick="irParaPagina()" class="hotspot btn-video" title="Presentes"></div>
+            <div onclick="irParaPagina()" class="hotspot"></div>
         </div>
     </div>
 
     <div id="etapa-pagina" class="section">
-        <img src="pagina.png" alt="Sugestão de Presentes">
+        <img src="pagina.png" alt="Página">
         
-        <div onclick="voltarVideo()" class="hotspot btn-back" title="Voltar"></div>
+        <div onclick="voltarVideo()" class="btn-back"></div>
     </div>
 
     <script>
@@ -128,7 +125,6 @@
         function iniciarVideo() {
             document.getElementById('etapa-capa').classList.remove('active');
             document.getElementById('etapa-video').classList.add('active');
-            v.muted = false; // Garante que o som saia
             v.play();
         }
 
@@ -144,7 +140,7 @@
             v.play();
         }
 
-        // Loop automático para o vídeo, se desejar
+        // Se o vídeo terminar, ele volta para o começo (loop)
         v.onended = function() {
             v.play();
         };
