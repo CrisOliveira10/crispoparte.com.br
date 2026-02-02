@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convite Isabella - 3 Anos</title>
+
+    <meta property="og:title" content="Convite Especial: Isabella - 3 Anos">
+    <meta property="og:description" content="Clique para ver os detalhes do convite da Isabella!">
+    <meta property="og:image" content="https://SEU-USUARIO.github.io/SEU-REPOSITORIO/capa.png"> <meta property="og:url" content="https://SEU-USUARIO.github.io/SEU-REPOSITORIO/">
+    <meta property="og:type" content="website">
+
+    <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
+        
+        /* Contêineres de Seção */
+        .section { display: none; width: 100%; height: 100vh; position: relative; }
+        .active { display: flex; justify-content: center; align-items: center; }
+
+        img, video { max-width: 100%; max-height: 100vh; display: block; }
+
+        /* Estilo dos Hotspots */
+        .hotspot {
+            position: absolute;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1); /* Quase transparente */
+            border-radius: 50%;
+            transition: transform 0.2s;
+        }
+        .hotspot:hover { transform: scale(1.1); background: rgba(255, 255, 255, 0.3); }
+
+        /* Layout dos 3 Hotspots no Vídeo */
+        .video-controls {
+            position: absolute;
+            bottom: 120px; /* Afastado 120px do rodapé */
+            display: flex;
+            gap: 40px;
+        }
+        .btn-video { width: 60px; height: 60px; }
+
+        /* Botão Voltar na Página */
+        .btn-back { top: 20px; right: 20px; width: 50px; height: 50px; }
+    </style>
+</head>
+<body>
+
+    <div id="etapa-capa" class="section active" onclick="iniciarVideo()">
+        <img src="capa.png" alt="Capa">
+        <div style="position: absolute; bottom: 20%; color: white; animation: pulse 2s infinite;">Clique para abrir</div>
+    </div>
+
+    <div id="etapa-video" class="section">
+        <video id="meuVideo" playsinline>
+            <source src="video.mp4" type="video/mp4">
+        </video>
+        
+        <div class="video-controls">
+            <a href="https://wa.me/5571993233142" target="_blank" class="hotspot btn-video"></a>
+            <a href="https://maps.app.goo.gl/TY6YvE9iN7LfRTFU7" target="_blank" class="hotspot btn-video"></a>
+            <div onclick="irParaPagina()" class="hotspot btn-video"></div>
+        </div>
+    </div>
+
+    <div id="etapa-pagina" class="section">
+        <img src="pagina.png" alt="Sugestão de Presentes">
+        <div onclick="voltarVideo()" class="hotspot btn-back" style="background: rgba(255,0,0,0.2);"></div>
+    </div>
+
+    <script>
+        const v = document.getElementById('meuVideo');
+
+        function iniciarVideo() {
+            document.getElementById('etapa-capa').classList.remove('active');
+            document.getElementById('etapa-video').classList.add('active');
+            v.play(); // Áudio ativa aqui pelo clique do usuário na capa
+        }
+
+        function irParaPagina() {
+            v.pause();
+            document.getElementById('etapa-video').classList.remove('active');
+            document.getElementById('etapa-pagina').classList.add('active');
+        }
+
+        function voltarVideo() {
+            document.getElementById('etapa-pagina').classList.remove('active');
+            document.getElementById('etapa-video').classList.add('active');
+            v.play();
+        }
+    </script>
+</body>
+</html>
