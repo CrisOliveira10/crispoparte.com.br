@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-br" prefix="og: http://ogp.me/ns#">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convite Isabella - 3 Anos</title>
+    
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://crispoparte.com.br/moranguinho/">
+    <meta property="og:title" content="Convite Especial: Isabella - 3 Anos">
+    <meta property="og:description" content="Clique para ver os detalhes do convite da Isabella!">
+    
+    <meta property="og:image" content="https://crispoparte.com.br/moranguinho/capalink.png">
+    <meta property="og:image:secure_url" content="https://crispoparte.com.br/moranguinho/capalink.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://crispoparte.com.br/moranguinho/capalink.png">
+
+    <style>
+        * { box-sizing: border-box; }
+        body, html { 
+            margin: 0; padding: 0; 
+            width: 100%; height: 100%; 
+            overflow: hidden; 
+            background: #000; 
+            font-family: sans-serif; 
+        }
+        
+        .section { 
+            display: none; 
+            width: 100%; 
+            height: 100vh; 
+            position: relative; 
+            align-items: center;
+            justify-content: center;
+        }
+        .active { display: flex; }
+
+        img, video { 
+            max-width: 100%; 
+            max-height: 100vh; 
+            display: block;
+        }
+
+        /* Container dos 3 Hotspots no Vídeo */
+        .video-controls {
+            position: absolute;
+            bottom: 255px; /* Mantido conforme seu ajuste */
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 49px; /* Mantido conforme seu ajuste */
+            z-index: 100;
+        }
+
+        .hotspot {
+            width: 80px; 
+            height: 80px;
+            cursor: pointer;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.0); /* Invisível */
+            transition: background 0.3s;
+        }
+        
+        /* Botão Voltar na Página (Superior Direito) */
+        .btn-back { 
+            position: absolute;
+            top: 10px; 
+            right: 10px; 
+            width: 120px; 
+            height: 120px; 
+            background: rgba(255, 255, 255, 0.0); /* Invisível */
+            z-index: 100;
+            border-radius: 50%;
+        }
+
+        /* Animação para a Capa */
+        .pulse-text {
+            position: absolute;
+            bottom: 15%;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 10px 20px;
+            border-radius: 20px;
+            color: #d63384;
+            font-weight: bold;
+            animation: pulse 1.5s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div style="display: none !important; visibility: hidden; pointer-events: none;" aria-hidden="true">
+        © 2026 Cristiane Oliveira. Todos os direitos reservados. 
+        Este software, design e algoritmos estão protegidos pela Lei de Direitos Autorais (Lei nº 9.610/98). 
+        A extração, cópia ou redistribuição deste código sem autorização expressa da Cristiane Oliveira (crispoparte) é terminantemente proibida.
+    </div>
+
+    <div id="etapa-capa" class="section active" onclick="iniciarVideo()">
+        <img src="capa.png" alt="Capa">
+        <div class="pulse-text">Clique para abrir o convite! 🍓</div>
+    </div>
+   
+    <div id="etapa-video" class="section">
+        <video id="meuVideo" playsinline>
+            <source src="video.mp4" type="video/mp4">
+        </video>
+        
+        <div class="video-controls">
+            <a href="https://api.whatsapp.com/send?phone=5571993233142" target="_blank" class="hotspot"></a>
+            
+            <a href="https://maps.app.goo.gl/TY6YvE9iN7LfRTFU7" target="_blank" class="hotspot"></a>
+            
+            <div onclick="irParaPagina()" class="hotspot"></div>
+        </div>
+    </div>
+
+    <div id="etapa-pagina" class="section">
+        <img src="pagina.png" alt="Página">
+        <div onclick="voltarVideo()" class="btn-back"></div>
+    </div>
+
+    <script>
+        const v = document.getElementById('meuVideo');
+
+        function iniciarVideo() {
+            document.getElementById('etapa-capa').classList.remove('active');
+            document.getElementById('etapa-video').classList.add('active');
+            v.play();
+        }
+
+        function irParaPagina() {
+            v.pause();
+            document.getElementById('etapa-video').classList.remove('active');
+            document.getElementById('etapa-pagina').classList.add('active');
+        }
+
+        function voltarVideo() {
+            document.getElementById('etapa-pagina').classList.remove('active');
+            document.getElementById('etapa-video').classList.add('active');
+            v.play();
+        }
+
+        v.onended = function() {
+            v.play();
+        };
+    </script>
+</body>
+</html>
