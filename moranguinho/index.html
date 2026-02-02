@@ -7,46 +7,99 @@
 
     <meta property="og:title" content="Convite Especial: Isabella - 3 Anos">
     <meta property="og:description" content="Clique para ver os detalhes do convite da Isabella!">
-    <meta property="og:image" content="https://crispoparte.com.br/moranguinho/capalink.png"> <meta property="og:url" content="https://crispoparte.com.br/moranguinho/">
+    <meta property="og:image" content="https://crispoparte.com.br/moranguinho/capalink.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:url" content="https://crispoparte.com.br/moranguinho/">
     <meta property="og:type" content="website">
 
     <style>
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
+        * { box-sizing: border-box; }
+        body, html { 
+            margin: 0; padding: 0; 
+            width: 100%; height: 100%; 
+            overflow: hidden; 
+            background: #fdf0f3; /* Cor de fundo suave */
+            font-family: 'Arial', sans-serif; 
+        }
         
         /* Contêineres de Seção */
-        .section { display: none; width: 100%; height: 100vh; position: relative; }
-        .active { display: flex; justify-content: center; align-items: center; }
+        .section { 
+            display: none; 
+            width: 100%; 
+            height: 100vh; 
+            position: relative; 
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .active { display: flex; }
 
-        img, video { max-width: 100%; max-height: 100vh; display: block; }
+        img, video { 
+            max-width: 100%; 
+            max-height: 100vh; 
+            object-fit: contain;
+        }
 
-        /* Estilo dos Hotspots */
+        /* Hotspots */
         .hotspot {
             position: absolute;
             cursor: pointer;
-            background: rgba(255, 255, 255, 0.1); /* Quase transparente */
+            z-index: 10;
             border-radius: 50%;
-            transition: transform 0.2s;
+            /* background: rgba(255, 255, 255, 0.2); Deixe transparente ou com cor para teste */
         }
-        .hotspot:hover { transform: scale(1.1); background: rgba(255, 255, 255, 0.3); }
 
-        /* Layout dos 3 Hotspots no Vídeo */
+        /* Layout dos 3 Hotspots no Vídeo (lado a lado) */
         .video-controls {
             position: absolute;
-            bottom: 120px; /* Afastado 120px do rodapé */
+            bottom: 120px; /* 120px do rodapé */
             display: flex;
-            gap: 40px;
+            gap: 25px;
+            justify-content: center;
+            width: 100%;
         }
-        .btn-video { width: 60px; height: 60px; }
+        .btn-video { 
+            width: 70px; 
+            height: 70px; 
+            background: rgba(255, 255, 255, 0.1); /* Toque de transparência */
+        }
 
-        /* Botão Voltar na Página */
-        .btn-back { top: 20px; right: 20px; width: 50px; height: 50px; }
+        /* Botão Voltar na Página (Superior Direito) */
+        .btn-back { 
+            top: 20px; 
+            right: 20px; 
+            width: 60px; 
+            height: 60px; 
+            background: rgba(255, 0, 0, 0.1); 
+        }
+
+        /* Animação para a Capa */
+        .pulse-text {
+            position: absolute;
+            bottom: 15%;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 10px 20px;
+            border-radius: 20px;
+            color: #d63384;
+            font-weight: bold;
+            animation: pulse 1.5s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
     </style>
 </head>
 <body>
 
     <div id="etapa-capa" class="section active" onclick="iniciarVideo()">
         <img src="capa.png" alt="Capa">
-        <div style="position: absolute; bottom: 20%; color: white; animation: pulse 2s infinite;">Clique para abrir</div>
+        <div class="pulse-text">Clique para abrir o convite! 🍓</div>
     </div>
 
     <div id="etapa-video" class="section">
@@ -55,15 +108,18 @@
         </video>
         
         <div class="video-controls">
-            <a href="https://wa.me/5571993233142" target="_blank" class="hotspot btn-video"></a>
-            <a href="https://maps.app.goo.gl/TY6YvE9iN7LfRTFU7" target="_blank" class="hotspot btn-video"></a>
-            <div onclick="irParaPagina()" class="hotspot btn-video"></div>
+            <a href="https://wa.me/5571993233142" target="_blank" class="hotspot btn-video" title="WhatsApp"></a>
+            
+            <a href="https://maps.app.goo.gl/TY6YvE9iN7LfRTFU7" target="_blank" class="hotspot btn-video" title="Localização"></a>
+            
+            <div onclick="irParaPagina()" class="hotspot btn-video" title="Presentes"></div>
         </div>
     </div>
 
     <div id="etapa-pagina" class="section">
         <img src="pagina.png" alt="Sugestão de Presentes">
-        <div onclick="voltarVideo()" class="hotspot btn-back" style="background: rgba(255,0,0,0.2);"></div>
+        
+        <div onclick="voltarVideo()" class="hotspot btn-back" title="Voltar"></div>
     </div>
 
     <script>
@@ -72,7 +128,8 @@
         function iniciarVideo() {
             document.getElementById('etapa-capa').classList.remove('active');
             document.getElementById('etapa-video').classList.add('active');
-            v.play(); // Áudio ativa aqui pelo clique do usuário na capa
+            v.muted = false; // Garante que o som saia
+            v.play();
         }
 
         function irParaPagina() {
@@ -86,6 +143,11 @@
             document.getElementById('etapa-video').classList.add('active');
             v.play();
         }
+
+        // Loop automático para o vídeo, se desejar
+        v.onended = function() {
+            v.play();
+        };
     </script>
 </body>
 </html>
