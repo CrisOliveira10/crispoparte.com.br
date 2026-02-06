@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <title>Câmera Pro - Boomerang Final</title>
+    <style>
+        :root { --accent: #25D366; --record: #ff0000; --boom: #e1306c; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; background: #000; color: #fff; overflow: hidden; width: 100vw; height: 100dvh; font-family: sans-serif; }
+        
+        .stage { position: relative; width: 100%; height: 100%; overflow: hidden; background: #000; touch-action: none; }
+        
+        /* Ajuste na transição para o zoom ser suave */
+        #camera { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.1s linear; }
+        #camera.mirrored { transform: scaleX(-1); }
+        
+        #canvasPreview, #videoPreview { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; background: black; display: none; z-index: 6; }
+        
+        #molduraImagePreview { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: bottom; pointer-events: none; z-index: 5; display: none; }
+        
+        #canvasFinal { display: none; }
+        
+        .ui-layer { position: absolute; inset: 0; pointer-events: none; z-index: 20; display: flex; flex-direction: column; justify-content: space-between; padding: 40px 20px; }
+        .top-bar { display: flex; justify-content: space-between; pointer-events: auto; }
+        
+        .boom-loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.9); padding: 25px; border-radius: 20px; display: none; z-index: 100; border: 2px solid var(--boom); text-align: center; }
+        
+        .controls-bottom { display: flex; flex-direction: column; align-items: center; gap: 20px; pointer-events: auto; }
+        .btn-ui { padding: 10px 20px; background: rgba(0,0,0,0.6); border: 1px solid #fff; border-radius: 20px; color: #fff; cursor: pointer; backdrop-filter: blur(5px); }
+        
+        .capture-controls { display: flex; gap: 20px; align-items: center; }
+        .btn-photo { width: 55px; height: 55px; border-radius: 50%; border: 2px solid #fff; background: rgba(255,255,255,0.2); font-size: 24px; cursor: pointer; }
+        .btn-boom { width: 60px; height: 60px; border-radius: 50%; border: 3px solid var(--boom); background: rgba(225, 48, 108, 0.2); font-size: 28px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; }
+        
+        .btn-video { width: 80px; height: 80px; border-radius: 50%; border: 5px solid #fff; background: rgba(255,255,255,0.1); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-video.recording { border-color: var(--record); background: rgba(255,0,0,0.3); }
+        .stop-square { width: 30px; height: 30px; background: red; border-radius: 4px; }
+        
+        #resultUI { position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 50px; z-index: 30; background: rgba(0,0,0,0.85); }
+        .actions-box { display: flex; flex-direction: column; gap: 15px; width: 85%; pointer-events: auto; }
+        .btn-res { padding: 20px; border-radius: 15px; border: none; font-weight: bold; font-size: 18px; cursor: pointer; text-align: center; text-decoration: none; color: #fff; }
+        
+        #startScreen { 
+            position: absolute; 
+            inset: 0; 
+            background-color: #000;
+            background-image: url('capajpg.jpg'); 
+            background-size: cover; 
+            background-position: center; 
+            background-repeat: no-repeat;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 100; 
+        }
+        #startBtn { padding: 25px 55px; font-size: 24px; font-weight: bold; border: none; background: #FF5722; color: #fff; border-radius: 50px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+    </style>
+</head>
+<body>
+
+<div class="stage" id="mainStage">
+    <video id="camera" autoplay playsinline muted></video>
+    <canvas id="canvasPreview"></canvas> 
+    <canvas id="canvasFinal"></canvas>
+    <video id="videoPreview" playsinline controls loop></video>
+    <img id="molduraImagePreview" src="" />
+    <div class="boom-loading" id="boomLoading">🚀 Criando seu Boomerang...</div>
+
+    <div class="ui-layer" id="cameraUI" style="display:none;">
+        <div class="top-bar">
+            <button class="btn-ui" id="switchBtn">🔄 INVERTER</button>
+        </div>
+        <div class="controls-bottom">
+            <div class="capture-controls">
+                <button id="capturePhotoBtn" class="btn-photo">📷</button>
+                <button id="captureVideoBtn" class="btn-video">
+                    <svg id="camIcon" viewBox="0 0 24 24" width="40" height="40" fill="white"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+                    <div id="stopIcon" class="stop-square" style="display:none;"></div>
+                </button>
+                <button id="boomerangBtn" class="btn-boom">∞</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="resultUI">
+        <div class="actions-box">
+            <button id="downloadBtn" class="btn-res" style="background:var(--accent);">📥 BAIXAR AGORA</button>
+            <button id="newBtn" class="btn-res" style="background:#444;">🔄 TIRAR OUTRA</button>
+        </div>
+    </div>
+
+    <div id="startScreen"><button id="startBtn">INICIAR CÂMERA</button></div>
+</div>
+
+<script>
+let usingFrontCamera = true, stream = null, isRecording = false, mediaRecorder = null, recordedChunks = [];
+let currentFileUrl = null, boomFrames = [], currentType = 'image';
+const BOOM_CAPTURE_TIME = 1200; 
+
+// Variáveis para o Zoom por Pinça
+let currentScale = 1;
+let startDistance = 0;
+let baseScale = 1;
+
+const video = document.getElementById('camera'), 
+      canvasFinal = document.getElementById('canvasFinal'),
+      canvasPreview = document.getElementById('canvasPreview'),
+      videoPreview = document.getElementById('videoPreview'),
+      molduraImg = document.getElementById('molduraImagePreview'),
+      ctxFinal = canvasFinal.getContext('2d', { alpha: false }),
+      mainStage = document.getElementById('mainStage');
+
+document.getElementById('startBtn').onclick = () => initCamera();
+document.getElementById('switchBtn').onclick = switchCamera;
+document.getElementById('capturePhotoBtn').onclick = takePhoto;
+document.getElementById('captureVideoBtn').onclick = () => isRecording ? stopRecording() : startRecording(false);
+document.getElementById('boomerangBtn').onclick = () => startRecording(true);
+document.getElementById('newBtn').onclick = () => location.reload();
+
+// --- LÓGICA DE ZOOM POR PINÇA ---
+mainStage.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 2) {
+        startDistance = Math.hypot(
+            e.touches[0].pageX - e.touches[1].pageX,
+            e.touches[0].pageY - e.touches[1].pageY
+        );
+        baseScale = currentScale;
+    }
+});
+
+mainStage.addEventListener('touchmove', (e) => {
+    if (e.touches.length === 2 && startDistance > 0) {
+        const distance = Math.hypot(
+            e.touches[0].pageX - e.touches[1].pageX,
+            e.touches[0].pageY - e.touches[1].pageY
+        );
+        
+        // Sensibilidade do zoom
+        const delta = distance / startDistance;
+        let newScale = baseScale * delta;
+        
+        // Limites: Zoom de 1x até 4x
+        newScale = Math.min(Math.max(1, newScale), 4);
+        currentScale = newScale;
+        
+        applyZoom();
+    }
+});
+
+function applyZoom() {
+    // Aplica o zoom visual no elemento de vídeo
+    // Mantém o espelhamento se estiver usando a câmera frontal
+    const mirror = usingFrontCamera ? 'scaleX(-1)' : 'scaleX(1)';
+    video.style.transform = `${mirror} scale(${currentScale})`;
+}
+// ---------------------------------
+
+document.getElementById('downloadBtn').onclick = function() {
+    if (!currentFileUrl) return;
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = currentFileUrl;
+    a.download = `meu_registro_${Date.now()}.${currentType === 'image' ? 'png' : 'webm'}`;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { document.body.removeChild(a); }, 100);
+};
+
+async function initCamera() {
+    if (stream) stream.getTracks().forEach(t => t.stop());
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: usingFrontCamera ? 'user' : 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
+            audio: true
+        });
+        video.srcObject = stream;
+        video.onloadedmetadata = () => {
+            video.play();
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('cameraUI').style.display = 'flex';
+            molduraImg.src = 'moldura1.png'; 
+            molduraImg.style.display = 'block';
+            
+            // Reinicia zoom ao trocar de câmera
+            currentScale = 1;
+            applyZoom();
+        };
+    } catch (e) { alert("Câmera não disponível."); }
+}
+
+function drawFrame(ctx, w, h) {
+    ctx.save();
+    
+    // Calcula o centro para o zoom no canvas
+    const centerX = w / 2;
+    const centerY = h / 2;
+    
+    if (usingFrontCamera) { 
+        ctx.translate(w, 0); 
+        ctx.scale(-1, 1); 
+    }
+    
+    // Aplica o zoom no desenho do Canvas (importante para que a foto/vídeo saia com zoom)
+    ctx.translate(centerX, centerY);
+    ctx.scale(currentScale, currentScale);
+    ctx.translate(-centerX, -centerY);
+    
+    ctx.drawImage(video, 0, 0, w, h);
+    ctx.restore();
+    
+    if (molduraImg.complete) ctx.drawImage(molduraImg, 0, 0, w, h);
+}
+
+function takePhoto() {
+    currentType = 'image';
+    canvasFinal.width = 1080; canvasFinal.height = 1920;
+    drawFrame(ctxFinal, 1080, 1920);
+    canvasFinal.toBlob(blob => {
+        if (currentFileUrl) URL.revokeObjectURL(currentFileUrl);
+        currentFileUrl = URL.createObjectURL(blob);
+        showResult(currentFileUrl, 'image');
+    }, 'image/png', 1.0);
+}
+
+function startRecording(isBoom) {
+    isRecording = true; recordedChunks = []; boomFrames = [];
+    let startTime = Date.now();
+    currentType = 'video';
+    if (isBoom) {
+        captureBoomerang(startTime);
+    } else {
+        document.getElementById('camIcon').style.display = 'none';
+        document.getElementById('stopIcon').style.display = 'block';
+        document.getElementById('captureVideoBtn').classList.add('recording');
+        canvasFinal.width = 720; canvasFinal.height = 1280;
+        const canvasStream = canvasFinal.captureStream(30);
+        if (stream.getAudioTracks().length > 0) canvasStream.addTrack(stream.getAudioTracks()[0]);
+        mediaRecorder = new MediaRecorder(canvasStream, { mimeType: 'video/webm;codecs=vp9', videoBitsPerSecond: 5000000 });
+        mediaRecorder.ondataavailable = e => { if(e.data.size > 0) recordedChunks.push(e.data); };
+        mediaRecorder.onstop = () => {
+            if (currentFileUrl) URL.revokeObjectURL(currentFileUrl);
+            currentFileUrl = URL.createObjectURL(new Blob(recordedChunks, { type: 'video/webm' }));
+            showResult(currentFileUrl, 'video');
+        };
+        mediaRecorder.start();
+        const loop = () => { if(isRecording) { drawFrame(ctxFinal, 720, 1280); requestAnimationFrame(loop); } };
+        loop();
+    }
+}
+
+function captureBoomerang(startTime) {
+    canvasFinal.width = 720; canvasFinal.height = 1280;
+    const interval = setInterval(() => {
+        if (Date.now() - startTime >= BOOM_CAPTURE_TIME) {
+            clearInterval(interval);
+            isRecording = false;
+            processBoomerang();
+        } else {
+            const fCanvas = document.createElement('canvas');
+            fCanvas.width = 720; fCanvas.height = 1280;
+            const fCtx = fCanvas.getContext('2d');
+            
+            // Captura o frame com o zoom atual
+            const centerX = 720 / 2;
+            const centerY = 1280 / 2;
+            fCtx.translate(centerX, centerY);
+            fCtx.scale(currentScale, currentScale);
+            fCtx.translate(-centerX, -centerY);
+            
+            fCtx.drawImage(video, 0, 0, 720, 1280);
+            boomFrames.push(fCanvas);
+        }
+    }, 40); 
+}
+
+function processBoomerang() {
+    document.getElementById('boomLoading').style.display = 'block';
+    const pingPong = [...boomFrames, ...[...boomFrames].reverse()];
+    const finalSequence = [...pingPong, ...pingPong, ...pingPong];
+    const streamBoom = canvasFinal.captureStream(30);
+    const rec = new MediaRecorder(streamBoom, { mimeType: 'video/webm;codecs=vp9', videoBitsPerSecond: 6000000 });
+    rec.ondataavailable = e => { if(e.data.size > 0) recordedChunks.push(e.data); };
+    rec.onstop = () => {
+        document.getElementById('boomLoading').style.display = 'none';
+        if (currentFileUrl) URL.revokeObjectURL(currentFileUrl);
+        currentFileUrl = URL.createObjectURL(new Blob(recordedChunks, { type: 'video/webm' }));
+        showResult(currentFileUrl, 'video');
+    };
+    rec.start();
+    let idx = 0;
+    const playInterval = setInterval(() => {
+        if (idx >= finalSequence.length) {
+            clearInterval(playInterval);
+            rec.stop();
+        } else {
+            ctxFinal.clearRect(0,0,720,1280);
+            ctxFinal.save();
+            if (usingFrontCamera) { ctxFinal.translate(720,0); ctxFinal.scale(-1,1); }
+            // Os frames do boomerang já foram capturados com zoom na função captureBoomerang
+            ctxFinal.drawImage(finalSequence[idx], 0, 0, 720, 1280);
+            ctxFinal.restore();
+            if (molduraImg.complete) ctxFinal.drawImage(molduraImg, 0, 0, 720, 1280);
+            idx++;
+        }
+    }, 33);
+}
+
+function stopRecording() {
+    isRecording = false;
+    document.getElementById('camIcon').style.display = 'block';
+    document.getElementById('stopIcon').style.display = 'none';
+    document.getElementById('captureVideoBtn').classList.remove('recording');
+    if(mediaRecorder) mediaRecorder.stop();
+}
+
+function showResult(url, type) {
+    document.getElementById('resultUI').style.display = 'flex';
+    if (type === 'image') {
+        canvasPreview.style.display = 'block'; videoPreview.style.display = 'none';
+        canvasPreview.width = window.innerWidth; canvasPreview.height = window.innerHeight;
+        canvasPreview.getContext('2d').drawImage(canvasFinal, 0, 0, canvasPreview.width, canvasPreview.height);
+    } else {
+        canvasPreview.style.display = 'none'; videoPreview.style.display = 'block'; 
+        videoPreview.src = url; videoPreview.play();
+    }
+}
+
+function switchCamera() { usingFrontCamera = !usingFrontCamera; initCamera(); }
+</script><div style="display: none !important; visibility: hidden; pointer-events: none;" aria-hidden="true">
+    © 2026 Cristiane Oliveira. Todos os direitos reservados. 
+    Este software, design e algoritmos estão protegidos pela Lei de Direitos Autorais (Lei nº 9.610/98). 
+    A extração, cópia ou redistribuição deste código sem autorização expressa da Cristiane Oliveira (crispoparte) é terminantemente proibida.
+</div>
+
+<script>
+    (function() {
+        // Bloqueia clique com botão direito
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+        // Bloqueia atalhos de teclado (F12, Ctrl+U, Ctrl+C, Ctrl+S, Ctrl+Shift+I)
+        document.addEventListener('keydown', function(e) {
+            if (
+                e.keyCode == 123 || // F12
+                (e.ctrlKey && e.keyCode == 85) || // Ctrl+U (Ver código)
+                (e.ctrlKey && e.shiftKey && e.keyCode == 73) || // Ctrl+Shift+I (Inspecionar)
+                (e.ctrlKey && e.keyCode == 67) || // Ctrl+C (Copiar)
+                (e.ctrlKey && e.keyCode == 83)    // Ctrl+S (Salvar)
+            ) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        console.log("%c Protegido pela Lei 9.610/98 - Autoria: Cristiane Oliveira ", "color: white; background: red; font-weight: bold;");
+    })();
+</script>
+</body>
+</html>
