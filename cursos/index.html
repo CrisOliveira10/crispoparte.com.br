@@ -2,53 +2,77 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bem-vindo!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Curso - Cristiane Oliveira</title>
+
+    <meta name="author" content="Cristiane Oliveira">
+    <meta name="copyright" content="© 2026 Cristiane Oliveira - Todos os direitos reservados. Lei nº 9.610/98.">
+    <meta name="date" content="2026-02-04">
 
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Cursos">
+    <meta property="og:title" content="Curso">
     <meta property="og:description" content="Bem-vindo ao meu site. Toque para abrir e conhecer meus cursos.">
     <meta property="og:url" content="https://crispoparte.com.br/cursos/">
     <meta property="og:image" content="https://crispoparte.com.br/cursos/media/capalink.png">
     <meta property="og:image:secure_url" content="https://crispoparte.com.br/cursos/media/capalink.png">
-    <meta property="og:image:type" content="image/png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Curso">
-    <meta name="twitter:description" content="Você recebeu um convite especial. Toque para abrir.">
-    <meta name="twitter:image" content="https://crispoparte.com.br/cursos/media/capalink.png">
-
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
     <style>
+        /* Reset total de margens e preenchimento */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
+        /* Força o corpo e o html a ocuparem 100% da altura visível sem rolagem */
         body, html {
             height: 100%;
             width: 100%;
-            overflow: hidden; /* Impede rolagem lateral e vertical */
+            overflow: hidden;
             background-color: #ffffff; /* Ajuste para a cor de fundo do seu design */
+            position: fixed; /* Evita rebote (bounce) no iOS */
         }
+
+        /* Container principal que segura o iframe */
         .container-canva {
             position: absolute;
             top: 0;
             left: 0;
+            right: 0;
+            bottom: 0;
             width: 100%;
             height: 100%;
-            will-change: transform;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
+
+        /* O segredo para mobile: remover restrições de aspect-ratio do iframe */
         iframe {
-            width: 100%;
-            height: 100%;
+            width: 100% !important;
+            height: 100% !important;
             border: none;
+            display: block;
+        }
+
+        /* Ajuste específico para garantir que o Canva não crie barras pretas no mobile */
+        @media screen and (max-width: 768px) {
+            .container-canva {
+                height: 100vh;
+                height: -webkit-fill-available; /* Ajuste para navegadores Safari/iPhone */
+            }
         }
     </style>
+
+    <script>
+        // Proteção de Autoria no Console
+        console.log("%cAviso: Conteúdo Protegido", "color: red; font-size: 20px; font-weight: bold;");
+        console.log("Autor: Cristiane Oliveira | Data: 04.02.2026");
+        console.log("Todos os direitos reservados.");
+
+        // Desativa clique direito
+        document.addEventListener('contextmenu', event => event.preventDefault());
+    </script>
 </head>
 <body>
 
