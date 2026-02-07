@@ -5,11 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Convite Interativo</title>
 
+<meta property="og:type" content="website">
+<meta property="og:title" content="Convite Interativo">
+<meta property="og:description" content="Você recebeu um convite especial. Toque para abrir e viver essa experiência.">
+<meta property="og:url" content="https://molduracriativa.github.io/interativovideo/">
+
+<meta property="og:image" content="https://molduracriativa.github.io/interativovideo/media/capalink.png">
+<meta property="og:image:secure_url" content="https://molduracriativa.github.io/interativovideo/media/capalink.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Convite Interativo">
+<meta name="twitter:description" content="Você recebeu um convite especial. Toque para abrir.">
+<meta name="twitter:image" content="https://molduracriativa.github.io/interativovideo/media/capalink.png">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;overflow:hidden;background:#000}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;display:flex;justify-content:center;align-items:center}
 
-/* ===== VIDEO ===== */
+/* ===== VIDEO CENTRALIZADO ===== */
 #video{
   position:absolute;
   inset:0;
@@ -19,41 +38,46 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000}
   z-index:1;
 }
 
-/* ===== AUDIO ===== */
 #audio{display:none}
 
-/* ===== TEXTO CONVIDADO ===== */
+/* ===== TEXTO CONVIDADO CENTRALIZADO ===== */
 #footerInvite{
   position:absolute;
-  bottom:6%;
-  width:100%;
+  bottom:8%; /* Subi um pouco para não cortar em alguns celulares */
+  width:90%;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
   text-align:center;
   color:#fff;
-  font-family:Arial,sans-serif;
+  font-family: 'Segoe UI', Arial, sans-serif;
   z-index:5;
   opacity:0;
-  transform:translateY(20px);
-  transition:.8s;
+  transition:.8s ease-out;
   pointer-events:none;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
 }
 #footerInvite.show{
   opacity:1;
-  transform:translateY(0);
+  transform:translateX(-50%) translateY(0);
 }
 #footerInvite span{
   display:block;
-  margin-top:6px;
-  font-size:18px;
+  margin-top:8px;
+  font-size:19px;
+  font-weight: 300;
+}
+#footerInvite strong {
+  font-size: 24px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-/* ===== CLIQUE VIDEO 1 ===== */
 #video1Click{
   position:absolute;
   inset:0;
   z-index:10;
 }
 
-/* ===== CONTROLES ===== */
 #audioControl{
   position:absolute;
   top:15px;
@@ -73,7 +97,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000}
   display:none;
 }
 
-/* ===== MENU ===== */
 #menu{
   position:absolute;
   right:0;
@@ -99,7 +122,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000}
 #btn2{top:195px}
 #btn3{top:295px}
 
-/* ===== MAPS VIDEO 3 ===== */
 #mapsHotspot{
   position:absolute;
   left:50%;
@@ -111,7 +133,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000}
   display:none;
 }
 
-/* ===== FORM VIDEO 4 ===== */
 #formHotspot{
   position:absolute;
   left:50%;
@@ -123,7 +144,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000}
   display:none;
 }
 
-/* ===== CRONÔMETRO VIDEO 4 ===== */
 #countdown{
   position:absolute;
   left:50%;
@@ -134,12 +154,11 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000}
   color:#fff;
   font-family:Arial,sans-serif;
 }
-.count-grid{display:flex;gap:14px;text-align:center}
+.count-grid{display:flex;gap:14px;text-align:center;justify-content:center}
 .count-box{min-width:70px}
 .count-num{font-size:28px;font-weight:bold}
 .count-label{font-size:12px;margin-top:4px}
 
-/* ===== TRANSIÇÃO ===== */
 #transition{
   position:absolute;
   inset:0;
@@ -150,7 +169,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000}
   background:rgba(0,0,0,.15);
 }
 #transition img{
-  width:140px;
+  width:160px;
   animation:zoomIcon .9s ease forwards;
 }
 @keyframes zoomIcon{
@@ -180,8 +199,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000}
   <div id="btn3" class="menu-hotspot" onclick="goVideoWithTransition(5)"></div>
 </div>
 
-<a id="mapsHotspot" href="https://maps.app.goo.gl/AZBjKdxYEqVsC6N38" target="_blank"></a>
-<a id="formHotspot" href="https://forms.gle/gCTygBPyy5mx22aZA" target="_blank"></a>
+<a id="mapsHotspot" href="https://maps.google.com" target="_blank"></a>
+<a id="formHotspot" href="https://forms.gle/saLoTwPCFw1LHnf36" target="_blank"></a>
 
 <div id="transition">
   <img src="media/icon.png">
@@ -197,7 +216,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000}
 </div>
 
 <script>
-const LOOP_START = 7;
+const LOOP_START = 8;
 const EVENT_DATE = "2026-08-20T18:00:00";
 let video2FirstPlay = true;
 let countdownInterval;
@@ -218,6 +237,8 @@ const countdown=document.getElementById("countdown");
 const formHotspot=document.getElementById("formHotspot");
 const transition=document.getElementById("transition");
 
+const d=document.getElementById("d"), h=document.getElementById("h"), m=document.getElementById("m"), s=document.getElementById("s");
+
 function preloadNextVideos(){
   if(preloaded) return;
   preloaded = true;
@@ -225,8 +246,6 @@ function preloadNextVideos(){
     const v=document.createElement("video");
     v.src=`media/video${n}.mp4`;
     v.preload="auto";
-    v.muted=true;
-    v.playsInline=true;
   });
 }
 
@@ -258,26 +277,17 @@ function loadVideo(n,fromReturn=false){
 
   if(n===2){
     preloadNextVideos();
-
     if(video2FirstPlay && !fromReturn){
       video.onended=()=>video.pause();
       video2FirstPlay=false;
     }else{
       video.onloadedmetadata=()=>video.currentTime=LOOP_START;
       video.ontimeupdate=()=>{
-        if(video.currentTime>=video.duration-.2){
-          video.currentTime=LOOP_START;
-        }
+        if(video.currentTime>=video.duration-.2) video.currentTime=LOOP_START;
       };
     }
   }
-
-  if(n>=3){
-    video.onended=()=>{
-      video.currentTime=0;
-      video.play();
-    };
-  }
+  if(n>=3) video.onended=()=> { video.currentTime=0; video.play(); };
 }
 
 function goVideoWithTransition(n){
@@ -286,7 +296,6 @@ function goVideoWithTransition(n){
   img.style.animation="none";
   img.offsetHeight;
   img.style.animation="zoomIcon .9s ease forwards";
-
   setTimeout(()=>{
     transition.style.display="none";
     loadVideo(n);
@@ -297,7 +306,7 @@ function startCountdown(){
   const target=new Date(EVENT_DATE).getTime();
   countdownInterval=setInterval(()=>{
     const diff=target-Date.now();
-    if(diff<=0)return;
+    if(diff<=0){ clearInterval(countdownInterval); return; }
     d.textContent=String(Math.floor(diff/86400000)).padStart(2,"0");
     h.textContent=String(Math.floor(diff/3600000)%24).padStart(2,"0");
     m.textContent=String(Math.floor(diff/60000)%60).padStart(2,"0");
@@ -315,22 +324,9 @@ function showInviteWithDelay(){
   }
 }
 
-/* ===== CONTROLE DE SOM ===== */
-clickV1.onclick=()=>{
-  audio.play();
-  loadVideo(2);
-};
-
-audioCtrl.onclick=e=>{
-  e.stopPropagation();
-  audio.paused ? audio.play() : audio.pause();
-};
-
-menuToggle.onclick=e=>{
-  e.stopPropagation();
-  menu.style.display=menu.style.display==="block"?"none":"block";
-};
-
+clickV1.onclick=()=>{ audio.play(); loadVideo(2); };
+audioCtrl.onclick=e=>{ e.stopPropagation(); audio.paused ? audio.play() : audio.pause(); };
+menuToggle.onclick=e=>{ e.stopPropagation(); menu.style.display=menu.style.display==="block"?"none":"block"; };
 backBtn.onclick=()=>loadVideo(2,true);
 
 loadVideo(1);
