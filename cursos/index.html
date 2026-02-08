@@ -2,39 +2,35 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Curso - Cristiane Oliveira</title>
-
-    <meta name="description" content="Acesse os cursos de Cristiane Oliveira e transforme sua arte. Toque para conhecer!">
-    <meta name="author" content="Cristiane Oliveira">
-    <meta name="copyright" content="© 2026 Cristiane Oliveira">
-
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://crispoparte.com.br/cursos/">
-    <meta property="og:title" content="Curso - Cristiane Oliveira">
-    <meta property="og:description" content="Clique para abrir e conhecer meus cursos.">
-    <meta property="og:image" content="https://crispoparte.com.br/cursos/media/capalink.png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Curso - Cristiane Oliveira">
-    <meta name="twitter:description" content="Transforme sua arte com nossos cursos exclusivos.">
-    <meta name="twitter:image" content="https://crispoparte.com.br/cursos/media/capalink.png">
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        /* Liberamos a rolagem total do corpo do site */
         html, body { 
-            height: 100%; width: 100%; overflow: hidden; 
-            background-color: #ffffff; position: fixed; 
+            height: 100%; 
+            width: 100%; 
+            overflow-y: auto; /* Permite rolagem vertical */
+            overflow-x: hidden;
+            background-color: #ffffff; 
         }
-        .container-canva {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100dvh;
-            display: flex;
-        }
-        iframe { width: 100%; height: 100%; border: none; display: block; }
 
-        /* Lógica Responsiva */
+        .container-canva {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* O segredo: o iframe precisa ser gigante ou se ajustar ao conteúdo */
+        iframe { 
+            width: 100%; 
+            height: 100vh; /* Ele ocupa a visão, mas permite que o conteúdo role */
+            border: none; 
+        }
+
         .desktop-view { display: block; }
         .mobile-view { display: none; }
 
@@ -43,22 +39,18 @@
             .mobile-view { display: block; }
         }
     </style>
-
-    <script>
-        document.addEventListener('contextmenu', event => event.preventDefault());
-    </script>
 </head>
 <body>
 
 <div class="container-canva">
     <iframe class="desktop-view" 
-            src="https://www.canva.com/design/DAHAq42whx8/Y_InP7BBBfw0-fQSLYsFWQ/view?embed" 
-            allowfullscreen="allowfullscreen" allow="fullscreen">
+            src="https://www.canva.com/design/DAHAq42whx8/Y_InP7BBBfw0-fQSLYsFWQ/view?website" 
+            allowfullscreen>
     </iframe>
 
     <iframe class="mobile-view" 
-            src="https://www.canva.com/design/DAHAqyOJpY4/sKGX-JtNWbnLBjbBh4uJRQ/view?embed" 
-            allowfullscreen="allowfullscreen" allow="fullscreen">
+            src="https://www.canva.com/design/DAHAqyOJpY4/sKGX-JtNWbnLBjbBh4uJRQ/view?website" 
+            allowfullscreen>
     </iframe>
 </div>
 
