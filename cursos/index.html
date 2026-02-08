@@ -2,32 +2,28 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Curso - Cristiane Oliveira</title>
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        /* Liberamos a rolagem total do corpo do site */
+        /* Permitir rolagem real no navegador */
         html, body { 
             height: 100%; 
             width: 100%; 
-            overflow-y: auto; /* Permite rolagem vertical */
-            overflow-x: hidden;
+            overflow-y: auto; 
             background-color: #ffffff; 
         }
 
         .container-canva {
             width: 100%;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            height: 100vh; /* Mantém o iframe na visão */
         }
 
-        /* O segredo: o iframe precisa ser gigante ou se ajustar ao conteúdo */
         iframe { 
             width: 100%; 
-            height: 100vh; /* Ele ocupa a visão, mas permite que o conteúdo role */
+            height: 100%; 
             border: none; 
         }
 
@@ -44,12 +40,12 @@
 
 <div class="container-canva">
     <iframe class="desktop-view" 
-            src="https://www.canva.com/design/DAHAq42whx8/Y_InP7BBBfw0-fQSLYsFWQ/view?website" 
+            src="https://www.canva.com/design/DAHAq42whx8/Y_InP7BBBfw0-fQSLYsFWQ/view?embed" 
             allowfullscreen>
     </iframe>
 
     <iframe class="mobile-view" 
-            src="https://www.canva.com/design/DAHAqyOJpY4/sKGX-JtNWbnLBjbBh4uJRQ/view?website" 
+            src="https://www.canva.com/design/DAHAqyOJpY4/sKGX-JtNWbnLBjbBh4uJRQ/view?embed" 
             allowfullscreen>
     </iframe>
 </div>
