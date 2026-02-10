@@ -3,90 +3,56 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <title>Filtro God is Good - Final Fix</title>
+    <title>Filtro God is Good - Estável</title>
     <style>
-        :root {
-            --accent: #25D366;
-            --record: #ff0000;
-        }
-        
+        :root { --accent: #25D366; --record: #ff0000; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-        body {
-            margin: 0; background: #000; color: #fff; overflow: hidden;
-            width: 100vw; height: 100dvh;
-            font-family: sans-serif;
-        }
+        body { margin: 0; background: #000; color: #fff; overflow: hidden; width: 100vw; height: 100dvh; font-family: sans-serif; }
 
         .frame { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
         .stage { position: relative; width: 100%; height: 100%; overflow: hidden; background: #000; }
 
-        #camera {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            object-fit: cover; z-index: 1;
-        }
+        #camera { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
         #camera.mirrored { transform: scaleX(-1); }
 
-        #editorCanvas, #canvasPreview, #videoPreview {
+        /* Canvas de edição e previews */
+        #editorCanvas, #canvasPreview, #videoPreview { 
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            object-fit: contain; z-index: 6; background: #000; display: none;
+            object-fit: contain; z-index: 6; background: #000; display: none; 
         }
-        
-        #molduraImagePreview {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            object-fit: cover; object-position: bottom; 
-            pointer-events: none; z-index: 5; display: none;
-        }
-        
-        #canvasFinal { display: none; } 
 
-        .ui-layer {
-            position: absolute; inset: 0; pointer-events: none; z-index: 20;
-            display: flex; flex-direction: column; justify-content: space-between; padding: 20px;
+        /* A MOLDURA AGORA TEM Z-INDEX MAIOR PARA FICAR SEMPRE NO TOPO */
+        #molduraImagePreview { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            object-fit: contain; object-position: bottom; 
+            pointer-events: none; z-index: 10; display: none; 
         }
+
+        #canvasFinal { display: none; }
+
+        /* Camadas de Interface */
+        .ui-layer { position: absolute; inset: 0; pointer-events: none; z-index: 20; display: flex; flex-direction: column; justify-content: space-between; padding: 20px; }
         .top-bar { display: flex; justify-content: space-between; align-items: flex-start; pointer-events: auto; }
-        
-        .timer-badge {
-            background: var(--record); color: white; padding: 5px 12px; border-radius: 12px;
-            font-weight: bold; font-size: 16px; display: none; animation: pulse 1s infinite;
-        }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+        .timer-badge { background: var(--record); color: white; padding: 5px 12px; border-radius: 12px; font-weight: bold; display: none; animation: pulse 1s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
 
-        .controls-bottom {
-            display: flex; flex-direction: column; align-items: center; 
-            gap: 25px; pointer-events: auto; padding-bottom: 30px;
-        }
-
-        .btn {
-            padding: 10px 16px; font-size: 14px; font-weight: 600;
-            border: 2px solid rgba(255,255,255,0.3); border-radius: 20px;
-            background: rgba(0, 0, 0, 0.65); color: #fff; cursor: pointer; backdrop-filter: blur(4px);
-        }
+        .controls-bottom { display: flex; flex-direction: column; align-items: center; gap: 25px; pointer-events: auto; padding-bottom: 30px; }
+        .btn { padding: 10px 16px; font-size: 14px; font-weight: 600; border: 2px solid rgba(255,255,255,0.3); border-radius: 20px; background: rgba(0, 0, 0, 0.65); color: #fff; cursor: pointer; backdrop-filter: blur(4px); }
         .btn-frame { border-color: var(--accent); }
-
-        .action-btn-large {
-            width: 75px; height: 75px; border-radius: 50%; border: 4px solid #fff;
-            background: rgba(255, 255, 255, 0.2); cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-        }
+        .action-btn-large { width: 75px; height: 75px; border-radius: 50%; border: 4px solid #fff; background: rgba(255, 255, 255, 0.2); cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .action-btn-large.recording { border-color: var(--record); background: rgba(255, 0, 0, 0.5); }
-        .action-btn-large.recording .stop-icon { display: block; width: 25px; height: 25px; background: var(--record); border-radius: 4px; }
+        .stop-icon { width: 25px; height: 25px; background: var(--record); border-radius: 4px; display: none; }
+        .action-btn-large.recording .stop-icon { display: block; }
         .action-btn-large.recording .cam-icon { display: none; }
-        .stop-icon { display: none; }
 
-        #startScreen {
-            position: absolute; inset: 0; z-index: 100;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: url('capajpg.jpg') center/cover;
-        }
+        #startScreen { position: absolute; inset: 0; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; background: url('capajpg.jpg') center/cover; }
         #startBtn { padding: 18px 32px; font-size: 20px; background: #FF5722; color: white; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; }
 
-        #editUI { display: none; z-index: 30; background: transparent; }
+        #editUI { display: none; z-index: 30; }
         .actions-col { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 300px; pointer-events: auto; }
         .btn-main { width: 100%; padding: 15px; border-radius: 12px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; color: #fff; text-align: center; text-decoration: none; }
         .btn-green { background: var(--accent); }
         .btn-gray { background: #555; }
-
         .flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; z-index: 100; }
     </style>
 </head>
@@ -104,7 +70,7 @@
             <div class="flash" id="flash"></div>
 
             <div class="ui-layer" id="editUI">
-                <div style="text-align:center; padding-top:40px; text-shadow: 0 2px 4px #000;"><b>Ajuste sua foto (Arraste e Zoom)</b></div>
+                <div style="text-align:center; padding-top:40px; text-shadow: 0 2px 4px #000;"><b>Arraste e use 2 dedos para zoom</b></div>
                 <div style="flex:1"></div>
                 <div class="actions-col">
                     <button id="confirmEditBtn" class="btn-main btn-green">✅ Confirmar Ajuste</button>
@@ -181,7 +147,9 @@
                         document.getElementById('cameraUI').style.display = 'none';
                         document.getElementById('editUI').style.display = 'flex';
                         editor.style.display = 'block';
+                        molduraImg.style.display = 'block'; // Garante que a moldura apareça
                         editor.width = stage.clientWidth; editor.height = stage.clientHeight;
+                        // Reset transform
                         transform.sc = editor.width / galleryImg.width;
                         transform.x = 0; transform.y = (editor.height - (galleryImg.height * transform.sc)) / 2;
                         renderEditor();
@@ -194,26 +162,18 @@
 
         function renderEditor() {
             if (!isEditing) return;
-            // 1. Limpa o Canvas
             eCtx.fillStyle = "#000";
             eCtx.fillRect(0, 0, editor.width, editor.height);
-            
-            // 2. Desenha a FOTO (Com Transformações)
             eCtx.save();
             eCtx.translate(transform.x, transform.y);
             eCtx.scale(transform.sc, transform.sc);
-            eCtx.imageSmoothingEnabled = true;
             eCtx.drawImage(galleryImg, 0, 0);
-            eCtx.restore(); // <--- IMPORTANTE: Fecha o bloco de zoom aqui!
-
-            // 3. Desenha a MOLDURA (Fixa, fora do restore)
-            const ratio = molduraImg.naturalWidth / molduraImg.naturalHeight;
-            const th = editor.width / ratio;
-            eCtx.drawImage(molduraImg, 0, editor.height - th, editor.width, th);
-            
+            eCtx.restore();
+            // A MOLDURA NÃO É MAIS DESENHADA AQUI, ELA É UM <IMG> NO HTML
             animId = requestAnimationFrame(renderEditor);
         }
 
+        // Touch controls para o Canvas de Edição
         editor.ontouchstart = e => {
             if (e.touches.length === 1) {
                 transform.lx = e.touches[0].clientX - transform.x;
@@ -230,12 +190,10 @@
                 transform.y = e.touches[0].clientY - transform.ly;
             } else if (e.touches.length === 2) {
                 const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-                const delta = (d - transform.ld) * 0.005; // Sensibilidade do zoom
-                transform.sc += delta;
-                if (transform.sc < 0.05) transform.sc = 0.05;
+                transform.sc *= (d / transform.ld);
                 transform.ld = d;
             }
-        }, { passive: false };
+        };
 
         function confirmGalleryEdit() {
             isEditing = false; flash();
@@ -295,7 +253,8 @@
         }
 
         function drawMolduraFinal(ctx, w, h) {
-            const th = w / (molduraImg.naturalWidth / molduraImg.naturalHeight);
+            const ratio = molduraImg.naturalWidth / molduraImg.naturalHeight;
+            const th = w / ratio;
             ctx.drawImage(molduraImg, 0, h - th, w, th);
         }
 
@@ -306,7 +265,7 @@
 
         function showResult(type, blob) {
             const url = URL.createObjectURL(blob);
-            video.style.display = 'none'; editor.style.display = 'none';
+            video.style.display = 'none'; editor.style.display = 'none'; molduraImg.style.display = 'none';
             document.getElementById('cameraUI').style.display = 'none';
             document.getElementById('editUI').style.display = 'none';
             document.getElementById('resultUI').style.display = 'flex';
@@ -325,6 +284,7 @@
         function reset() {
             isEditing = false; cancelAnimationFrame(animId);
             video.style.display = 'block';
+            molduraImg.style.display = 'block';
             document.getElementById('cameraUI').style.display = 'flex';
             document.getElementById('editUI').style.display = 'none';
             document.getElementById('resultUI').style.display = 'none';
