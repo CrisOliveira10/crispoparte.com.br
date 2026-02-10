@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <title>Filtro God is Good - Completo</title>
+    <title>Filtro God is Good - Final Fix</title>
     <style>
         :root {
             --accent: #25D366;
@@ -19,7 +19,7 @@
         }
 
         .frame { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
-        .stage { position: relative; width: 100%; height: 100%; overflow: hidden; background: #111; }
+        .stage { position: relative; width: 100%; height: 100%; overflow: hidden; background: #000; }
 
         #camera {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
@@ -64,26 +64,23 @@
         }
         .btn-frame { border-color: var(--accent); }
 
-        /* Botão de Gravação Estilizado */
         .action-btn-large {
             width: 75px; height: 75px; border-radius: 50%; border: 4px solid #fff;
             background: rgba(255, 255, 255, 0.2); cursor: pointer;
-            display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: center;
         }
         .action-btn-large.recording { border-color: var(--record); background: rgba(255, 0, 0, 0.5); }
         .action-btn-large.recording .stop-icon { display: block; width: 25px; height: 25px; background: var(--record); border-radius: 4px; }
         .action-btn-large.recording .cam-icon { display: none; }
         .stop-icon { display: none; }
 
-        /* Capa / Start Screen */
         #startScreen {
             position: absolute; inset: 0; z-index: 100;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             background: url('capajpg.jpg') center/cover;
         }
-        #startBtn { padding: 18px 32px; font-size: 20px; background: #FF5722; color: white; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        #startBtn { padding: 18px 32px; font-size: 20px; background: #FF5722; color: white; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; }
 
-        /* UI Edição e Resultado */
         #editUI { display: none; z-index: 30; background: transparent; }
         .actions-col { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 300px; pointer-events: auto; }
         .btn-main { width: 100%; padding: 15px; border-radius: 12px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; color: #fff; text-align: center; text-decoration: none; }
@@ -107,7 +104,7 @@
             <div class="flash" id="flash"></div>
 
             <div class="ui-layer" id="editUI">
-                <div style="text-align:center; padding-top:40px; text-shadow: 0 2px 4px #000;"><b>Ajuste sua foto na moldura</b></div>
+                <div style="text-align:center; padding-top:40px; text-shadow: 0 2px 4px #000;"><b>Ajuste sua foto (Arraste e Zoom)</b></div>
                 <div style="flex:1"></div>
                 <div class="actions-col">
                     <button id="confirmEditBtn" class="btn-main btn-green">✅ Confirmar Ajuste</button>
@@ -128,9 +125,7 @@
                     <div style="display:flex; align-items:center; gap:25px;">
                         <button id="galleryBtn" class="btn" style="font-size: 24px;">🖼️</button>
                         <input type="file" id="fileInput" accept="image/*" style="display: none;">
-                        
                         <button id="capturePhotoBtn" class="btn" style="font-size: 24px;">📷</button>
-
                         <button id="captureVideoBtn" class="action-btn-large">
                             <svg class="cam-icon" width="30" height="30" viewBox="0 0 24 24" fill="white"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
                             <div class="stop-icon"></div>
@@ -173,10 +168,7 @@
         document.getElementById('confirmEditBtn').onclick = confirmGalleryEdit;
         document.getElementById('cancelEditBtn').onclick = reset;
         document.getElementById('newBtn').onclick = reset;
-
-        document.getElementById('captureVideoBtn').onclick = () => {
-            if (!isRecording) startRecording(); else stopRecording();
-        };
+        document.getElementById('captureVideoBtn').onclick = () => { if (!isRecording) startRecording(); else stopRecording(); };
 
         fileInput.onchange = e => {
             if (e.target.files[0]) {
@@ -202,19 +194,30 @@
 
         function renderEditor() {
             if (!isEditing) return;
-            eCtx.fillStyle = "#000"; eCtx.fillRect(0, 0, editor.width, editor.height);
+            // 1. Limpa o Canvas
+            eCtx.fillStyle = "#000";
+            eCtx.fillRect(0, 0, editor.width, editor.height);
+            
+            // 2. Desenha a FOTO (Com Transformações)
             eCtx.save();
-            eCtx.translate(transform.x, transform.y); eCtx.scale(transform.sc, transform.sc);
-            eCtx.imageSmoothingEnabled = true; eCtx.drawImage(galleryImg, 0, 0);
-            eCtx.restore();
-            const th = editor.width / (molduraImg.naturalWidth / molduraImg.naturalHeight);
+            eCtx.translate(transform.x, transform.y);
+            eCtx.scale(transform.sc, transform.sc);
+            eCtx.imageSmoothingEnabled = true;
+            eCtx.drawImage(galleryImg, 0, 0);
+            eCtx.restore(); // <--- IMPORTANTE: Fecha o bloco de zoom aqui!
+
+            // 3. Desenha a MOLDURA (Fixa, fora do restore)
+            const ratio = molduraImg.naturalWidth / molduraImg.naturalHeight;
+            const th = editor.width / ratio;
             eCtx.drawImage(molduraImg, 0, editor.height - th, editor.width, th);
+            
             animId = requestAnimationFrame(renderEditor);
         }
 
         editor.ontouchstart = e => {
             if (e.touches.length === 1) {
-                transform.lx = e.touches[0].clientX - transform.x; transform.ly = e.touches[0].clientY - transform.y;
+                transform.lx = e.touches[0].clientX - transform.x;
+                transform.ly = e.touches[0].clientY - transform.y;
             } else if (e.touches.length === 2) {
                 transform.ld = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
             }
@@ -223,10 +226,12 @@
         editor.ontouchmove = e => {
             e.preventDefault();
             if (e.touches.length === 1) {
-                transform.x = e.touches[0].clientX - transform.lx; transform.y = e.touches[0].clientY - transform.ly;
+                transform.x = e.touches[0].clientX - transform.lx;
+                transform.y = e.touches[0].clientY - transform.ly;
             } else if (e.touches.length === 2) {
                 const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-                transform.sc += (d - transform.ld) * 0.005;
+                const delta = (d - transform.ld) * 0.005; // Sensibilidade do zoom
+                transform.sc += delta;
                 if (transform.sc < 0.05) transform.sc = 0.05;
                 transform.ld = d;
             }
@@ -238,8 +243,10 @@
             const s = 1080 / editor.width;
             ctxF.fillStyle = "#000"; ctxF.fillRect(0,0,1080,1920);
             ctxF.save();
-            ctxF.translate(transform.x * s, transform.y * s); ctxF.scale(transform.sc * s, transform.sc * s);
-            ctxF.drawImage(galleryImg, 0, 0); ctxF.restore();
+            ctxF.translate(transform.x * s, transform.y * s);
+            ctxF.scale(transform.sc * s, transform.sc * s);
+            ctxF.drawImage(galleryImg, 0, 0);
+            ctxF.restore();
             drawMolduraFinal(ctxF, 1080, 1920);
             finishProcess('image');
         }
@@ -258,7 +265,6 @@
             document.getElementById('recordingTimer').style.display = 'block';
             recordingStart = Date.now(); recordedChunks = [];
             cFinal.width = 720; cFinal.height = 1280;
-
             const loop = () => {
                 if (!isRecording) return;
                 drawVideoToCanvas(ctxF, 720, 1280);
@@ -267,7 +273,6 @@
                 requestAnimationFrame(loop);
             };
             loop();
-
             const cStream = cFinal.captureStream(30);
             if (stream.getAudioTracks().length) cStream.addTrack(stream.getAudioTracks()[0]);
             mediaRecorder = new MediaRecorder(cStream, { mimeType: 'video/webm' });
@@ -276,12 +281,7 @@
             mediaRecorder.start();
         }
 
-        function stopRecording() {
-            isRecording = false;
-            document.getElementById('captureVideoBtn').classList.remove('recording');
-            document.getElementById('recordingTimer').style.display = 'none';
-            mediaRecorder.stop();
-        }
+        function stopRecording() { isRecording = false; document.getElementById('captureVideoBtn').classList.remove('recording'); document.getElementById('recordingTimer').style.display = 'none'; mediaRecorder.stop(); }
 
         function drawVideoToCanvas(ctx, w, h) {
             ctx.save();
@@ -300,12 +300,8 @@
         }
 
         function finishProcess(type) {
-            const blob = new Blob(recordedChunks, { type: type === 'image' ? 'image/png' : 'video/webm' });
-            if (type === 'image') {
-                cFinal.toBlob(b => showResult('image', b), 'image/png');
-            } else {
-                showResult('video', blob);
-            }
+            if (type === 'image') { cFinal.toBlob(b => showResult('image', b), 'image/png'); }
+            else { const blob = new Blob(recordedChunks, { type: 'video/webm' }); showResult('video', blob); }
         }
 
         function showResult(type, blob) {
@@ -314,16 +310,12 @@
             document.getElementById('cameraUI').style.display = 'none';
             document.getElementById('editUI').style.display = 'none';
             document.getElementById('resultUI').style.display = 'flex';
-            document.querySelector('#resultUI .actions-col').style.display = 'flex';
-
             if (type === 'image') {
                 document.getElementById('videoPreview').style.display = 'none';
-                cPre.style.display = 'block';
-                cPre.width = stage.clientWidth; cPre.height = stage.clientHeight;
+                cPre.style.display = 'block'; cPre.width = stage.clientWidth; cPre.height = stage.clientHeight;
                 ctxP.drawImage(cFinal, 0, 0, cPre.width, cPre.height);
             } else {
-                cPre.style.display = 'none';
-                document.getElementById('videoPreview').style.display = 'block';
+                cPre.style.display = 'none'; document.getElementById('videoPreview').style.display = 'block';
                 document.getElementById('videoPreview').src = url;
             }
             document.getElementById('downloadBtn').href = url;
@@ -360,15 +352,8 @@
             } catch (e) { alert("Erro ao acessar câmera."); }
         }
 
-        function updateTimer() {
-            const s = Math.floor((Date.now() - recordingStart) / 1000);
-            document.getElementById('recordingTimer').innerText = `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
-        }
-
-        function flash() {
-            const f = document.getElementById('flash');
-            f.style.opacity = '1'; setTimeout(() => f.style.opacity = '0', 150);
-        }
+        function updateTimer() { const s = Math.floor((Date.now() - recordingStart) / 1000); document.getElementById('recordingTimer').innerText = `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`; }
+        function flash() { const f = document.getElementById('flash'); f.style.opacity = '1'; setTimeout(() => f.style.opacity = '0', 150); }
     </script>
 </body>
 </html>
