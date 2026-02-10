@@ -29,7 +29,8 @@
         }
         #camera.mirrored { transform: scaleX(-1); }
 
-        #canvasPreview, #videoPreview {
+        /* Canvas de Preview e Edição */
+        #canvasPreview, #videoPreview, #editorCanvas {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
             object-fit: contain; 
             z-index: 6; background: #000; display: none;
@@ -95,11 +96,16 @@
         }
         #startBtn { padding: 18px 32px; font-size: 20px; background: #FF5722; color: white; border: none; border-radius: 50px; cursor: pointer; }
 
-        #resultUI .actions { display: none; flex-direction: column; gap: 12px; width: 100%; max-width: 300px; pointer-events: auto; }
+        /* UI de Edição */
+        #editUI { display: none; z-index: 30; background: rgba(0,0,0,0.8); }
+
+        #resultUI .actions, #editUI .actions { display: none; flex-direction: column; gap: 12px; width: 100%; max-width: 300px; pointer-events: auto; }
         .action-btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; text-align: center; text-decoration: none; display: inline-block; }
         .btn-save { background: var(--accent); color: #fff; }
         .btn-new { background: #555; color: #fff; }
         .flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; z-index: 100; transition: opacity 0.1s; }
+        
+        .tip-edit { position: absolute; top: 10%; width: 100%; text-align: center; color: #fff; font-size: 14px; pointer-events: none; }
     </style>
 </head>
 <body>
@@ -107,13 +113,22 @@
     <div class="frame">
         <div class="stage" id="stage">
             <video id="camera" autoplay playsinline muted></video>
-            <canvas id="canvasPreview"></canvas> 
+            <canvas id="editorCanvas"></canvas> <canvas id="canvasPreview"></canvas> 
             <canvas id="canvasFinal"></canvas>
             <video id="videoPreview" playsinline controls></video>
             
             <img id="molduraImagePreview" alt="Moldura Estática" src="" /> 
             
             <div class="flash" id="flash"></div>
+
+            <div class="ui-layer" id="editUI">
+                <div class="tip-edit">Arraste e use dois dedos para ajustar a foto</div>
+                <div style="flex:1"></div>
+                <div class="actions" style="display: flex;">
+                    <button id="confirmEditBtn" class="action-btn btn-save">✅ Confirmar Ajuste</button>
+                    <button id="cancelEditBtn" class="action-btn btn-new">❌ Cancelar</button>
+                </div>
+            </div>
 
             <div class="ui-layer" id="cameraUI" style="display: none;">
                 <div class="top-bar">
@@ -130,9 +145,7 @@
                     <div class="capture-controls">
                         <button id="galleryBtn" class="action-btn-mini">🖼️</button>
                         <input type="file" id="fileInput" accept="image/*" style="display: none;">
-
                         <button id="capturePhotoBtn" class="action-btn-mini">📷</button>
-                        
                         <button id="captureVideoBtn" class="action-btn-large">
                             <svg class="cam-icon" width="30" height="30" viewBox="0 0 24 24" fill="white"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
                             <div class="stop-icon"></div>
@@ -157,10 +170,9 @@
     </div>
 
     <script>
-        // --- CONFIGURAÇÃO ---
         const MOLDURAS = { 
-            'm1': { type: 'image', src: 'moldura1.png' }, 
-            'm2': { type: 'image', src: 'moldura2.png' } 
+            'm1': { src: 'moldura1.png' }, 
+            'm2': { src: 'moldura2.png' } 
         };
         
         let currentMolduraKey = 'm1';
@@ -171,78 +183,144 @@
         let recordedChunks = [];
         let recordingStartTime = 0;
         let animationFrameId = null;
-        let currentDownloadData = { blob: null, filename: null, url: null };
+        let currentDownloadData = { blob: null, url: null };
+
+        // Variáveis para Transformação da Imagem da Galeria
+        let galleryImg = new Image();
+        let imgTransform = { x: 0, y: 0, scale: 1, lastX: 0, lastY: 0, lastDist: 0 };
+        let isEditing = false;
 
         const video = document.getElementById('camera');
-        const videoPreview = document.getElementById('videoPreview');
+        const editorCanvas = document.getElementById('editorCanvas');
+        const editorCtx = editorCanvas.getContext('2d');
         const canvasPreview = document.getElementById('canvasPreview');
         const ctxPreview = canvasPreview.getContext('2d');
         const canvasFinal = document.getElementById('canvasFinal');
-        const ctxFinal = canvasFinal.getContext('2d', { alpha: false }); 
+        const ctxFinal = canvasFinal.getContext('2d'); 
         const molduraImagePreview = document.getElementById('molduraImagePreview');
         const cameraUI = document.getElementById('cameraUI');
+        const editUI = document.getElementById('editUI');
         const resultUI = document.getElementById('resultUI');
-        const recordingTimer = document.getElementById('recordingTimer');
         const fileInput = document.getElementById('fileInput');
 
-        // --- EVENTOS ---
-        document.getElementById('startBtn').addEventListener('click', () => initCamera(true));
+        // EVENTOS
+        document.getElementById('startBtn').addEventListener('click', () => initCamera());
         document.getElementById('switchBtn').addEventListener('click', switchCamera);
         document.getElementById('newPhotoBtn').addEventListener('click', resetCamera);
         document.getElementById('m1Btn').addEventListener('click', (e) => setMoldura(e.target, 'm1'));
         document.getElementById('m2Btn').addEventListener('click', (e) => setMoldura(e.target, 'm2'));
         document.getElementById('capturePhotoBtn').addEventListener('click', takePhoto);
         document.getElementById('galleryBtn').addEventListener('click', () => fileInput.click());
-        document.getElementById('downloadBtn').addEventListener('click', triggerDownload);
+        document.getElementById('confirmEditBtn').addEventListener('click', confirmGalleryEdit);
+        document.getElementById('cancelEditBtn').addEventListener('click', resetCamera);
 
         document.getElementById('captureVideoBtn').addEventListener('click', () => {
-            if (!isRecording) startRecording();
-            else stopRecording();
+            if (!isRecording) startRecording(); else stopRecording();
         });
 
         fileInput.addEventListener('change', function(e) {
             if (e.target.files && e.target.files[0]) {
                 const reader = new FileReader();
                 reader.onload = (event) => {
-                    const img = new Image();
-                    img.onload = () => processGalleryImage(img);
-                    img.src = event.target.result;
+                    galleryImg = new Image();
+                    galleryImg.onload = startGalleryEditor;
+                    galleryImg.src = event.target.result;
                 };
                 reader.readAsDataURL(e.target.files[0]);
             }
         });
 
-        // --- FUNÇÕES ---
+        // FUNÇÕES DE EDIÇÃO (TOUCH)
+        function startGalleryEditor() {
+            isEditing = true;
+            cameraUI.style.display = 'none';
+            editUI.style.display = 'flex';
+            editorCanvas.style.display = 'block';
+            video.style.display = 'none';
+            
+            editorCanvas.width = stage.clientWidth;
+            editorCanvas.height = stage.clientHeight;
 
+            // Reset transform
+            const ratio = galleryImg.width / galleryImg.height;
+            imgTransform.scale = editorCanvas.width / galleryImg.width;
+            imgTransform.x = 0;
+            imgTransform.y = (editorCanvas.height - (galleryImg.height * imgTransform.scale)) / 2;
+            
+            drawEditor();
+        }
+
+        function drawEditor() {
+            if (!isEditing) return;
+            editorCtx.fillStyle = "#000";
+            editorCtx.fillRect(0, 0, editorCanvas.width, editorCanvas.height);
+            
+            editorCtx.save();
+            editorCtx.translate(imgTransform.x, imgTransform.y);
+            editorCtx.scale(imgTransform.scale, imgTransform.scale);
+            editorCtx.drawImage(galleryImg, 0, 0);
+            editorCtx.restore();
+
+            // Moldura por cima para guiar o usuário
+            const mRatio = molduraImagePreview.naturalWidth / molduraImagePreview.naturalHeight;
+            const th = editorCanvas.width / mRatio;
+            editorCtx.drawImage(molduraImagePreview, 0, editorCanvas.height - th, editorCanvas.width, th);
+            
+            requestAnimationFrame(drawEditor);
+        }
+
+        // Touch Interaction Logic
+        editorCanvas.addEventListener('touchstart', e => {
+            if (e.touches.length === 1) {
+                imgTransform.lastX = e.touches[0].clientX - imgTransform.x;
+                imgTransform.lastY = e.touches[0].clientY - imgTransform.y;
+            } else if (e.touches.length === 2) {
+                imgTransform.lastDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+            }
+        });
+
+        editorCanvas.addEventListener('touchmove', e => {
+            e.preventDefault();
+            if (e.touches.length === 1) {
+                imgTransform.x = e.touches[0].clientX - imgTransform.lastX;
+                imgTransform.y = e.touches[0].clientY - imgTransform.lastY;
+            } else if (e.touches.length === 2) {
+                const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+                imgTransform.scale *= (dist / imgTransform.lastDist);
+                imgTransform.lastDist = dist;
+            }
+        }, { passive: false });
+
+        function confirmGalleryEdit() {
+            isEditing = false;
+            editorCanvas.style.display = 'none';
+            editUI.style.display = 'none';
+            flashEffect();
+
+            canvasFinal.width = 1080; canvasFinal.height = 1920;
+            const finalScale = 1080 / editorCanvas.width;
+
+            // 1. Foto editada
+            ctxFinal.fillStyle = "#000";
+            ctxFinal.fillRect(0,0,1080,1920);
+            ctxFinal.save();
+            ctxFinal.translate(imgTransform.x * finalScale, imgTransform.y * finalScale);
+            ctxFinal.scale(imgTransform.scale * finalScale, imgTransform.scale * finalScale);
+            ctxFinal.drawImage(galleryImg, 0, 0);
+            ctxFinal.restore();
+
+            // 2. Moldura
+            drawImageLayer(ctxFinal, molduraImagePreview, 1080, 1920);
+            canvasFinal.toBlob(blob => showResult('image', blob), 'image/png');
+        }
+
+        // MOLDURA E CÂMERA (PRESERVADO)
         function setMoldura(btn, key) {
             document.querySelectorAll('.frame-selector .btn').forEach(b => b.classList.remove('btn-frame'));
             if(btn) btn.classList.add('btn-frame');
             currentMolduraKey = key;
             molduraImagePreview.src = MOLDURAS[key].src;
             molduraImagePreview.style.display = 'block';
-        }
-
-        // Função de Galeria (Foto do fundo, moldura na frente)
-        function processGalleryImage(userImg) {
-            flashEffect();
-            canvasFinal.width = 1080; canvasFinal.height = 1920;
-            
-            // 1. Desenha imagem da galeria (Fundo)
-            const ratio = userImg.width / userImg.height;
-            let dw, dh, dx, dy;
-            if (ratio > (1080/1920)) {
-                dh = 1920; dw = 1920 * ratio;
-                dx = (1080 - dw) / 2; dy = 0;
-            } else {
-                dw = 1080; dh = 1080 / ratio;
-                dx = 0; dy = (1920 - dh) / 2;
-            }
-            ctxFinal.drawImage(userImg, dx, dy, dw, dh);
-            
-            // 2. Desenha Moldura (Frente)
-            drawImageLayer(ctxFinal, molduraImagePreview, 1080, 1920);
-
-            canvasFinal.toBlob(blob => showResult('image', blob), 'image/png');
         }
 
         function takePhoto() { 
@@ -260,7 +338,6 @@
             recordingStartTime = Date.now();
             recordedChunks = [];
             canvasFinal.width = 720; canvasFinal.height = 1280;
-
             const loop = () => {
                 if (!isRecording) return;
                 drawVideoToCanvas(ctxFinal, 720, 1280, true);
@@ -269,16 +346,11 @@
                 animationFrameId = requestAnimationFrame(loop);
             };
             loop();
-
             const canvasStream = canvasFinal.captureStream(30);
             if (stream.getAudioTracks().length) canvasStream.addTrack(stream.getAudioTracks()[0]);
-            
             mediaRecorder = new MediaRecorder(canvasStream, { mimeType: 'video/webm' });
             mediaRecorder.ondataavailable = e => recordedChunks.push(e.data);
-            mediaRecorder.onstop = () => {
-                const blob = new Blob(recordedChunks, { type: 'video/webm' });
-                showResult('video', blob);
-            };
+            mediaRecorder.onstop = () => showResult('video', new Blob(recordedChunks, { type: 'video/webm' }));
             mediaRecorder.start();
         }
 
@@ -289,8 +361,6 @@
             mediaRecorder.stop();
             recordingTimer.style.display = 'none';
         }
-
-        // --- AUXILIARES (IGUAIS AO SEU) ---
 
         function drawVideoToCanvas(ctx, w, h, mirror) {
             ctx.save();
@@ -311,38 +381,37 @@
 
         function showResult(type, blob) {
             const url = URL.createObjectURL(blob);
-            currentDownloadData = { blob, url, filename: `${type}_${Date.now()}.${type === 'image' ? 'png' : 'webm'}` };
-            
+            currentDownloadData = { url, filename: `${type}_${Date.now()}.${type === 'image' ? 'png' : 'webm'}` };
             video.style.display = 'none';
             cameraUI.style.display = 'none';
             resultUI.style.display = 'flex';
             document.querySelector('#resultUI .actions').style.display = 'flex';
-
             if (type === 'image') {
                 canvasPreview.style.display = 'block';
-                videoPreview.style.display = 'none';
-                canvasPreview.width = stage.clientWidth;
-                canvasPreview.height = stage.clientHeight;
+                canvasPreview.width = stage.clientWidth; canvasPreview.height = stage.clientHeight;
                 ctxPreview.drawImage(canvasFinal, 0, 0, canvasPreview.width, canvasPreview.height);
             } else {
-                canvasPreview.style.display = 'none';
-                videoPreview.style.display = 'block';
-                videoPreview.src = url;
+                videoPreview.style.display = 'block'; videoPreview.src = url;
             }
+            document.getElementById('downloadBtn').href = url;
+            document.getElementById('downloadBtn').download = currentDownloadData.filename;
         }
 
         function resetCamera() {
+            isEditing = false;
+            editorCanvas.style.display = 'none';
+            editUI.style.display = 'none';
             video.style.display = 'block';
             resultUI.style.display = 'none';
             cameraUI.style.display = 'flex';
             canvasPreview.style.display = 'none';
             videoPreview.style.display = 'none';
             fileInput.value = "";
-            setMoldura(null, currentMolduraKey);
         }
 
         async function initCamera() {
             try {
+                if(stream) stream.getTracks().forEach(t => t.stop());
                 stream = await navigator.mediaDevices.getUserMedia({
                     video: { facingMode: usingFrontCamera ? 'user' : 'environment', width: 1280, height: 720 },
                     audio: true
@@ -352,23 +421,14 @@
                 document.getElementById('startScreen').style.display = 'none';
                 cameraUI.style.display = 'flex';
                 setMoldura(document.getElementById('m1Btn'), 'm1');
-            } catch (e) { alert("Erro ao acessar câmera."); }
+            } catch (e) { alert("Câmera não autorizada ou indisponível."); }
         }
 
         function switchCamera() { usingFrontCamera = !usingFrontCamera; initCamera(); }
-        
         function updateTimer() {
             const s = Math.floor((Date.now() - recordingStartTime) / 1000);
             recordingTimer.innerText = `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
         }
-
-        function triggerDownload() {
-            const a = document.createElement('a');
-            a.href = currentDownloadData.url;
-            a.download = currentDownloadData.filename;
-            a.click();
-        }
-
         function flashEffect() {
             const f = document.getElementById('flash');
             f.style.opacity = '1'; setTimeout(() => f.style.opacity = '0', 150);
