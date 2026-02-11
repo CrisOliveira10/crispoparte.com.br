@@ -42,7 +42,7 @@
             cursor: pointer;
         }
 
-        /* Container do Canva */
+        /* Container que permite a rolagem vertical */
         #container-canva {
             display: none;
             position: absolute;
@@ -51,29 +51,27 @@
             width: 100vw;
             height: 100dvh;
             z-index: 1;
-            overflow-x: hidden; /* Trava rolagem lateral */
-            overflow-y: auto;   /* Permite rolagem vertical igual ao PDF */
+            overflow-y: auto; 
+            overflow-x: hidden; /* Trava o balanço lateral */
             -webkit-overflow-scrolling: touch;
         }
 
-        /* O TRUQUE DO ZOOM: 
-           Como sua arte é 1366x768 (Paisagem) e o celular é Retrato,
-           aumentamos a escala para que a largura da arte preencha a largura da tela.
-        */
+        /* Wrapper para forçar o enquadramento */
         .canva-wrapper {
             width: 100%;
-            height: 100%;
+            height: 350%; /* Altura estendida para garantir que o conteúdo longo caiba */
             position: relative;
         }
 
+        /* Ajuste de escala para preencher a largura do celular */
         iframe {
             position: absolute;
             top: 0;
             left: 50%;
-            width: 150%; /* Aumentamos a largura para "zoom" */
+            width: 250%; /* Valor alto para garantir que a arte 1366px "estoure" e preencha a tela do celular */
             height: 100%;
             border: none;
-            transform: translateX(-50%); /* Centraliza o zoom */
+            transform: translateX(-50%); /* Centraliza o zoom no meio da arte */
         }
     </style>
 </head>
@@ -103,7 +101,10 @@
         const containerCanva = document.getElementById('container-canva');
 
         botao.addEventListener('click', () => {
+            // Inicia áudio
             audio.play().catch(e => console.log("Áudio ativado"));
+
+            // Efeito de transição
             overlay.style.opacity = '0';
             setTimeout(() => {
                 overlay.style.display = 'none';
@@ -111,7 +112,7 @@
             }, 500);
         });
 
-        // Segurança mantida
+        // Bloqueios de segurança
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', e => {
             if (e.keyCode == 123 || (e.ctrlKey && (e.keyCode == 85 || e.keyCode == 73 || e.keyCode == 67 || e.keyCode == 83))) {
