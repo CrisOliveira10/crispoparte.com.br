@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Convite Interativo</title>
+
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            overflow: hidden; /* Mantém a tela fixa até o clique */
+            font-family: sans-serif;
+        }
+
+        /* Tela de Entrada */
+        .page-overlay {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            background: #000;
+            transition: opacity 0.5s ease;
+        }
+
+        .bg-btn {
+            width: 100%;
+            height: 100%;
+            background-image: url('abrir.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            cursor: pointer;
+        }
+
+        /* Container do Canva (Invisível no início) */
+        #container-canva {
+            display: none;
+            width: 100%;
+            height: 100vh;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div style="display: none !important; visibility: hidden;" aria-hidden="true">
+        © 2026 Cristiane Oliveira. Protegido pela Lei nº 9.610/98.
+    </div>
+
+    <audio id="bgMusic" loop preload="auto">
+        <source src="audio.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="page-overlay" id="overlay">
+        <div class="bg-btn" id="btnAbrir"></div>
+    </div>
+
+    <div id="container-canva">
+        <iframe src="https://www.canva.com/design/DAG8FQsgmJ0/656UfPLYCpXCZPXNwlCf7A/view?embed" 
+                allowfullscreen="allowfullscreen" allow="autoplay">
+        </iframe>
+    </div>
+
+    <script>
+        const audio = document.getElementById('bgMusic');
+        const botao = document.getElementById('btnAbrir');
+        const overlay = document.getElementById('overlay');
+        const containerCanva = document.getElementById('container-canva');
+
+        botao.addEventListener('click', () => {
+            // Toca a música
+            audio.play().catch(e => console.error("Erro ao tocar áudio:", e));
+
+            // Esconde a capa e mostra o conteúdo do Canva
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                containerCanva.style.display = 'block';
+                document.body.style.overflow = 'auto'; // Permite rolagem se necessário
+            }, 500);
+        });
+
+        // --- Script de Segurança (Mantido) ---
+        (function() {
+            document.addEventListener('contextmenu', e => e.preventDefault());
+            document.addEventListener('keydown', function(e) {
+                if (e.keyCode == 123 || (e.ctrlKey && (e.keyCode == 85 || e.keyCode == 73 || e.keyCode == 67 || e.keyCode == 83))) {
+                    e.preventDefault();
+                }
+            });
+            console.log("%c Protegido por Cristiane Oliveira ", "color: white; background: red; font-weight: bold;");
+        })();
+    </script>
+</body> 
+</html>
