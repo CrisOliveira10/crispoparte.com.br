@@ -1,184 +1,172 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Convite Filippo</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta property="og:title" content="Convite Especial - Filippo">
-    <meta property="og:description" content="Clique para abrir o convite interativo!">
-    
-    <meta property="og:image" content="capalink.png">
-    <meta property="og:image:secure_url" content="capalink.png">
-    
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:image:type" content="image/png">
-    <meta property="og:type" content="website">
+<title>Convite Filippo</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
-        html, body {
-            width: 100%;
-            height: 100%;
-            background: #000;
-            overflow: hidden;
-            position: fixed;
-        }
+<!-- Open Graph -->
+<meta property="og:title" content="Convite Especial - Filippo">
+<meta property="og:description" content="Clique para abrir o convite interativo!">
+<meta property="og:image" content="https://crispoparte.com.br/filippo/capalink.png">
+<meta property="og:image:secure_url" content="https://crispoparte.com.br/filippo/capalink.png">
+<meta property="og:url" content="https://crispoparte.com.br/filippo/">
+<meta property="og:type" content="website">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/png">
 
-        /* Capa de Entrada */
-        .page-overlay {
-            position: fixed;
-            inset: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 999;
-            background: #000;
-            transition: opacity 0.5s ease;
-        }
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Convite Especial - Filippo">
+<meta name="twitter:description" content="Clique para abrir o convite interativo!">
+<meta name="twitter:image" content="https://crispoparte.com.br/filippo/capalink.png">
 
-        .bg-btn {
-            width: 100%;
-            height: 100%;
-            background-image: url('abrir.png');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            cursor: pointer;
-        }
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-        /* Botão de Som Pulsante */
-        #music-control {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            width: 50px;
-            height: 50px;
-            background-color: #e4483e; 
-            border-radius: 50%;
-            display: none; 
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            border: none;
-            outline: none;
-            animation: pulse-soft 2s infinite ease-in-out;
-        }
+html, body {
+    width: 100%;
+    height: 100%;
+    background: #000;
+    overflow: hidden;
+    position: fixed;
+}
 
-        @keyframes pulse-soft {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); box-shadow: 0 4px 20px rgba(228, 72, 62, 0.5); }
-            100% { transform: scale(1); }
-        }
+/* Overlay */
+.page-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    background: #000;
+    transition: opacity 0.5s ease;
+}
 
-        #music-control svg {
-            width: 24px;
-            height: 24px;
-            fill: white;
-        }
+.bg-btn {
+    width: 100%;
+    height: 100%;
+    background-image: url('abrir.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+}
 
-        /* Container do Canva com Toque Otimizado */
-        #container-canva {
-            display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100dvh;
-            z-index: 1;
-            overflow-y: auto; 
-            overflow-x: hidden;
-            -webkit-overflow-scrolling: touch; 
-        }
+/* Botão música */
+#music-control {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    width: 50px;
+    height: 50px;
+    background-color: #e4483e;
+    border-radius: 50%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    border: none;
+    animation: pulse-soft 2s infinite ease-in-out;
+}
 
-        .canva-wrapper {
-            width: 100%;
-            height: 350%; 
-            position: relative;
-        }
+@keyframes pulse-soft {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
 
-        iframe {
-            position: absolute;
-            /* AJUSTE AQUI: O sinal de '-' é essencial para subir a arte */
-            top: -50px; 
-            left: 50%;
-            /* AJUSTE AQUI: 175% para um bom zoom lateral */
-            width: 175%; 
-            height: 100%;
-            border: none;
-            transform: translateX(-50%);
-            pointer-events: auto; 
-        }
-    </style>
+#music-control svg {
+    width: 24px;
+    height: 24px;
+    fill: white;
+}
+
+/* Canva */
+#container-canva {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100dvh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+.canva-wrapper {
+    width: 100%;
+    height: 350%;
+    position: relative;
+}
+
+iframe {
+    position: absolute;
+    top: -50px;
+    left: 50%;
+    width: 175%;
+    height: 100%;
+    border: none;
+    transform: translateX(-50%);
+}
+</style>
 </head>
 
 <body>
 
-    <audio id="bgMusic" loop preload="auto">
-        <source src="audio.mp3" type="audio/mpeg">
-    </audio>
+<audio id="bgMusic" loop preload="auto">
+    <source src="audio.mp3" type="audio/mpeg">
+</audio>
 
-    <button id="music-control" onclick="toggleMusic()">
-        <span id="music-icon">
-            <svg viewBox="0 0 24 24"><path d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18.03,19.86 21,16.28 21,12C21,7.72 18.03,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16.02C15.5,15.29 16.5,13.77 16.5,12M3,9V15H7L12,20V4L7,9H3Z"/></svg>
-        </span>
-    </button>
+<button id="music-control" onclick="toggleMusic()">
+<svg viewBox="0 0 24 24">
+<path d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18.03,19.86 21,16.28 21,12C21,7.72 18.03,4.14 14,3.23M3,9V15H7L12,20V4L7,9H3Z"/>
+</svg>
+</button>
 
-    <div class="page-overlay" id="overlay">
-        <div class="bg-btn" id="btnAbrir"></div>
+<div class="page-overlay" id="overlay">
+    <div class="bg-btn" id="btnAbrir"></div>
+</div>
+
+<div id="container-canva">
+    <div class="canva-wrapper">
+        <iframe src="https://www.canva.com/design/DAG8FQsgmJ0/656UfPLYCpXCZPXNwlCf7A/view?embed" allow="autoplay"></iframe>
     </div>
+</div>
 
-    <div id="container-canva">
-        <div class="canva-wrapper">
-            <iframe src="https://www.canva.com/design/DAG8FQsgmJ0/656UfPLYCpXCZPXNwlCf7A/view?embed" 
-                    allow="autoplay">
-            </iframe>
-        </div>
-    </div>
+<script>
+const audio = document.getElementById('bgMusic');
+const botaoAbrir = document.getElementById('btnAbrir');
+const overlay = document.getElementById('overlay');
+const containerCanva = document.getElementById('container-canva');
+const musicBtn = document.getElementById('music-control');
 
-    <script>
-        const audio = document.getElementById('bgMusic');
-        const botaoAbrir = document.getElementById('btnAbrir');
-        const overlay = document.getElementById('overlay');
-        const containerCanva = document.getElementById('container-canva');
-        const musicBtn = document.getElementById('music-control');
-        const musicIcon = document.getElementById('music-icon');
+botaoAbrir.addEventListener('click', () => {
+    audio.play().catch(() => {});
+    overlay.style.opacity = '0';
+    setTimeout(() => {
+        overlay.style.display = 'none';
+        containerCanva.style.display = 'block';
+        musicBtn.style.display = 'flex';
+    }, 500);
+});
 
-        const iconPlay = '<svg viewBox="0 0 24 24"><path d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18.03,19.86 21,16.28 21,12C21,7.72 18.03,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16.02C15.5,15.29 16.5,13.77 16.5,12M3,9V15H7L12,20V4L7,9H3Z"/></svg>';
-        const iconMute = '<svg viewBox="0 0 24 24"><path d="M12,4L9.91,6.09L12,8.18M4.27,3L3,4.27L7.73,9H3V15H7L12,20V13.27L16.25,17.53C15.58,18.04 14.83,18.43 14,18.7V20.77C15.38,20.44 16.63,19.81 17.69,18.95L20.73,22L22,20.73L4.27,3M19,12C19,12.94 18.8,13.82 18.46,14.62L19.97,16.13C20.62,14.91 21,13.5 21,12C21,7.72 18.03,4.14 14,3.23V5.29C16.89,6.15 19,8.83 19,12M16.5,12C16.5,10.23 15.5,8.71 14,7.97V10.18L16.45,12.63C16.48,12.43 16.5,12.22 16.5,12Z"/></svg>';
+function toggleMusic() {
+    if (audio.paused) {
+        audio.play();
+    } else {
+        audio.pause();
+    }
+}
 
-        botaoAbrir.addEventListener('click', () => {
-            audio.play().catch(e => console.log("Áudio ativado"));
-            overlay.style.opacity = '0';
-            setTimeout(() => {
-                overlay.style.display = 'none';
-                containerCanva.style.display = 'block';
-                musicBtn.style.display = 'flex';
-                containerCanva.focus(); 
-            }, 500);
-        });
+document.addEventListener('contextmenu', e => e.preventDefault());
+</script>
 
-        function toggleMusic() {
-            if (audio.paused) {
-                audio.play();
-                musicIcon.innerHTML = iconPlay;
-                musicBtn.style.animation = "pulse-soft 2s infinite ease-in-out";
-            } else {
-                audio.pause();
-                musicIcon.innerHTML = iconMute;
-                musicBtn.style.animation = "none";
-            }
-        }
-
-        document.addEventListener('contextmenu', e => e.preventDefault());
-    </script>
-</body> 
+</body>
 </html>
