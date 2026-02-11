@@ -42,6 +42,32 @@
             cursor: pointer;
         }
 
+        /* Botão de Som Flutuante */
+        #music-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            /* 👇 MUDE A COR DO BOTÃO AQUI 👇 */
+            background-color: #e4483e; 
+            border-radius: 50%;
+            display: none; /* Inicia escondido, aparece após o 'Abrir' */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border: none;
+            outline: none;
+        }
+
+        #music-control svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
         /* Container que permite a rolagem vertical */
         #container-canva {
             display: none;
@@ -52,26 +78,24 @@
             height: 100dvh;
             z-index: 1;
             overflow-y: auto; 
-            overflow-x: hidden; /* Trava o balanço lateral */
+            overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
         }
 
-        /* Wrapper para forçar o enquadramento */
         .canva-wrapper {
             width: 100%;
-            height: 350%; /* Altura estendida para garantir que o conteúdo longo caiba */
+            height: 350%; 
             position: relative;
         }
 
-        /* Ajuste de escala para preencher a largura do celular */
         iframe {
             position: absolute;
             top: 0;
             left: 50%;
-            width: 220%; /* Valor alto para garantir que a arte 1366px "estoure" e preencha a tela do celular */
+            width: 220%; 
             height: 100%;
             border: none;
-            transform: translateX(-50%); /* Centraliza o zoom no meio da arte */
+            transform: translateX(-50%);
         }
     </style>
 </head>
@@ -81,6 +105,12 @@
     <audio id="bgMusic" loop preload="auto">
         <source src="audio.mp3" type="audio/mpeg">
     </audio>
+
+    <button id="music-control" onclick="toggleMusic()">
+        <span id="music-icon">
+            <svg viewBox="0 0 24 24"><path d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18.03,19.86 21,16.28 21,12C21,7.72 18.03,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16.02C15.5,15.29 16.5,13.77 16.5,12M3,9V15H7L12,20V4L7,9H3Z"/></svg>
+        </span>
+    </button>
 
     <div class="page-overlay" id="overlay">
         <div class="bg-btn" id="btnAbrir"></div>
@@ -96,23 +126,37 @@
 
     <script>
         const audio = document.getElementById('bgMusic');
-        const botao = document.getElementById('btnAbrir');
+        const botaoAbrir = document.getElementById('btnAbrir');
         const overlay = document.getElementById('overlay');
         const containerCanva = document.getElementById('container-canva');
+        const musicBtn = document.getElementById('music-control');
+        const musicIcon = document.getElementById('music-icon');
 
-        botao.addEventListener('click', () => {
-            // Inicia áudio
+        // Ícones SVG para trocar visualmente
+        const iconPlay = '<svg viewBox="0 0 24 24"><path d="M14,3.23V5.29C16.89,6.15 19,8.83 19,12C19,15.17 16.89,17.85 14,18.71V20.77C18.03,19.86 21,16.28 21,12C21,7.72 18.03,4.14 14,3.23M16.5,12C16.5,10.23 15.5,8.71 14,7.97V16.02C15.5,15.29 16.5,13.77 16.5,12M3,9V15H7L12,20V4L7,9H3Z"/></svg>';
+        const iconMute = '<svg viewBox="0 0 24 24"><path d="M12,4L9.91,6.09L12,8.18M4.27,3L3,4.27L7.73,9H3V15H7L12,20V13.27L16.25,17.53C15.58,18.04 14.83,18.43 14,18.7V20.77C15.38,20.44 16.63,19.81 17.69,18.95L20.73,22L22,20.73L4.27,3M19,12C19,12.94 18.8,13.82 18.46,14.62L19.97,16.13C20.62,14.91 21,13.5 21,12C21,7.72 18.03,4.14 14,3.23V5.29C16.89,6.15 19,8.83 19,12M16.5,12C16.5,10.23 15.5,8.71 14,7.97V10.18L16.45,12.63C16.48,12.43 16.5,12.22 16.5,12Z"/></svg>';
+
+        botaoAbrir.addEventListener('click', () => {
             audio.play().catch(e => console.log("Áudio ativado"));
-
-            // Efeito de transição
             overlay.style.opacity = '0';
             setTimeout(() => {
                 overlay.style.display = 'none';
                 containerCanva.style.display = 'block';
+                musicBtn.style.display = 'flex'; // Mostra o botão de som
             }, 500);
         });
 
-        // Bloqueios de segurança
+        function toggleMusic() {
+            if (audio.paused) {
+                audio.play();
+                musicIcon.innerHTML = iconPlay;
+            } else {
+                audio.pause();
+                musicIcon.innerHTML = iconMute;
+            }
+        }
+
+        // Segurança
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', e => {
             if (e.keyCode == 123 || (e.ctrlKey && (e.keyCode == 85 || e.keyCode == 73 || e.keyCode == 67 || e.keyCode == 83))) {
