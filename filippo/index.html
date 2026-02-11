@@ -6,7 +6,6 @@
     <title>Convite Interativo</title>
 
     <style>
-        /* Reset para comportamento de aplicativo */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -17,8 +16,8 @@
             width: 100%;
             height: 100%;
             background: #000;
-            overflow: hidden; /* Trava a rolagem da página principal */
-            position: fixed; /* Evita o "puxar para atualizar" */
+            overflow: hidden;
+            position: fixed;
         }
 
         /* Capa de Entrada */
@@ -43,7 +42,7 @@
             cursor: pointer;
         }
 
-        /* Container do Canva - O segredo está aqui */
+        /* Container do Canva */
         #container-canva {
             display: none;
             position: absolute;
@@ -52,32 +51,34 @@
             width: 100vw;
             height: 100dvh;
             z-index: 1;
-            overflow-y: auto; /* Permite a rolagem igual ao PDF */
+            overflow-x: hidden; /* Trava rolagem lateral */
+            overflow-y: auto;   /* Permite rolagem vertical igual ao PDF */
             -webkit-overflow-scrolling: touch;
         }
 
-        /* Iframe ajustado para eliminar bordas do Canva */
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            display: block;
-            /* Algumas versões do Canva adicionam padding, isso ajuda a neutralizar */
-            transform: scale(1.02); 
-        }
-
+        /* O TRUQUE DO ZOOM: 
+           Como sua arte é 1366x768 (Paisagem) e o celular é Retrato,
+           aumentamos a escala para que a largura da arte preencha a largura da tela.
+        */
         .canva-wrapper {
             width: 100%;
             height: 100%;
+            position: relative;
+        }
+
+        iframe {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 150%; /* Aumentamos a largura para "zoom" */
+            height: 100%;
+            border: none;
+            transform: translateX(-50%); /* Centraliza o zoom */
         }
     </style>
 </head>
 
 <body>
-
-    <div style="display: none !important; visibility: hidden;" aria-hidden="true">
-        © 2026 Cristiane Oliveira.
-    </div>
 
     <audio id="bgMusic" loop preload="auto">
         <source src="audio.mp3" type="audio/mpeg">
@@ -102,19 +103,15 @@
         const containerCanva = document.getElementById('container-canva');
 
         botao.addEventListener('click', () => {
-            // Tocar música
             audio.play().catch(e => console.log("Áudio ativado"));
-
-            // Sumir com a capa
             overlay.style.opacity = '0';
-            
             setTimeout(() => {
                 overlay.style.display = 'none';
                 containerCanva.style.display = 'block';
             }, 500);
         });
 
-        // Bloqueios de segurança
+        // Segurança mantida
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', e => {
             if (e.keyCode == 123 || (e.ctrlKey && (e.keyCode == 85 || e.keyCode == 73 || e.keyCode == 67 || e.keyCode == 83))) {
