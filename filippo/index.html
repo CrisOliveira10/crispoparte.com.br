@@ -6,33 +6,31 @@
     <title>Convite Interativo</title>
 
     <style>
+        /* Reset para comportamento de aplicativo */
         * {
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
+            margin: 0;
+            padding: 0;
         }
         
         html, body {
-            margin: 0;
-            padding: 0;
             width: 100%;
             height: 100%;
             background: #000;
-            overflow: hidden;
+            overflow: hidden; /* Trava a rolagem da página principal */
+            position: fixed; /* Evita o "puxar para atualizar" */
         }
 
         /* Capa de Entrada */
         .page-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 999;
             background: #000;
-            transition: opacity 0.6s ease;
+            transition: opacity 0.5s ease;
         }
 
         .bg-btn {
@@ -45,34 +43,32 @@
             cursor: pointer;
         }
 
-        /* Container que força o preenchimento total */
+        /* Container do Canva - O segredo está aqui */
         #container-canva {
             display: none;
-            position: fixed; /* Fixa para evitar saltos */
+            position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100dvh;
             z-index: 1;
-            overflow: hidden;
+            overflow-y: auto; /* Permite a rolagem igual ao PDF */
+            -webkit-overflow-scrolling: touch;
         }
 
-        /* O segredo: iframe com 100% da altura da tela (100dvh para celulares novos) */
+        /* Iframe ajustado para eliminar bordas do Canva */
         iframe {
             width: 100%;
-            height: 100dvh; /* dvh adapta-se dinamicamente às barras do navegador */
+            height: 100%;
             border: none;
-            margin: 0;
-            padding: 0;
             display: block;
+            /* Algumas versões do Canva adicionam padding, isso ajuda a neutralizar */
+            transform: scale(1.02); 
         }
 
-        /* Ajuste para remover barras extras do Canva em alguns casos */
         .canva-wrapper {
             width: 100%;
             height: 100%;
-            overflow-y: auto; 
-            -webkit-overflow-scrolling: touch;
         }
     </style>
 </head>
@@ -80,7 +76,7 @@
 <body>
 
     <div style="display: none !important; visibility: hidden;" aria-hidden="true">
-        © 2026 Cristiane Oliveira. Protegido pela Lei nº 9.610/98.
+        © 2026 Cristiane Oliveira.
     </div>
 
     <audio id="bgMusic" loop preload="auto">
@@ -94,7 +90,6 @@
     <div id="container-canva">
         <div class="canva-wrapper">
             <iframe src="https://www.canva.com/design/DAG8FQsgmJ0/656UfPLYCpXCZPXNwlCf7A/view?embed" 
-                    allowfullscreen="allowfullscreen" 
                     allow="autoplay">
             </iframe>
         </div>
@@ -107,27 +102,25 @@
         const containerCanva = document.getElementById('container-canva');
 
         botao.addEventListener('click', () => {
-            audio.play().catch(e => console.log("Áudio aguardando..."));
+            // Tocar música
+            audio.play().catch(e => console.log("Áudio ativado"));
 
+            // Sumir com a capa
             overlay.style.opacity = '0';
             
             setTimeout(() => {
                 overlay.style.display = 'none';
                 containerCanva.style.display = 'block';
-                // Garante que o body não tente rolar sozinho, deixando a rolagem pro Canva
-                document.body.style.overflow = 'hidden'; 
-            }, 600);
+            }, 500);
         });
 
-        // Segurança
-        (function() {
-            document.addEventListener('contextmenu', e => e.preventDefault());
-            document.addEventListener('keydown', function(e) {
-                if (e.keyCode == 123 || (e.ctrlKey && (e.keyCode == 85 || e.keyCode == 73 || e.keyCode == 67 || e.keyCode == 83))) {
-                    e.preventDefault();
-                }
-            });
-        })();
+        // Bloqueios de segurança
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (e.keyCode == 123 || (e.ctrlKey && (e.keyCode == 85 || e.keyCode == 73 || e.keyCode == 67 || e.keyCode == 83))) {
+                e.preventDefault();
+            }
+        });
     </script>
 </body> 
 </html>
