@@ -20,6 +20,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;display:flex;ju
 #video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
 #audio{display:none}
 
+/* ESTILO DO TEXTO DO CONVIDADO */
 #footerInvite{
   position:absolute;bottom:8%;width:90%;left:50%;
   transform:translateX(-50%) translateY(20px);
@@ -54,6 +55,11 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;display:flex;ju
 
 #transition{position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:50;background:rgba(0,0,0,.15)}
 
+/* ============================================================
+  2. TAMANHO DO ÍCONE DE TRANSIÇÃO
+  Se o ícone ficar grande ou pequeno demais, altere o width aqui.
+  ============================================================
+*/
 #transition img{width:500px;animation:zoomIcon .9s ease forwards}
 
 @keyframes zoomIcon{
@@ -96,18 +102,26 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;display:flex;ju
 </div>
 
 <script>
-const LOOP_START = 8; 
-const EVENT_DATE = "2026-03-08T18:00:00"; 
+// ============================================================
+//           4. LISTA DE CONVIDADOS E CONFIGURAÇÕES
+//           Esta é a parte principal para as alunas!
+// ============================================================
+
+const LOOP_START = 8; // Tempo onde o vídeo 2 fica em loop
+const EVENT_DATE = "2026-03-08T18:00:00"; // Data do evento para o contador
 
 const convidados = {
     "Drika": "0809",
     "Andressa": "1234",
     "Ramon": "5566",
     "Myrtes": "7788",
-    "Cristiane": "1808",
-    "Marcela": "2158"
+    "Cristiane": "1808"
+    // Para adicionar mais: "Nome": "Senha",
 };
 
+// ============================================================
+//                LÓGICA INTERNA (SISTEMA)
+// ============================================================
 let video2FirstPlay = true;
 let countdownInterval;
 let preloaded = false;
@@ -217,6 +231,10 @@ function startCountdown(){
   },1000);
 }
 
+// ============================================================
+// 5. TEXTO PERSONALIZADO DO CONVIDADO (EDITÁVEL)
+// Altere as frases dentro de footer.innerHTML
+// ============================================================
 function showInviteWithDelay(){
   const params = new URLSearchParams(location.search);
   const nome = params.get("nome");
