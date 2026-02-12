@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Camila 2 Anos</title>
+<title>Convite Interativo - Camila 2 Anos</title>
 
 <meta property="og:title" content="Convite Especial - Camila">
 <meta property="og:description" content="Clique para abrir o convite interativo!">
@@ -12,106 +12,67 @@
 <meta property="og:type" content="website">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;overflow:hidden;background:#000;display:flex;justify-content:center;align-items:center}
+* { margin:0; padding:0; box-sizing:border-box; }
+html, body { width:100%; height:100%; overflow:hidden; background:#000; display:flex; justify-content:center; align-items:center; }
 
-#video{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  z-index:1;
-}
+/* VIDEO DE FUNDO */
+#video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:1; }
+#audio { display:none; }
 
-#audio{display:none}
+/* TEXTO DO CONVIDADO */
+#footerInvite {
+    position:absolute; bottom:8%; width:90%; left:50%;
+    transform: translateX(-50%) translateY(20px);
+    text-align:center; color:#fff; font-family: 'Segoe UI', Arial, sans-serif;
+    z-index:5; opacity:0; transition:.8s ease-out; pointer-events:none;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+}
+#footerInvite.show { opacity:1; transform:translateX(-50%) translateY(0); }
+#footerInvite span { display:block; margin-top:8px; font-size:19px; font-weight:300; }
+#footerInvite strong { font-size:24px; text-transform:uppercase; letter-spacing:1px; }
 
-#footerInvite{
-  position:absolute;
-  bottom:8%; 
-  width:90%;
-  left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  text-align:center;
-  color:#fff;
-  font-family: 'Segoe UI', Arial, sans-serif;
-  z-index:5;
-  opacity:0;
-  transition:.8s ease-out;
-  pointer-events:none;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-}
-#footerInvite.show{
-  opacity:1;
-  transform:translateX(-50%) translateY(0);
-}
-#footerInvite span{
-  display:block;
-  margin-top:8px;
-  font-size:19px;
-  font-weight: 300;
-}
-#footerInvite strong {
-  font-size: 24px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
+/* ÁREAS DE CLIQUE E BOTÕES */
+#video1Click { position:absolute; inset:0; z-index:10; }
+#audioControl { position:absolute; top:15px; left:15px; width:80px; height:80px; z-index:20; display:none; cursor:pointer; }
+#menuToggle, #backToVideo2 { position:absolute; top:15px; right:15px; width:120px; height:80px; z-index:20; display:none; cursor:pointer; }
 
-#video1Click{ position:absolute; inset:0; z-index:10; }
-
-#audioControl{
-  position:absolute; top:15px; left:15px; width:80px; height:80px;
-  z-index:20; display:none; cursor: pointer;
+/* MENU LATERAL */
+#menu {
+    position:absolute; right:0; top:70%; transform:translateY(-50%);
+    width:300px; height:520px; background:url("media/menu.png") no-repeat right center;
+    background-size:contain; display:none; z-index:15; pointer-events:none;
 }
-#menuToggle,#backToVideo2{
-  position:absolute; top:15px; right:15px; width:120px; height:80px;
-  z-index:20; display:none; cursor: pointer;
+.menu-hotspot { position:absolute; right:35px; width:90px; height:70px; cursor:pointer; pointer-events:auto; }
+#btn1 { top:95px; } #btn2 { top:195px; } #btn3 { top:295px; }
+
+/* HOTSPOTS INTERATIVOS */
+#mapsHotspot { position:absolute; left:50%; bottom:200px; transform:translateX(-50%); width:320px; height:120px; z-index:20; display:none; }
+#formHotspot { position:absolute; left:50%; bottom:80px; transform:translateX(-50%); width:320px; height:90px; z-index:20; display:none; }
+
+/* CONTADOR */
+#countdown { position:absolute; left:50%; bottom:200px; transform:translateX(-50%); display:none; z-index:20; color:#fff; font-family:Arial,sans-serif; }
+.count-grid { display:flex; gap:14px; text-align:center; justify-content:center; }
+.count-box { min-width:70px; }
+.count-num { font-size:28px; font-weight:bold; }
+.count-label { font-size:12px; margin-top:4px; }
+
+/* TRANSIÇÃO ENTRE VÍDEOS */
+#transition { position:absolute; inset:0; display:none; align-items:center; justify-content:center; z-index:50; background:rgba(0,0,0,.15); }
+
+/* ===== EDITAR TAMANHO DO ÍCONE DE TRANSIÇÃO AQUI ===== */
+#transition img { 
+    width: 500px; 
+    animation: zoomIcon .9s ease forwards; 
 }
 
-#menu{
-  position:absolute; right:0; top:70%; transform:translateY(-50%);
-  width:300px; height:520px; background:url("media/menu.png") no-repeat right center;
-  background-size:contain; display:none; z-index:15; pointer-events:none;
-}
-.menu-hotspot{
-  position:absolute; right:35px; width:90px; height:70px;
-  cursor:pointer; pointer-events:auto;
-}
-#btn1{top:95px} #btn2{top:195px} #btn3{top:295px}
-
-#mapsHotspot{
-  position:absolute; left:50%; bottom:200px; transform:translateX(-50%);
-  width:320px; height:120px; z-index:20; display:none;
-}
-
-#formHotspot{
-  position:absolute; left:50%; bottom:80px; transform:translateX(-50%);
-  width:320px; height:90px; z-index:20; display:none;
-}
-
-#countdown{
-  position:absolute; left:50%; bottom:200px; transform:translateX(-50%);
-  display:none; z-index:20; color:#fff; font-family:Arial,sans-serif;
-}
-.count-grid{display:flex;gap:14px;text-align:center;justify-content:center}
-.count-box{min-width:70px}
-.count-num{font-size:28px;font-weight:bold}
-.count-label{font-size:12px;margin-top:4px}
-
-#transition{
-  position:absolute; inset:0; display:none; align-items:center;
-  justify-content:center; z-index:50; background:rgba(0,0,0,.15);
-}
-#transition img{ width:500px; animation:zoomIcon .9s ease forwards; }
-@keyframes zoomIcon{
-  0%{transform:scale(.2);opacity:0}
-  40%{transform:scale(1.1);opacity:1}
-  70%{transform:scale(.95);opacity:1}
-  100%{transform:scale(.3);opacity:0}
+@keyframes zoomIcon {
+    0% { transform:scale(.2); opacity:0; }
+    40% { transform:scale(1.1); opacity:1; }
+    70% { transform:scale(.95); opacity:1; }
+    100% { transform:scale(.3); opacity:0; }
 }
 </style>
 </head>
-
 <body>
 
 <video id="video" autoplay muted playsinline preload="auto"></video>
@@ -119,191 +80,201 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;display:flex;ju
 
 <div id="video1Click"></div>
 <div id="footerInvite"></div>
-
 <div id="audioControl"></div>
 <div id="menuToggle"></div>
 <div id="backToVideo2"></div>
 
 <div id="menu">
-  <div id="btn1" class="menu-hotspot" onclick="goVideoWithTransition(3)"></div>
-  <div id="btn2" class="menu-hotspot" onclick="goVideoWithTransition(4)"></div>
-  <div id="btn3" class="menu-hotspot" onclick="goVideoWithTransition(5)"></div>
+    <div id="btn1" class="menu-hotspot" onclick="goVideoWithTransition(3)"></div>
+    <div id="btn2" class="menu-hotspot" onclick="goVideoWithTransition(4)"></div>
+    <div id="btn3" class="menu-hotspot" onclick="goVideoWithTransition(5)"></div>
 </div>
 
-<a id="mapsHotspot" href="https://maps.app.goo.gl/mawxDEiANM3pBqyM7" target="_blank"></a>
+<a id="mapsHotspot" href="https://maps.google.com" target="_blank"></a>
 <a id="formHotspot" href="https://forms.gle/BkcfW7u2ESfEkXku7" target="_blank"></a>
 
 <div id="transition">
-  <img src="media/icon.png">
+    <img src="media/icon.png">
 </div>
 
 <div id="countdown">
-  <div class="count-grid">
-    <div class="count-box"><div class="count-num" id="d">00</div><div class="count-label">Dias</div></div>
-    <div class="count-box"><div class="count-num" id="h">00</div><div class="count-label">Horas</div></div>
-    <div class="count-box"><div class="count-num" id="m">00</div><div class="count-label">Min</div></div>
-    <div class="count-box"><div class="count-num" id="s">00</div><div class="count-label">Seg</div></div>
-  </div>
+    <div class="count-grid">
+        <div class="count-box"><div class="count-num" id="d">00</div><div class="count-label">Dias</div></div>
+        <div class="count-box"><div class="count-num" id="h">00</div><div class="count-label">Horas</div></div>
+        <div class="count-box"><div class="count-num" id="m">00</div><div class="count-label">Min</div></div>
+        <div class="count-box"><div class="count-num" id="s">00</div><div class="count-label">Seg</div></div>
+    </div>
 </div>
 
 <script>
-const LOOP_START = 8;
-const EVENT_DATE = "2026-03-08T18:00:00";
+// ============================================================
+//           ÁREA DE EDIÇÃO PARA AS ALUNAS (IMPORTANTE)
+// ============================================================
+
+const LOOP_START = 8; // Tempo (segundos) onde o loop do vídeo 2 começa
+const EVENT_DATE = "2026-03-08T18:00:00"; // Data do Evento (Ano-Mês-DiaTHora)
+
+// LISTA DE CONVIDADOS E SENHAS
+// Padrão: "Nome": "Senha"
+const convidados = {
+    "Drika": "0809",
+    "Andressa": "1234",
+    "Ramon": "5566",
+    "Myrtes": "7788",
+    "Thais": "0000"
+};
+
+// ============================================================
+//                LÓGICA DO SISTEMA (CUIDADO AO EDITAR)
+// ============================================================
+
 let video2FirstPlay = true;
 let countdownInterval;
 let preloaded = false;
 
-const convidados=["Drika","Andressa","Ramon","Myrtes","Thais","Marcela","Tatiane","Kelly","Katia","Aline","Ruan"];
-
-const video=document.getElementById("video");
-const audio=document.getElementById("audio");
-const footer=document.getElementById("footerInvite");
-const clickV1=document.getElementById("video1Click");
-const audioCtrl=document.getElementById("audioControl");
-const menuToggle=document.getElementById("menuToggle");
-const menu=document.getElementById("menu");
-const backBtn=document.getElementById("backToVideo2");
-const mapsHotspot=document.getElementById("mapsHotspot");
-const countdown=document.getElementById("countdown");
-const formHotspot=document.getElementById("formHotspot");
-const transition=document.getElementById("transition");
-
+const video = document.getElementById("video");
+const audio = document.getElementById("audio");
+const footer = document.getElementById("footerInvite");
+const clickV1 = document.getElementById("video1Click");
+const audioCtrl = document.getElementById("audioControl");
+const menuToggle = document.getElementById("menuToggle");
+const menu = document.getElementById("menu");
+const backBtn = document.getElementById("backToVideo2");
+const mapsHotspot = document.getElementById("mapsHotspot");
+const countdown = document.getElementById("countdown");
+const formHotspot = document.getElementById("formHotspot");
+const transition = document.getElementById("transition");
 const d=document.getElementById("d"), h=document.getElementById("h"), m=document.getElementById("m"), s=document.getElementById("s");
 
 function preloadNextVideos(){
-  if(preloaded) return;
-  preloaded = true;
-  [3,4,5].forEach(n=>{
-    const v=document.createElement("video");
-    v.src=`media/video${n}.mp4`;
-    v.preload="auto";
-  });
+    if(preloaded) return;
+    preloaded = true;
+    [3,4,5].forEach(n=>{
+        const v = document.createElement("video");
+        v.src = `media/video${n}.mp4`;
+        v.preload = "auto";
+    });
 }
 
-// Função para mudar o volume suavemente para um valor alvo
+// Função para mudar o volume suavemente (Ducking/Fade)
 function fadeTo(targetVolume, duration = 1000) {
     const startVolume = audio.volume;
     const diff = targetVolume - startVolume;
     const startTime = performance.now();
-
     function update(currentTime) {
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / duration, 1);
         audio.volume = startVolume + (diff * progress);
-
-        if (progress < 1) {
-            requestAnimationFrame(update);
-        }
+        if (progress < 1) requestAnimationFrame(update);
     }
     requestAnimationFrame(update);
 }
 
 function resetVideoEvents(){
-  video.onended=null;
-  video.ontimeupdate=null;
-  video.onloadedmetadata=null;
-  clearInterval(countdownInterval);
+    video.onended = null;
+    video.ontimeupdate = null;
+    video.onloadedmetadata = null;
+    clearInterval(countdownInterval);
 }
 
-function loadVideo(n,fromReturn=false){
-  resetVideoEvents();
-  video.src=`media/video${n}.mp4`;
-  video.load();
-  
-  // No vídeo 2 (fala do personagem), tiramos o MUTE do vídeo
-  video.muted = (n === 2 && video2FirstPlay && !fromReturn) ? false : true;
-  
-  video.play();
+function loadVideo(n, fromReturn = false){
+    resetVideoEvents();
+    video.src = `media/video${n}.mp4`;
+    video.load();
+    
+    // Libera o som do Vídeo 2 na primeira vez para ouvir a fala
+    video.muted = (n === 2 && video2FirstPlay && !fromReturn) ? false : true;
+    video.play();
 
-  footer.classList.remove("show");
-  clickV1.style.display=n===1?"block":"none";
-  audioCtrl.style.display=n===2?"block":"none";
-  menuToggle.style.display=n===2?"block":"none";
-  menu.style.display="none";
-  backBtn.style.display=n>=3?"block":"none";
-  mapsHotspot.style.display=n===3?"block":"none";
-  countdown.style.display=n===4?"block":"none";
-  formHotspot.style.display=n===4?"block":"none";
+    footer.classList.remove("show");
+    clickV1.style.display = n === 1 ? "block" : "none";
+    audioCtrl.style.display = n === 2 ? "block" : "none";
+    menuToggle.style.display = n === 2 ? "block" : "none";
+    menu.style.display = "none";
+    backBtn.style.display = n >= 3 ? "block" : "none";
+    mapsHotspot.style.display = n === 3 ? "block" : "none";
+    countdown.style.display = n === 4 ? "block" : "none";
+    formHotspot.style.display = n === 4 ? "block" : "none";
 
-  if(n===1) showInviteWithDelay();
-  if(n===4) startCountdown();
+    if(n === 1) showInviteWithDelay();
+    if(n === 4) startCountdown();
 
-  if(n===2){
-    preloadNextVideos();
-    audio.play();
-
-    if(video2FirstPlay && !fromReturn){
-      // ABAIXA A TRILHA PARA OUVIR A FALA (Ducking)
-      fadeTo(0.15, 800); 
-
-      video.onended = () => {
-        video.pause();
-        video2FirstPlay = false;
-        // VOLTA A TRILHA AO NORMAL quando a fala acabar
-        fadeTo(1, 1000); 
-      };
+    if(n === 2){
+        preloadNextVideos();
+        audio.play();
+        if(video2FirstPlay && !fromReturn){
+            fadeTo(0.15, 800); // Abaixa a trilha para a fala aparecer
+            video.onended = () => {
+                video.pause();
+                video2FirstPlay = false;
+                fadeTo(1, 1000); // Volta a trilha ao normal
+            };
+        } else {
+            audio.volume = 1;
+            video.muted = true;
+            video.onloadedmetadata = () => video.currentTime = LOOP_START;
+            video.ontimeupdate = () => {
+                if(video.currentTime >= video.duration - 0.2) video.currentTime = LOOP_START;
+            };
+        }
     } else {
-      // Loop normal da navegação (trilha em 100%)
-      audio.volume = 1;
-      video.muted = true;
-      video.onloadedmetadata = () => video.currentTime = LOOP_START;
-      video.ontimeupdate = () => {
-        if(video.currentTime >= video.duration - 0.2) video.currentTime = LOOP_START;
-      };
+        audio.volume = 1;
     }
-  } else {
-      // Se for outro vídeo (3, 4, 5), garante que a trilha está alta
-      audio.volume = 1;
-  }
-  
-  if(n>=3) video.onended = () => { video.currentTime = 0; video.play(); };
+    if(n >= 3) video.onended = () => { video.currentTime = 0; video.play(); };
 }
 
 function goVideoWithTransition(n){
-  transition.style.display="flex";
-  const img=transition.firstElementChild;
-  img.style.animation="none";
-  img.offsetHeight;
-  img.style.animation="zoomIcon .9s ease forwards";
-  setTimeout(()=>{
-    transition.style.display="none";
-    loadVideo(n);
-  },900);
+    transition.style.display = "flex";
+    const img = transition.firstElementChild;
+    img.style.animation = "none";
+    img.offsetHeight;
+    img.style.animation = "zoomIcon .9s ease forwards";
+    setTimeout(() => {
+        transition.style.display = "none";
+        loadVideo(n);
+    }, 900);
 }
 
 function startCountdown(){
-  const target=new Date(EVENT_DATE).getTime();
-  countdownInterval=setInterval(()=>{
-    const diff=target-Date.now();
-    if(diff<=0){ clearInterval(countdownInterval); return; }
-    d.textContent=String(Math.floor(diff/86400000)).padStart(2,"0");
-    h.textContent=String(Math.floor(diff/3600000)%24).padStart(2,"0");
-    m.textContent=String(Math.floor(diff/60000)%60).padStart(2,"0");
-    s.textContent=String(Math.floor(diff/1000)%60).padStart(2,"0");
-  },1000);
+    const target = new Date(EVENT_DATE).getTime();
+    countdownInterval = setInterval(() => {
+        const diff = target - Date.now();
+        if(diff <= 0){ clearInterval(countdownInterval); return; }
+        d.textContent = String(Math.floor(diff/86400000)).padStart(2,"0");
+        h.textContent = String(Math.floor(diff/3600000)%24).padStart(2,"0");
+        m.textContent = String(Math.floor(diff/60000)%60).padStart(2,"0");
+        s.textContent = String(Math.floor(diff/1000)%60).padStart(2,"0");
+    }, 1000);
 }
 
+// FUNÇÃO DE SEGURANÇA (NOME + SENHA)
 function showInviteWithDelay(){
-  const nome=new URLSearchParams(location.search).get("nome");
-  if(nome && convidados.includes(nome)){
-    setTimeout(()=>{
-      footer.innerHTML=`<strong>${nome},</strong><span>Este convite foi preparado<br>especialmente para você</span>`;
-      footer.classList.add("show");
-    },1000);
-  }
+    const params = new URLSearchParams(location.search);
+    const nome = params.get("nome");
+    const senha = params.get("senha");
+
+    // Valida se o nome existe e se a senha bate com o nome
+    if(nome && convidados[nome] && convidados[nome] === senha){
+        setTimeout(() => {
+            footer.innerHTML = `<strong>${nome},</strong><span>Este convite foi preparado<br>especialmente para você</span>`;
+            footer.classList.add("show");
+        }, 1000);
+    }
 }
 
-clickV1.onclick=()=>{ loadVideo(2); };
+// INTERAÇÕES DE CLIQUE
+clickV1.onclick = () => { loadVideo(2); };
 
-audioCtrl.onclick=e=>{ 
+audioCtrl.onclick = e => { 
     e.stopPropagation(); 
     if (audio.paused) { audio.play(); fadeTo(1, 500); } 
     else { fadeTo(0, 800); setTimeout(() => audio.pause(), 800); }
 };
 
-menuToggle.onclick=e=>{ e.stopPropagation(); menu.style.display=menu.style.display==="block"?"none":"block"; };
-backBtn.onclick=()=>loadVideo(2,true);
+menuToggle.onclick = e => { e.stopPropagation(); menu.style.display = (menu.style.display === "block") ? "none" : "block"; };
+backBtn.onclick = () => loadVideo(2, true);
 
+// Inicia no Vídeo 1
 loadVideo(1);
 </script>
 
