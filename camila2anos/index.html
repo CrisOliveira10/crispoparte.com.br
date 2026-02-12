@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Camila 2 Anos</title>
 
-<!-- Open Graph -->
 <meta property="og:title" content="Convite Especial - Camila">
 <meta property="og:description" content="Clique para abrir o convite interativo!">
 <meta property="og:image" content="https://crispoparte.com.br/camila2anos/capalink.png">
@@ -16,11 +15,11 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:type" content="image/png">
 
-<!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Convite Especial - Camila">
 <meta name="twitter:description" content="Clique para abrir o convite interativo!">
 <meta name="twitter:image" content="https://crispoparte.com.br/camila2anos/capalink.png">
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;overflow:hidden;background:#000;display:flex;justify-content:center;align-items:center}
@@ -40,7 +39,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;display:flex;ju
 /* ===== TEXTO CONVIDADO CENTRALIZADO ===== */
 #footerInvite{
   position:absolute;
-  bottom:8%; /* Subi um pouco para não cortar em alguns celulares */
+  bottom:8%; 
   width:90%;
   left: 50%;
   transform: translateX(-50%) translateY(20px);
@@ -83,6 +82,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;display:flex;ju
   height:80px;
   z-index:20;
   display:none;
+  cursor: pointer;
 }
 #menuToggle,#backToVideo2{
   position:absolute;
@@ -92,6 +92,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;display:flex;ju
   height:80px;
   z-index:20;
   display:none;
+  cursor: pointer;
 }
 
 #menu{
@@ -246,6 +247,21 @@ function preloadNextVideos(){
   });
 }
 
+// Função para abaixar volume suavemente (exclusivo para o controle do vídeo 2)
+function fadeOutAudio() {
+    const step = 0.05;
+    const interval = 50; 
+    const fade = setInterval(() => {
+        if (audio.volume > step) {
+            audio.volume -= step;
+        } else {
+            audio.volume = 0;
+            audio.pause();
+            clearInterval(fade);
+        }
+    }, interval);
+}
+
 function resetVideoEvents(){
   video.onended=null;
   video.ontimeupdate=null;
@@ -274,6 +290,11 @@ function loadVideo(n,fromReturn=false){
 
   if(n===2){
     preloadNextVideos();
+    
+    // Ativa o som no vídeo 2
+    audio.volume = 1;
+    audio.play();
+
     if(video2FirstPlay && !fromReturn){
       video.onended=()=>video.pause();
       video2FirstPlay=false;
@@ -284,6 +305,7 @@ function loadVideo(n,fromReturn=false){
       };
     }
   }
+  
   if(n>=3) video.onended=()=> { video.currentTime=0; video.play(); };
 }
 
@@ -321,8 +343,19 @@ function showInviteWithDelay(){
   }
 }
 
-clickV1.onclick=()=>{ audio.play(); loadVideo(2); };
-audioCtrl.onclick=e=>{ e.stopPropagation(); audio.paused ? audio.play() : audio.pause(); };
+// Interações
+clickV1.onclick=()=>{ loadVideo(2); };
+
+audioCtrl.onclick=e=>{ 
+    e.stopPropagation(); 
+    if (audio.paused) {
+        audio.volume = 1;
+        audio.play();
+    } else {
+        fadeOutAudio(); // Abaixa suavemente apenas aqui
+    }
+};
+
 menuToggle.onclick=e=>{ e.stopPropagation(); menu.style.display=menu.style.display==="block"?"none":"block"; };
 backBtn.onclick=()=>loadVideo(2,true);
 
