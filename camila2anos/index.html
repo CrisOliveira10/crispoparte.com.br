@@ -57,7 +57,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;display:flex;ju
 
 /* ============================================================
   2. TAMANHO DO ÍCONE DE TRANSIÇÃO
-  Se o ícone ficar grande ou pequeno demais, altere o width aqui.
+  ALTERE O VALOR DO WIDTH ABAIXO PARA MUDAR O TAMANHO DO ÍCONE
   ============================================================
 */
 #transition img{width:500px;animation:zoomIcon .9s ease forwards}
@@ -103,12 +103,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;display:flex;ju
 
 <script>
 // ============================================================
-//            4. LISTA DE CONVIDADOS E CONFIGURAÇÕES
-//            Esta é a parte principal para as alunas!
+//           4. LISTA DE CONVIDADOS E CONFIGURAÇÕES
+//           ESTA É A PARTE PRINCIPAL PARA AS ALUNAS!
 // ============================================================
 
-const LOOP_START = 8; // Tempo onde o vídeo 2 fica em loop
-const EVENT_DATE = "2026-03-08T18:00:00"; // Data do evento para o contador
+const LOOP_START = 8; // TEMPO ONDE O VÍDEO 2 FICA EM LOOP (EM SEGUNDOS)
+const EVENT_DATE = "2026-03-08T18:00:00"; // ALTERE A DATA DO EVENTO AQUI
 
 const convidados = {
     "Drika": "0809",
@@ -116,7 +116,7 @@ const convidados = {
     "Ramon": "5566",
     "Myrtes": "7788",
     "Cristiane": "1808"
-    // Para adicionar mais: "Nome": "Senha",
+    // PARA ADICIONAR MAIS: "Nome": "Senha",
 };
 
 // ============================================================
@@ -233,7 +233,7 @@ function startCountdown(){
 
 // ============================================================
 // 5. TEXTO PERSONALIZADO DO CONVIDADO (EDITÁVEL)
-// Altere as frases dentro de footer.innerHTML
+// ALTERE AS FRASES DENTRO DO footer.innerHTML ABAIXO
 // ============================================================
 function showInviteWithDelay(){
   const params = new URLSearchParams(location.search);
