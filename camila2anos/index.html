@@ -20,7 +20,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;display:flex;ju
 #video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
 #audio{display:none}
 
-/* ESTILO DO TEXTO DO CONVIDADO */
 #footerInvite{
   position:absolute;bottom:8%;width:90%;left:50%;
   transform:translateX(-50%) translateY(20px);
@@ -55,10 +54,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;display:flex;ju
 
 #transition{position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:50;background:rgba(0,0,0,.15)}
 
-/* ============================================================
-  2. TAMANHO DO ÍCONE DE TRANSIÇÃO
-  ============================================================
-*/
 #transition img{width:500px;animation:zoomIcon .9s ease forwards}
 
 @keyframes zoomIcon{
@@ -101,13 +96,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;display:flex;ju
 </div>
 
 <script>
-// ============================================================
-//           4. LISTA DE CONVIDADOS E CONFIGURAÇÕES
-//           ESTA É A PARTE PRINCIPAL PARA AS ALUNAS!
-// ============================================================
-
-const LOOP_START = 8; // TEMPO ONDE O VÍDEO 2 FICA EM LOOP (EM SEGUNDOS)
-const EVENT_DATE = "2026-03-08T18:00:00"; // DATA DO EVENTO PARA O CONTADOR
+const LOOP_START = 8; 
+const EVENT_DATE = "2026-03-08T18:00:00"; 
 
 const convidados = {
     "Drika": "0809",
@@ -116,12 +106,8 @@ const convidados = {
     "Myrtes": "7788",
     "Cristiane": "1808",
     "Marcela": "2158"
-    // PARA ADICIONAR MAIS: "Nome": "Senha",
 };
 
-// ============================================================
-//                LÓGICA INTERNA (SISTEMA)
-// ============================================================
 let video2FirstPlay = true;
 let countdownInterval;
 let preloaded = false;
