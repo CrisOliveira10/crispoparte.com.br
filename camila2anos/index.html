@@ -57,7 +57,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;display:flex;ju
 
 /* ============================================================
   2. TAMANHO DO ÍCONE DE TRANSIÇÃO
-  Se o ícone ficar grande ou pequeno demais, altere o width aqui.
   ============================================================
 */
 #transition img{width:500px;animation:zoomIcon .9s ease forwards}
@@ -87,7 +86,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;display:flex;ju
   <div id="btn3" class="menu-hotspot" onclick="goVideoWithTransition(5)"></div>
 </div>
 
-<a id="mapsHotspot" href="https://maps.app.goo.gl/mawxDEiANM3pBqyM7"_blank"></a>
+<a id="mapsHotspot" href="https://www.google.com/maps" target="_blank"></a>
 <a id="formHotspot" href="https://forms.gle/BkcfW7u2ESfEkXku7" target="_blank"></a>
 
 <div id="transition"><img src="media/icon.png"></div>
@@ -104,11 +103,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;display:flex;ju
 <script>
 // ============================================================
 //           4. LISTA DE CONVIDADOS E CONFIGURAÇÕES
-//           Esta é a parte principal para as alunas!
 // ============================================================
 
-const LOOP_START = 8; // Tempo onde o vídeo 2 fica em loop
-const EVENT_DATE = "2026-03-08T18:00:00"; // Data do evento para o contador
+const LOOP_START = 8; 
+const EVENT_DATE = "2026-03-08T18:00:00"; 
 
 const convidados = {
     "Drika": "0809",
@@ -116,12 +114,11 @@ const convidados = {
     "Ramon": "5566",
     "Myrtes": "7788",
     "Cristiane": "1808",
-  "Thais":"4545","Daniela":"1205","Tatiane":"6569","Marcela":"7875"
-    // Para adicionar mais: "Nome": "Senha",
+    "Thais":"4545","Daniela":"1205","Tatiane":"6569","Marcela":"7875"
 };
 
 // ============================================================
-//                LÓGICA INTERNA (SISTEMA)
+//                 LÓGICA INTERNA (SISTEMA)
 // ============================================================
 let video2FirstPlay = true;
 let countdownInterval;
@@ -233,22 +230,32 @@ function startCountdown(){
 }
 
 // ============================================================
-// 5. TEXTO PERSONALIZADO DO CONVIDADO (EDITÁVEL)
-// Altere as frases dentro de footer.innerHTML
+// 5. TEXTO PERSONALIZADO E MODO PORTARIA
 // ============================================================
 function showInviteWithDelay(){
   const params = new URLSearchParams(location.search);
   const nome = params.get("nome");
+  const ehPortaria = params.get("portaria");
 
   if(nome && convidados[nome]){
     const senhaRecuperada = convidados[nome]; 
     
     setTimeout(()=>{
-      footer.innerHTML=`
-        <strong>${nome},</strong>
-        <span>Sua senha de acesso é: <strong>${senhaRecuperada}</strong><br>
-        Este convite foi preparado<br>especialmente para você!</span>
-      `;
+      if(ehPortaria === "sim") {
+        footer.innerHTML=`
+          <div style="background: #28a745; padding: 15px; border-radius: 10px; border: 2px solid #fff;">
+            <strong style="font-size: 26px;">✅ ACESSO LIBERADO</strong><br>
+            <span style="font-size: 20px; font-weight: bold;">CONVIDADO(A): ${nome}</span><br>
+            <span style="font-size: 18px;">SENHA: ${senhaRecuperada}</span>
+          </div>
+        `;
+      } else {
+        footer.innerHTML=`
+          <strong>${nome},</strong>
+          <span>Sua senha de acesso é: <strong>${senhaRecuperada}</strong><br>
+          Este convite foi preparado<br>especialmente para você!</span>
+        `;
+      }
       footer.classList.add("show");
     },1000);
   }
