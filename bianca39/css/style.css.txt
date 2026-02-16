@@ -1,0 +1,161 @@
+:root{
+  --cor-primaria: #6b4b3e;   /* COR PRINCIPAL EDITÁVEL */
+  --cor-botao-audio: #ffffff;
+  --cor-icone-audio: #6b4b3e;
+}
+
+body{
+  margin:0;
+  font-family: Arial, sans-serif;
+  background:#fff;
+  scroll-behavior:smooth;
+}
+
+/* =================== PAGINAS =================== */
+
+.pagina{
+  position:relative;
+  width:100%;
+  text-align:center;
+  padding:0;
+}
+
+.full-img,
+.full-video{
+  width:100%;
+  max-width:900px;
+  display:block;
+  margin:0 auto;
+}
+
+/* =================== BOTÃO AUDIO =================== */
+
+.audio-btn{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  border:none;
+  background:var(--cor-botao-audio);
+  color:var(--cor-icone-audio);
+  font-size:22px;
+  cursor:pointer;
+  z-index:9999;
+  box-shadow:0 4px 15px rgba(0,0,0,0.3);
+}
+
+/* =================== CONTADOR (PAG 3) =================== */
+
+.contador-topo{
+  position:absolute;
+  top:5%;
+  left:50%;
+  transform:translateX(-50%);
+  color:#fff;
+  z-index:5;
+}
+
+#countdown{
+  font-size:24px;
+  margin-top:10px;
+}
+
+/* =================== BOTÃO SALVAR AGENDA =================== */
+
+.btn-agenda{
+  position:absolute;
+  bottom:5%;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:5;
+}
+
+/* =================== BOTÕES PRINCIPAIS =================== */
+
+.btn-principal{
+  padding:14px 30px;
+  background:var(--cor-primaria);
+  color:#fff;
+  border:none;
+  cursor:pointer;
+  font-size:16px;
+}
+
+/* =================== PAGINA 5 BOTÕES =================== */
+
+.btn-confirmar{
+  position:absolute;
+  bottom:35%;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:5;
+}
+
+.btn-maps{
+  position:absolute;
+  bottom:20%;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:5;
+  text-decoration:none;
+}
+
+/* =================== PIX PAGINA 6 =================== */
+
+.pix-area{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  text-align:center;
+  z-index:5;
+  color:#fff;
+}
+
+/* =================== MODAL =================== */
+
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.7);
+  z-index:99999;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.modal-content{
+  background:#fff;
+  padding:30px;
+  width:90%;
+  max-width:400px;
+  border-radius:8px;
+}
+
+input{
+  width:100%;
+  margin-top:10px;
+  padding:8px;
+}
+
+.btn-marrom{
+  background:var(--cor-primaria);
+  color:#fff;
+  padding:10px;
+  border:none;
+  margin-top:10px;
+  cursor:pointer;
+  width:100%;
+}
+
+/* =================== FOOTER =================== */
+
+footer{
+  text-align:center;
+  padding:30px;
+  background:#f5f5f5;
+  font-size:14px;
+}
