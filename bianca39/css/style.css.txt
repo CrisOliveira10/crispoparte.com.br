@@ -1,12 +1,12 @@
 :root{
-  --cor-primaria: #6b4b3e;   /* COR PRINCIPAL EDITÁVEL */
-  --cor-botao-audio: #ffffff;
-  --cor-icone-audio: #6b4b3e;
+  --cor-primaria:#6b4b3e;
+  --cor-botao-audio:#ffffff;
+  --cor-icone-audio:#6b4b3e;
 }
 
 body{
   margin:0;
-  font-family: Arial, sans-serif;
+  font-family:Arial, sans-serif;
   background:#fff;
   scroll-behavior:smooth;
 }
@@ -50,26 +50,47 @@ body{
 
 .contador-topo{
   position:absolute;
-  top:5%;
+  top:8%;
   left:50%;
   transform:translateX(-50%);
   color:#fff;
-  z-index:5;
+  z-index:10;
+  text-align:center;
 }
 
 #countdown{
-  font-size:24px;
+  font-size:26px;
   margin-top:10px;
+  font-weight:bold;
+}
+
+/* =================== CANVA CENTRAL =================== */
+
+.canva-container{
+  position:absolute;
+  top:45%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:90%;
+  max-width:800px;
+  z-index:10;
+}
+
+.canva-container iframe{
+  width:100%;
+  height:450px;
+  border:none;
+  border-radius:8px;
 }
 
 /* =================== BOTÃO SALVAR AGENDA =================== */
 
 .btn-agenda{
   position:absolute;
-  bottom:5%;
+  bottom:8%;
   left:50%;
   transform:translateX(-50%);
-  z-index:5;
+  z-index:10;
 }
 
 /* =================== BOTÕES PRINCIPAIS =================== */
@@ -81,6 +102,7 @@ body{
   border:none;
   cursor:pointer;
   font-size:16px;
+  border-radius:6px;
 }
 
 /* =================== PAGINA 5 BOTÕES =================== */
@@ -90,7 +112,7 @@ body{
   bottom:35%;
   left:50%;
   transform:translateX(-50%);
-  z-index:5;
+  z-index:10;
 }
 
 .btn-maps{
@@ -98,7 +120,7 @@ body{
   bottom:20%;
   left:50%;
   transform:translateX(-50%);
-  z-index:5;
+  z-index:10;
   text-decoration:none;
 }
 
@@ -110,8 +132,30 @@ body{
   left:50%;
   transform:translate(-50%,-50%);
   text-align:center;
-  z-index:5;
+  z-index:10;
   color:#fff;
+}
+
+.pix-line{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  align-items:center;
+  margin-top:10px;
+}
+
+#pixCode{
+  font-weight:bold;
+  background:rgba(255,255,255,0.2);
+  padding:8px 12px;
+  border-radius:6px;
+}
+
+.pix-msg{
+  display:none;
+  margin-top:8px;
+  font-size:14px;
+  font-weight:bold;
 }
 
 /* =================== MODAL =================== */
@@ -122,7 +166,6 @@ body{
   inset:0;
   background:rgba(0,0,0,0.7);
   z-index:99999;
-  display:flex;
   justify-content:center;
   align-items:center;
 }
@@ -133,6 +176,12 @@ body{
   width:90%;
   max-width:400px;
   border-radius:8px;
+  text-align:left;
+}
+
+.modal label{
+  display:block;
+  margin-top:10px;
 }
 
 input{
@@ -146,9 +195,10 @@ input{
   color:#fff;
   padding:10px;
   border:none;
-  margin-top:10px;
+  margin-top:15px;
   cursor:pointer;
   width:100%;
+  border-radius:6px;
 }
 
 /* =================== FOOTER =================== */
@@ -158,4 +208,27 @@ footer{
   padding:30px;
   background:#f5f5f5;
   font-size:14px;
+}
+
+/* =================== RESPONSIVO =================== */
+
+@media(max-width:768px){
+
+  .canva-container{
+    top:50%;
+  }
+
+  .canva-container iframe{
+    height:300px;
+  }
+
+  #countdown{
+    font-size:20px;
+  }
+
+  .btn-principal{
+    font-size:14px;
+    padding:12px 20px;
+  }
+
 }
