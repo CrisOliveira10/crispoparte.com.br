@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Convite Interativo</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<!-- BOTÃO PLAY/PAUSE -->
+<div class="audio-control" onclick="toggleAudio()">
+  <span id="audioIcon">▶</span>
+</div>
+
+<audio id="bgAudio" src="media/audio.mp3" loop></audio>
+
+<!-- PAGINA 1 -->
+<section class="pagina">
+  <img src="media/pagina1.png" class="full-img">
+</section>
+
+<!-- PAGINA 2 -->
+<section class="pagina">
+  <video src="media/pagina2.mp4" autoplay muted loop class="full-video"></video>
+</section>
+
+<!-- PAGINA 3 -->
+<section class="pagina central">
+  <img src="media/pagina3.png" class="full-img">
+  <div class="canva-container">
+    <iframe 
+      src="https://www.canva.com/design/DAGzjYuhX2M/rqhthTAdy_vF8cUo3qrzEg/view?embed"
+      allowfullscreen>
+    </iframe>
+  </div>
+</section>
+
+<!-- PAGINA 4 -->
+<section class="pagina central">
+  <img src="media/pagina4.png" class="full-img">
+
+  <div class="contador">
+    <h2>Faltam:</h2>
+    <div id="countdown"></div>
+
+    <button class="btn-principal"
+      onclick="gerarICS()">
+      Salvar na Agenda
+    </button>
+  </div>
+</section>
+
+<!-- PAGINA 5 -->
+<section class="pagina central">
+  <img src="media/pagina5.png" class="full-img">
+
+  <button class="btn-principal" onclick="abrirModal()">
+    Confirmar Presença
+  </button>
+</section>
+
+<!-- MODAL CONFIRMAÇÃO -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+
+    <h2>Você irá à festa?</h2>
+
+    <form id="formConfirmacao">
+      <label><input type="radio" name="resposta" value="Sim, Eu confirmo" required> Sim, Eu confirmo</label>
+      <label><input type="radio" name="resposta" value="Não posso"> Não posso.</label>
+
+      <input type="text" id="nome" placeholder="Seu nome" required>
+      <input type="text" id="acompanhantes" placeholder="Quem mais irá com você?">
+
+      <button type="submit" class="btn-marrom">Enviar</button>
+    </form>
+
+  </div>
+</div>
+
+<!-- PAGINA 6 -->
+<section class="pagina central">
+  <img src="media/pagina6.png" class="full-img">
+
+  <div class="pix-area">
+    <button class="btn-principal" onclick="copiarPix()">
+      Copiar chave Pix
+    </button>
+    <p id="pixMsg"></p>
+  </div>
+</section>
+
+<!-- RODAPÉ -->
+<footer>
+  <p>Desenvolvido por Cris Oliveira</p>
+  <p>Todos os direitos reservados.</p>
+  <p>
+    Entre em contato com o Desenvolvedor  
+    <a href="https://wa.me/5571993233142" target="_blank">WhatsApp</a>
+  </p>
+</footer>
+
+<script src="js/script.js"></script>
+</body>
+</html>
