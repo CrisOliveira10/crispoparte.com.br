@@ -4,34 +4,35 @@
   --cor-icone-audio:#6b4b3e;
 }
 
+/* =================== BASE =================== */
+
 body{
   margin:0;
   font-family:Arial, sans-serif;
-  background:#eaeaea; /* fundo elegante desktop */
+  background:#eaeaea;
   scroll-behavior:smooth;
 }
 
-/* =================== PAGINAS =================== */
-
+/* Container principal tipo "celular" */
 .pagina{
   position:relative;
   width:100%;
-  max-width:430px;          /* ideal para arte 1080x1920 */
-  margin:0 auto;            /* centraliza */
+  max-width:100vw;              /* usa largura real do aparelho */
   text-align:center;
   padding:0;
   overflow:hidden;
-  box-shadow:0 0 30px rgba(0,0,0,0.15);
+  margin:0 auto;
   background:#fff;
 }
+
+/* =================== IMAGENS / VIDEO =================== */
 
 .full-img,
 .full-video{
   width:100%;
   height:auto;
   display:block;
-  position:relative;
-  z-index:1;
+  object-fit:cover;
 }
 
 /* =================== BOTÃO AUDIO =================== */
@@ -40,8 +41,8 @@ body{
   position:fixed;
   bottom:20px;
   right:20px;
-  width:50px;
-  height:50px;
+  width:48px;
+  height:48px;
   border-radius:50%;
   border:none;
   background:var(--cor-botao-audio);
@@ -52,7 +53,7 @@ body{
   box-shadow:0 4px 15px rgba(0,0,0,0.3);
 }
 
-/* =================== CONTADOR (PAG 3) =================== */
+/* =================== CONTADOR =================== */
 
 .contador-topo{
   position:absolute;
@@ -66,18 +67,13 @@ body{
   pointer-events:none;
 }
 
-.contador-topo h2{
-  margin:0;
-  font-size:20px;
-}
-
 #countdown{
-  font-size:26px;
-  margin-top:8px;
+  font-size:6vw;   /* escala proporcional ao aparelho */
   font-weight:bold;
+  margin-top:8px;
 }
 
-/* =================== CANVA CENTRAL =================== */
+/* =================== CANVA =================== */
 
 .canva-container{
   position:absolute;
@@ -90,12 +86,23 @@ body{
 
 .canva-container iframe{
   width:100%;
-  height:450px;
+  height:55vw;   /* proporcional */
+  max-height:450px;
   border:none;
   border-radius:8px;
 }
 
-/* =================== BOTÃO SALVAR AGENDA =================== */
+/* =================== BOTÕES =================== */
+
+.btn-principal{
+  padding:14px 30px;
+  background:var(--cor-primaria);
+  color:#fff;
+  border:none;
+  cursor:pointer;
+  font-size:4vw;
+  border-radius:6px;
+}
 
 .btn-agenda{
   position:absolute;
@@ -104,20 +111,6 @@ body{
   transform:translateX(-50%);
   z-index:20;
 }
-
-/* =================== BOTÕES PRINCIPAIS =================== */
-
-.btn-principal{
-  padding:14px 30px;
-  background:var(--cor-primaria);
-  color:#fff;
-  border:none;
-  cursor:pointer;
-  font-size:16px;
-  border-radius:6px;
-}
-
-/* =================== PAGINA 5 BOTÕES =================== */
 
 .btn-confirmar{
   position:absolute;
@@ -136,7 +129,7 @@ body{
   text-decoration:none;
 }
 
-/* =================== PIX PAGINA 6 =================== */
+/* =================== PIX =================== */
 
 .pix-area{
   position:absolute;
@@ -194,11 +187,6 @@ body{
   text-align:left;
 }
 
-.modal label{
-  display:block;
-  margin-top:10px;
-}
-
 input{
   width:100%;
   margin-top:10px;
@@ -225,33 +213,26 @@ footer{
   font-size:14px;
 }
 
-/* =================== RESPONSIVO =================== */
+/* =================== DESKTOP AJUSTE =================== */
 
-@media(max-width:768px){
-
-  body{
-    background:#fff;
-  }
+@media(min-width:768px){
 
   .pagina{
-    box-shadow:none;
+    max-width:430px;    /* no desktop vira mockup de celular */
+    margin:0 auto;
+    box-shadow:0 0 30px rgba(0,0,0,0.2);
   }
 
-  .canva-container{
-    top:50%;
-  }
-
-  .canva-container iframe{
-    height:300px;
+  body{
+    background:#eaeaea;
   }
 
   #countdown{
-    font-size:20px;
+    font-size:26px;
   }
 
   .btn-principal{
-    font-size:14px;
-    padding:12px 20px;
+    font-size:16px;
   }
 
 }
