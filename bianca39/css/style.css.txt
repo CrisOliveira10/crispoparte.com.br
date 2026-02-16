@@ -7,7 +7,7 @@
 body{
   margin:0;
   font-family:Arial, sans-serif;
-  background:#fff;
+  background:#eaeaea; /* fundo elegante desktop */
   scroll-behavior:smooth;
 }
 
@@ -16,19 +16,22 @@ body{
 .pagina{
   position:relative;
   width:100%;
+  max-width:430px;          /* ideal para arte 1080x1920 */
+  margin:0 auto;            /* centraliza */
   text-align:center;
   padding:0;
   overflow:hidden;
+  box-shadow:0 0 30px rgba(0,0,0,0.15);
+  background:#fff;
 }
 
 .full-img,
 .full-video{
   width:100%;
-  max-width:900px;
+  height:auto;
   display:block;
-  margin:0 auto;
   position:relative;
-  z-index:1; /* imagem sempre atrás */
+  z-index:1;
 }
 
 /* =================== BOTÃO AUDIO =================== */
@@ -37,7 +40,7 @@ body{
   position:fixed;
   bottom:20px;
   right:20px;
-  width:50px;        /* menor */
+  width:50px;
   height:50px;
   border-radius:50%;
   border:none;
@@ -59,7 +62,7 @@ body{
   width:100%;
   text-align:center;
   color:#ffffff;
-  z-index:50;        /* aumentado */
+  z-index:50;
   pointer-events:none;
 }
 
@@ -82,7 +85,6 @@ body{
   left:50%;
   transform:translate(-50%,-50%);
   width:90%;
-  max-width:800px;
   z-index:20;
 }
 
@@ -138,7 +140,7 @@ body{
 
 .pix-area{
   position:absolute;
-  top:55%; /* ajustado para ficar melhor visualmente */
+  top:55%;
   left:50%;
   transform:translate(-50%,-50%);
   text-align:center;
@@ -226,6 +228,14 @@ footer{
 /* =================== RESPONSIVO =================== */
 
 @media(max-width:768px){
+
+  body{
+    background:#fff;
+  }
+
+  .pagina{
+    box-shadow:none;
+  }
 
   .canva-container{
     top:50%;
