@@ -1,0 +1,87 @@
+// AUDIO
+const audio = document.getElementById("bgAudio");
+const icon = document.getElementById("audioIcon");
+
+function toggleAudio() {
+  if (audio.paused) {
+    audio.play();
+    icon.textContent = "⏸";
+  } else {
+    audio.pause();
+    icon.textContent = "▶";
+  }
+}
+
+// CONTADOR
+const dataEvento = new Date("2026-08-18T19:00:00");
+
+function atualizarContador() {
+  const agora = new Date();
+  const diff = dataEvento - agora;
+
+  if (diff <= 0) {
+    document.getElementById("countdown").innerHTML = "É hoje!";
+    return;
+  }
+
+  const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const horas = Math.floor((diff / (1000 * 60 * 60)) % 24);
+  const minutos = Math.floor((diff / (1000 * 60)) % 60);
+  const segundos = Math.floor((diff / 1000) % 60);
+
+  document.getElementById("countdown").innerHTML =
+    `${dias}d ${horas}h ${minutos}m ${segundos}s`;
+}
+
+setInterval(atualizarContador, 1000);
+
+// GERAR ICS
+function gerarICS() {
+  const inicio = "20260818T190000";
+  const fim = "20260818T230000";
+
+  const ics =
+`BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+DTSTART;TZID=America/Sao_Paulo:${inicio}
+DTEND;TZID=America/Sao_Paulo:${fim}
+SUMMARY:Evento Especial
+DESCRIPTION:Convite Interativo
+LOCATION:Local do Evento
+END:VEVENT
+END:VCALENDAR`;
+
+  const blob = new Blob([ics], { type: "text/calendar" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "evento.ics";
+  link.click();
+}
+
+// MODAL
+function abrirModal() {
+  document.getElementById("modal").style.display = "flex";
+}
+
+// ENVIO PARA GOOGLE PLANILHA (via email editável)
+document.getElementById("formConfirmacao").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  const nome = document.getElementById("nome").value;
+  const acompanhantes = document.getElementById("acompanhantes").value;
+  const resposta = document.querySelector('input[name="resposta"]:checked').value;
+
+  const emailDestino = "crispoparte@gmail.com"; // EDITÁVEL
+
+  const assunto = "Confirmação de Presença";
+  const corpo = `Nome: ${nome}%0AResposta: ${resposta}%0AAcompanhantes: ${acompanhantes}`;
+
+  window.location.href = `mailto:${emailDestino}?subject=${assunto}&body=${corpo}`;
+});
+
+// PIX
+function copiarPix() {
+  navigator.clipboard.writeText("71993233142");
+  document.getElementById("pixMsg").textContent = "Chave Pix copiada!";
+}
