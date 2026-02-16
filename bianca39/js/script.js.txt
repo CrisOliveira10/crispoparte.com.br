@@ -9,15 +9,24 @@ const audioIcon = document.getElementById("audioIcon");
 let tocando = false;
 
 audioBtn.addEventListener("click", () => {
+
   if (!tocando) {
-    audio.play();
-    audioIcon.textContent = "❚❚";
-    tocando = true;
+
+    audio.play().then(() => {
+      audioIcon.textContent = "❚❚";
+      tocando = true;
+    }).catch(() => {
+      console.log("Autoplay bloqueado pelo navegador");
+    });
+
   } else {
+
     audio.pause();
     audioIcon.textContent = "▶";
     tocando = false;
+
   }
+
 });
 
 
@@ -25,7 +34,6 @@ audioBtn.addEventListener("click", () => {
    CONTADOR
 ========================= */
 
-// DATA CORRIGIDA (21 fevereiro 2026 - 20h)
 const dataEvento = new Date("2026-02-21T20:00:00");
 
 function atualizarContador() {
@@ -33,8 +41,12 @@ function atualizarContador() {
   const agora = new Date();
   const diff = dataEvento - agora;
 
+  const countdown = document.getElementById("countdown");
+
+  if (!countdown) return;
+
   if (diff <= 0) {
-    document.getElementById("countdown").innerHTML = "É HOJE!";
+    countdown.innerHTML = "É HOJE!";
     return;
   }
 
@@ -43,7 +55,7 @@ function atualizarContador() {
   const minutos = Math.floor((diff / (1000 * 60)) % 60);
   const segundos = Math.floor((diff / 1000) % 60);
 
-  document.getElementById("countdown").innerHTML =
+  countdown.innerHTML =
     `${dias}d ${horas}h ${minutos}m ${segundos}s`;
 }
 
@@ -92,7 +104,6 @@ function fecharModal() {
   document.getElementById("modal").style.display = "none";
 }
 
-// fechar clicando fora
 window.addEventListener("click", function(e){
   const modal = document.getElementById("modal");
   if(e.target === modal){
@@ -102,15 +113,32 @@ window.addEventListener("click", function(e){
 
 
 /* =========================
-   COPIAR PIX
+   COPIAR PIX (ATUALIZADO)
 ========================= */
 
-function copiarPix() {
+const copyButton = document.getElementById("copyButton");
 
-  const chave = document.getElementById("pixKey").innerText;
+if (copyButton) {
 
-  navigator.clipboard.writeText(chave).then(() => {
-    document.getElementById("pixMsg").textContent = "Chave Pix copiada!";
+  copyButton.addEventListener("click", function () {
+
+    const pixCode = document.getElementById("pixCode").innerText;
+    const message = document.getElementById("copyMessage");
+
+    navigator.clipboard.writeText(pixCode)
+      .then(() => {
+
+        message.style.display = "block";
+
+        setTimeout(() => {
+          message.style.display = "none";
+        }, 2000);
+
+      })
+      .catch(() => {
+        alert("Não foi possível copiar. Copie manualmente.");
+      });
+
   });
 
 }
