@@ -10,14 +10,13 @@
 
 /* ========================================================= */
 /* 🔴🔴🔴 ÁREA DE CORES EDITÁVEIS 🔴🔴🔴 */
-/* ALTERE SOMENTE AQUI */
 /* ========================================================= */
 
 :root{
-  --cor-fundo: #faf7f2;        /* 🎨 COR DE FUNDO DO SITE */
-  --cor-cronometro: #4d1010;   /* 🎨 COR DOS NÚMEROS DO CRONÔMETRO */
-  --cor-botoes: #4d1010;       /* 🎨 COR DOS BOTÕES */
-  --cor-texto-botoes: #ffffff; /* 🎨 COR DO TEXTO DOS BOTÕES */
+  --cor-fundo: #faf7f2;
+  --cor-cronometro: #4d1010;
+  --cor-botoes: #4d1010;
+  --cor-texto-botoes: #ffffff;
 }
 
 /* ========================================================= */
@@ -105,7 +104,7 @@ html,body{
   border-radius:8px;
 }
 
-/* BOTÃO MAPS */
+/* MAPS */
 .maps-btn{
   display:block;
   text-align:center;
@@ -116,7 +115,7 @@ html,body{
   text-decoration:none;
 }
 
-/* FORMULÁRIO */
+/* FORMULÁRIO GOOGLE */
 .form-box{
   padding:40px 15px;
   text-align:center;
@@ -127,20 +126,10 @@ html,body{
   margin-bottom:25px;
 }
 
-.form-box input{
+.form-box iframe{
   width:100%;
-  padding:15px;
-  font-size:18px;
-  margin-bottom:15px;
-}
-
-.form-box button{
-  padding:15px;
-  font-size:20px;
-  background:var(--cor-botoes);
-  color:var(--cor-texto-botoes);
+  height:650px;
   border:none;
-  width:100%;
 }
 
 /* PIX */
@@ -203,7 +192,7 @@ footer{
 <img src="media/pagina4.png" class="full-img">
 <div class="canva-box">
 
-<!-- 🔴🔴🔴 EDITAR LINK INCORPORADO DO CANVA AQUI 🔴🔴🔴 -->
+<!-- 🔴 EDITAR LINK CANVA AQUI -->
 <iframe src="https://www.canva.com/design/DAHBh6xi5Qs/8-drazZaaEd_nJX36uLFpw/view?embed"></iframe>
 
 </div>
@@ -213,7 +202,7 @@ footer{
 <section class="pagina">
 <img src="media/pagina5.png" class="full-img">
 
-<!-- 🔴🔴🔴 EDITAR LINK DO GOOGLE MAPS AQUI 🔴🔴🔴 -->
+<!-- 🔴 EDITAR LINK MAPS AQUI -->
 <a href="https://maps.app.goo.gl/1D3JBDRJyoShTRnh9" target="_blank" class="maps-btn">
 COMO CHEGAR
 </a>
@@ -221,17 +210,11 @@ COMO CHEGAR
 <div class="form-box">
 <h2>CONFIRME SUA PRESENÇA</h2>
 
-<!-- 🔴🔴🔴 EDITAR EMAIL QUE RECEBE O FORMULÁRIO AQUI 🔴🔴🔴 -->
-<form action="https://formsubmit.co/crispoparte@gmail.com" method="POST">
-
-<input type="hidden" name="_captcha" value="false">
-
-<input type="text" name="Nome" placeholder="Seu Nome" required>
-<input type="text" name="Acompanhantes" placeholder="Acompanhantes">
-
-<button type="submit">ENVIAR</button>
-
-</form>
+<!-- 🔴🔴🔴 GOOGLE FORMS INCORPORADO 🔴🔴🔴 -->
+<!-- SE PRECISAR ALTERAR, PEGAR O LINK DE INCORPORAÇÃO NO GOOGLE FORMS -->
+<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfZl-JMf4OIw0R7_eh3nHieNQTY8Gc8cIxxcI9pQ9vDAW8wYQ/viewform?embedded=true">
+Carregando…
+</iframe>
 
 </div>
 </section>
@@ -242,7 +225,7 @@ COMO CHEGAR
 
 <div class="pix-box">
 
-<!-- 🔴🔴🔴 EDITAR CHAVE PIX AQUI 🔴🔴🔴 -->
+<!-- 🔴 EDITAR CHAVE PIX AQUI -->
 <span id="pixKey">71993233142</span>
 
 <button id="copyBtn">COPIAR CHAVE PIX</button>
@@ -258,15 +241,10 @@ Todos os direitos reservados.
 
 <script>
 
-/* ========================================================= */
-/* 🔴🔴🔴 EDITAR DATA DO EVENTO AQUI 🔴🔴🔴 */
-/* FORMATO: ANO-MÊS-DIA T HORA:MINUTO:SEGUNDO */
-/* ========================================================= */
-
+/* 🔴 EDITAR DATA DO EVENTO AQUI */
 const dataEvento = new Date("2026-08-18T20:00:00");
 
-/* ========================================================= */
-
+/* AUDIO */
 const audio = document.getElementById("bgAudio");
 const btn = document.getElementById("audioBtn");
 let tocando=false;
@@ -283,6 +261,7 @@ tocando=false;
 }
 }
 
+/* CRONÔMETRO */
 function atualizar(){
 const agora = new Date();
 const diff = dataEvento - agora;
