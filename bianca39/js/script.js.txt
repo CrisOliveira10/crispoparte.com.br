@@ -1,26 +1,40 @@
-// AUDIO
-const audio = document.getElementById("bgAudio");
-const icon = document.getElementById("audioIcon");
+/* =========================
+   AUDIO PLAY / PAUSE
+========================= */
 
-function toggleAudio() {
-  if (audio.paused) {
+const audio = document.getElementById("bgAudio");
+const audioBtn = document.getElementById("audioBtn");
+const audioIcon = document.getElementById("audioIcon");
+
+let tocando = false;
+
+audioBtn.addEventListener("click", () => {
+  if (!tocando) {
     audio.play();
-    icon.textContent = "⏸";
+    audioIcon.textContent = "❚❚";
+    tocando = true;
   } else {
     audio.pause();
-    icon.textContent = "▶";
+    audioIcon.textContent = "▶";
+    tocando = false;
   }
-}
+});
 
-// CONTADOR
-const dataEvento = new Date("2026-08-18T19:00:00");
+
+/* =========================
+   CONTADOR
+========================= */
+
+// DATA CORRIGIDA (21 fevereiro 2026 - 20h)
+const dataEvento = new Date("2026-02-21T20:00:00");
 
 function atualizarContador() {
+
   const agora = new Date();
   const diff = dataEvento - agora;
 
   if (diff <= 0) {
-    document.getElementById("countdown").innerHTML = "É hoje!";
+    document.getElementById("countdown").innerHTML = "É HOJE!";
     return;
   }
 
@@ -33,12 +47,18 @@ function atualizarContador() {
     `${dias}d ${horas}h ${minutos}m ${segundos}s`;
 }
 
+atualizarContador();
 setInterval(atualizarContador, 1000);
 
-// GERAR ICS
+
+/* =========================
+   GERAR ARQUIVO ICS
+========================= */
+
 function gerarICS() {
-  const inicio = "20260818T190000";
-  const fim = "20260818T230000";
+
+  const inicio = "20260221T200000";
+  const fim = "20260221T230000";
 
   const ics =
 `BEGIN:VCALENDAR
@@ -46,42 +66,51 @@ VERSION:2.0
 BEGIN:VEVENT
 DTSTART;TZID=America/Sao_Paulo:${inicio}
 DTEND;TZID=America/Sao_Paulo:${fim}
-SUMMARY:Evento Especial
-DESCRIPTION:Convite Interativo
-LOCATION:Local do Evento
+SUMMARY:Aniversário Bianca 39
+DESCRIPTION:Venha celebrar comigo!
+LOCATION:MilMar Gelateria e Cafeteria - Salvador BA
 END:VEVENT
 END:VCALENDAR`;
 
   const blob = new Blob([ics], { type: "text/calendar" });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
-  link.download = "evento.ics";
+  link.download = "convite.ics";
   link.click();
 }
 
-// MODAL
+
+/* =========================
+   MODAL
+========================= */
+
 function abrirModal() {
   document.getElementById("modal").style.display = "flex";
 }
 
-// ENVIO PARA GOOGLE PLANILHA (via email editável)
-document.getElementById("formConfirmacao").addEventListener("submit", function(e) {
-  e.preventDefault();
+function fecharModal() {
+  document.getElementById("modal").style.display = "none";
+}
 
-  const nome = document.getElementById("nome").value;
-  const acompanhantes = document.getElementById("acompanhantes").value;
-  const resposta = document.querySelector('input[name="resposta"]:checked').value;
-
-  const emailDestino = "crispoparte@gmail.com"; // EDITÁVEL
-
-  const assunto = "Confirmação de Presença";
-  const corpo = `Nome: ${nome}%0AResposta: ${resposta}%0AAcompanhantes: ${acompanhantes}`;
-
-  window.location.href = `mailto:${emailDestino}?subject=${assunto}&body=${corpo}`;
+// fechar clicando fora
+window.addEventListener("click", function(e){
+  const modal = document.getElementById("modal");
+  if(e.target === modal){
+    modal.style.display = "none";
+  }
 });
 
-// PIX
+
+/* =========================
+   COPIAR PIX
+========================= */
+
 function copiarPix() {
-  navigator.clipboard.writeText("71993233142");
-  document.getElementById("pixMsg").textContent = "Chave Pix copiada!";
+
+  const chave = document.getElementById("pixKey").innerText;
+
+  navigator.clipboard.writeText(chave).then(() => {
+    document.getElementById("pixMsg").textContent = "Chave Pix copiada!";
+  });
+
 }
