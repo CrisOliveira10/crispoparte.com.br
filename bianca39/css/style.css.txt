@@ -4,28 +4,31 @@
   --cor-icone-audio:#6b4b3e;
 }
 
-/* =================== BASE =================== */
+/* =================== BASE GLOBAL =================== */
 
-body{
+html, body{
   margin:0;
+  padding:0;
+  max-width:100%;
+  overflow-x:hidden;   /* remove qualquer scroll lateral */
   font-family:Arial, sans-serif;
-  background:#eaeaea;
   scroll-behavior:smooth;
+  background:#eaeaea;
 }
 
-/* Container principal tipo "celular" */
+/* =================== CONTAINER PRINCIPAL =================== */
+
 .pagina{
   position:relative;
   width:100%;
-  max-width:100vw;              /* usa largura real do aparelho */
-  text-align:center;
-  padding:0;
-  overflow:hidden;
+  max-width:100vw;     /* usa largura real do aparelho */
   margin:0 auto;
+  text-align:center;
+  overflow:hidden;
   background:#fff;
 }
 
-/* =================== IMAGENS / VIDEO =================== */
+/* =================== IMAGEM E VIDEO =================== */
 
 .full-img,
 .full-video{
@@ -68,7 +71,7 @@ body{
 }
 
 #countdown{
-  font-size:6vw;   /* escala proporcional ao aparelho */
+  font-size:6vw;   /* escala automática */
   font-weight:bold;
   margin-top:8px;
 }
@@ -86,7 +89,7 @@ body{
 
 .canva-container iframe{
   width:100%;
-  height:55vw;   /* proporcional */
+  height:55vw;
   max-height:450px;
   border:none;
   border-radius:8px;
@@ -213,18 +216,18 @@ footer{
   font-size:14px;
 }
 
-/* =================== DESKTOP AJUSTE =================== */
+/* =================== AJUSTE DESKTOP =================== */
 
 @media(min-width:768px){
 
-  .pagina{
-    max-width:430px;    /* no desktop vira mockup de celular */
-    margin:0 auto;
-    box-shadow:0 0 30px rgba(0,0,0,0.2);
-  }
-
   body{
     background:#eaeaea;
+  }
+
+  .pagina{
+    max-width:430px;  /* simula tamanho iPhone Pro Max */
+    margin:0 auto;
+    box-shadow:0 0 30px rgba(0,0,0,0.2);
   }
 
   #countdown{
