@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Convite Interativo</title>
+
+<style>
+
+/* ================== CORES EDITÁVEIS ================== */
+
+:root{
+  --cor-fundo: #faf7f2;
+  --cor-cronometro: #4d1010;
+}
+
+/* ================== BASE ================== */
+
+html,body{
+  margin:0;
+  padding:0;
+  background:var(--cor-fundo);
+  font-family:Arial, sans-serif;
+  overflow-x:hidden;
+}
+
+/* ================== PÁGINAS ================== */
+
+.pagina{
+  position:relative;
+  width:100%;
+  max-width:430px;
+  margin:0 auto;
+}
+
+.full-img,
+.full-video{
+  width:100%;
+  display:block;
+}
+
+/* ================== BOTÃO ÁUDIO ================== */
+
+#audioBtn{
+  position:fixed;
+  top:15px;
+  right:15px;
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  border:none;
+  font-size:18px;
+  cursor:pointer;
+  z-index:9999;
+}
+
+/* ================== CRONÔMETRO ================== */
+
+.cronometro{
+  position:absolute;
+  top:6%;
+  width:100%;
+  text-align:center;
+  font-size:24px;
+  font-weight:bold;
+  color:var(--cor-cronometro);
+}
+
+/* ================== CANVA ================== */
+
+.canva-box{
+  position:absolute;
+  top:30%;
+  left:50%;
+  transform:translateX(-50%);
+  width:90%;
+}
+
+.canva-box iframe{
+  width:100%;
+  height:400px;
+  border:none;
+  border-radius:8px;
+}
+
+/* ================== MAPS ================== */
+
+.maps-btn{
+  display:block;
+  text-align:center;
+  font-size:20px;
+  padding:15px;
+  background:#4d1010;
+  color:#fff;
+  text-decoration:none;
+}
+
+/* ================== FORMULÁRIO ================== */
+
+.form-box{
+  padding:30px 15px;
+  text-align:center;
+}
+
+.form-box h2{
+  font-size:40px;
+  margin-bottom:20px;
+}
+
+.form-box input{
+  width:100%;
+  padding:15px;
+  font-size:18px;
+  margin-bottom:15px;
+}
+
+.form-box button{
+  padding:15px;
+  font-size:20px;
+  background:#4d1010;
+  color:#fff;
+  border:none;
+  width:100%;
+}
+
+/* ================== PIX ================== */
+
+.pix-box{
+  text-align:center;
+  padding:20px;
+}
+
+#pixKey{
+  font-size:20px;
+  font-weight:bold;
+  display:block;
+  margin-bottom:10px;
+}
+
+#copyBtn{
+  padding:12px 25px;
+  font-size:16px;
+  background:#4d1010;
+  color:#fff;
+  border:none;
+}
+
+/* ================== FOOTER ================== */
+
+footer{
+  text-align:center;
+  padding:30px;
+  font-size:14px;
+}
+
+@media(min-width:768px){
+  .pagina{
+    box-shadow:0 0 25px rgba(0,0,0,0.2);
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- BOTÃO ÁUDIO -->
+<button id="audioBtn">▶</button>
+<audio id="bgAudio" src="media/audio.mp3" loop></audio>
+
+<!-- PÁGINA 1 -->
+<section class="pagina">
+<img src="media/pagina1.png" class="full-img">
+</section>
+
+<!-- PÁGINA 2 -->
+<section class="pagina">
+<video autoplay muted loop playsinline class="full-video">
+<source src="media/pagina2.mp4" type="video/mp4">
+</video>
+</section>
+
+<!-- PÁGINA 3 -->
+<section class="pagina">
+<img src="media/pagina3.png" class="full-img">
+
+<div class="cronometro" id="contador"></div>
+
+</section>
+
+<!-- PÁGINA 4 -->
+<section class="pagina">
+<img src="media/pagina4.png" class="full-img">
+
+<div class="canva-box">
+<iframe src="https://www.canva.com/design/DAGzjYuhX2M/rqhthTAdy_vF8cUo3qrzEg/view?embed"></iframe>
+</div>
+
+</section>
+
+<!-- PÁGINA 5 -->
+<section class="pagina">
+<img src="media/pagina5.png" class="full-img">
+
+<a href="https://maps.app.goo.gl/1D3JBDRJyoShTRnh9" target="_blank" class="maps-btn">
+COMO CHEGAR
+</a>
+
+<div class="form-box">
+<h2>CONFIRME SUA PRESENÇA</h2>
+
+<form action="https://formsubmit.co/crispoparte@gmail.com" method="POST">
+<input type="hidden" name="_captcha" value="false">
+<input type="text" name="Nome" placeholder="Seu Nome" required>
+<input type="text" name="Acompanhantes" placeholder="Acompanhantes">
+<button type="submit">ENVIAR</button>
+</form>
+
+</div>
+
+</section>
+
+<!-- PÁGINA 6 -->
+<section class="pagina">
+<img src="media/pagina6.png" class="full-img">
+
+<div class="pix-box">
+<span id="pixKey">71993233142</span>
+<button id="copyBtn">COPIAR CHAVE PIX</button>
+</div>
+
+</section>
+
+<footer>
+Desenvolvido por Cris Oliveira<br>
+Todos os direitos reservados.
+</footer>
+
+<script>
+
+/* AUDIO */
+const audio = document.getElementById("bgAudio");
+const btn = document.getElementById("audioBtn");
+let tocando=false;
+
+btn.onclick=function(){
+if(!tocando){
+audio.play();
+btn.innerHTML="❚❚";
+tocando=true;
+}else{
+audio.pause();
+btn.innerHTML="▶";
+tocando=false;
+}
+}
+
+/* CRONÔMETRO */
+const dataEvento = new Date("2026-02-21T20:00:00");
+
+function atualizar(){
+const agora = new Date();
+const diff = dataEvento - agora;
+
+if(diff<=0){
+document.getElementById("contador").innerHTML="É HOJE!";
+return;
+}
+
+const d=Math.floor(diff/(1000*60*60*24));
+const h=Math.floor((diff/(1000*60*60))%24);
+const m=Math.floor((diff/(1000*60))%60);
+const s=Math.floor((diff/1000)%60);
+
+document.getElementById("contador").innerHTML=
+d+"d "+h+"h "+m+"m "+s+"s";
+}
+
+setInterval(atualizar,1000);
+atualizar();
+
+/* PIX */
+document.getElementById("copyBtn").onclick=function(){
+const chave=document.getElementById("pixKey").innerText;
+navigator.clipboard.writeText(chave);
+alert("Chave Pix copiada!");
+}
+
+</script>
+
+</body>
+</html>
