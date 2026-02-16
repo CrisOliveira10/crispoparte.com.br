@@ -1,311 +1,271 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Convite Interativo</title>
 
-<title>Convite Interativo</title>
+    <style>
+        /* ========================================================= */
+        /* 🔴 ÁREA DE CORES EDITÁVEIS */
+        /* ========================================================= */
+        :root {
+            --cor-fundo: #faf7f2;
+            --cor-cronometro: #4d1010;
+            --cor-botoes: #4d1010;
+            --cor-texto-botoes: #ffffff;
+            --cor-destaque: #8b2d2d; /* Nova cor para hover */
+        }
 
-<style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: var(--cor-fundo);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
 
-/* ========================================================= */
-/* 🔴🔴🔴 ÁREA DE CORES EDITÁVEIS 🔴🔴🔴 */
-/* ========================================================= */
+        .pagina {
+            position: relative;
+            width: 100%;
+            max-width: 430px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
 
-:root{
-  --cor-fundo: #faf7f2;
-  --cor-cronometro: #4d1010;
-  --cor-botoes: #4d1010;
-  --cor-texto-botoes: #ffffff;
-}
+        .full-img, .full-video {
+            width: 100%;
+            display: block;
+            height: auto;
+        }
 
-/* ========================================================= */
+        /* BOTÃO ÁUDIO */
+        #audioBtn {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 2px solid var(--cor-texto-botoes);
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 9999;
+            background: var(--cor-botoes);
+            color: var(--cor-texto-botoes);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
 
-html,body{
-  margin:0;
-  padding:0;
-  background:var(--cor-fundo);
-  font-family:Arial, sans-serif;
-  overflow-x:hidden;
-}
+        #audioBtn:active { transform: scale(0.9); }
 
-.pagina{
-  position:relative;
-  width:100%;
-  max-width:430px;
-  margin:0 auto;
-}
+        /* CRONÔMETRO */
+        .cronometro {
+            position: absolute;
+            top: 15%; /* Ajuste fino da posição sobre a imagem */
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            z-index: 10;
+        }
 
-.full-img,
-.full-video{
-  width:100%;
-  display:block;
-}
+        .tempo-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.2); /* Fundo sutil */
+            padding: 5px;
+            border-radius: 8px;
+            min-width: 60px;
+        }
 
-/* BOTÃO ÁUDIO */
-#audioBtn{
-  position:fixed;
-  top:15px;
-  right:15px;
-  width:50px;
-  height:50px;
-  border-radius:50%;
-  border:none;
-  font-size:18px;
-  cursor:pointer;
-  z-index:9999;
-  background:var(--cor-botoes);
-  color:var(--cor-texto-botoes);
-}
+        .tempo-numero {
+            font-size: 8vw;
+            font-weight: bold;
+            color: var(--cor-cronometro);
+            line-height: 1;
+        }
 
-/* CRONÔMETRO */
-.cronometro{
-  position:absolute;
-  top:12%;
-  width:100%;
-  display:flex;
-  justify-content:center;
-  gap:12px;
-}
+        @media(min-width: 430px) { .tempo-numero { font-size: 35px; } }
 
-.tempo-box{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-}
+        .tempo-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: var(--cor-cronometro);
+            letter-spacing: 1px;
+        }
 
-.tempo-numero{
-  font-size:8vw;
-  font-weight:bold;
-  color:var(--cor-cronometro);
-  line-height:1;
-}
+        /* CANVA & FORMS */
+        .embed-container {
+            width: 90%;
+            margin: 0 auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
 
-.tempo-label{
-  font-size:3vw;
-  color:var(--cor-cronometro);
-  letter-spacing:1px;
-}
+        .canva-box { margin: 20px auto; }
 
-/* CANVA */
-.canva-box{
-  position:absolute;
-  top:30%;
-  left:50%;
-  transform:translateX(-50%);
-  width:90%;
-}
+        /* MAPS */
+        .maps-btn {
+            display: block;
+            width: 80%;
+            margin: 10px auto;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 15px;
+            background: var(--cor-botoes);
+            color: var(--cor-texto-botoes);
+            text-decoration: none;
+            border-radius: 30px;
+            transition: background 0.3s;
+        }
 
-.canva-box iframe{
-  width:100%;
-  height:60vw;
-  max-height:420px;
-  border:none;
-  border-radius:8px;
-}
+        /* FORMULÁRIO */
+        .form-box { padding: 20px 10px; text-align: center; }
+        .form-box iframe { width: 100%; height: 500px; border: none; border-radius: 8px; }
 
-/* MAPS */
-.maps-btn{
-  display:block;
-  text-align:center;
-  font-size:20px;
-  padding:15px;
-  background:var(--cor-botoes);
-  color:var(--cor-texto-botoes);
-  text-decoration:none;
-}
+        /* PIX */
+        .pix-box { text-align: center; padding: 40px 20px; background: #fff; }
+        #pixKey {
+            font-size: 18px;
+            color: #333;
+            background: #eee;
+            padding: 10px;
+            border-radius: 5px;
+            word-break: break-all;
+            display: block;
+            margin-bottom: 15px;
+        }
 
-/* FORMULÁRIO GOOGLE */
-.form-box{
-  padding:40px 15px;
-  text-align:center;
-}
+        #copyBtn {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            background: var(--cor-botoes);
+            color: var(--cor-texto-botoes);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
 
-.form-box h2{
-  font-size:40px;
-  margin-bottom:25px;
-}
-
-.form-box iframe{
-  width:100%;
-  height:650px;
-  border:none;
-}
-
-/* PIX */
-.pix-box{
-  text-align:center;
-  padding:30px 20px;
-}
-
-#pixKey{
-  font-size:22px;
-  font-weight:bold;
-  display:block;
-  margin-bottom:15px;
-}
-
-#copyBtn{
-  padding:14px 30px;
-  font-size:16px;
-  background:var(--cor-botoes);
-  color:var(--cor-texto-botoes);
-  border:none;
-}
-
-/* FOOTER */
-footer{
-  text-align:center;
-  padding:30px;
-  font-size:14px;
-}
-
-</style>
+        footer { text-align: center; padding: 40px 20px; font-size: 12px; color: #666; }
+    </style>
 </head>
 
 <body>
 
-<!-- BOTÃO ÁUDIO -->
 <button id="audioBtn">▶</button>
 <audio id="bgAudio" src="media/audio.mp3" loop></audio>
 
-<!-- PÁGINA 1 -->
 <section class="pagina">
-<img src="media/pagina1.png" class="full-img">
+    <img src="media/pagina1.png" class="full-img" alt="Capa">
 </section>
 
-<!-- PÁGINA 2 -->
 <section class="pagina">
-<video autoplay muted loop playsinline class="full-video">
-<source src="media/pagina2.mp4" type="video/mp4">
-</video>
+    <video autoplay muted loop playsinline class="full-video">
+        <source src="media/pagina2.mp4" type="video/mp4">
+    </video>
 </section>
 
-<!-- PÁGINA 3 -->
 <section class="pagina">
-<img src="media/pagina3.png" class="full-img">
-<div class="cronometro" id="contador"></div>
+    <img src="media/pagina3.png" class="full-img" alt="Contagem Regressiva">
+    <div class="cronometro" id="contador"></div>
 </section>
 
-<!-- PÁGINA 4 -->
 <section class="pagina">
-<img src="media/pagina4.png" class="full-img">
-<div class="canva-box">
-
-<!-- 🔴 EDITAR LINK CANVA AQUI -->
-<iframe src="https://www.canva.com/design/DAHBh6xi5Qs/8-drazZaaEd_nJX36uLFpw/view?embed"></iframe>
-
-</div>
+    <img src="media/pagina4.png" class="full-img">
+    <div class="embed-container canva-box">
+        <iframe src="https://www.canva.com/design/DAHBh6xi5Qs/8-drazZaaEd_nJX36uLFpw/view?embed" allowfullscreen></iframe>
+    </div>
 </section>
 
-<!-- PÁGINA 5 -->
 <section class="pagina">
-<img src="media/pagina5.png" class="full-img">
-
-<!-- 🔴 EDITAR LINK MAPS AQUI -->
-<a href="https://maps.app.goo.gl/1D3JBDRJyoShTRnh9" target="_blank" class="maps-btn">
-COMO CHEGAR
-</a>
-
-<div class="form-box">
-<h2>CONFIRME SUA PRESENÇA</h2>
-
-<!-- 🔴🔴🔴 GOOGLE FORMS INCORPORADO 🔴🔴🔴 -->
-<!-- SE PRECISAR ALTERAR, PEGAR O LINK DE INCORPORAÇÃO NO GOOGLE FORMS -->
-<iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfZl-JMf4OIw0R7_eh3nHieNQTY8Gc8cIxxcI9pQ9vDAW8wYQ/viewform?embedded=true">
-Carregando…
-</iframe>
-
-</div>
+    <img src="media/pagina5.png" class="full-img">
+    <a href="https://maps.google.com" target="_blank" class="maps-btn">📍 VER LOCALIZAÇÃO</a>
+    
+    <div class="form-box">
+        <div class="embed-container">
+            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSfZl-JMf4OIw0R7_eh3nHieNQTY8Gc8cIxxcI9pQ9vDAW8wYQ/viewform?embedded=true">Carregando…</iframe>
+        </div>
+    </div>
 </section>
 
-<!-- PÁGINA 6 -->
 <section class="pagina">
-<img src="media/pagina6.png" class="full-img">
-
-<div class="pix-box">
-
-<!-- 🔴 EDITAR CHAVE PIX AQUI -->
-<span id="pixKey">71993233142</span>
-
-<button id="copyBtn">COPIAR CHAVE PIX</button>
-
-</div>
-
+    <img src="media/pagina6.png" class="full-img">
+    <div class="pix-box">
+        <p>Se desejar nos presentear:</p>
+        <span id="pixKey">71993233142</span>
+        <button id="copyBtn">COPIAR CHAVE PIX</button>
+    </div>
 </section>
 
 <footer>
-Desenvolvido por Cris Oliveira, Crispoparte<br>
-Todos os direitos reservados.
+    Desenvolvido por Cris Oliveira, Crispoparte<br>
+    © 2026 Todos os direitos reservados.
 </footer>
 
 <script>
+    // DATA DO EVENTO
+    const dataEvento = new Date("2026-08-18T20:00:00").getTime();
 
-/* 🔴 EDITAR DATA DO EVENTO AQUI */
-const dataEvento = new Date("2026-08-18T20:00:00");
+    // AUDIO CONTROL
+    const audio = document.getElementById("bgAudio");
+    const btn = document.getElementById("audioBtn");
+    
+    btn.onclick = () => {
+        if(audio.paused) {
+            audio.play();
+            btn.innerHTML = "❚❚";
+        } else {
+            audio.pause();
+            btn.innerHTML = "▶";
+        }
+    };
 
-/* AUDIO */
-const audio = document.getElementById("bgAudio");
-const btn = document.getElementById("audioBtn");
-let tocando=false;
+    // CRONÔMETRO
+    function atualizar() {
+        const agora = new Date().getTime();
+        const diff = dataEvento - agora;
 
-btn.onclick=function(){
-if(!tocando){
-audio.play();
-btn.innerHTML="❚❚";
-tocando=true;
-}else{
-audio.pause();
-btn.innerHTML="▶";
-tocando=false;
-}
-}
+        if(diff <= 0) {
+            document.getElementById("contador").innerHTML = "<b>É HOJE!</b>";
+            return;
+        }
 
-/* CRONÔMETRO */
-function atualizar(){
-const agora = new Date();
-const diff = dataEvento - agora;
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
 
-if(diff<=0){
-document.getElementById("contador").innerHTML="É HOJE!";
-return;
-}
+        document.getElementById("contador").innerHTML = `
+            <div class="tempo-box"><span class="tempo-numero">${d}</span><span class="tempo-label">Dias</span></div>
+            <div class="tempo-box"><span class="tempo-numero">${h}</span><span class="tempo-label">Horas</span></div>
+            <div class="tempo-box"><span class="tempo-numero">${m}</span><span class="tempo-label">Min</span></div>
+            <div class="tempo-box"><span class="tempo-numero">${s}</span><span class="tempo-label">Seg</span></div>
+        `;
+    }
+    setInterval(atualizar, 1000);
+    atualizar();
 
-const d=Math.floor(diff/(1000*60*60*24));
-const h=Math.floor((diff/(1000*60*60))%24);
-const m=Math.floor((diff/(1000*60))%60);
-const s=Math.floor((diff/1000)%60);
-
-document.getElementById("contador").innerHTML = `
-  <div class="tempo-box">
-    <div class="tempo-numero">${d}</div>
-    <div class="tempo-label">DIAS</div>
-  </div>
-  <div class="tempo-box">
-    <div class="tempo-numero">${h}</div>
-    <div class="tempo-label">HORAS</div>
-  </div>
-  <div class="tempo-box">
-    <div class="tempo-numero">${m}</div>
-    <div class="tempo-label">MIN</div>
-  </div>
-  <div class="tempo-box">
-    <div class="tempo-numero">${s}</div>
-    <div class="tempo-label">SEG</div>
-  </div>
-`;
-}
-
-setInterval(atualizar,1000);
-atualizar();
-
-/* PIX */
-document.getElementById("copyBtn").onclick=function(){
-const chave=document.getElementById("pixKey").innerText;
-navigator.clipboard.writeText(chave);
-alert("Chave Pix copiada!");
-}
-
+    // PIX COPY COM FEEDBACK
+    document.getElementById("copyBtn").onclick = function() {
+        const chave = document.getElementById("pixKey").innerText;
+        navigator.clipboard.writeText(chave).then(() => {
+            const originalText = this.innerText;
+            this.innerText = "✅ COPIADO!";
+            this.style.background = "#28a745";
+            
+            setTimeout(() => {
+                this.innerText = originalText;
+                this.style.background = "";
+            }, 2000);
+        });
+    }
 </script>
 
 </body>
