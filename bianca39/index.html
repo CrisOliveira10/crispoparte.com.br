@@ -28,12 +28,12 @@
   </video>
 </section>
 
-<!-- PAGINA 3 (CONTADOR + CANVA + AGENDA) -->
-<section class="pagina central relative">
+<!-- PAGINA 3 -->
+<section class="pagina">
 
   <img src="media/pagina3.png" class="full-img">
 
-  <!-- CONTADOR NO TOPO -->
+  <!-- CONTADOR -->
   <div class="contador-topo">
     <h2>FALTAM!</h2>
     <div id="countdown"></div>
@@ -47,15 +47,16 @@
     </iframe>
   </div>
 
-  <!-- BOTÃO SALVAR NA AGENDA NO RODAPÉ -->
+  <!-- BOTÃO AGENDA -->
   <button class="btn-principal btn-agenda" onclick="gerarICS()">
     SALVAR NA AGENDA
   </button>
 
 </section>
 
-<!-- PAGINA 5 (CONFIRMAÇÃO) -->
-<section class="pagina central relative">
+<!-- PAGINA 5 -->
+<section class="pagina">
+
   <img src="media/pagina5.png" class="full-img">
 
   <button class="btn-principal btn-confirmar" onclick="abrirModal()">
@@ -78,6 +79,9 @@
 
     <form action="https://formsubmit.co/crispoparte@gmail.com" method="POST">
 
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_subject" value="Nova Confirmação de Presença">
+
       <label>
         <input type="radio" name="Presença" value="Sim, Eu confirmo" required>
         Sim, Eu confirmo
@@ -91,24 +95,31 @@
       <input type="text" name="Nome" placeholder="Seu nome" required>
       <input type="text" name="Acompanhantes" placeholder="Quem mais irá com você?">
 
-      <button type="submit" class="btn-marrom">Enviar</button>
+      <button type="submit" class="btn-marrom">
+        Enviar
+      </button>
 
     </form>
 
   </div>
 </div>
 
-<!-- PAGINA 6 (PIX) -->
-<section class="pagina central relative">
+<!-- PAGINA 6 -->
+<section class="pagina">
+
   <img src="media/pagina6.png" class="full-img">
 
   <div class="pix-area">
-    <p>Chave Pix:</p>
-    <strong id="pixKey">71993233142</strong>
-    <button class="btn-principal" onclick="copiarPix()">
-      COPIAR PIX
-    </button>
-    <p id="pixMsg"></p>
+    <p class="pix-label">Chave Pix</p>
+
+    <div class="pix-line">
+      <span id="pixCode">71993233142</span>
+      <button id="copyButton" class="btn-principal">
+        Copiar
+      </button>
+    </div>
+
+    <p id="copyMessage" class="pix-msg">Chave copiada!</p>
   </div>
 
 </section>
@@ -118,8 +129,10 @@
   <p>Desenvolvido por Cris Oliveira</p>
   <p>Todos os direitos reservados.</p>
   <p>
-    Entre em contato com o Desenvolvedor  
-    <a href="https://wa.me/5571993233142" target="_blank">WhatsApp</a>
+    Entre em contato com o Desenvolvedor
+    <a href="https://wa.me/5571993233142" target="_blank">
+      WhatsApp
+    </a>
   </p>
 </footer>
 
