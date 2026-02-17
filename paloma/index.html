@@ -12,7 +12,8 @@
 
 :root{
   --cor-fundo: #faf7f2;
-  --cor-cronometro: #4d1010;
+  --cor-cronometro-fundo: #3275a8; /* Cor azul do fundo do cronômetro */
+  --cor-cronometro-texto: #ffffff;
 }
 
 /* ================== BASE ================== */
@@ -57,32 +58,67 @@ html,body{
 
 /* ================== CRONÔMETRO (PÁGINA 3) ================== */
 
-.cronometro{
-  position:absolute;
-  top:25%;
-  width:100%;
-  text-align:center;
-  font-size:6vw;
-  font-weight:bold;
-  color:var(--cor-cronometro);
+.cronometro {
+  position: absolute;
+  top: 25%; /* Ajuste aqui para subir ou descer o bloco todo */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 85%;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  background: var(--cor-cronometro-fundo);
+  padding: 12px 5px;
+  border-radius: 50px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  z-index: 10;
 }
 
-/* ================== CANVA (PÁGINA 4) ================== */
-
-.canva-box{
-  position:absolute;
-  top:30%;
-  left:50%;
-  transform:translateX(-50%);
-  width:90%;
+.tempo-unidade {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--cor-cronometro-texto);
+  min-width: 55px;
 }
 
-.canva-box iframe{
-  width:100%;
-  height:60vw;
-  max-height:420px;
-  border:none;
-  border-radius:8px;
+.tempo-valor {
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.tempo-legenda {
+  font-size: 9px;
+  text-transform: uppercase;
+  margin-top: 4px;
+  letter-spacing: 1px;
+}
+
+/* ================== SLIDER DE FOTOS (PÁGINA 4) ================== */
+
+.slider-container {
+    position: absolute;
+    top: 30%; /* Posição onde ficava o Canva */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 85%;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.slider-wrapper {
+    display: flex;
+    transition: transform 0.4s ease-out;
+    touch-action: pan-y; /* Permite scroll vertical na página, mas desliza fotos horizontal */
+}
+
+.slider-wrapper img {
+    width: 100%;
+    flex-shrink: 0;
+    object-fit: cover;
+    display: block;
 }
 
 /* ================== BOTÕES DE LINK (ESTILO MAPS) ================== */
@@ -155,11 +191,8 @@ footer{
   font-size:14px;
 }
 
-/* Desktop mockup */
 @media(min-width:768px){
-  .pagina{
-    box-shadow:0 0 25px rgba(0,0,0,0.2);
-  }
+  .pagina{ box-shadow:0 0 25px rgba(0,0,0,0.2); }
 }
 
 </style>
@@ -193,8 +226,9 @@ CONFIRME SUA PRESENÇA
 
 <section class="pagina">
 <img src="media/pagina4.png" class="full-img">
-<div class="canva-box">
-<iframe src="https://www.canva.com/design/DAHBh6xi5Qs/8-drazZaaEd_nJX36uLFpw/view?embed"></iframe>
+<div class="slider-container">
+    <div class="slider-wrapper" id="sliderWrapper">
+        </div>
 </div>
 </section>
 
@@ -207,26 +241,21 @@ COMO CHEGAR
 
 <div class="form-box">
 <h2>DEIXE SUA MENSAGEM</h2>
-
 <form action="https://formsubmit.co/crispoparte@gmail.com" method="POST">
 <input type="hidden" name="_captcha" value="false">
 <input type="text" name="Nome" placeholder="Seu Nome" required>
 <input type="text" name="Sua menssagem aqui!" placeholder="Sua menssagem aqui!">
 <button type="submit">ENVIAR</button>
 </form>
-
 </div>
-
 </section>
 
 <section class="pagina">
 <img src="media/pagina6.png" class="full-img">
-
 <div class="pix-box">
 <span id="pixKey">71993233142</span>
 <button id="copyBtn">COPIAR CHAVE PIX</button>
 </div>
-
 </section>
 
 <footer>
@@ -236,7 +265,34 @@ Todos os direitos reservados.
 
 <script>
 
-/* AUDIO */
+/* --- CONFIGURAÇÃO DO SLIDER INTELIGENTE --- */
+// ADICIONE OU REMOVA OS NOMES DAS FOTOS AQUI:
+const listaFotos = ['foto1.jpg', 'foto2.jpg', 'foto3.jpg', 'foto4.jpg', 'foto5.jpg', 'foto6.jpg']; 
+
+const wrapper = document.getElementById('sliderWrapper');
+
+// Gerador automático de imagens
+listaFotos.forEach(nomeFoto => {
+    const img = document.createElement('img');
+    img.src = `media/${nomeFoto}`;
+    wrapper.appendChild(img);
+});
+
+// Lógica de deslizar (Touch)
+let startsX = 0;
+let currentIndex = 0;
+
+wrapper.addEventListener('touchstart', e => startsX = e.touches[0].clientX);
+wrapper.addEventListener('touchend', e => {
+    let diff = startsX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) { // sensibilidade do deslize
+        if (diff > 0 && currentIndex < listaFotos.length - 1) currentIndex++;
+        else if (diff < 0 && currentIndex > 0) currentIndex--;
+        wrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
+    }
+});
+
+/* --- ÁUDIO --- */
 const audio = document.getElementById("bgAudio");
 const btn = document.getElementById("audioBtn");
 let tocando=false;
@@ -253,7 +309,7 @@ tocando=false;
 }
 }
 
-/* CRONÔMETRO */
+/* --- CRONÔMETRO --- */
 const dataEvento = new Date("2026-02-21T20:00:00");
 
 function atualizar(){
@@ -270,14 +326,19 @@ const h=Math.floor((diff/(1000*60*60))%24);
 const m=Math.floor((diff/(1000*60))%60);
 const s=Math.floor((diff/1000)%60);
 
-document.getElementById("contador").innerHTML=
-d+"d "+h+"h "+m+"m "+s+"s";
+// HTML formatado conforme a imagem (Número em cima, texto embaixo)
+document.getElementById("contador").innerHTML = `
+    <div class="tempo-unidade"><span class="tempo-valor">${d}</span><span class="tempo-legenda">DIAS</span></div>
+    <div class="tempo-unidade"><span class="tempo-valor">${h}</span><span class="tempo-legenda">HORAS</span></div>
+    <div class="tempo-unidade"><span class="tempo-valor">${m}</span><span class="tempo-legenda">MIN</span></div>
+    <div class="tempo-unidade"><span class="tempo-valor">${s}</span><span class="tempo-legenda">SEG</span></div>
+`;
 }
 
 setInterval(atualizar,1000);
 atualizar();
 
-/* PIX */
+/* --- PIX --- */
 document.getElementById("copyBtn").onclick=function(){
 const chave=document.getElementById("pixKey").innerText;
 navigator.clipboard.writeText(chave);
