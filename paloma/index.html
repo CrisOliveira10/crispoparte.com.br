@@ -55,10 +55,10 @@ html,body{
   z-index:9999;
 }
 
-/* 🔴 AJUSTE DE POSIÇÃO DO CRONÔMETRO (PÁGINA 3) */
+/* CRONÔMETRO (PÁGINA 3) */
 .cronometro {
   position: absolute;
-  top: 25%; /* Aumente para descer, diminua para subir */
+  top: 25%; 
   left: 50%;
   transform: translateX(-50%);
   width: 85%;
@@ -93,10 +93,10 @@ html,body{
   letter-spacing: 1px;
 }
 
-/* 🔴 AJUSTE DE POSIÇÃO DO SLIDER (PÁGINA 4) */
+/* SLIDER DE FOTOS (PÁGINA 4) */
 .slider-container {
     position: absolute;
-    top: 15%; /* Alterado de 30% para 15% para ficar mais alto */
+    top: 15%; 
     left: 50%;
     transform: translateX(-50%);
     width: 85%;
@@ -154,6 +154,7 @@ html,body{
   color:#fff;
   border:none;
   width:100%;
+  cursor: pointer;
 }
 
 /* PIX */
@@ -226,17 +227,24 @@ CONFIRME SUA PRESENÇA
 <section class="pagina">
 <img src="media/pagina5.png" class="full-img">
 
-<a href="https://maps.app.goo.gl/1D3JBDRJyoShTRnh9" target="_blank" class="maps-btn">
+<a href="https://maps.google.com" target="_blank" class="maps-btn">
 COMO CHEGAR
 </a>
 
 <div class="form-box">
 <h2>DEIXE SUA MENSAGEM</h2>
 <form action="https://formsubmit.co/crispoparte@gmail.com" method="POST">
-<input type="hidden" name="_captcha" value="false">
-<input type="text" name="Nome" placeholder="Seu Nome" required>
-<input type="text" name="Sua menssagem aqui!" placeholder="Sua menssagem aqui!">
-<button type="submit">ENVIAR</button>
+  
+  <input type="hidden" name="_next" value="https://crispoparte.com.br/">
+
+  <input type="hidden" name="_success" value="Recebemos sua mensagem! Voltando ao convite...">
+
+  <input type="hidden" name="_captcha" value="false">
+  
+  <input type="text" name="Nome" placeholder="Seu Nome" required>
+  <input type="text" name="Sua menssagem aqui!" placeholder="Sua menssagem aqui!">
+  
+  <button type="submit">ENVIAR</button>
 </form>
 </div>
 </section>
@@ -257,7 +265,7 @@ Todos os direitos reservados.
 <script>
 
 /* ========================================================= */
-/* 🔴 CONFIGURAÇÃO DO SLIDER (ALUNAS ADICIONAM FOTOS AQUI) */
+/* 🔴 CONFIGURAÇÃO DO SLIDER (ADICIONAR FOTOS AQUI) */
 /* ========================================================= */
 const listaFotos = ['foto1.jpg', 'foto2.jpg', 'foto3.jpg', 'foto4.jpg', 'foto5.jpg', 'foto6.jpg']; 
 
@@ -303,7 +311,7 @@ document.getElementById("contador").innerHTML="É HOJE!";
 return;
 }
 
-// Cálculo com formatação de 2 dígitos (ex: 07 em vez de 7)
+// Cálculo com 2 dígitos (padStart garante o 0 na frente)
 const d = Math.floor(diff/(1000*60*60*24)).toString().padStart(2, '0');
 const h = Math.floor((diff/(1000*60*60))%24).toString().padStart(2, '0');
 const m = Math.floor((diff/(1000*60))%60).toString().padStart(2, '0');
