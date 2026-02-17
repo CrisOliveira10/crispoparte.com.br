@@ -8,15 +8,17 @@
 
 <style>
 
-/* ================== CORES EDITÁVEIS ================== */
-
+/* ========================================================= */
+/* 🔴 ÁREA DE CORES EDITÁVEIS (ALUNAS ALTERAM AQUI) */
+/* ========================================================= */
 :root{
   --cor-fundo: #faf7f2;
-  --cor-cronometro-fundo: #3275a8; /* Cor azul do fundo do cronômetro */
+  --cor-cronometro-fundo: #3275a8; 
   --cor-cronometro-texto: #ffffff;
+  --cor-botoes-geral: #4d1010;
 }
 
-/* ================== BASE ================== */
+/* ========================================================= */
 
 html,body{
   margin:0;
@@ -25,8 +27,6 @@ html,body{
   font-family:Arial, sans-serif;
   overflow-x:hidden;
 }
-
-/* ================== PÁGINAS (EMPILHADAS) ================== */
 
 .pagina{
   position:relative;
@@ -41,8 +41,7 @@ html,body{
   display:block;
 }
 
-/* ================== BOTÃO ÁUDIO ================== */
-
+/* BOTÃO ÁUDIO */
 #audioBtn{
   position:fixed;
   top:15px;
@@ -56,11 +55,10 @@ html,body{
   z-index:9999;
 }
 
-/* ================== CRONÔMETRO (PÁGINA 3) ================== */
-
+/* 🔴 AJUSTE DE POSIÇÃO DO CRONÔMETRO (PÁGINA 3) */
 .cronometro {
   position: absolute;
-  top: 25%; /* Ajuste aqui para subir ou descer o bloco todo */
+  top: 25%; /* Aumente para descer, diminua para subir */
   left: 50%;
   transform: translateX(-50%);
   width: 85%;
@@ -95,11 +93,10 @@ html,body{
   letter-spacing: 1px;
 }
 
-/* ================== SLIDER DE FOTOS (PÁGINA 4) ================== */
-
+/* 🔴 AJUSTE DE POSIÇÃO DO SLIDER (PÁGINA 4) */
 .slider-container {
     position: absolute;
-    top: 30%; /* Posição onde ficava o Canva */
+    top: 15%; /* Alterado de 30% para 15% para ficar mais alto */
     left: 50%;
     transform: translateX(-50%);
     width: 85%;
@@ -111,7 +108,7 @@ html,body{
 .slider-wrapper {
     display: flex;
     transition: transform 0.4s ease-out;
-    touch-action: pan-y; /* Permite scroll vertical na página, mas desliza fotos horizontal */
+    touch-action: pan-y;
 }
 
 .slider-wrapper img {
@@ -121,20 +118,18 @@ html,body{
     display: block;
 }
 
-/* ================== BOTÕES DE LINK (ESTILO MAPS) ================== */
-
+/* BOTÕES DE LINK */
 .maps-btn{
   display:block;
   text-align:center;
   font-size:20px;
   padding:15px;
-  background:#4d1010;
+  background: var(--cor-botoes-geral);
   color:#fff;
   text-decoration:none;
 }
 
-/* ================== FORMULÁRIO ================== */
-
+/* FORMULÁRIO */
 .form-box{
   padding:40px 15px;
   text-align:center;
@@ -155,14 +150,13 @@ html,body{
 .form-box button{
   padding:15px;
   font-size:20px;
-  background:#4d1010;
+  background: var(--cor-botoes-geral);
   color:#fff;
   border:none;
   width:100%;
 }
 
-/* ================== PIX ================== */
-
+/* PIX */
 .pix-box{
   text-align:center;
   padding:30px 20px;
@@ -178,12 +172,10 @@ html,body{
 #copyBtn{
   padding:14px 30px;
   font-size:16px;
-  background:#4d1010;
+  background: var(--cor-botoes-geral);
   color:#fff;
   border:none;
 }
-
-/* ================== FOOTER ================== */
 
 footer{
   text-align:center;
@@ -227,8 +219,7 @@ CONFIRME SUA PRESENÇA
 <section class="pagina">
 <img src="media/pagina4.png" class="full-img">
 <div class="slider-container">
-    <div class="slider-wrapper" id="sliderWrapper">
-        </div>
+    <div class="slider-wrapper" id="sliderWrapper"></div>
 </div>
 </section>
 
@@ -265,27 +256,24 @@ Todos os direitos reservados.
 
 <script>
 
-/* --- CONFIGURAÇÃO DO SLIDER INTELIGENTE --- */
-// ADICIONE OU REMOVA OS NOMES DAS FOTOS AQUI:
+/* ========================================================= */
+/* 🔴 CONFIGURAÇÃO DO SLIDER (ALUNAS ADICIONAM FOTOS AQUI) */
+/* ========================================================= */
 const listaFotos = ['foto1.jpg', 'foto2.jpg', 'foto3.jpg', 'foto4.jpg', 'foto5.jpg', 'foto6.jpg']; 
 
 const wrapper = document.getElementById('sliderWrapper');
-
-// Gerador automático de imagens
 listaFotos.forEach(nomeFoto => {
     const img = document.createElement('img');
     img.src = `media/${nomeFoto}`;
     wrapper.appendChild(img);
 });
 
-// Lógica de deslizar (Touch)
 let startsX = 0;
 let currentIndex = 0;
-
 wrapper.addEventListener('touchstart', e => startsX = e.touches[0].clientX);
 wrapper.addEventListener('touchend', e => {
     let diff = startsX - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 50) { // sensibilidade do deslize
+    if (Math.abs(diff) > 50) {
         if (diff > 0 && currentIndex < listaFotos.length - 1) currentIndex++;
         else if (diff < 0 && currentIndex > 0) currentIndex--;
         wrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
@@ -296,20 +284,14 @@ wrapper.addEventListener('touchend', e => {
 const audio = document.getElementById("bgAudio");
 const btn = document.getElementById("audioBtn");
 let tocando=false;
-
 btn.onclick=function(){
-if(!tocando){
-audio.play();
-btn.innerHTML="❚❚";
-tocando=true;
-}else{
-audio.pause();
-btn.innerHTML="▶";
-tocando=false;
-}
+if(!tocando){ audio.play(); btn.innerHTML="❚❚"; tocando=true; }
+else{ audio.pause(); btn.innerHTML="▶"; tocando=false; }
 }
 
-/* --- CRONÔMETRO --- */
+/* ========================================================= */
+/* 🔴 CONFIGURAÇÃO DA DATA DO EVENTO */
+/* ========================================================= */
 const dataEvento = new Date("2026-02-21T20:00:00");
 
 function atualizar(){
@@ -321,12 +303,12 @@ document.getElementById("contador").innerHTML="É HOJE!";
 return;
 }
 
-const d=Math.floor(diff/(1000*60*60*24));
-const h=Math.floor((diff/(1000*60*60))%24);
-const m=Math.floor((diff/(1000*60))%60);
-const s=Math.floor((diff/1000)%60);
+// Cálculo com formatação de 2 dígitos (ex: 07 em vez de 7)
+const d = Math.floor(diff/(1000*60*60*24)).toString().padStart(2, '0');
+const h = Math.floor((diff/(1000*60*60))%24).toString().padStart(2, '0');
+const m = Math.floor((diff/(1000*60))%60).toString().padStart(2, '0');
+const s = Math.floor((diff/1000)%60).toString().padStart(2, '0');
 
-// HTML formatado conforme a imagem (Número em cima, texto embaixo)
 document.getElementById("contador").innerHTML = `
     <div class="tempo-unidade"><span class="tempo-valor">${d}</span><span class="tempo-legenda">DIAS</span></div>
     <div class="tempo-unidade"><span class="tempo-valor">${h}</span><span class="tempo-legenda">HORAS</span></div>
@@ -334,7 +316,6 @@ document.getElementById("contador").innerHTML = `
     <div class="tempo-unidade"><span class="tempo-valor">${s}</span><span class="tempo-legenda">SEG</span></div>
 `;
 }
-
 setInterval(atualizar,1000);
 atualizar();
 
@@ -346,6 +327,5 @@ alert("Chave Pix copiada!");
 }
 
 </script>
-
 </body>
 </html>
