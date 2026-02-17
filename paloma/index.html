@@ -96,7 +96,7 @@ html,body{
 /* SLIDER DE FOTOS (PÁGINA 4) */
 .slider-container {
     position: absolute;
-    top: 8%; 
+    top: 8%; /* 🔴 Para SUBIR diminua, para DESCER aumente */
     left: 50%;
     transform: translateX(-50%);
     width: 85%;
@@ -129,9 +129,9 @@ html,body{
   text-decoration:none;
 }
 
-/* FORMULÁRIO */
+/* 🔴 FORMULÁRIO (AJUSTADO PARA NÃO DESALINHAR) */
 .form-box{
-  padding:40px 15px;
+  padding:40px 10px;
   text-align:center;
 }
 
@@ -141,10 +141,14 @@ html,body{
 }
 
 .form-box input{
-  width:100%;
-  padding:15px;
-  font-size:18px;
-  margin-bottom:15px;
+  width: 90%;            /* 🔴 Largura da caixa */
+  padding: 15px;
+  font-size: 18px;
+  margin-bottom: 15px;
+  box-sizing: border-box; /* 🔴 Faz a caixa ficar centralizada sem sobrar */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  display: inline-block;
 }
 
 .form-box button{
@@ -153,8 +157,9 @@ html,body{
   background: var(--cor-botoes-geral);
   color:#fff;
   border:none;
-  width:100%;
+  width: 90%;
   cursor: pointer;
+  border-radius: 5px;
 }
 
 /* PIX */
@@ -178,10 +183,18 @@ html,body{
   border:none;
 }
 
+/* RODAPÉ */
 footer{
   text-align:center;
   padding:30px;
   font-size:14px;
+  line-height: 1.6;
+}
+
+footer a {
+  color: inherit;
+  text-decoration: none;
+  font-weight: bold;
 }
 
 @media(min-width:768px){
@@ -258,14 +271,16 @@ COMO CHEGAR
 </section>
 
 <footer>
-Desenvolvido por Cris Oliveira<br>
-Todos os direitos reservados<br>contato (71) 9.93233142
+  Desenvolvido por Cris Oliveira<br>
+  Todos os direitos reservados<br>
+  
+  contato: <a href="https://wa.me/5571993233142" target="_blank">(71) 9.93233142</a>
 </footer>
 
 <script>
 
 /* ========================================================= */
-/* 🔴 CONFIGURAÇÃO DO SLIDER (ADICIONAR FOTOS AQUI) */
+/* 🔴 CONFIGURAÇÃO DO SLIDER (FLEXÍVEL) */
 /* ========================================================= */
 const listaFotos = ['foto1.jpg', 'foto2.jpg', 'foto3.jpg', 'foto4.jpg', 'foto5.jpg', 'foto6.jpg']; 
 
@@ -298,7 +313,7 @@ else{ audio.pause(); btn.innerHTML="▶"; tocando=false; }
 }
 
 /* ========================================================= */
-/* 🔴 CONFIGURAÇÃO DA DATA DO EVENTO */
+/* 🔴 DATA DO EVENTO (FORMATO: ANO-MÊS-DIA) */
 /* ========================================================= */
 const dataEvento = new Date("2026-02-21T20:00:00");
 
@@ -311,7 +326,6 @@ document.getElementById("contador").innerHTML="É HOJE!";
 return;
 }
 
-// Cálculo com 2 dígitos (padStart garante o 0 na frente)
 const d = Math.floor(diff/(1000*60*60*24)).toString().padStart(2, '0');
 const h = Math.floor((diff/(1000*60*60))%24).toString().padStart(2, '0');
 const m = Math.floor((diff/(1000*60))%60).toString().padStart(2, '0');
