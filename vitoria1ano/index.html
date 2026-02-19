@@ -8,6 +8,7 @@
     
     <style>
         :root {
+            /* EDITE A COR AQUI */
             --cor-botao: #ffffff; 
         }
 
@@ -15,7 +16,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent; /* Remove o brilho azul ao tocar no iPhone */
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -55,24 +56,37 @@
             align-items: center;
         }
 
-        /* BOTÃO DE ÁUDIO MELHORADO */
+        /* ANIMAÇÃO PULSE */
+        @keyframes pulse-white {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        }
+
+        /* BOTÃO PLAY/PAUSE */
         .btn-audio {
             position: fixed;
-            bottom: 30px; /* Um pouco mais alto para não bater na barra do iPhone */
-            left: 20px;
+            top: 30px; 
+            left: 20px; 
             width: 48px;
             height: 48px;
             border-radius: 50%;
-            background-color: rgba(0, 0, 0, 0.3); /* Fundo leve para visibilidade */
+            background-color: rgba(0, 0, 0, 0.4); 
             border: 2px solid var(--cor-botao);
             color: var(--cor-botao);
-            display: none;
+            display: none; 
             justify-content: center;
             align-items: center;
             cursor: pointer;
             z-index: 1000;
-            font-size: 20px;
-            transition: transform 0.2s;
+            font-size: 18px;
+            /* Aplicação da animação */
+            animation: pulse-white 2s infinite;
+        }
+
+        .btn-audio:active {
+            transform: scale(0.9);
+            animation: none; /* Para a animação ao clicar */
         }
 
         .hotspot { position: absolute; cursor: pointer; z-index: 10; }
@@ -124,17 +138,11 @@
     const iconeAudio = document.getElementById('iconeAudio');
 
     function startInvite() {
-        // No iPhone, o play() DEVE acontecer dentro dessa função de clique
-        musica.play().then(() => {
-            console.log("Áudio tocando com sucesso");
-        }).catch(e => {
-            console.log("Erro ao tocar áudio: ", e);
-        });
-
+        // Garantindo áudio no iOS
+        musica.play().catch(e => console.log("Áudio pendente"));
+        
         btnAudio.style.display = 'flex';
         goPage(2);
-        
-        // Tenta tocar o vídeo
         video.play();
 
         video.onended = () => {
@@ -146,9 +154,11 @@
         if (musica.paused) {
             musica.play();
             iconeAudio.innerText = "II";
+            btnAudio.style.animation = "pulse-white 2s infinite"; // Volta a pulsar no play
         } else {
             musica.pause();
             iconeAudio.innerText = "▶";
+            btnAudio.style.animation = "none"; // Para de pulsar no pause (opcional)
         }
     }
 
@@ -160,7 +170,6 @@
         }
     }
 
-    // Truque extra para navegadores mobile que suspendem o áudio
     document.addEventListener("visibilitychange", () => {
         if (document.visibilityState === "visible" && !musica.paused) {
             musica.play();
