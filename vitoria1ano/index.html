@@ -8,7 +8,6 @@
     
     <style>
         :root {
-            /* EDITE A COR AQUI */
             --cor-botao: #ffffff; 
         }
 
@@ -16,6 +15,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent; /* Remove o brilho azul ao tocar no iPhone */
         }
 
         body {
@@ -55,52 +55,34 @@
             align-items: center;
         }
 
-        .hotspot {
-            position: absolute;
-            cursor: pointer;
-            z-index: 10;
-        }
-
-        .btn-voltar {
-            position: absolute;
-            top: 5%;
-            right: 5%;
-            width: 12%;
-            aspect-ratio: 1/1;
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 20;
-        }
-
-        /* BOTÃO DE ÁUDIO */
+        /* BOTÃO DE ÁUDIO MELHORADO */
         .btn-audio {
             position: fixed;
-            bottom: 20px;
+            bottom: 30px; /* Um pouco mais alto para não bater na barra do iPhone */
             left: 20px;
-            width: 45px;
-            height: 45px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
-            background-color: transparent;
+            background-color: rgba(0, 0, 0, 0.3); /* Fundo leve para visibilidade */
             border: 2px solid var(--cor-botao);
             color: var(--cor-botao);
-            display: none; /* Inicia oculto */
+            display: none;
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            z-index: 100;
+            z-index: 1000;
             font-size: 20px;
             transition: transform 0.2s;
         }
 
-        .btn-audio:active {
-            transform: scale(0.9);
-        }
+        .hotspot { position: absolute; cursor: pointer; z-index: 10; }
+        .btn-voltar { position: absolute; top: 5%; right: 5%; width: 12%; aspect-ratio: 1/1; z-index: 20; }
     </style>
 </head>
 
 <body>
 
-<audio id="musica" src="audio.mp3" loop></audio>
+<audio id="musica" src="audio.mp3" loop preload="auto"></audio>
 
 <div id="btnControleAudio" class="btn-audio" onclick="toggleAudio()">
     <span id="iconeAudio">II</span>
@@ -115,27 +97,16 @@
 
 <div class="page" id="page2">
     <div class="content-wrapper">
-        <video id="video" src="pagina2.mp4" playsinline webkit-playsinline></video>
+        <video id="video" src="pagina2.mp4" playsinline webkit-playsinline muted></video>
     </div>
 </div>
 
 <div class="page" id="page3">
     <div class="content-wrapper">
         <img src="pagina3.jpg">
-
-        <a class="hotspot"
-           style="bottom:25%; left:16%; width:20%; height:10%;"
-           href="https://www.google.com/maps/search/?api=1&query=Localização"
-           target="_blank"></a>
-
-        <a class="hotspot"
-           style="bottom:25%; left:40%; width:20%; height:10%;"
-           href="https://wa.me/5511947057844?text=Gostaria%20de%20confirmar%20presen%C3%A7a"
-           target="_blank"></a>
-
-        <div class="hotspot"
-             style="bottom:25%; left:64%; width:20%; height:10%;"
-             onclick="goPage(4)"></div>
+        <a class="hotspot" style="bottom:25%; left:16%; width:20%; height:10%;" href="https://maps.google.com" target="_blank"></a>
+        <a class="hotspot" style="bottom:25%; left:40%; width:20%; height:10%;" href="https://wa.me/5511947057844" target="_blank"></a>
+        <div class="hotspot" style="bottom:25%; left:64%; width:20%; height:10%;" onclick="goPage(4)"></div>
     </div>
 </div>
 
@@ -153,9 +124,17 @@
     const iconeAudio = document.getElementById('iconeAudio');
 
     function startInvite() {
-        musica.play().catch(e => console.log("Áudio aguardando interação"));
-        btnAudio.style.display = 'flex'; // Mostra o botão quando começar
+        // No iPhone, o play() DEVE acontecer dentro dessa função de clique
+        musica.play().then(() => {
+            console.log("Áudio tocando com sucesso");
+        }).catch(e => {
+            console.log("Erro ao tocar áudio: ", e);
+        });
+
+        btnAudio.style.display = 'flex';
         goPage(2);
+        
+        // Tenta tocar o vídeo
         video.play();
 
         video.onended = () => {
@@ -166,10 +145,10 @@
     function toggleAudio() {
         if (musica.paused) {
             musica.play();
-            iconeAudio.innerText = "II"; // Símbolo de Pause
+            iconeAudio.innerText = "II";
         } else {
             musica.pause();
-            iconeAudio.innerText = "▶"; // Símbolo de Play
+            iconeAudio.innerText = "▶";
         }
     }
 
@@ -180,6 +159,13 @@
             targetPage.style.display = 'block';
         }
     }
+
+    // Truque extra para navegadores mobile que suspendem o áudio
+    document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible" && !musica.paused) {
+            musica.play();
+        }
+    });
 </script>
 
 </body>
