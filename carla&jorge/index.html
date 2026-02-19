@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Convite Carla & Jorge</title>
+<title>Convite Interativo</title>
 
 <style>
 
@@ -141,4 +141,213 @@ html,body{
 }
 
 .form-box input{
-  width: 90%;            /* 🔴 Lar
+  width: 90%;            /* 🔴 Largura da caixa */
+  padding: 15px;
+  font-size: 18px;
+  margin-bottom: 15px;
+  box-sizing: border-box; /* 🔴 Faz a caixa ficar centralizada sem sobrar */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  display: inline-block;
+}
+
+.form-box button{
+  padding:15px;
+  font-size:20px;
+  background: var(--cor-botoes-geral);
+  color:#fff;
+  border:none;
+  width: 90%;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+/* PIX */
+.pix-box{
+  text-align:center;
+  padding:30px 20px;
+}
+
+#pixKey{
+  font-size:22px;
+  font-weight:bold;
+  display:block;
+  margin-bottom:15px;
+}
+
+#copyBtn{
+  padding:14px 30px;
+  font-size:16px;
+  background: var(--cor-botoes-geral);
+  color:#fff;
+  border:none;
+}
+
+/* RODAPÉ */
+footer{
+  text-align:center;
+  padding:30px;
+  font-size:14px;
+  line-height: 1.6;
+}
+
+footer a {
+  color: inherit;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+@media(min-width:768px){
+  .pagina{ box-shadow:0 0 25px rgba(0,0,0,0.2); }
+}
+
+</style>
+</head>
+
+<body>
+
+<button id="audioBtn">▶</button>
+<audio id="bgAudio" src="media/audio.mp3" loop></audio>
+
+<section class="pagina">
+<img src="media/pagina1.png" class="full-img">
+</section>
+
+<section class="pagina">
+<video autoplay muted loop playsinline class="full-video">
+<source src="media/pagina2.mp4" type="video/mp4">
+</video>
+</section>
+
+<section class="pagina">
+<img src="media/pagina3.png" class="full-img">
+<div class="cronometro" id="contador"></div>
+</section>
+
+<section class="pagina">
+<a href="https://forms.gle/i5171PjDYHXc1ej76" target="_blank" class="maps-btn">
+CONFIRME SUA PRESENÇA
+</a>
+</section>
+
+<section class="pagina">
+<img src="media/pagina4.png" class="full-img">
+<div class="slider-container">
+    <div class="slider-wrapper" id="sliderWrapper"></div>
+</div>
+</section>
+
+<section class="pagina">
+<img src="media/pagina5.png" class="full-img">
+
+<a href="https://maps.app.goo.gl/XvTcxzdbXB184d6WA" target="_blank" class="maps-btn">
+COMO CHEGAR
+</a>
+
+<div class="form-box">
+<h2>DEIXE SUA MENSAGEM</h2>
+<form action="https://formsubmit.co/crispoparte@gmail.com" method="POST">
+  
+  <input type="hidden" name="_next" value="https://crispoparte.com.br/paloma">
+
+  <input type="hidden" name="_success" value="Recebemos sua mensagem! Voltando ao convite...">
+
+  <input type="hidden" name="_captcha" value="false">
+  
+  <input type="text" name="Nome" placeholder="Seu Nome" required>
+  <input type="text" name="Sua menssagem aqui!" placeholder="Sua menssagem aqui!">
+  
+  <button type="submit">ENVIAR</button>
+</form>
+</div>
+</section>
+
+<section class="pagina">
+<img src="media/pagina6.png" class="full-img">
+<div class="pix-box">
+<span id="pixKey">71993233142</span>
+<button id="copyBtn">COPIAR CHAVE PIX</button>
+</div>
+</section>
+
+<footer>
+  Desenvolvido por Cris Oliveira<br>
+  Todos os direitos reservados<br>
+  
+  contato: <a href="https://wa.me/5571993233142" target="_blank">(71) 9.93233142</a>
+</footer>
+
+<script>
+
+/* ========================================================= */
+/* 🔴 CONFIGURAÇÃO DO SLIDER (FLEXÍVEL) */
+/* ========================================================= */
+const listaFotos = ['foto1.jpg', 'foto2.jpg', 'foto3.jpg', 'foto4.jpg', 'foto5.jpg', 'foto6.jpg']; 
+
+const wrapper = document.getElementById('sliderWrapper');
+listaFotos.forEach(nomeFoto => {
+    const img = document.createElement('img');
+    img.src = `media/${nomeFoto}`;
+    wrapper.appendChild(img);
+});
+
+let startsX = 0;
+let currentIndex = 0;
+wrapper.addEventListener('touchstart', e => startsX = e.touches[0].clientX);
+wrapper.addEventListener('touchend', e => {
+    let diff = startsX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+        if (diff > 0 && currentIndex < listaFotos.length - 1) currentIndex++;
+        else if (diff < 0 && currentIndex > 0) currentIndex--;
+        wrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
+    }
+});
+
+/* --- ÁUDIO --- */
+const audio = document.getElementById("bgAudio");
+const btn = document.getElementById("audioBtn");
+let tocando=false;
+btn.onclick=function(){
+if(!tocando){ audio.play(); btn.innerHTML="❚❚"; tocando=true; }
+else{ audio.pause(); btn.innerHTML="▶"; tocando=false; }
+}
+
+/* ========================================================= */
+/* 🔴 DATA DO EVENTO (FORMATO: ANO-MÊS-DIA) */
+/* ========================================================= */
+const dataEvento = new Date("2026-02-21T20:00:00");
+
+function atualizar(){
+const agora = new Date();
+const diff = dataEvento - agora;
+
+if(diff<=0){
+document.getElementById("contador").innerHTML="É HOJE!";
+return;
+}
+
+const d = Math.floor(diff/(1000*60*60*24)).toString().padStart(2, '0');
+const h = Math.floor((diff/(1000*60*60))%24).toString().padStart(2, '0');
+const m = Math.floor((diff/(1000*60))%60).toString().padStart(2, '0');
+const s = Math.floor((diff/1000)%60).toString().padStart(2, '0');
+
+document.getElementById("contador").innerHTML = `
+    <div class="tempo-unidade"><span class="tempo-valor">${d}</span><span class="tempo-legenda">DIAS</span></div>
+    <div class="tempo-unidade"><span class="tempo-valor">${h}</span><span class="tempo-legenda">HORAS</span></div>
+    <div class="tempo-unidade"><span class="tempo-valor">${m}</span><span class="tempo-legenda">MIN</span></div>
+    <div class="tempo-unidade"><span class="tempo-valor">${s}</span><span class="tempo-legenda">SEG</span></div>
+`;
+}
+setInterval(atualizar,1000);
+atualizar();
+
+/* --- PIX --- */
+document.getElementById("copyBtn").onclick=function(){
+const chave=document.getElementById("pixKey").innerText;
+navigator.clipboard.writeText(chave);
+alert("Chave Pix copiada!");
+}
+
+</script>
+</body>
+</html>
