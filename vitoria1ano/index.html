@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    
+    <title>Convite Vitoria</title>
+    
+    <style>
+        :root {
+            /* EDITE A COR AQUI */
+            --cor-botao: #ffffff; 
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            height: 100dvh;
+            width: 100vw;
+            overflow: hidden;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .page {
+            display: none;
+            width: 100%;
+            height: 100dvh;
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .page img,
+        .page video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; 
+            display: block;
+        }
+
+        .content-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hotspot {
+            position: absolute;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .btn-voltar {
+            position: absolute;
+            top: 5%;
+            right: 5%;
+            width: 12%;
+            aspect-ratio: 1/1;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 20;
+        }
+
+        /* NOVO BOTÃO DE ÁUDIO */
+        .btn-audio {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: transparent;
+            border: 2px solid var(--cor-botao);
+            color: var(--cor-botao);
+            display: none; /* Inicia oculto */
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 100;
+            font-size: 20px;
+            transition: transform 0.2s;
+        }
+
+        .btn-audio:active {
+            transform: scale(0.9);
+        }
+    </style>
+</head>
+
+<body>
+
+<audio id="musica" src="audio.mp3" loop></audio>
+
+<div id="btnControleAudio" class="btn-audio" onclick="toggleAudio()">
+    <span id="iconeAudio">II</span>
+</div>
+
+<div class="page" id="page1" style="display:block;">
+    <div class="content-wrapper" onclick="startInvite()">
+        <img src="pagina1.png">
+        <div class="hotspot" style="top:0; left:0; width:100%; height:100%;"></div>
+    </div>
+</div>
+
+<div class="page" id="page2">
+    <div class="content-wrapper">
+        <video id="video" src="pagina2.mp4" playsinline webkit-playsinline></video>
+    </div>
+</div>
+
+<div class="page" id="page3">
+    <div class="content-wrapper">
+        <img src="pagina3.jpg">
+
+        <a class="hotspot"
+           style="bottom:25%; left:16%; width:20%; height:10%;"
+           href="https://www.google.com/maps/search/?api=1&query=Localização"
+           target="_blank"></a>
+
+        <a class="hotspot"
+           style="bottom:25%; left:40%; width:20%; height:10%;"
+           href="https://wa.me/5511947057844?text=Gostaria%20de%20confirmar%20presen%C3%A7a"
+           target="_blank"></a>
+
+        <div class="hotspot"
+             style="bottom:25%; left:64%; width:20%; height:10%;"
+             onclick="goPage(4)"></div>
+    </div>
+</div>
+
+<div class="page" id="page4">
+    <div class="content-wrapper">
+        <img src="pagina4.jpg">
+        <div class="btn-voltar" onclick="goPage(3)"></div>
+    </div>
+</div>
+
+<script>
+    const musica = document.getElementById('musica');
+    const video = document.getElementById('video');
+    const btnAudio = document.getElementById('btnControleAudio');
+    const iconeAudio = document.getElementById('iconeAudio');
+
+    function startInvite() {
+        musica.play().catch(e => console.log("Áudio aguardando interação"));
+        btnAudio.style.display = 'flex'; // Mostra o botão quando começar
+        goPage(2);
+        video.play();
+
+        video.onended = () => {
+            goPage(3);
+        };
+    }
+
+    function toggleAudio() {
+        if (musica.paused) {
+            musica.play();
+            iconeAudio.innerText = "II"; // Símbolo de Pause
+        } else {
+            musica.pause();
+            iconeAudio.innerText = "▶"; // Símbolo de Play
+        }
+    }
+
+    function goPage(num) {
+        document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+        const targetPage = document.getElementById('page' + num);
+        if (targetPage) {
+            targetPage.style.display = 'block';
+        }
+    }
+</script>
+
+</body>
+</html>
