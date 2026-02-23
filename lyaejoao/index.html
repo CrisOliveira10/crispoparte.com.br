@@ -1,97 +1,97 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    
-    <title>Convite Lya e João</title>
-    
-    <style>
-        :root {
-            /* EDITE A COR AQUI */
-            --cor-botao: #ffffff; 
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Convite Lya e João</title>
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+<style>
+:root {
+    --cor-botao: #ffffff; 
+}
 
-        body {
-            background: #000;
-            height: 100dvh;
-            width: 100vw;
-            overflow: hidden;
-            font-family: sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
 
-        .page {
-            display: none;
-            width: 100%;
-            height: 100dvh;
-            position: relative;
-            max-width: 500px;
-            margin: 0 auto;
-        }
+body {
+    background: #000;
+    height: 100dvh;
+    width: 100vw;
+    overflow: hidden;
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-        .page img,
-        .page video {
-            width: 100%;
-            height: 100%;
-            object-fit: contain; 
-            display: block;
-        }
+.page {
+    display: none;
+    width: 100%;
+    height: 100dvh;
+    position: relative;
+    max-width: 500px;
+    margin: 0 auto;
+}
 
-        .content-wrapper {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+.page img,
+.page video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; 
+    display: block;
+}
 
-        /* ANIMAÇÃO PULSE */
-        @keyframes pulse-white {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
-        }
+.content-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-        /* BOTÃO PLAY/PAUSE */
-        .btn-audio {
-            position: fixed;
-            top: 30px; 
-            left: 20px; 
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background-color: rgba(0, 0, 0, 0.4); 
-            border: 2px solid var(--cor-botao);
-            color: var(--cor-botao);
-            display: none; 
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            z-index: 1000;
-            font-size: 18px;
-            /* Aplicação da animação */
-            animation: pulse-white 2s infinite;
-        }
+/* ANIMAÇÃO PULSE */
+@keyframes pulse-white {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+}
 
-        .btn-audio:active {
-            transform: scale(0.9);
-            animation: none; /* Para a animação ao clicar */
-        }
+/* BOTÃO PLAY/PAUSE */
+.btn-audio {
+    position: fixed;
+    top: 30px; 
+    left: 20px; 
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.4); 
+    border: 2px solid var(--cor-botao);
+    color: var(--cor-botao);
+    display: none; 
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 1000;
+    font-size: 18px;
+    animation: pulse-white 2s infinite;
+}
 
-        .hotspot { position: absolute; cursor: pointer; z-index: 10; }
-        .btn-voltar { position: absolute; top: 5%; right: 5%; width: 12%; aspect-ratio: 1/1; z-index: 20; }
-    </style>
+.btn-audio:active {
+    transform: scale(0.9);
+    animation: none;
+}
+
+.hotspot {
+    position: absolute;
+    cursor: pointer;
+    z-index: 10;
+}
+</style>
 </head>
 
 <body>
@@ -102,6 +102,7 @@
     <span id="iconeAudio">II</span>
 </div>
 
+<!-- PÁGINA 1 -->
 <div class="page" id="page1" style="display:block;">
     <div class="content-wrapper" onclick="startInvite()">
         <img src="pagina1.jpg">
@@ -109,72 +110,71 @@
     </div>
 </div>
 
+<!-- PÁGINA 2 (VÍDEO) -->
 <div class="page" id="page2">
     <div class="content-wrapper">
         <video id="video" src="pagina2.mp4" playsinline webkit-playsinline muted></video>
     </div>
 </div>
 
+<!-- PÁGINA 3 -->
 <div class="page" id="page3">
     <div class="content-wrapper">
         <img src="pagina3.jpg">
-        <a class="hotspot" style="bottom:25%; left:16%; width:20%; height:10%;" href="http://noivos.casar.com/lyaejoao"></a>
-        
-        <div class="hotspot" style="bottom:25%; left:64%; width:20%; height:10%;" onclick="goPage(4)"></div>
-    </div>
-</div>
 
-<div class="page" id="page4">
-    <div class="content-wrapper">
-        <img src="pagina4.jpg">
-        <div class="btn-voltar" onclick="goPage(3)"></div>
+        <!-- ÚNICO HOTSPOT -->
+        <a class="hotspot"
+           style="bottom:25%; left:16%; width:20%; height:10%;"
+           href="http://noivos.casar.com/lyaejoao"
+           target="_blank">
+        </a>
+
     </div>
 </div>
 
 <script>
-    const musica = document.getElementById('musica');
-    const video = document.getElementById('video');
-    const btnAudio = document.getElementById('btnControleAudio');
-    const iconeAudio = document.getElementById('iconeAudio');
+const musica = document.getElementById('musica');
+const video = document.getElementById('video');
+const btnAudio = document.getElementById('btnControleAudio');
+const iconeAudio = document.getElementById('iconeAudio');
 
-    function startInvite() {
-        // Garantindo áudio no iOS
-        musica.play().catch(e => console.log("Áudio pendente"));
-        
-        btnAudio.style.display = 'flex';
-        goPage(2);
-        video.play();
+function startInvite() {
+    musica.play().catch(e => console.log("Áudio pendente"));
+    btnAudio.style.display = 'flex';
 
-        video.onended = () => {
-            goPage(3);
-        };
+    goPage(2);
+    video.play();
+
+    video.onended = () => {
+        goPage(3);
+    };
+}
+
+function toggleAudio() {
+    if (musica.paused) {
+        musica.play();
+        iconeAudio.innerText = "II";
+        btnAudio.style.animation = "pulse-white 2s infinite";
+    } else {
+        musica.pause();
+        iconeAudio.innerText = "▶";
+        btnAudio.style.animation = "none";
     }
+}
 
-    function toggleAudio() {
-        if (musica.paused) {
-            musica.play();
-            iconeAudio.innerText = "II";
-            btnAudio.style.animation = "pulse-white 2s infinite"; // Volta a pulsar no play
-        } else {
-            musica.pause();
-            iconeAudio.innerText = "▶";
-            btnAudio.style.animation = "none"; // Para de pulsar no pause (opcional)
-        }
+function goPage(num) {
+    document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+    const targetPage = document.getElementById('page' + num);
+    if (targetPage) {
+        targetPage.style.display = 'block';
     }
+}
 
-    function goPage(num) {
-        document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-        const targetPage = document.getElementById('page' + num);
-        if (targetPage) {
-            targetPage.style.display = 'block';
-        }
+document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible" && !musica.paused) {
+        musica.play();
     }
-
-    document.addEventListener("visibilitychange", () => {
-        if (document.visibilityState === "visible" && !musica.paused) {
-            musica.play();
-        }
-    });
+});
 </script>
 
 </body>
