@@ -8,7 +8,7 @@
 <style>
 :root {
     --cor-botao: #ffffff;
-    --cor-hotspot: rgba(255, 0, 0, 0.35); /* 🔴 ALTERE PARA transparent QUANDO FINALIZAR */
+    --cor-hotspot: rgba(255, 0, 0, 0.35); /* 🔴 depois troque para transparent */
 }
 
 * {
@@ -42,7 +42,7 @@ body {
 .page video {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover; /* ✅ CORRIGIDO AQUI */
     display: block;
 }
 
@@ -50,19 +50,16 @@ body {
     position: relative;
     width: 100%;
     height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 /* ANIMAÇÃO PULSE */
 @keyframes pulse-white {
-    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
-    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
-    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255,255,255,0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(255,255,255,0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255,255,255,0); }
 }
 
-/* BOTÃO PLAY/PAUSE */
+/* BOTÃO PLAY */
 .btn-audio {
     position: fixed;
     top: 30px;
@@ -70,7 +67,7 @@ body {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(0,0,0,0.4);
     border: 2px solid var(--cor-botao);
     color: var(--cor-botao);
     display: none;
@@ -87,7 +84,7 @@ body {
     animation: none;
 }
 
-/* HOTSPOT VISÍVEL PARA AJUSTE */
+/* HOTSPOT */
 .hotspot {
     position: absolute;
     cursor: pointer;
@@ -126,9 +123,9 @@ body {
     <div class="content-wrapper">
         <img src="pagina3.jpg">
 
-        <!-- 🔴 HOTSPOT EDITÁVEL -->
+        <!-- 🔴 HOTSPOT AJUSTÁVEL -->
         <a class="hotspot"
-          style="top:50%; left:50%; width:22%; height:10%; transform:translateX(-50%);"
+           style="top:65%; left:50%; width:22%; height:10%; transform:translateX(-50%);"
            href="http://noivos.casar.com/lyaejoao"
            target="_blank">
         </a>
