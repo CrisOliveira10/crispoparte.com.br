@@ -7,7 +7,8 @@
 
 <style>
 :root {
-    --cor-botao: #ffffff; 
+    --cor-botao: #ffffff;
+    --cor-hotspot: rgba(255, 0, 0, 0.35); /* 🔴 ALTERE PARA transparent QUANDO FINALIZAR */
 }
 
 * {
@@ -41,7 +42,7 @@ body {
 .page video {
     width: 100%;
     height: 100%;
-    object-fit: contain; 
+    object-fit: contain;
     display: block;
 }
 
@@ -64,15 +65,15 @@ body {
 /* BOTÃO PLAY/PAUSE */
 .btn-audio {
     position: fixed;
-    top: 30px; 
-    left: 20px; 
+    top: 30px;
+    left: 20px;
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background-color: rgba(0, 0, 0, 0.4); 
+    background-color: rgba(0, 0, 0, 0.4);
     border: 2px solid var(--cor-botao);
     color: var(--cor-botao);
-    display: none; 
+    display: none;
     justify-content: center;
     align-items: center;
     cursor: pointer;
@@ -86,10 +87,13 @@ body {
     animation: none;
 }
 
+/* HOTSPOT VISÍVEL PARA AJUSTE */
 .hotspot {
     position: absolute;
     cursor: pointer;
     z-index: 10;
+    background-color: var(--cor-hotspot);
+    border: 2px dashed red;
 }
 </style>
 </head>
@@ -106,11 +110,11 @@ body {
 <div class="page" id="page1" style="display:block;">
     <div class="content-wrapper" onclick="startInvite()">
         <img src="pagina1.jpg">
-        <div class="hotspot" style="top:0; left:0; width:100%; height:100%;"></div>
+        <div class="hotspot" style="top:0; left:0; width:100%; height:100%; background:transparent; border:none;"></div>
     </div>
 </div>
 
-<!-- PÁGINA 2 (VÍDEO) -->
+<!-- PÁGINA 2 -->
 <div class="page" id="page2">
     <div class="content-wrapper">
         <video id="video" src="pagina2.mp4" playsinline webkit-playsinline muted></video>
@@ -122,7 +126,7 @@ body {
     <div class="content-wrapper">
         <img src="pagina3.jpg">
 
-        <!-- ÚNICO HOTSPOT -->
+        <!-- 🔴 HOTSPOT EDITÁVEL -->
         <a class="hotspot"
            style="bottom:25%; left:16%; width:20%; height:10%;"
            href="http://noivos.casar.com/lyaejoao"
