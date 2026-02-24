@@ -1,11 +1,4 @@
 <!DOCTYPE html>
-<!--
-© 2026 Cristiane Oliveira
-Material exclusivo para alunos.
-Proibida reprodução, distribuição ou revenda.
-Lei 9.610/98 – Direitos Autorais.
--->
-
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -15,7 +8,8 @@ Lei 9.610/98 – Direitos Autorais.
     <style>
         :root {
             --cor-botao: #ffffff;
-            --aspect-ratio: 9 / 16; /* Proporção padrão de convites mobile */
+            --aspect-ratio: 9 / 16;
+            --tempo-transicao: 0.8s; /* Velocidade do fade */
         }
 
         /* RESET */
@@ -28,7 +22,7 @@ Lei 9.610/98 – Direitos Autorais.
 
         body {
             background: #000;
-            height: 100dvh; /* Dynamic VH para Safari */
+            height: 100dvh;
             width: 100vw;
             overflow: hidden;
             font-family: sans-serif;
@@ -37,23 +31,30 @@ Lei 9.610/98 – Direitos Autorais.
             align-items: center;
         }
 
-        /* 🔴 ATIVE PARA VER HOTSPOTS DURANTE OS TESTES */
+        /* CONFIGURAÇÃO DE TRANSIÇÃO */
+        .page {
+            display: none;
+            width: 100%;
+            height: 100dvh;
+            position: absolute; /* Mudado para absolute para sobrepor durante o fade */
+            max-width: 500px;
+            opacity: 0;
+            transition: opacity var(--tempo-transicao) ease-in-out;
+            z-index: 1;
+        }
+
+        .page.active {
+            display: block;
+            opacity: 1;
+            z-index: 2;
+        }
+
+        /* 🔴 MODO EDIÇÃO */
         body.modo-edicao .hotspot {
             border: 2px dashed red;
             background: rgba(255,0,0,0.2);
         }
 
-        /* CONTAINER PRINCIPAL */
-        .page {
-            display: none;
-            width: 100%;
-            height: 100dvh;
-            position: relative;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        /* WRAPPER COM ASPECT RATIO PARA CONTER A ARTE */
         .content-wrapper {
             position: relative;
             width: 100%;
@@ -63,7 +64,6 @@ Lei 9.610/98 – Direitos Autorais.
             align-items: center;
         }
 
-        /* GARANTE QUE A MÍDIA NÃO CORTE (CONTAIN) */
         .media-container {
             position: relative;
             width: 100%;
@@ -78,23 +78,20 @@ Lei 9.610/98 – Direitos Autorais.
         .media-container video {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Evita cortes nas laterais ou topo */
+            object-fit: contain;
             display: block;
         }
 
-        /* AREA DE INTERAÇÃO (Sincronizada com a imagem) */
         .interactive-area {
             position: absolute;
             aspect-ratio: var(--aspect-ratio);
             height: 100%;
             max-width: 100%;
-            /* Esta div tem o tamanho exato da arte visível */
         }
 
-        /* BOTÃO ÁUDIO */
         .btn-audio {
             position: fixed;
-            top: env(safe-area-inset-top, 30px); /* Respeita o notch do iPhone */
+            top: env(safe-area-inset-top, 30px);
             left: 20px;
             width: 44px;
             height: 44px;
@@ -133,7 +130,7 @@ Lei 9.610/98 – Direitos Autorais.
     <span id="iconeAudio">▶</span>
 </div>
 
-<div class="page" id="page1" style="display:block;">
+<div class="page active" id="page1">
     <div class="content-wrapper" onclick="startInvite()">
         <div class="media-container">
             <img src="pagina1.jpg">
@@ -199,14 +196,26 @@ Lei 9.610/98 – Direitos Autorais.
     }
 
     function goPage(num) {
-        document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+        const pages = document.querySelectorAll('.page');
         const targetPage = document.getElementById('page' + num);
+
+        // Remove a classe ativa de todas as páginas
+        pages.forEach(p => {
+            p.classList.remove('active');
+            // Timeout para esconder o display após o fade out (opcional)
+            setTimeout(() => { if(!p.classList.contains('active')) p.style.display = 'none'; }, 800);
+        });
+
+        // Ativa a nova página
         if (targetPage) {
             targetPage.style.display = 'block';
+            // Pequeno delay para o browser processar o display:block antes da opacidade
+            setTimeout(() => {
+                targetPage.classList.add('active');
+            }, 10);
         }
     }
 
-    // Garante que o áudio não pare ao trocar de aba e voltar
     document.addEventListener("visibilitychange", () => {
         if (document.visibilityState === "visible" && !musica.paused) {
             musica.play();
