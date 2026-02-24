@@ -16,98 +16,95 @@ Lei 9.610/98 – Direitos Autorais.
 <style>
 
 /* RESET */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
 }
 
-body {
-    background: #000;
-    height: 100vh;
-    width: 100vw;
-    overflow: hidden;
-    font-family: sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+body{
+    background:#000;
+    height:100dvh; /* 🔥 viewport real mobile */
+    width:100vw;
+    overflow:hidden;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-family:sans-serif;
 }
 
-/* PÁGINAS COM FADE */
-.page {
-    position: absolute;
-    width: 100%;
-    height: 100vh;
-    max-width: 500px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.8s ease;
+/* CONTAINER PADRÃO IGUAL AO SEU ANTIGO */
+.page{
+    position:absolute;
+    width:100%;
+    height:100dvh;
+    max-width:500px;
+    margin:0 auto;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .8s ease;
 }
 
-.page.active {
-    opacity: 1;
-    pointer-events: auto;
+.page.active{
+    opacity:1;
+    pointer-events:auto;
 }
 
 .page img,
-.page video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
+.page video{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
 }
 
-.content-wrapper {
-    position: relative;
-    width: 100%;
-    height: 100%;
+.content-wrapper{
+    position:relative;
+    width:100%;
+    height:100%;
 }
 
 /* HOTSPOT */
-.hotspot {
-    position: absolute;
-    cursor: pointer;
-    z-index: 10;
+.hotspot{
+    position:absolute;
+    cursor:pointer;
+    z-index:10;
 }
 
-/* BOTÃO ÁUDIO PREMIUM */
-.btn-audio {
-    position: fixed;
-    top: 25px;
-    left: 20px;
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    background: rgba(0,0,0,0.55);
-    border: 2px solid #fff;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    z-index: 1000;
-    backdrop-filter: blur(6px);
-    transition: transform 0.3s ease;
+/* BOTÃO PREMIUM */
+.btn-audio{
+    position:fixed;
+    top:30px;
+    left:20px;
+    width:48px;
+    height:48px;
+    border-radius:50%;
+    background:rgba(0,0,0,.5);
+    border:2px solid #fff;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    cursor:pointer;
+    z-index:1000;
+    backdrop-filter:blur(4px);
+    transition:.3s;
 }
 
-.btn-audio:hover {
-    transform: scale(1.08);
+.btn-audio svg{
+    width:22px;
+    height:22px;
+    fill:#fff;
 }
 
-.btn-audio svg {
-    width: 22px;
-    height: 22px;
-    fill: #fff;
+@keyframes pulse{
+    0%{transform:scale(1)}
+    50%{transform:scale(1.07)}
+    100%{transform:scale(1)}
 }
 
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.07); }
-    100% { transform: scale(1); }
-}
-
-.btn-audio.playing {
-    animation: pulse 2s infinite;
+.btn-audio.playing{
+    animation:pulse 2s infinite;
 }
 
 </style>
@@ -116,7 +113,6 @@ body {
 <body>
 
 <audio id="musica" src="audio.mp3" loop preload="auto"></audio>
-
 <div id="btnAudio" class="btn-audio" onclick="toggleAudio()"></div>
 
 <!-- PÁGINAS -->
@@ -146,69 +142,56 @@ body {
 
 <script>
 
-const musica = document.getElementById('musica');
-const video = document.getElementById('video');
-const btnAudio = document.getElementById('btnAudio');
-let isPlaying = false;
+const musica=document.getElementById("musica");
+const video=document.getElementById("video");
+const btnAudio=document.getElementById("btnAudio");
+let tocando=false;
 
-const playIcon = `
-<svg viewBox="0 0 24 24">
-<polygon points="5,3 19,12 5,21"></polygon>
-</svg>`;
+const playIcon=`<svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"></polygon></svg>`;
+const pauseIcon=`<svg viewBox="0 0 24 24"><rect x="5" y="3" width="5" height="18"></rect><rect x="14" y="3" width="5" height="18"></rect></svg>`;
 
-const pauseIcon = `
-<svg viewBox="0 0 24 24">
-<rect x="5" y="3" width="5" height="18"></rect>
-<rect x="14" y="3" width="5" height="18"></rect>
-</svg>`;
-
-function updateButton() {
-    btnAudio.innerHTML = isPlaying ? pauseIcon : playIcon;
-    btnAudio.classList.toggle("playing", isPlaying);
+function atualizarBotao(){
+    btnAudio.innerHTML=tocando?pauseIcon:playIcon;
+    btnAudio.classList.toggle("playing",tocando);
 }
 
-function fadeToPage(num) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    const target = document.getElementById('page' + num);
-    if (target) target.classList.add('active');
+function mudarPagina(n){
+    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+    document.getElementById("page"+n).classList.add("active");
 }
 
-function startInvite() {
+function startInvite(){
+    btnAudio.style.display="flex";
 
-    btnAudio.style.display = "flex";
+    musica.play().then(()=>{
+        tocando=true;
+        atualizarBotao();
+    }).catch(()=>{});
 
-    musica.play().then(() => {
-        isPlaying = true;
-        updateButton();
-    }).catch(() => {
-        isPlaying = false;
-        updateButton();
-    });
-
-    fadeToPage(2);
+    mudarPagina(2);
 
     video.play().catch(()=>{});
-    video.onended = () => fadeToPage(3);
+    video.onended=()=>mudarPagina(3);
 }
 
-function toggleAudio() {
-    if (isPlaying) {
+function toggleAudio(){
+    if(tocando){
         musica.pause();
-        isPlaying = false;
-    } else {
+        tocando=false;
+    }else{
         musica.play().catch(()=>{});
-        isPlaying = true;
+        tocando=true;
     }
-    updateButton();
+    atualizarBotao();
 }
 
-document.addEventListener("visibilitychange", function() {
-    if (document.visibilityState === "visible" && isPlaying) {
+document.addEventListener("visibilitychange",()=>{
+    if(document.visibilityState==="visible" && tocando){
         musica.play().catch(()=>{});
     }
 });
 
-updateButton();
+atualizarBotao();
 
 </script>
 
