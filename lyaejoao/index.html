@@ -15,7 +15,6 @@ Lei 9.610/98 – Direitos Autorais.
 
 <style>
 
-/* RESET */
 *{
     margin:0;
     padding:0;
@@ -25,30 +24,27 @@ Lei 9.610/98 – Direitos Autorais.
 
 body{
     background:#000;
-    height:100dvh; /* 🔥 viewport real mobile */
+    height:100dvh;
     width:100vw;
     overflow:hidden;
-    display:flex;
-    justify-content:center;
-    align-items:center;
     font-family:sans-serif;
 }
 
-/* CONTAINER PADRÃO IGUAL AO SEU ANTIGO */
+/* CONTAINER IGUAL AO ORIGINAL */
 .page{
-    position:absolute;
+    display:none;
     width:100%;
     height:100dvh;
     max-width:500px;
     margin:0 auto;
+    position:relative;
+    transition:opacity .6s ease;
     opacity:0;
-    pointer-events:none;
-    transition:opacity .8s ease;
 }
 
 .page.active{
+    display:block;
     opacity:1;
-    pointer-events:auto;
 }
 
 .page img,
@@ -65,14 +61,13 @@ body{
     height:100%;
 }
 
-/* HOTSPOT */
 .hotspot{
     position:absolute;
     cursor:pointer;
     z-index:10;
 }
 
-/* BOTÃO PREMIUM */
+/* BOTÃO */
 .btn-audio{
     position:fixed;
     top:30px;
@@ -88,7 +83,6 @@ body{
     cursor:pointer;
     z-index:1000;
     backdrop-filter:blur(4px);
-    transition:.3s;
 }
 
 .btn-audio svg{
@@ -115,7 +109,6 @@ body{
 <audio id="musica" src="audio.mp3" loop preload="auto"></audio>
 <div id="btnAudio" class="btn-audio" onclick="toggleAudio()"></div>
 
-<!-- PÁGINAS -->
 <div class="page active" id="page1">
     <div class="content-wrapper" onclick="startInvite()">
         <img src="pagina1.jpg">
@@ -156,8 +149,15 @@ function atualizarBotao(){
 }
 
 function mudarPagina(n){
-    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-    document.getElementById("page"+n).classList.add("active");
+    document.querySelectorAll(".page").forEach(p=>{
+        p.classList.remove("active");
+        p.style.display="none";
+    });
+
+    const target=document.getElementById("page"+n);
+    target.style.display="block";
+
+    setTimeout(()=>target.classList.add("active"),10);
 }
 
 function startInvite(){
