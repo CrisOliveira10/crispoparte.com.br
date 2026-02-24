@@ -5,108 +5,126 @@ Material exclusivo para alunos.
 Proibida reprodução, distribuição ou revenda.
 Lei 9.610/98 – Direitos Autorais.
 -->
+
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Convite Lya e João</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Convite Lya e João</title>
 
-<style>
-:root {
-    --cor-botao: #ffffff;
-}
+    <style>
+        :root {
+            --cor-botao: #ffffff;
+            --aspect-ratio: 9 / 16; /* Proporção padrão de convites mobile */
+        }
 
-/* RESET */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-}
+        /* RESET */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-body {
-    background: #000;
-    height: 100dvh;
-    width: 100vw;
-    overflow: hidden;
-    font-family: sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+        body {
+            background: #000;
+            height: 100dvh; /* Dynamic VH para Safari */
+            width: 100vw;
+            overflow: hidden;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-/* 🔴 ATIVE PARA VER HOTSPOTS */
-body.modo-edicao .hotspot {
-    border: 2px dashed red;
-    background: rgba(255,0,0,0.2);
-}
+        /* 🔴 ATIVE PARA VER HOTSPOTS DURANTE OS TESTES */
+        body.modo-edicao .hotspot {
+            border: 2px dashed red;
+            background: rgba(255,0,0,0.2);
+        }
 
-/* PÁGINAS */
-.page {
-    display: none;
-    width: 100%;
-    height: 100dvh;
-    position: relative;
-    max-width: 500px;
-    margin: 0 auto;
-}
+        /* CONTAINER PRINCIPAL */
+        .page {
+            display: none;
+            width: 100%;
+            height: 100dvh;
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto;
+        }
 
-.page img,
-.page video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
+        /* WRAPPER COM ASPECT RATIO PARA CONTER A ARTE */
+        .content-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-.content-wrapper {
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
+        /* GARANTE QUE A MÍDIA NÃO CORTE (CONTAIN) */
+        .media-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-height: 100dvh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-/* ANIMAÇÃO */
-@keyframes pulse-white {
-    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255,255,255,0.7); }
-    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(255,255,255,0); }
-    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255,255,255,0); }
-}
+        .media-container img,
+        .media-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Evita cortes nas laterais ou topo */
+            display: block;
+        }
 
-/* BOTÃO ÁUDIO CORRIGIDO */
-.btn-audio {
-    position: fixed;
-    top: 30px;
-    left: 20px;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background-color: rgba(0,0,0,0.5);
-    border: 2px solid #ffffff;
-    color: #ffffff;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    z-index: 1000;
-    font-size: 20px;
-    font-weight: bold;
-    animation: pulse-white 2s infinite;
-}
+        /* AREA DE INTERAÇÃO (Sincronizada com a imagem) */
+        .interactive-area {
+            position: absolute;
+            aspect-ratio: var(--aspect-ratio);
+            height: 100%;
+            max-width: 100%;
+            /* Esta div tem o tamanho exato da arte visível */
+        }
 
-.btn-audio:active {
-    transform: scale(0.9);
-    animation: none;
-}
+        /* BOTÃO ÁUDIO */
+        .btn-audio {
+            position: fixed;
+            top: env(safe-area-inset-top, 30px); /* Respeita o notch do iPhone */
+            left: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background-color: rgba(0,0,0,0.5);
+            border: 2px solid #ffffff;
+            color: #ffffff;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 1000;
+            font-size: 18px;
+            animation: pulse-white 2s infinite;
+        }
 
-.hotspot {
-    position: absolute;
-    cursor: pointer;
-    z-index: 10;
-}
-</style>
+        @keyframes pulse-white {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255,255,255,0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(255,255,255,0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+        }
+
+        .hotspot {
+            position: absolute;
+            cursor: pointer;
+            z-index: 10;
+        }
+    </style>
 </head>
 
-<!-- 🔴 REMOVA class="modo-edicao" PARA ENTREGA -->
 <body>
 
 <audio id="musica" src="audio.mp3" loop preload="auto"></audio>
@@ -115,79 +133,85 @@ body.modo-edicao .hotspot {
     <span id="iconeAudio">▶</span>
 </div>
 
-<!-- PÁGINA 1 -->
 <div class="page" id="page1" style="display:block;">
     <div class="content-wrapper" onclick="startInvite()">
-        <img src="pagina1.jpg">
-        <div class="hotspot" style="top:0; left:0; width:100%; height:100%;"></div>
+        <div class="media-container">
+            <img src="pagina1.jpg">
+            <div class="interactive-area">
+                <div class="hotspot" style="top:0; left:0; width:100%; height:100%;"></div>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- PÁGINA 2 -->
 <div class="page" id="page2">
     <div class="content-wrapper">
-        <video id="video" src="pagina2.mp4" playsinline webkit-playsinline muted></video>
+        <div class="media-container">
+            <video id="video" src="pagina2.mp4" playsinline webkit-playsinline muted preload="auto"></video>
+        </div>
     </div>
 </div>
 
-<!-- PÁGINA 3 -->
 <div class="page" id="page3">
     <div class="content-wrapper">
-        <img src="pagina3.jpg">
-
-        <a class="hotspot"
-           style="top:63%; left:50%; width:22%; height:10%; transform:translateX(-50%);"
-           href="http://noivos.casar.com/lyaejoao"
-           target="_blank">
-        </a>
-
+        <div class="media-container">
+            <img src="pagina3.jpg">
+            <div class="interactive-area">
+                <a class="hotspot" 
+                   style="top:63%; left:50%; width:40%; height:10%; transform:translateX(-50%);" 
+                   href="http://noivos.casar.com/lyaejoao" 
+                   target="_blank">
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
-const musica = document.getElementById('musica');
-const video = document.getElementById('video');
-const btnAudio = document.getElementById('btnControleAudio');
-const iconeAudio = document.getElementById('iconeAudio');
+    const musica = document.getElementById('musica');
+    const video = document.getElementById('video');
+    const btnAudio = document.getElementById('btnControleAudio');
+    const iconeAudio = document.getElementById('iconeAudio');
 
-function startInvite() {
-    musica.play().catch(() => {});
-    btnAudio.style.display = 'flex';
-    iconeAudio.innerText = "II";
-
-    goPage(2);
-    video.play();
-
-    video.onended = () => {
-        goPage(3);
-    };
-}
-
-function toggleAudio() {
-    if (musica.paused) {
-        musica.play();
+    function startInvite() {
+        musica.play().catch(e => console.log("Audio play blocked"));
+        btnAudio.style.display = 'flex';
         iconeAudio.innerText = "II";
-        btnAudio.style.animation = "pulse-white 2s infinite";
-    } else {
-        musica.pause();
-        iconeAudio.innerText = "▶";
-        btnAudio.style.animation = "none";
-    }
-}
 
-function goPage(num) {
-    document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-    const targetPage = document.getElementById('page' + num);
-    if (targetPage) {
-        targetPage.style.display = 'block';
-    }
-}
+        goPage(2);
+        video.play();
 
-document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible" && !musica.paused) {
-        musica.play();
+        video.onended = () => {
+            goPage(3);
+        };
     }
-});
+
+    function toggleAudio() {
+        if (musica.paused) {
+            musica.play();
+            iconeAudio.innerText = "II";
+            btnAudio.style.animation = "pulse-white 2s infinite";
+        } else {
+            musica.pause();
+            iconeAudio.innerText = "▶";
+            btnAudio.style.animation = "none";
+        }
+    }
+
+    function goPage(num) {
+        document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+        const targetPage = document.getElementById('page' + num);
+        if (targetPage) {
+            targetPage.style.display = 'block';
+        }
+    }
+
+    // Garante que o áudio não pare ao trocar de aba e voltar
+    document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible" && !musica.paused) {
+            musica.play();
+        }
+    });
 </script>
 
 </body>
