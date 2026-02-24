@@ -10,13 +10,13 @@ Lei 9.610/98 – Direitos Autorais.
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Convite Lya e João</title>
-<meta property="og:title" content="Convite especial: Lya & João">
-    <meta property="og:description" content="Toque para abrir os detalhes deste dia incrível.">
-    <meta property="og:image" content="https://crispoparte.com.br/lyaejoao/capalink.png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:type" content="website">
 
+<meta property="og:title" content="Convite especial: Lya & João">
+<meta property="og:description" content="Toque para abrir os detalhes deste dia incrível.">
+<meta property="og:image" content="https://crispoparte.com.br/lyaejoao/capalink.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:type" content="website">
 
 <style>
 :root {
@@ -79,7 +79,7 @@ body.modo-edicao .hotspot {
     100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255,255,255,0); }
 }
 
-/* BOTÃO ÁUDIO CORRIGIDO */
+/* BOTÃO ÁUDIO */
 .btn-audio {
     position: fixed;
     top: 30px;
@@ -113,7 +113,6 @@ body.modo-edicao .hotspot {
 </style>
 </head>
 
-<!-- 🔴 REMOVA class="modo-edicao" PARA ENTREGA -->
 <body>
 
 <audio id="musica" src="audio.mp3" loop preload="auto"></audio>
@@ -125,7 +124,7 @@ body.modo-edicao .hotspot {
 <!-- PÁGINA 1 -->
 <div class="page" id="page1" style="display:block;">
     <div class="content-wrapper" onclick="startInvite()">
-        <img src="pagina1.jpg">
+        <img src="pagina1.jpg" alt="Página inicial">
         <div class="hotspot" style="top:0; left:0; width:100%; height:100%;"></div>
     </div>
 </div>
@@ -133,21 +132,21 @@ body.modo-edicao .hotspot {
 <!-- PÁGINA 2 -->
 <div class="page" id="page2">
     <div class="content-wrapper">
-        <video id="video" src="pagina2.mp4" playsinline webkit-playsinline muted></video>
+        <video id="video" src="pagina2.mp4" playsinline webkit-playsinline muted preload="auto"></video>
     </div>
 </div>
 
 <!-- PÁGINA 3 -->
 <div class="page" id="page3">
     <div class="content-wrapper">
-        <img src="pagina3.jpg">
+        <img src="pagina3.jpg" alt="Detalhes do evento">
 
-       <a class="hotspot"
-   style="top:63%; left:50%; width:22%; height:10%; transform:translateX(-50%);"
-   href="http://noivos.casar.com/lyaejoao"
-   target="_blank"
-   rel="noopener noreferrer">
-</a>
+        <a class="hotspot"
+           style="top:63%; left:50%; width:22%; height:10%; transform:translateX(-50%);"
+           href="http://noivos.casar.com/lyaejoao"
+           target="_blank"
+           rel="noopener noreferrer">
+        </a>
 
     </div>
 </div>
@@ -164,7 +163,7 @@ function startInvite() {
     iconeAudio.innerText = "II";
 
     goPage(2);
-    video.play();
+    video.play().catch(() => {});
 
     video.onended = () => {
         goPage(3);
@@ -193,7 +192,7 @@ function goPage(num) {
 
 document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible" && !musica.paused) {
-        musica.play();
+        musica.play().catch(() => {});
     }
 });
 </script>
