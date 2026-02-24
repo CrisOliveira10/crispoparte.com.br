@@ -8,20 +8,10 @@ Lei 9.610/98 – Direitos Autorais.
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Convite Lya e João</title>
 
-<meta property="og:title" content="Convite especial: Lya & João">
-<meta property="og:description" content="Toque para abrir os detalhes deste dia incrível.">
-<meta property="og:image" content="https://crispoparte.com.br/lyaejoao/capalink.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:type" content="website">
-
 <style>
-:root {
-    --cor-botao: #ffffff;
-}
 
 /* RESET */
 * {
@@ -34,15 +24,12 @@ Lei 9.610/98 – Direitos Autorais.
 body {
     background: #000;
     height: 100vh;
-    width: 100%;
+    width: 100vw;
     overflow: hidden;
     font-family: sans-serif;
-}
-
-/* 🔴 ATIVE PARA VER HOTSPOTS */
-body.modo-edicao .hotspot {
-    border: 2px dashed red;
-    background: rgba(255,0,0,0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* PÁGINAS */
@@ -69,44 +56,49 @@ body.modo-edicao .hotspot {
     height: 100%;
 }
 
-/* ANIMAÇÃO */
-@keyframes pulse-white {
-    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255,255,255,0.7); }
-    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(255,255,255,0); }
-    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255,255,255,0); }
-}
-
-/* BOTÃO ÁUDIO */
-.btn-audio {
-    position: fixed;
-    top: 30px;
-    left: 20px;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background-color: rgba(0,0,0,0.5);
-    border: 2px solid #ffffff;
-    color: #ffffff;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    z-index: 1000;
-    font-size: 20px;
-    font-weight: bold;
-    animation: pulse-white 2s infinite;
-}
-
-.btn-audio:active {
-    transform: scale(0.9);
-    animation: none;
-}
-
+/* HOTSPOT */
 .hotspot {
     position: absolute;
     cursor: pointer;
     z-index: 10;
 }
+
+/* BOTÃO ÁUDIO ULTRA ESTÁVEL */
+.btn-audio {
+    position: fixed;
+    top: 25px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.6);
+    border: 2px solid #ffffff;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+}
+
+/* Ícones SVG */
+.btn-audio svg {
+    width: 22px;
+    height: 22px;
+    fill: #ffffff;
+}
+
+/* Animação leve */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+}
+
+.btn-audio.playing {
+    animation: pulse 2s infinite;
+}
+
 </style>
 </head>
 
@@ -114,9 +106,7 @@ body.modo-edicao .hotspot {
 
 <audio id="musica" src="audio.mp3" loop preload="auto"></audio>
 
-<div id="btnControleAudio" class="btn-audio" onclick="toggleAudio()">
-    <span id="iconeAudio">▶</span>
-</div>
+<div id="btnAudio" class="btn-audio" onclick="toggleAudio()"></div>
 
 <!-- PÁGINA 1 -->
 <div class="page" id="page1" style="display:block;">
@@ -137,61 +127,94 @@ body.modo-edicao .hotspot {
 <div class="page" id="page3">
     <div class="content-wrapper">
         <img src="pagina3.jpg">
-
         <a class="hotspot"
            style="top:63%; left:50%; width:22%; height:10%; transform:translateX(-50%);"
            href="http://noivos.casar.com/lyaejoao"
-           target="_blank"
-           rel="noopener noreferrer">
+           target="_blank">
         </a>
-
     </div>
 </div>
 
 <script>
+
 const musica = document.getElementById('musica');
 const video = document.getElementById('video');
-const btnAudio = document.getElementById('btnControleAudio');
-const iconeAudio = document.getElementById('iconeAudio');
+const btnAudio = document.getElementById('btnAudio');
 
+let isPlaying = false;
+
+/* Ícones SVG */
+const playIcon = `
+<svg viewBox="0 0 24 24">
+<polygon points="5,3 19,12 5,21"></polygon>
+</svg>`;
+
+const pauseIcon = `
+<svg viewBox="0 0 24 24">
+<rect x="5" y="3" width="5" height="18"></rect>
+<rect x="14" y="3" width="5" height="18"></rect>
+</svg>`;
+
+/* Define estado visual */
+function updateButton() {
+    if (isPlaying) {
+        btnAudio.innerHTML = pauseIcon;
+        btnAudio.classList.add("playing");
+    } else {
+        btnAudio.innerHTML = playIcon;
+        btnAudio.classList.remove("playing");
+    }
+}
+
+/* Iniciar convite */
 function startInvite() {
-    musica.play().catch(() => {});
-    btnAudio.style.display = 'flex';
-    iconeAudio.innerText = "II";
+
+    btnAudio.style.display = "flex";
+
+    musica.play().then(() => {
+        isPlaying = true;
+        updateButton();
+    }).catch(() => {
+        isPlaying = false;
+        updateButton();
+    });
 
     goPage(2);
-    video.play();
 
-    video.onended = () => {
-        goPage(3);
-    };
-}
-
-function toggleAudio() {
-    if (musica.paused) {
-        musica.play();
-        iconeAudio.innerText = "II";
-        btnAudio.style.animation = "pulse-white 2s infinite";
-    } else {
-        musica.pause();
-        iconeAudio.innerText = "▶";
-        btnAudio.style.animation = "none";
+    if (video) {
+        video.play().catch(()=>{});
+        video.onended = () => goPage(3);
     }
 }
 
+/* Alternar áudio */
+function toggleAudio() {
+    if (isPlaying) {
+        musica.pause();
+        isPlaying = false;
+    } else {
+        musica.play().catch(()=>{});
+        isPlaying = true;
+    }
+    updateButton();
+}
+
+/* Troca de página */
 function goPage(num) {
     document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-    const targetPage = document.getElementById('page' + num);
-    if (targetPage) {
-        targetPage.style.display = 'block';
-    }
+    const page = document.getElementById('page' + num);
+    if (page) page.style.display = 'block';
 }
 
-document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible" && !musica.paused) {
-        musica.play();
+/* Corrige retomada no iOS */
+document.addEventListener("visibilitychange", function() {
+    if (document.visibilityState === "visible" && isPlaying) {
+        musica.play().catch(()=>{});
     }
 });
+
+updateButton();
+
 </script>
 
 </body>
