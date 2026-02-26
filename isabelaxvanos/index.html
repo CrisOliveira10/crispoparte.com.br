@@ -8,7 +8,7 @@
     <style>
         :root {
             --cor-botao-musica: rgba(255, 255, 255, 0.8);
-            --cor-icone: #1a2a6c; /* Tom azul marinho combinando com Van Gogh */
+            --cor-icone: #1a2a6c;
         }
 
         * {
@@ -29,7 +29,17 @@
             align-items: center;
         }
 
-        /* Container Principal */
+        /* Canvas para o efeito de brilhos */
+        #canvas-brilhos {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Deixa os cliques passarem para os botões */
+            z-index: 9999;
+        }
+
         .page {
             display: none;
             width: 100%;
@@ -37,12 +47,12 @@
             position: relative;
             max-width: 500px; 
             margin: 0 auto;
-            animation: fadeIn 0.8s ease-in-out;
+            animation: fadeIn 1s ease-in-out;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         .page img, .page video {
@@ -58,20 +68,18 @@
             height: 100%;
         }
 
-        /* Áreas de Clique (Hotspots) */
         .hotspot {
             position: absolute;
             cursor: pointer;
             z-index: 10;
-            /* background: rgba(255,0,0,0.2);  Descomente para testar o posicionamento */
         }
 
         .btn-voltar {
             position: absolute;
             top: 5%;
             right: 8%;
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
             background: rgba(255,255,255,0.2);
             border-radius: 50%;
             cursor: pointer;
@@ -80,11 +88,11 @@
             justify-content: center;
             align-items: center;
             color: white;
-            font-size: 20px;
+            font-size: 18px;
             border: 1px solid white;
+            backdrop-filter: blur(5px);
         }
 
-        /* BOTÃO DE MÚSICA FLUTUANTE */
         #btn-musica {
             position: fixed;
             top: 25px;
@@ -94,7 +102,7 @@
             background-color: var(--cor-botao-musica);
             border-radius: 50%;
             z-index: 999;
-            display: none; /* Aparece após o primeiro clique */
+            display: none;
             justify-content: center;
             align-items: center;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
@@ -103,23 +111,9 @@
             animation: pulse-suave 2s infinite;
         }
 
-        /* Ícones de Play e Pause */
-        .icon-play { 
-            width: 0; height: 0; 
-            border-top: 8px solid transparent; 
-            border-bottom: 8px solid transparent; 
-            border-left: 12px solid var(--cor-icone); 
-            margin-left: 4px; 
-        }
-        
-        .icon-pause { 
-            display: flex; gap: 4px; 
-        }
-        .icon-pause div { 
-            width: 4px; height: 16px; 
-            background-color: var(--cor-icone); 
-            border-radius: 2px;
-        }
+        .icon-play { width: 0; height: 0; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-left: 12px solid var(--cor-icone); margin-left: 4px; }
+        .icon-pause { display: flex; gap: 4px; }
+        .icon-pause div { width: 4px; height: 16px; background-color: var(--cor-icone); border-radius: 2px; }
 
         @keyframes pulse-suave {
             0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,255,255,0.7); }
@@ -131,9 +125,11 @@
 
 <body>
 
+<canvas id="canvas-brilhos"></canvas>
+
 <audio id="musica" src="audio.mp3" loop preload="auto"></audio>
 
-<button id="btn-musica" onclick="toggleMusica()" aria-label="Controlar música">
+<button id="btn-musica" onclick="toggleMusica()">
     <div id="container-icone">
         <div class="icon-pause"><div></div><div></div></div>
     </div>
@@ -141,7 +137,7 @@
 
 <div class="page" id="page1" style="display:block;">
     <div class="content-wrapper" onclick="startInvite()">
-        <img src="pagina1.jpg" alt="Capa do Convite">
+        <img src="pagina1.jpg" alt="Capa">
         <div class="hotspot" style="top:0; left:0; width:100%; height:100%;"></div>
     </div>
 </div>
@@ -154,38 +150,24 @@
 
 <div class="page" id="page3">
     <div class="content-wrapper">
-        <img src="pagina3.jpg" alt="Informações do Evento">
-
-        <a class="hotspot"
-           style="bottom: 39%; left: 28%; width: 20%; height: 11%;"
-           href="https://wa.me/5571993233142?text=Olá!%20Gostaria%20de%20confirmar%20minha%20presença%20no%20aniversário%20da%20Isabela."
-           target="_blank"></a>
-
-        <a class="hotspot"
-           style="bottom: 39%; left: 52%; width: 20%; height: 11%;"
-           href="https://maps.app.goo.gl/ptLoFiKwLQwthu5L7"
-           target="_blank"></a>
-
-        <div class="hotspot"
-             style="bottom: 27%; left: 28%; width: 20%; height: 11%;"
-             onclick="goPage(4)"></div>
-
-        <div class="hotspot" 
-             style="bottom: 27%; left: 52%; width: 20%; height: 11%;" 
-             onclick="goPage(5)"></div>
+        <img src="pagina3.jpg" alt="Menu">
+        <a class="hotspot" style="bottom: 39%; left: 28%; width: 20%; height: 11%;" href="https://wa.me/5571993233142?text=Olá!%20Confirmo%20presença!" target="_blank"></a>
+        <a class="hotspot" style="bottom: 39%; left: 52%; width: 20%; height: 11%;" href="https://maps.google.com" target="_blank"></a>
+        <div class="hotspot" style="bottom: 27%; left: 28%; width: 20%; height: 11%;" onclick="goPage(4)"></div>
+        <div class="hotspot" style="bottom: 27%; left: 52%; width: 20%; height: 11%;" onclick="goPage(5)"></div>
     </div>
 </div>
 
 <div class="page" id="page4">
     <div class="content-wrapper">
-        <img src="pagina4.jpg" alt="Sugestões de Presentes">
+        <img src="pagina4.jpg" alt="Presentes">
         <div class="btn-voltar" onclick="goPage(3)">✖</div>
     </div>
 </div>
 
 <div class="page" id="page5">
     <div class="content-wrapper">
-        <img src="pagina5.jpg" alt="Traje Sugerido">
+        <img src="pagina5.jpg" alt="Traje">
         <div class="btn-voltar" onclick="goPage(3)">✖</div>
     </div>
 </div>
@@ -194,48 +176,101 @@
     const musica = document.getElementById('musica');
     const video = document.getElementById('video');
     const btnMusica = document.getElementById('btn-musica');
-    const containerIcone = document.getElementById('container-icone');
+    const canvas = document.getElementById('canvas-brilhos');
+    const ctx = canvas.getContext('2d');
+
+    let particles = [];
+
+    // Ajusta o canvas ao tamanho da tela
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Classe da Partícula de Brilho
+    class Particle {
+        constructor() {
+            this.x = canvas.width / 2;
+            this.y = canvas.height / 2;
+            this.size = Math.random() * 4 + 1;
+            this.speedX = (Math.random() * 10) - 5;
+            this.speedY = (Math.random() * 10) - 5;
+            this.color = `hsl(${Math.random() * 40 + 40}, 100%, 70%)`; // Dourados/Amarelos
+            this.opacity = 1;
+        }
+        update() {
+            this.x += this.speedX;
+            this.y += this.speedY;
+            this.opacity -= 0.02;
+        }
+        draw() {
+            ctx.globalAlpha = this.opacity;
+            ctx.fillStyle = this.color;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Adiciona um brilho extra (glow)
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = this.color;
+        }
+    }
+
+    function createExplosion() {
+        particles = [];
+        for (let i = 0; i < 80; i++) {
+            particles.push(new Particle());
+        }
+        animateParticles();
+    }
+
+    function animateParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = 0; i < particles.length; i++) {
+            particles[i].update();
+            particles[i].draw();
+            if (particles[i].opacity <= 0) {
+                particles.splice(i, 1);
+                i--;
+            }
+        }
+        if (particles.length > 0) {
+            requestAnimationFrame(animateParticles);
+        } else {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    }
 
     function startInvite() {
-        // Inicia música (necessário interação humana para browsers bloquearem autoplay)
-        musica.play().then(() => {
-            btnMusica.style.display = 'flex';
-        }).catch(e => console.log("Aguardando interação para áudio."));
-        
-        // Vai para a página do vídeo
+        createExplosion();
+        musica.play().then(() => { btnMusica.style.display = 'flex'; });
         goPage(2);
-        
-        // Tenta tocar o vídeo
-        video.play().catch(error => {
-            console.log("Vídeo bloqueado, tentando mudo...");
-            video.muted = true;
-            video.play();
-        });
-
-        // Quando o vídeo acabar, vai para a página de informações
-        video.onended = () => {
-            goPage(3);
-        };
+        video.play().catch(() => { video.muted = true; video.play(); });
+        video.onended = () => { goPage(3); };
     }
 
     function toggleMusica() {
         if (musica.paused) {
             musica.play();
-            containerIcone.innerHTML = '<div class="icon-pause"><div></div><div></div></div>';
+            document.getElementById('container-icone').innerHTML = '<div class="icon-pause"><div></div><div></div></div>';
         } else {
             musica.pause();
-            containerIcone.innerHTML = '<div class="icon-play"></div>';
+            document.getElementById('container-icone').innerHTML = '<div class="icon-play"></div>';
         }
     }
 
     function goPage(num) {
-        // Esconde todas as páginas
-        document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-        // Mostra a página desejada
-        const targetPage = document.getElementById('page' + num);
-        if (targetPage) {
-            targetPage.style.display = 'block';
-        }
+        // Dispara a explosão antes de trocar
+        createExplosion();
+        
+        // Pequeno delay para a transição ficar fluida com o brilho
+        setTimeout(() => {
+            document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+            const target = document.getElementById('page' + num);
+            if (target) target.style.display = 'block';
+        }, 100);
     }
 </script>
 
