@@ -13,14 +13,26 @@ Lei 9.610/98 – Direitos Autorais.
     <title>Convite Leticia 15 anos</title>
 
     <style>
+        /* =========================================================
+           1. ÁREA DE EDIÇÃO DE CORES (PARA AS ALUNAS)
+           =========================================================
+        */
+        :root {
+            --cor-do-botao: #ffffff; /* Altere aqui a cor do círculo */
+            --cor-do-icone: #000000; /* Altere aqui a cor do ícone (som/pause) */
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent; /* Remove o brilho azul ao clicar no Android/iOS */
         }
 
         body {
             background: #000;
+            /* Suporte para navegadores que não entendem dvh */
+            height: 100vh;
             height: 100dvh;
             width: 100vw;
             overflow: hidden;
@@ -33,7 +45,7 @@ Lei 9.610/98 – Direitos Autorais.
         .page {
             display: none;
             width: 100%;
-            height: 100dvh;
+            height: 100%;
             position: relative;
             max-width: 500px; 
             margin: 0 auto;
@@ -60,7 +72,6 @@ Lei 9.610/98 – Direitos Autorais.
             position: absolute;
             cursor: pointer;
             z-index: 10;
-         /* background: rgba(255,0,0,0.3); / / Remova o comentário para ajustar as posições */
         }
 
         .btn-voltar {
@@ -73,12 +84,53 @@ Lei 9.610/98 – Direitos Autorais.
             cursor: pointer;
             z-index: 20;
         }
+
+        /* =========================================================
+           ESTILO DO BOTÃO FLUTUANTE (AJUSTADO PARA SAFARI/CHROME)
+           =========================================================
+        */
+        #btn-musica {
+            position: fixed;
+            /* env(safe-area-inset-top) garante que não fique embaixo da câmera do iPhone */
+            top: calc(2% + env(safe-area-inset-top));
+            left: 5%;
+            width: 45px;
+            height: 45px;
+            background-color: var(--cor-do-botao);
+            border-radius: 50%;
+            z-index: 100;
+            display: none; 
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            cursor: pointer;
+            animation: pulse-simples 2s infinite;
+            border: none;
+            outline: none;
+        }
+
+        .icon-play { width: 0; height: 0; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-left: 12px solid var(--cor-do-icone); margin-left: 4px; }
+        
+        .icon-pause { display: flex; gap: 4px; }
+        .icon-pause div { width: 4px; height: 15px; background-color: var(--cor-do-icone); }
+
+        @keyframes pulse-simples {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
 
 <body>
 
-<audio id="musica" src="audio.mp3" loop></audio>
+<audio id="musica" src="audio.mp3" loop preload="auto"></audio>
+
+<div id="btn-musica" onclick="toggleMusica()">
+    <div id="container-icone">
+        <div class="icon-pause"><div></div><div></div></div>
+    </div>
+</div>
 
 <div class="page" id="page1" style="display:block;">
     <div class="content-wrapper" onclick="startInvite()">
@@ -89,7 +141,7 @@ Lei 9.610/98 – Direitos Autorais.
 
 <div class="page" id="page2">
     <div class="content-wrapper">
-        <video id="video" src="pagina2.mp4" playsinline webkit-playsinline></video>
+        <video id="video" src="pagina2.mp4" playsinline webkit-playsinline preload="auto"></video>
     </div>
 </div>
 
@@ -104,7 +156,7 @@ Lei 9.610/98 – Direitos Autorais.
 
         <a class="hotspot"
            style="bottom:28%; left:35%; width:15%; height:12%;"
-            href="https://maps.app.goo.gl/DqbXn5Nz9gSzQmSCA"
+            href="https://maps.app.goo.gl/EshGCckwocacXL189"
            target="_blank"></a>
 
         <div class="hotspot"
@@ -134,15 +186,42 @@ Lei 9.610/98 – Direitos Autorais.
 <script>
     const musica = document.getElementById('musica');
     const video = document.getElementById('video');
+    const btnMusica = document.getElementById('btn-musica');
+    const containerIcone = document.getElementById('container-icone');
 
     function startInvite() {
-        musica.play().catch(e => console.log("Áudio aguardando interação"));
+        // iOS exige que o play ocorra dentro de uma função de clique
+        musica.play().then(() => {
+            btnMusica.style.display = 'flex';
+        }).catch(e => {
+            console.log("Autoplay bloqueado, aguardando interação.");
+        });
+        
         goPage(2);
-        video.play();
+        
+        // Garante que o vídeo toque mesmo em modo de economia de energia
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(error => {
+                // Se falhar (comum no Safari), tenta tocar mudo para não travar a experiência
+                video.muted = true;
+                video.play();
+            });
+        }
 
         video.onended = () => {
             goPage(3);
         };
+    }
+
+    function toggleMusica() {
+        if (musica.paused) {
+            musica.play();
+            containerIcone.innerHTML = '<div class="icon-pause"><div></div><div></div></div>';
+        } else {
+            musica.pause();
+            containerIcone.innerHTML = '<div class="icon-play"></div>';
+        }
     }
 
     function goPage(num) {
