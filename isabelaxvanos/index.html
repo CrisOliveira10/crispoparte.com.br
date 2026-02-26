@@ -1,4 +1,10 @@
 <!DOCTYPE html>
+<!--
+© 2026 Cristiane Oliveira
+Material exclusivo para alunos.
+Proibida reprodução, distribuição ou revenda.
+Lei 9.610/98 – Direitos Autorais.
+-->
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
@@ -29,17 +35,18 @@
             align-items: center;
         }
 
-        /* Canvas para o efeito de brilhos */
+        /* Camada de Brilhos */
         #canvas-brilhos {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none; /* Deixa os cliques passarem para os botões */
+            pointer-events: none;
             z-index: 9999;
         }
 
+        /* Estilo das Páginas */
         .page {
             display: none;
             width: 100%;
@@ -47,12 +54,16 @@
             position: relative;
             max-width: 500px; 
             margin: 0 auto;
-            animation: fadeIn 1s ease-in-out;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
+        /* Animação suave de entrada */
+        .fade-in {
+            animation: fadeInEffect 0.8s ease-in-out;
+        }
+
+        @keyframes fadeInEffect {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .page img, .page video {
@@ -93,6 +104,7 @@
             backdrop-filter: blur(5px);
         }
 
+        /* Botão de Música */
         #btn-musica {
             position: fixed;
             top: 25px;
@@ -116,9 +128,9 @@
         .icon-pause div { width: 4px; height: 16px; background-color: var(--cor-icone); border-radius: 2px; }
 
         @keyframes pulse-suave {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,255,255,0.7); }
-            70% { transform: scale(1.08); box-shadow: 0 0 0 10px rgba(255,255,255,0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+            0% { transform: scale(1); }
+            70% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
     </style>
 </head>
@@ -151,7 +163,7 @@
 <div class="page" id="page3">
     <div class="content-wrapper">
         <img src="pagina3.jpg" alt="Menu">
-        <a class="hotspot" style="bottom: 39%; left: 28%; width: 20%; height: 11%;" href="https://wa.me/5571993233142?text=Olá!%20Confirmo%20presença!" target="_blank"></a>
+        <a class="hotspot" style="bottom: 39%; left: 28%; width: 20%; height: 11%;" href="https://wa.me/5571993233142?text=Olá!%20Confirmo%20minha%20presença!" target="_blank"></a>
         <a class="hotspot" style="bottom: 39%; left: 52%; width: 20%; height: 11%;" href="https://maps.google.com" target="_blank"></a>
         <div class="hotspot" style="bottom: 27%; left: 28%; width: 20%; height: 11%;" onclick="goPage(4)"></div>
         <div class="hotspot" style="bottom: 27%; left: 52%; width: 20%; height: 11%;" onclick="goPage(5)"></div>
@@ -181,7 +193,6 @@
 
     let particles = [];
 
-    // Ajusta o canvas ao tamanho da tela
     function resizeCanvas() {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
@@ -189,7 +200,6 @@
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    // Classe da Partícula de Brilho
     class Particle {
         constructor() {
             this.x = canvas.width / 2;
@@ -197,7 +207,7 @@
             this.size = Math.random() * 4 + 1;
             this.speedX = (Math.random() * 10) - 5;
             this.speedY = (Math.random() * 10) - 5;
-            this.color = `hsl(${Math.random() * 40 + 40}, 100%, 70%)`; // Dourados/Amarelos
+            this.color = `hsl(${Math.random() * 40 + 40}, 100%, 70%)`;
             this.opacity = 1;
         }
         update() {
@@ -211,8 +221,6 @@
             ctx.beginPath();
             ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
             ctx.fill();
-            
-            // Adiciona um brilho extra (glow)
             ctx.shadowBlur = 10;
             ctx.shadowColor = this.color;
         }
@@ -243,12 +251,25 @@
         }
     }
 
+    // Início do Convite: Sem explosão para o vídeo começar rápido
     function startInvite() {
-        createExplosion();
-        musica.play().then(() => { btnMusica.style.display = 'flex'; });
-        goPage(2);
-        video.play().catch(() => { video.muted = true; video.play(); });
-        video.onended = () => { goPage(3); };
+        musica.play().then(() => { 
+            btnMusica.style.display = 'flex'; 
+        }).catch(e => console.log("Áudio aguardando interação"));
+        
+        // Transição direta para o vídeo
+        document.getElementById('page1').style.display = 'none';
+        document.getElementById('page2').style.display = 'block';
+        document.getElementById('page2').classList.add('fade-in');
+
+        video.play().catch(() => { 
+            video.muted = true; 
+            video.play(); 
+        });
+
+        video.onended = () => { 
+            goPage(3); // Brilhos voltam a partir daqui
+        };
     }
 
     function toggleMusica() {
@@ -261,16 +282,21 @@
         }
     }
 
+    // Função de troca de página com explosão de brilhos
     function goPage(num) {
-        // Dispara a explosão antes de trocar
         createExplosion();
         
-        // Pequeno delay para a transição ficar fluida com o brilho
         setTimeout(() => {
-            document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+            document.querySelectorAll('.page').forEach(p => {
+                p.style.display = 'none';
+                p.classList.remove('fade-in');
+            });
             const target = document.getElementById('page' + num);
-            if (target) target.style.display = 'block';
-        }, 100);
+            if (target) {
+                target.style.display = 'block';
+                target.classList.add('fade-in');
+            }
+        }, 150);
     }
 </script>
 
