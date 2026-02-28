@@ -10,14 +10,7 @@ Lei 9.610/98 – Direitos Autorais.
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>Convite Pedro</title>
-    <meta property="og:title" content="Convite especial: Pedro - 1 Ano">
-    <meta property="og:description" content="Toque para abrir os detalhes deste dia incrível.">
-    <meta property="og:image" content="https://crispoparte.com.br/pedro/capalink.png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:type" content="website">
-
+    <title>Convite Nicoly</title>
     <style>
         * {
             margin: 0;
@@ -64,40 +57,42 @@ Lei 9.610/98 – Direitos Autorais.
             cursor: pointer;
         }
 
-        /* AJUSTE CIRÚRGICO: BOTÃO DE CONTROLE DE ÁUDIO */
+        /* BOTÃO FLUTUANTE PLAY/PAUSE */
         #btn-audio {
             position: fixed;
             top: 20px;
             left: 20px;
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(5px);
+            width: 44px;
+            height: 44px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid #fff;
             border-radius: 50%;
             z-index: 9999;
-            display: none; /* Inicia oculto, aparece após o start */
+            display: none; /* Só aparece após o start */
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            border: 1px solid rgba(255, 255, 255, 0.5);
         }
 
-        /* Ícones Play/Pause via CSS */
-        .icon-pause::before, .icon-pause::after {
-            content: '';
+        /* Desenho dos Símbolos */
+        .symbol-pause {
+            display: flex;
+            gap: 4px;
+        }
+        .symbol-pause div {
             width: 4px;
-            height: 15px;
+            height: 16px;
             background: white;
-            margin: 0 2px;
         }
 
-        .icon-play {
+        .symbol-play {
             width: 0; 
             height: 0; 
-            border-top: 8px solid transparent;
-            border-bottom: 8px solid transparent;
-            border-left: 12px solid white;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-left: 14px solid white;
             margin-left: 4px;
+            display: none;
         }
     </style>
 </head>
@@ -107,11 +102,15 @@ Lei 9.610/98 – Direitos Autorais.
 <audio id="musica" src="audio.mp3" loop></audio>
 
 <div id="btn-audio" onclick="toggleAudio()">
-    <div id="audio-icon" class="icon-pause"></div>
+    <div id="icon-pause" class="symbol-pause">
+        <div></div>
+        <div></div>
+    </div>
+    <div id="icon-play" class="symbol-play"></div>
 </div>
 
 <div class="page" id="page1" style="display:block;">
-    <img src="pagina1.png">
+    <img src="pagina1.jpg">
     <div class="hotspot" style="top:0;left:0;width:100%;height:100%;" onclick="startInvite()"></div>
 </div>
 
@@ -139,7 +138,6 @@ Lei 9.610/98 – Direitos Autorais.
 
 <div class="page" id="page4">
     <img src="pagina4.jpg">
-
     <div class="btn-voltar" onclick="goPage(3)"></div>
 </div>
 
@@ -147,12 +145,13 @@ Lei 9.610/98 – Direitos Autorais.
     const musica = document.getElementById('musica');
     const video = document.getElementById('video');
     const btnAudio = document.getElementById('btn-audio');
-    const audioIcon = document.getElementById('audio-icon');
+    const iconPlay = document.getElementById('icon-play');
+    const iconPause = document.getElementById('icon-pause');
 
     function startInvite() {
         musica.play().then(() => {
-            btnAudio.style.display = 'flex'; // Mostra o botão quando a música começa
-        }).catch(e => console.log("Áudio bloqueado"));
+            btnAudio.style.display = 'flex';
+        }).catch(e => console.log("Erro ao tocar"));
         
         goPage(2);
         video.play();
@@ -162,14 +161,15 @@ Lei 9.610/98 – Direitos Autorais.
         };
     }
 
-    // Função para pausar/tocar
     function toggleAudio() {
         if (musica.paused) {
             musica.play();
-            audioIcon.className = 'icon-pause';
+            iconPause.style.display = 'flex';
+            iconPlay.style.display = 'none';
         } else {
             musica.pause();
-            audioIcon.className = 'icon-play';
+            iconPause.style.display = 'none';
+            iconPlay.style.display = 'block';
         }
     }
 
