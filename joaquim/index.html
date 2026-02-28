@@ -8,39 +8,55 @@
         body, html {
             margin: 0; padding: 0;
             width: 100%; height: 100%;
-            overflow: hidden; background-color: #000;
+            overflow: hidden; background-color: #000000;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* Tela de Início (Overlay) */
+        /* --- TELA DE INÍCIO (AQUI O VÍDEO APARECE AO FUNDO) --- */
         #overlay {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            /* ABAIXO: Fundo transparente para ver o vídeo atrás */
+            background: transparent; 
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            z-index: 100; color: white;
+            z-index: 100; 
             cursor: pointer; text-align: center;
         }
 
-        .play-icon {
-            width: 70px; height: 70px;
-            background: #fff; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            color: #000; font-size: 25px; margin-bottom: 20px;
+        /* --- CONFIGURAÇÃO DO TEXTO INICIAL --- */
+        #overlay h2 { 
+            font-weight: bold; 
+            text-shadow: 2px 2px 4px #000000; /* Sombra para ler melhor sobre o vídeo */
+            /* ALUNA: ALTERAR COR DO TEXTO ABAIXO */
+            color: #FFFFFF; 
         }
 
-        /* Botão Controle Canto Superior */
+        /* --- BOTÃO DE PLAY GRANDE (TELA INICIAL) --- */
+        .play-icon {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 30px; margin-bottom: 20px;
+            /* ALUNA: ALTERAR CORES DO BOTÃO DE INÍCIO ABAIXO */
+            background-color: #FFFFFF; /* Cor da bola */
+            color: #000000;            /* Cor do triângulo */
+        }
+
+        /* --- BOTÃO PLAY/PAUSE CANTO SUPERIOR --- */
         #controlBtn {
             position: absolute;
             top: 20px; left: 20px;
             width: 45px; height: 45px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
             border: none; cursor: pointer;
-            z-index: 10; font-size: 18px; color: #fff;
+            z-index: 10; font-size: 18px; 
             display: none; align-items: center; justify-content: center;
+            /* ALUNA: ALTERAR CORES DO BOTÃO SUPERIOR ABAIXO */
+            background-color: #FFFFFF; /* Cor da bola */
+            color: #000000;            /* Cor do ícone */
+            opacity: 0.7;              /* Transparência do botão */
         }
 
         .video-container {
@@ -51,7 +67,7 @@
 
         video { width: 100%; height: 100%; object-fit: contain; }
 
-        /* Hotspots (Botões de Clique no Final) */
+        /* --- ÁREAS DE CLIQUE (HOTSPOTS) NO FINAL --- */
         .hotspots {
             position: absolute;
             bottom: 15%; 
@@ -65,7 +81,6 @@
         .btn-interativo {
             width: 110px; height: 110px;
             background: transparent; cursor: pointer;
-            /* border: 1px solid red; */ /* Remova o comentário desta linha se quiser ver a área do botão para testar */
         }
     </style>
 </head>
@@ -73,13 +88,13 @@
 
     <div id="overlay" onclick="iniciarConvite()">
         <div class="play-icon">▶</div>
-        <h2 style="font-weight: 300;">Ative o play para a<br>magia acontecer!</h2>
+        <h2>Ative o play para a<br>magia acontecer!</h2>
     </div>
 
     <div class="video-container">
         <button id="controlBtn">⏸</button>
 
-        <video id="meuVideo" playsinline>
+        <video id="meuVideo" playsinline preload="auto">
             <source src="video.mp4" type="video/mp4">
         </video>
 
@@ -103,13 +118,10 @@
         function iniciarConvite() {
             overlay.style.display = 'none';
             btn.style.display = 'flex';
-            
-            // Inicia ambos simultaneamente
             video.play();
             audio.play();
         }
 
-        // Lógica unificada de Play/Pause (afeta vídeo e áudio)
         btn.addEventListener('click', () => {
             if (video.paused) {
                 video.play();
@@ -122,9 +134,8 @@
             }
         });
 
-        // Quando o vídeo termina
         video.onended = function() {
-            audio.pause(); // Garante que o som para se for maior que o vídeo
+            audio.pause();
             hotspots.style.display = 'flex';
         };
 
