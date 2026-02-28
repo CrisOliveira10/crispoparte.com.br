@@ -87,28 +87,29 @@ Lei 9.610/98 – Direitos Autorais.
             border: 1px solid rgba(255, 255, 255, 0.6);
         }
 
-        /* Símbolo Pause (dois traços) - CSS Corrigido */
+        /* AJUSTE: Símbolo Pause (DOIS TRAÇOS VERTICAIS) */
+        .icon-pause {
+            display: flex;
+            gap: 4px;
+            width: 16px;
+            height: 16px;
+        }
         .icon-pause::before, .icon-pause::after {
             content: '';
-            width: 4px;
+            width: 5px;
             height: 16px;
             background: white;
-            margin: 0 2px;
-            display: block; /* Garante que apareçam */
+            display: block;
         }
 
-        /* Símbolo Play (triângulo) - CSS Corrigido */
+        /* Símbolo Play (triângulo) */
         .icon-play {
             width: 0; 
             height: 0; 
-            border-top: 10px solid transparent;
-            border-bottom: 10px solid transparent;
-            border-left: 15px solid white;
-            margin-left: 5px; /* Ajuste fino */
-        }
-        /* Remove os traços do pause quando for play */
-        .icon-play::before, .icon-play::after {
-            display: none;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 12px solid white;
+            margin-left: 4px;
         }
     </style>
 </head>
