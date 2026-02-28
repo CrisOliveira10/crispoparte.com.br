@@ -29,14 +29,12 @@ Lei 9.610/98 – Direitos Autorais.
             background: #000;
             overflow: hidden;
             font-family: sans-serif;
-            /* Garante que o fundo cubra a tela toda no iOS */
             height: 100dvh; 
         }
 
         .page {
             display: none;
             width: 100vw;
-            /* AJUSTE: vh para dvh para Safari */
             height: 100dvh; 
             position: relative;
             justify-content: center;
@@ -48,18 +46,15 @@ Lei 9.610/98 – Direitos Autorais.
         .page video {
             width: 100%;
             height: 100%;
-            /* AJUSTE: object-fit: contain para não cortar a arte */
             object-fit: contain; 
         }
 
         /* BOTÕES INVISÍVEIS */
         .hotspot {
             position: absolute;
-            /* Ajuste para porcentagem */
             width: 15%; 
             height: 10%;
             cursor: pointer;
-            /* background: rgba(255,0,0,0.3); */
         }
 
         /* BOTÃO VOLTAR */
@@ -74,7 +69,7 @@ Lei 9.610/98 – Direitos Autorais.
             z-index: 100;
         }
 
-        /* AJUSTE: BOTÃO DE CONTROLE DE ÁUDIO (Play/Pause) */
+        /* BOTÃO DE CONTROLE DE ÁUDIO */
         #btn-audio {
             position: fixed;
             top: 3%;
@@ -85,30 +80,35 @@ Lei 9.610/98 – Direitos Autorais.
             backdrop-filter: blur(4px);
             border-radius: 50%;
             z-index: 9999;
-            display: none; /* Inicia oculto */
+            display: none; 
             align-items: center;
             justify-content: center;
             cursor: pointer;
             border: 1px solid rgba(255, 255, 255, 0.6);
         }
 
-        /* Símbolo Pause (dois traços) */
+        /* Símbolo Pause (dois traços) - CSS Corrigido */
         .icon-pause::before, .icon-pause::after {
             content: '';
             width: 4px;
             height: 16px;
             background: white;
             margin: 0 2px;
+            display: block; /* Garante que apareçam */
         }
 
-        /* Símbolo Play (triângulo) */
+        /* Símbolo Play (triângulo) - CSS Corrigido */
         .icon-play {
             width: 0; 
             height: 0; 
-            border-top: 8px solid transparent;
-            border-bottom: 8px solid transparent;
-            border-left: 12px solid white;
-            margin-left: 4px;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-left: 15px solid white;
+            margin-left: 5px; /* Ajuste fino */
+        }
+        /* Remove os traços do pause quando for play */
+        .icon-play::before, .icon-play::after {
+            display: none;
         }
     </style>
 </head>
@@ -160,7 +160,6 @@ Lei 9.610/98 – Direitos Autorais.
     const audioIcon = document.getElementById('audio-icon');
 
     function startInvite() {
-        // Inicia a música
         musica.play().then(() => {
             btnAudio.style.display = 'flex'; // Mostra o botão
         }).catch(e => console.log("Áudio bloqueado até interação"));
@@ -188,7 +187,7 @@ Lei 9.610/98 – Direitos Autorais.
         document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
         const targetPage = document.getElementById('page' + num);
         if (targetPage) {
-            targetPage.style.display = 'flex'; // Usando flex para centralizar
+            targetPage.style.display = 'flex';
         }
     }
 </script>
