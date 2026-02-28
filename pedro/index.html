@@ -8,7 +8,7 @@ Lei 9.610/98 – Direitos Autorais.
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     
     <title>Convite Pedro</title>
     <meta property="og:title" content="Convite especial: Pedro - 1 Ano">
@@ -29,40 +29,86 @@ Lei 9.610/98 – Direitos Autorais.
             background: #000;
             overflow: hidden;
             font-family: sans-serif;
+            /* Garante que o fundo cubra a tela toda no iOS */
+            height: 100dvh; 
         }
 
         .page {
             display: none;
             width: 100vw;
-            height: 100vh;
+            /* AJUSTE: vh para dvh para Safari */
+            height: 100dvh; 
             position: relative;
+            justify-content: center;
+            align-items: center;
+            background-color: #000;
         }
 
         .page img,
         .page video {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            /* AJUSTE: object-fit: contain para não cortar a arte */
+            object-fit: contain; 
         }
 
         /* BOTÕES INVISÍVEIS */
         .hotspot {
             position: absolute;
-            width: 70px;
-            height: 70px;
+            /* Ajuste para porcentagem */
+            width: 15%; 
+            height: 10%;
             cursor: pointer;
-            /* background: rgba(255,0,0,0.3); <- Remova o comentário para ver as áreas de clique */
+            /* background: rgba(255,0,0,0.3); */
         }
 
         /* BOTÃO VOLTAR */
         .btn-voltar {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 48px;
-            height: 48px;
+            top: 3%;
+            right: 5%;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             cursor: pointer;
+            z-index: 100;
+        }
+
+        /* AJUSTE: BOTÃO DE CONTROLE DE ÁUDIO (Play/Pause) */
+        #btn-audio {
+            position: fixed;
+            top: 3%;
+            left: 5%;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(4px);
+            border-radius: 50%;
+            z-index: 9999;
+            display: none; /* Inicia oculto */
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        /* Símbolo Pause (dois traços) */
+        .icon-pause::before, .icon-pause::after {
+            content: '';
+            width: 4px;
+            height: 16px;
+            background: white;
+            margin: 0 2px;
+        }
+
+        /* Símbolo Play (triângulo) */
+        .icon-play {
+            width: 0; 
+            height: 0; 
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 12px solid white;
+            margin-left: 4px;
         }
     </style>
 </head>
@@ -71,8 +117,12 @@ Lei 9.610/98 – Direitos Autorais.
 
 <audio id="musica" src="audio.mp3" loop></audio>
 
-<div class="page" id="page1" style="display:block;">
-    <img src="pagina1.png">
+<div id="btn-audio" onclick="toggleAudio()">
+    <div id="audio-icon" class="icon-pause"></div>
+</div>
+
+<div class="page" id="page1" style="display:flex;">
+    <img src="pagina1.jpg">
     <div class="hotspot" style="top:0;left:0;width:100%;height:100%;" onclick="startInvite()"></div>
 </div>
 
@@ -84,51 +134,61 @@ Lei 9.610/98 – Direitos Autorais.
     <img src="pagina3.jpg">
 
     <a class="hotspot"
-       style="bottom:18%; left:16%;"
+       style="bottom:15%; left:10%; width:25%; height:15%;"
        href="https://wa.me/5571993233142"
        target="_blank"></a>
 
     <a class="hotspot"
-       style="bottom:18%; left:42%;"
+       style="bottom:15%; left:37%; width:25%; height:15%;"
        href="https://maps.app.goo.gl/f6znvALZZBPfC8WK7"
        target="_blank"></a>
 
     <div class="hotspot"
-         style="bottom:18%; left:68%;"
+         style="bottom:15%; left:65%; width:25%; height:15%;"
          onclick="goPage(4)"></div>
 </div>
 
 <div class="page" id="page4">
     <img src="pagina4.jpg">
-
     <div class="btn-voltar" onclick="goPage(3)"></div>
 </div>
 
 <script>
     const musica = document.getElementById('musica');
     const video = document.getElementById('video');
+    const btnAudio = document.getElementById('btn-audio');
+    const audioIcon = document.getElementById('audio-icon');
 
     function startInvite() {
         // Inicia a música
-        musica.play().catch(e => console.log("Áudio bloqueado pelo navegador até interação"));
+        musica.play().then(() => {
+            btnAudio.style.display = 'flex'; // Mostra o botão
+        }).catch(e => console.log("Áudio bloqueado até interação"));
         
-        // Vai para a página do vídeo
         goPage(2);
         video.play();
 
-        // Quando o vídeo terminar, vai para a página de informações
         video.onended = () => {
             goPage(3);
         };
     }
 
+    // Função de alternar Play/Pause
+    function toggleAudio() {
+        if (musica.paused) {
+            musica.play();
+            audioIcon.className = 'icon-pause';
+        } else {
+            musica.pause();
+            audioIcon.className = 'icon-play';
+        }
+    }
+
     function goPage(num) {
-        // Esconde todas as páginas
         document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-        // Mostra a página desejada
         const targetPage = document.getElementById('page' + num);
         if (targetPage) {
-            targetPage.style.display = 'block';
+            targetPage.style.display = 'flex'; // Usando flex para centralizar
         }
     }
 </script>
