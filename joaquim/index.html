@@ -1,110 +1,144 @@
 <!DOCTYPE html>
+<!--
+© 2026 Cristiane Oliveira
+Material exclusivo para alunos.
+Proibida reprodução, distribuição ou revenda.
+Lei 9.610/98 – Direitos Autorais.
+-->
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Convite Especial</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Convite Joaquim</title>
     <style>
+        :root {
+            /* Cores facilitadas para as alunas */
+            --cor-botao: #FFFFFF;
+            --cor-icone: #000000;
+            --cor-texto: #FFFFFF;
+        }
+
         body, html {
             margin: 0; padding: 0;
-            width: 100%; height: 100%;
-            overflow: hidden; background-color: #000000;
+            width: 100%; 
+            height: 100dvh; /* dvh evita cortes no Safari/iOS */
+            overflow: hidden; 
+            background-color: #000000;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* --- TELA DE INÍCIO (AQUI O VÍDEO APARECE AO FUNDO) --- */
+        /* --- CONTAINER PRINCIPAL --- */
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 100dvh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- MEDIA WRAPPER (Mantém a proporção da arte) --- */
+        .media-wrapper {
+            position: relative;
+            height: 100%;
+            aspect-ratio: 9 / 16; /* Mantém proporção de celular */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Garante que a arte não corte */
+            z-index: 1;
+        }
+
+        /* --- TELA DE INÍCIO (OVERLAY) --- */
         #overlay {
-            position: fixed;
+            position: absolute; /* Relativo ao wrapper */
             top: 0; left: 0;
             width: 100%; height: 100%;
-            /* ABAIXO: Fundo transparente para ver o vídeo atrás */
-            background: transparent; 
+            background: rgba(0,0,0,0.2); /* Leve escurecida para ler o texto */
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            z-index: 100; 
-            cursor: pointer; text-align: center;
+            z-index: 100; cursor: pointer; text-align: center;
         }
 
-        /* --- CONFIGURAÇÃO DO TEXTO INICIAL --- */
         #overlay h2 { 
             font-weight: bold; 
-            text-shadow: 2px 2px 4px #000000; /* Sombra para ler melhor sobre o vídeo */
-            /* ALUNA: ALTERAR COR DO TEXTO ABAIXO */
-            color: #FFFFFF; 
+            text-shadow: 2px 2px 4px #000000;
+            color: var(--cor-texto); 
+            padding: 0 20px;
         }
 
-        /* --- BOTÃO DE PLAY GRANDE (TELA INICIAL) --- */
         .play-icon {
             width: 80px; height: 80px;
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             font-size: 30px; margin-bottom: 20px;
-            /* ALUNA: ALTERAR CORES DO BOTÃO DE INÍCIO ABAIXO */
-            background-color: #FFFFFF; /* Cor da bola */
-            color: #000000;            /* Cor do triângulo */
+            background-color: var(--cor-botao);
+            color: var(--cor-icone);
         }
 
-        /* --- BOTÃO PLAY/PAUSE CANTO SUPERIOR --- */
+        /* --- BOTÃO CONTROLE CANTO SUPERIOR --- */
         #controlBtn {
             position: absolute;
-            top: 20px; left: 20px;
+            top: 40px; left: 20px; /* Ajustado para não bater no relógio do iPhone */
             width: 45px; height: 45px;
             border-radius: 50%;
             border: none; cursor: pointer;
-            z-index: 10; font-size: 18px; 
+            z-index: 110; font-size: 18px; 
             display: none; align-items: center; justify-content: center;
-            /* ALUNA: ALTERAR CORES DO BOTÃO SUPERIOR ABAIXO */
-            background-color: #FFFFFF; /* Cor da bola */
-            color: #000000;            /* Cor do ícone */
-            opacity: 0.7;              /* Transparência do botão */
+            background-color: var(--cor-botao);
+            color: var(--cor-icone);
+            opacity: 0.8;
         }
 
-        .video-container {
-            position: relative;
-            width: 100vw; height: 100vh;
-            display: flex; justify-content: center; align-items: center;
-        }
-
-        video { width: 100%; height: 100%; object-fit: contain; }
-
-        /* --- ÁREAS DE CLIQUE (HOTSPOTS) NO FINAL --- */
+        /* --- HOTSPOTS RELATIVOS À IMAGEM --- */
         .hotspots {
             position: absolute;
-            bottom: 15%; 
+            bottom: 12%; /* Altura fixa em % em relação à arte */
             width: 100%;
             display: none; 
             justify-content: space-around;
-            padding: 0 10%; box-sizing: border-box;
+            padding: 0 5%;
+            box-sizing: border-box;
             z-index: 20;
         }
 
         .btn-interativo {
-            width: 110px; height: 110px;
-            background: transparent; cursor: pointer;
+            width: 25%; /* Largura relativa para encaixar nos botões da arte */
+            aspect-ratio: 1 / 1;
+            background: transparent; 
+            cursor: pointer;
+            /* border: 2px solid red; */ /* Descomente para testar a posição */
         }
     </style>
 </head>
 <body>
 
-    <div id="overlay" onclick="iniciarConvite()">
-        <div class="play-icon">▶</div>
-        <h2>Ative o play para a<br>magia acontecer!</h2>
-    </div>
-
     <div class="video-container">
         <button id="controlBtn">⏸</button>
 
-        <video id="meuVideo" playsinline preload="auto">
-            <source src="video.mp4" type="video/mp4">
-        </video>
+        <div class="media-wrapper">
+            <div id="overlay" onclick="iniciarConvite()">
+                <div class="play-icon">▶</div>
+                <h2>Ative o play para a<br>magia acontecer!</h2>
+            </div>
 
-        <audio id="meuAudio">
-            <source src="audio.mp3" type="audio/mpeg">
-        </audio>
+            <video id="meuVideo" playsinline preload="auto">
+                <source src="video.mp4" type="video/mp4">
+            </video>
 
-        <div class="hotspots" id="hotspotsContainer">
-            <div class="btn-interativo" onclick="confirmar()"></div>
-            <div class="btn-interativo" onclick="mapa()"></div>
+            <audio id="meuAudio">
+                <source src="audio.mp3" type="audio/mpeg">
+            </audio>
+
+            <div class="hotspots" id="hotspotsContainer">
+                <div class="btn-interativo" onclick="confirmar()"></div>
+                <div class="btn-interativo" onclick="mapa()"></div>
+            </div>
         </div>
     </div>
 
