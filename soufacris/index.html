@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <title>Sou Fã</title>
+    <title>Sou fã</title>
     <style>
         :root { --accent: #25D366; --record: #ff0000; --boom: #e1306c; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -49,17 +49,17 @@
             pointer-events: auto; 
         }
 
-        /* NOVA CLASSE PARA O ARQUIVO botões.png */
+        /* IMAGEM DE FUNDO 9:16 ATRÁS DOS BOTÕES */
         .bg-buttons {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 100%; /* Ele seguirá a largura do container pai */
+            width: 85px; /* Largura ajustada para cobrir os botões */
             height: auto;
             aspect-ratio: 9/16;
-            z-index: -1; /* Fica atrás dos botões */
-            pointer-events: none; /* Não interfere no clique */
+            z-index: -1; 
+            pointer-events: none;
             object-fit: contain;
         }
         
@@ -81,7 +81,19 @@
         .btn-res { padding: 20px; border-radius: 15px; border: none; font-weight: bold; font-size: 18px; cursor: pointer; text-align: center; text-decoration: none; color: #fff; }
         
         #startScreen { position: absolute; inset: 0; background: #000 url('capajpg.jpg') center/cover no-repeat; display: flex; align-items: center; justify-content: center; z-index: 100; }
-        #startBtn { padding: 25px 55px; font-size: 24px; font-weight: bold; border: none; background: #FF5722; color: #fff; border-radius: 50px; cursor: pointer; }
+        
+        /* BOTÃO INICIAR DIMINUÍDO */
+        #startBtn { 
+            padding: 15px 35px; 
+            font-size: 18px; 
+            font-weight: bold; 
+            border: none; 
+            background: #FF5722; 
+            color: #fff; 
+            border-radius: 50px; 
+            cursor: pointer; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
     </style>
 </head>
 <body>
@@ -100,7 +112,7 @@
             <button class="btn-ui" id="switchBtn">🔄 INVERTER</button>
         </div>
         <div class="controls-bottom">
-            <img src="botões.png" class="bg-buttons" alt="">
+            <img src="botoes.png" class="bg-buttons" alt="">
             
             <div id="videoTimer">00:00</div>
             <div class="capture-controls">
@@ -137,7 +149,6 @@
 </div>
 
 <script>
-/* O SCRIPT PERMANECE EXATAMENTE O MESMO QUE VOCÊ ENVIOU */
 let usingFrontCamera = true, stream = null, isRecording = false, mediaRecorder = null, recordedChunks = [];
 let currentFileUrl = null, boomFrames = [], currentType = 'image';
 let recordStartTime, timerInterval;
@@ -413,11 +424,8 @@ function showResult(url, type) {
 
 function resetAll() {
     isEditingGallery = false; cancelAnimationFrame(animId);
-    
-    // CORREÇÃO DO ÁUDIO AQUI:
     videoPreview.pause();
     videoPreview.src = "";
-    
     document.getElementById('resultUI').style.display = 'none';
     document.getElementById('editUI').style.display = 'none';
     editorCanvas.style.display = 'none'; canvasPreview.style.display = 'none';
