@@ -1,4 +1,10 @@
 <!DOCTYPE html>
+<!--
+© 2026 Cristiane Oliveira
+Material exclusivo para alunos.
+Proibida reprodução, distribuição ou revenda.
+Lei 9.610/98 – Direitos Autorais.
+-->
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
@@ -23,11 +29,10 @@
             max-width: 400px;
             width: 100%;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            overflow: hidden; /* Garante que a imagem siga a curva do topo */
+            overflow: hidden;
             padding-bottom: 30px;
         }
 
-        /* ESTILO DA IMAGEM DO CABEÇALHO */
         .header-image {
             width: 100%;
             height: auto;
@@ -120,6 +125,9 @@
             <option value="4+">4 ou mais</option>
         </select>
 
+        <label for="idade_criancas">Idade das crianças:</label>
+        <input type="text" id="idade_criancas" placeholder="Ex: 2 anos e 5 anos (se houver)">
+
         <button type="button" onclick="enviarWhats()">Enviar para WhatsApp</button>
     </div>
 </form>
@@ -131,11 +139,15 @@ function enviarWhats() {
     let participa = document.getElementById("participa").value;
     let adultos = document.getElementById("qtd_adultos").value;
     let criancas = document.getElementById("qtd_criancas").value;
+    let idades = document.getElementById("idade_criancas").value; // Captura a idade
 
     if(nome === "" || participa === "") {
         alert("Por favor, preencha seu nome e se você vai participar.");
         return;
     }
+
+    // Adiciona a informação de idade apenas se o usuário preencher algo
+    let infoIdade = idades ? idades : "Não informado";
 
     let mensagem = 
 `✨ *CONFIRMAÇÃO DE PRESENÇA* ✨
@@ -145,6 +157,7 @@ function enviarWhats() {
 👥 *Acompanhantes:* ${convidados}
 👨‍👩‍👧‍👦 *Total de Adultos:* ${adultos}
 👶 *Total de Crianças:* ${criancas}
+🎂 *Idade das Crianças:* ${infoIdade}
 
 _Enviado via Formulário_`;
 
