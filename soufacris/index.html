@@ -46,37 +46,37 @@ Lei 9.610/98 – Direitos Autorais.
 
         .boom-loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.9); padding: 25px; border-radius: 20px; display: none; z-index: 100; border: 2px solid var(--boom); text-align: center; }
         
-        /* POSICIONAMENTO DA ARTE E HOTSPOTS */
+        /* POSICIONAMENTO DA ARTE E HOTSPOTS - CORRIGIDO */
         .controls-bottom { 
             position: absolute;
-            inset: 0; /* Ocupa toda a tela */
+            inset: 0;
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            justify-content: flex-end; /* Alinha o conteúdo abaixo */
-            pointer-events: none; /* Deixa passar clique para a arte */
+            justify-content: flex-end;
+            pointer-events: none; 
         }
         
         .btn-ui { padding: 10px 20px; background: rgba(0,0,0,0.6); border: 1px solid #fff; border-radius: 20px; color: #fff; cursor: pointer; backdrop-filter: blur(5px); }
         
-        /* Container dos botões com a arte ilustrativa cobrindo a tela */
+        /* Container dos botões com a arte ilustrativa cobrindo a tela - CORRIGIDO */
         .capture-controls { 
             display: flex; 
             flex-direction: column; 
             gap: 15px; 
             align-items: center;
             justify-content: flex-end;
-            padding-bottom: 50px; /* Ajuste para afastar o botão de baixo da borda */
             
             /* ARTE BOTOES.PNG */
             background-image: url('botoes.png');
-            background-size: cover; /* Estica para cobrir a proporção 9:16 */
-            background-position: center;
+            background-size: cover; /* ESSENCIAL PARA ENCAIXAR 9:16 */
+            background-position: center bottom;
             background-repeat: no-repeat;
             
-            width: 100%;                
+            width: 100%; 
             height: 100%;
-            pointer-events: auto; /* Reativa cliques nesta área */
+            pointer-events: auto; 
+            padding-bottom: 30px; /* Ajuste fino da posição dos botões */
         }
         
         /* Botões invisíveis (hotspots) */
@@ -88,14 +88,14 @@ Lei 9.610/98 – Direitos Autorais.
             align-items: center; 
             justify-content: center;
             color: transparent;
-            z-index: 31; /* Acima da arte */
+            z-index: 31;
         }
 
-        /* Tamanho dos hotspots (ajuste para coincidir com sua arte) */
-        .btn-photo { width: 70px; height: 70px; }
+        /* Tamanho dos hotspots - ajuste conforme a arte */
+        .btn-photo { width: 80px; height: 80px; }
         .btn-boom { width: 70px; height: 70px; }
         .btn-gallery { width: 60px; height: 60px; }
-        .btn-video { width: 80px; height: 80px; }                
+        .btn-video { width: 90px; height: 90px; }
         
         #editUI { display: none; pointer-events: auto; text-align: center; }
         #resultUI { position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 50px; z-index: 40; background: rgba(0,0,0,0.85); }
@@ -104,7 +104,6 @@ Lei 9.610/98 – Direitos Autorais.
         
         #startScreen { position: absolute; inset: 0; background: #000 url('capajpg.jpg') center/cover no-repeat; display: flex; align-items: center; justify-content: center; z-index: 100; }
         
-        /* Botão iniciar diminuído */
         #startBtn { padding: 15px 30px; font-size: 18px; font-weight: bold; border: none; background: #FF5722; color: #fff; border-radius: 30px; cursor: pointer; }
     </style>
 </head>
@@ -138,8 +137,8 @@ Lei 9.610/98 – Direitos Autorais.
 
     <div class="ui-layer" id="editUI">
         <div style="background:rgba(0,0,0,0.5); padding:10px; border-radius:10px; pointer-events:none;">Ajuste sua foto</div>
-        <div class="controls-bottom" style="justify-content: flex-end; padding-bottom: 50px;">
-            <div class="actions-box" style="width:100%">
+        <div class="controls-bottom" style="justify-content: flex-end; padding-bottom: 50px; pointer-events: none;">
+            <div class="actions-box" style="width:100%; pointer-events: auto;">
                 <button id="confirmEditBtn" class="btn-res" style="background:var(--accent);">✅</button>
                 <button id="cancelEditBtn" class="btn-res" style="background:#444;">❌</button>
             </div>
@@ -157,7 +156,7 @@ Lei 9.610/98 – Direitos Autorais.
 </div>
 
 <script>
-/* MANTIDO EXATAMENTE COMO O ORIGINAL - SEM ALTERAÇÕES */
+// JS Mantido conforme solicitado
 let usingFrontCamera = true, stream = null, isRecording = false, mediaRecorder = null, recordedChunks = [];
 let currentFileUrl = null, boomFrames = [], currentType = 'image';
 let recordStartTime, timerInterval;
