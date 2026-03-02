@@ -8,11 +8,10 @@ Lei 9.610/98 – Direitos Autorais.
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
     <title>Convite Joaquim</title>
     <style>
         :root {
-            /* Cores facilitadas para as alunas */
             --cor-botao: #FFFFFF;
             --cor-icone: #000000;
             --cor-texto: #FFFFFF;
@@ -21,7 +20,8 @@ Lei 9.610/98 – Direitos Autorais.
         body, html {
             margin: 0; padding: 0;
             width: 100%; 
-            height: 100dvh; /* dvh evita cortes no Safari/iOS */
+            /* Uso de dvh (Dynamic Viewport Height) para evitar problemas com a barra do Safari/Chrome */
+            height: 100dvh; 
             overflow: hidden; 
             background-color: #000000;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -37,29 +37,31 @@ Lei 9.610/98 – Direitos Autorais.
             align-items: center;
         }
 
-        /* --- MEDIA WRAPPER (Mantém a proporção da arte) --- */
+        /* --- MEDIA WRAPPER (Mantém a proporção 9:16 da arte) --- */
         .media-wrapper {
             position: relative;
-            height: 100%;
-            aspect-ratio: 9 / 16; /* Mantém proporção de celular */
+            height: 100dvh; /* Garante que preencha a altura total disponível */
+            aspect-ratio: 9 / 16; 
             display: flex;
             justify-content: center;
             align-items: center;
+            background-color: #000;
         }
 
         video {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Garante que a arte não corte */
+            /* object-fit: contain garante que a arte nunca seja cortada nas laterais */
+            object-fit: contain; 
             z-index: 1;
         }
 
         /* --- TELA DE INÍCIO (OVERLAY) --- */
         #overlay {
-            position: absolute; /* Relativo ao wrapper */
+            position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: rgba(0,0,0,0.2); /* Leve escurecida para ler o texto */
+            background: rgba(0,0,0,0.4); 
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
             z-index: 100; cursor: pointer; text-align: center;
@@ -84,7 +86,9 @@ Lei 9.610/98 – Direitos Autorais.
         /* --- BOTÃO CONTROLE CANTO SUPERIOR --- */
         #controlBtn {
             position: absolute;
-            top: 40px; left: 20px; /* Ajustado para não bater no relógio do iPhone */
+            /* Usando env(safe-area-inset-top) para não ficar embaixo da câmera do iPhone */
+            top: calc(10px + env(safe-area-inset-top)); 
+            left: 20px; 
             width: 45px; height: 45px;
             border-radius: 50%;
             border: none; cursor: pointer;
@@ -95,10 +99,11 @@ Lei 9.610/98 – Direitos Autorais.
             opacity: 0.8;
         }
 
-        /* --- HOTSPOTS RELATIVOS À IMAGEM --- */
+        /* --- HOTSPOTS RELATIVOS À ARTE --- */
         .hotspots {
             position: absolute;
-            bottom: 12%; /* Altura fixa em % em relação à arte */
+            /* Posicionamento em % relativo ao media-wrapper */
+            bottom: 12%; 
             width: 100%;
             display: none; 
             justify-content: space-around;
@@ -108,11 +113,11 @@ Lei 9.610/98 – Direitos Autorais.
         }
 
         .btn-interativo {
-            width: 25%; /* Largura relativa para encaixar nos botões da arte */
+            width: 35%; /* Ajuste conforme o tamanho dos ícones na sua arte */
             aspect-ratio: 1 / 1;
             background: transparent; 
             cursor: pointer;
-            /* border: 2px solid red; */ /* Descomente para testar a posição */
+            /* border: 2px solid red; */ /* Remova o comentário para calibrar a posição */
         }
     </style>
 </head>
@@ -127,7 +132,7 @@ Lei 9.610/98 – Direitos Autorais.
                 <h2>Ative o play para a<br>magia acontecer!</h2>
             </div>
 
-            <video id="meuVideo" playsinline preload="auto">
+            <video id="meuVideo" playsinline preload="auto" muted>
                 <source src="video.mp4" type="video/mp4">
             </video>
 
@@ -136,8 +141,8 @@ Lei 9.610/98 – Direitos Autorais.
             </audio>
 
             <div class="hotspots" id="hotspotsContainer">
-                <div class="btn-interativo" onclick="confirmar()"></div>
-                <div class="btn-interativo" onclick="mapa()"></div>
+                <div class="btn-interativo" onclick="confirmar()" aria-label="Confirmar Presença"></div>
+                <div class="btn-interativo" onclick="mapa()" aria-label="Ver Mapa"></div>
             </div>
         </div>
     </div>
@@ -152,8 +157,12 @@ Lei 9.610/98 – Direitos Autorais.
         function iniciarConvite() {
             overlay.style.display = 'none';
             btn.style.display = 'flex';
+            
+            // Em alguns navegadores, o vídeo precisa estar mudo para dar play automático via JS, 
+            // mas como houve interação (clique), desativamos o mute.
+            video.muted = false;
             video.play();
-            audio.play();
+            audio.play().catch(e => console.log("Áudio aguardando interação"));
         }
 
         btn.addEventListener('click', () => {
@@ -169,16 +178,17 @@ Lei 9.610/98 – Direitos Autorais.
         });
 
         video.onended = function() {
-            audio.pause();
+            // Se houver áudio separado, paramos ele também
+            audio.pause(); 
             hotspots.style.display = 'flex';
         };
 
         function confirmar() {
-            window.open('https://wa.me/5571993233142', '_blank');
+            window.open('https://crispoparte.com.br/formulariojoaquim', '_blank');
         }
 
         function mapa() {
-            window.open('https://maps.app.goo.gl/WVu3tAX2YhUYnWos7', '_blank');
+            window.open('https://www.google.com/maps', '_blank');
         }
     </script>
 </body>
