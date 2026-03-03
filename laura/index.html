@@ -1,260 +1,277 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-<title>Laura</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <title>Interface Laura - Teste de Botões</title>
 
-<style>
-:root { --accent: #25D366; --record: #ff0000; --boom: #e1306c; }
+    <style>
+        :root { --accent: #25D366; --record: #ff0000; --boom: #e1306c; }
 
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-body {
-    margin: 0;
-    background: #000;
-    overflow: hidden;
-    width: 100vw;
-    height: 100dvh;
-    font-family: sans-serif;
-}
+        body {
+            margin: 0;
+            background: #000;
+            overflow: hidden;
+            width: 100vw;
+            height: 100dvh;
+            font-family: sans-serif;
+        }
 
-.stage {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-}
+        .stage {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
 
-/* CAMERA */
-#camera {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
+        /* CAMERA */
+        #camera {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 5;
+        }
 
-/* MOLDURA */
-#molduraImagePreview {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: bottom;
-    pointer-events: none;
-    z-index: 15;
-}
+        /* MOLDURA PRINCIPAL */
+        #molduraImagePreview {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: bottom;
+            pointer-events: none; /* Importante: cliques passam por ela */
+            z-index: 15;
+        }
 
-/* ARTE LATERAL RESPONSIVA */
-#sideButtonsArt {
-    position: absolute;
-    right: 0;
-    top: 0;
-    height: 100%;
-    width: auto;
-    pointer-events: none;
-    z-index: 25;
-}
+        /* ARTE LATERAL (VISUAL DOS BOTÕES) */
+        #sideButtonsArt {
+            position: absolute;
+            right: 0;
+            top: 0;
+            height: 100%;
+            width: auto;
+            pointer-events: none; /* Importante: cliques passam por ela */
+            z-index: 20;
+        }
 
-/* HOTSPOTS PROFISSIONAIS */
-.hotspot {
-    position: absolute;
-    right: 4.8%;
-    width: 13.5%;
-    aspect-ratio: 1/1;
-    border-radius: 50%;
-    background: transparent;
-    border: none;
-    opacity: 0;
-    z-index: 30;
-}
+        /* HOTSPOTS (ÁREAS DE CLIQUE REAIS) */
+        .hotspot {
+            position: absolute;
+            right: 2%; /* Ajuste conforme a largura da sua arte lateral */
+            width: 18%; /* Área de clique generosa */
+            height: 10%;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.01); /* Truque para ser clicável mas invisível */
+            border: none;
+            cursor: pointer;
+            z-index: 100; /* Garante que está ACIMA de tudo */
+            outline: none;
+        }
 
-/* POSIÇÃO MATEMÁTICA DOS BOTÕES */
-#galleryBtn      { top: 23.5%; }
-#capturePhotoBtn { top: 39.8%; }
-#captureVideoBtn { top: 56.2%; }
-#boomerangBtn    { top: 72.5%; }
+        /* POSIÇÕES DOS BOTÕES (Ajuste as porcentagens se necessário) */
+        #galleryBtn      { top: 22%; }
+        #capturePhotoBtn { top: 38%; }
+        #captureVideoBtn { top: 54%; }
+        #boomerangBtn    { top: 70%; }
 
-/* OUTROS ELEMENTOS */
-#canvasPreview, #videoPreview {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: none;
-    z-index: 40;
-}
+        /* PREVIEWS E TELAS DE RESULTADO */
+        #canvasPreview, #videoPreview {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: none;
+            z-index: 110;
+            background: #000;
+        }
 
-#resultUI {
-    position: absolute;
-    inset: 0;
-    display: none;
-    flex-direction: column;
-    justify-content: flex-end;
-    padding: 40px;
-    background: rgba(0,0,0,0.85);
-    z-index: 50;
-}
+        #resultUI {
+            position: absolute;
+            inset: 0;
+            display: none;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 40px;
+            background: rgba(0,0,0,0.7);
+            z-index: 120;
+        }
 
-.btn-res {
-    padding: 18px;
-    margin-bottom: 12px;
-    border-radius: 15px;
-    border: none;
-    font-size: 16px;
-    font-weight: bold;
-    color: #fff;
-    background: var(--accent);
-}
+        .btn-res {
+            padding: 18px;
+            margin-bottom: 12px;
+            border-radius: 15px;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            background: var(--accent);
+        }
 
-#startScreen {
-    position: absolute;
-    inset: 0;
-    background: #000 url('capajpg.jpg') center/cover no-repeat;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-}
+        #startScreen {
+            position: absolute;
+            inset: 0;
+            background: #000 url('capajpg.jpg') center/cover no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+        }
 
-#startBtn {
-    padding: 25px 55px;
-    font-size: 22px;
-    border: none;
-    border-radius: 40px;
-    background: #FF5722;
-    color: #fff;
-}
+        #startBtn {
+            padding: 25px 55px;
+            font-size: 22px;
+            border: none;
+            border-radius: 40px;
+            background: #FF5722;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
 
-</style>
+    </style>
 </head>
 
 <body>
 
 <div class="stage">
 
-<video id="camera" autoplay playsinline muted></video>
+    <video id="camera" autoplay playsinline muted></video>
 
-<img id="molduraImagePreview" src="moldura1.png" />
-<img id="sideButtonsArt" src="botoes.png" />
+    <img id="molduraImagePreview" src="moldura1.png" />
+    <img id="sideButtonsArt" src="botoes.png" />
 
-<!-- HOTSPOTS -->
-<button id="galleryBtn" class="hotspot"></button>
-<button id="capturePhotoBtn" class="hotspot"></button>
-<button id="captureVideoBtn" class="hotspot"></button>
-<button id="boomerangBtn" class="hotspot"></button>
+    <button id="galleryBtn" class="hotspot" title="Galeria"></button>
+    <button id="capturePhotoBtn" class="hotspot" title="Foto"></button>
+    <button id="captureVideoBtn" class="hotspot" title="Vídeo"></button>
+    <button id="boomerangBtn" class="hotspot" title="Boomerang"></button>
 
-<input type="file" id="fileInput" accept="image/*" style="display:none;">
+    <input type="file" id="fileInput" accept="image/*" style="display:none;">
+    <canvas id="canvasFinal" style="display:none;"></canvas>
+    <canvas id="canvasPreview"></canvas>
+    <video id="videoPreview" playsinline controls loop></video>
 
-<canvas id="canvasFinal" style="display:none;"></canvas>
-<canvas id="canvasPreview"></canvas>
-<video id="videoPreview" playsinline controls loop></video>
+    <div id="resultUI">
+        <button id="downloadBtn" class="btn-res">BAIXAR</button>
+        <button id="newBtn" class="btn-res" style="background:#444;">VOLTAR</button>
+    </div>
 
-<div id="resultUI">
-    <button id="downloadBtn" class="btn-res">BAIXAR</button>
-    <button id="newBtn" class="btn-res" style="background:#444;">VOLTAR</button>
-</div>
-
-<div id="startScreen">
-    <button id="startBtn">INICIAR CÂMERA</button>
-</div>
+    <div id="startScreen">
+        <button id="startBtn">INICIAR CÂMERA</button>
+    </div>
 
 </div>
 
 <script>
+    let stream = null;
+    let mediaRecorder = null;
+    let recordedChunks = [];
+    let currentFileUrl = null;
 
-let stream = null;
-let mediaRecorder = null;
-let recordedChunks = [];
-let currentFileUrl = null;
+    const video = document.getElementById('camera');
+    const canvasFinal = document.getElementById('canvasFinal');
+    const ctxFinal = canvasFinal.getContext('2d');
+    const canvasPreview = document.getElementById('canvasPreview');
+    const videoPreview = document.getElementById('videoPreview');
 
-const video = document.getElementById('camera');
-const canvasFinal = document.getElementById('canvasFinal');
-const ctxFinal = canvasFinal.getContext('2d');
-const canvasPreview = document.getElementById('canvasPreview');
-const videoPreview = document.getElementById('videoPreview');
+    // Inicialização
+    document.getElementById('startBtn').addEventListener('click', initCamera);
+    document.getElementById('galleryBtn').onclick = () => document.getElementById('fileInput').click();
+    document.getElementById('capturePhotoBtn').onclick = takePhoto;
+    document.getElementById('captureVideoBtn').onclick = startVideo;
+    document.getElementById('boomerangBtn').onclick = startBoomerang;
+    document.getElementById('newBtn').onclick = resetAll;
 
-document.getElementById('startBtn').onclick = initCamera;
-document.getElementById('galleryBtn').onclick = () => document.getElementById('fileInput').click();
-document.getElementById('capturePhotoBtn').onclick = takePhoto;
-document.getElementById('captureVideoBtn').onclick = startVideo;
-document.getElementById('boomerangBtn').onclick = startBoomerang;
-document.getElementById('newBtn').onclick = resetAll;
-
-async function initCamera(){
-    stream = await navigator.mediaDevices.getUserMedia({ video:true, audio:true });
-    video.srcObject = stream;
-    document.getElementById('startScreen').style.display='none';
-}
-
-function drawFrame(w,h){
-    ctxFinal.drawImage(video,0,0,w,h);
-    const moldura = document.getElementById('molduraImagePreview');
-    ctxFinal.drawImage(moldura,0,0,w,h);
-}
-
-function takePhoto(){
-    canvasFinal.width=1080;
-    canvasFinal.height=1920;
-    drawFrame(1080,1920);
-    canvasFinal.toBlob(blob=>{
-        currentFileUrl=URL.createObjectURL(blob);
-        showResult(currentFileUrl,'image');
-    });
-}
-
-function startVideo(){
-    canvasFinal.width=720;
-    canvasFinal.height=1280;
-    const streamCanvas=canvasFinal.captureStream(30);
-    mediaRecorder=new MediaRecorder(streamCanvas);
-    recordedChunks=[];
-    mediaRecorder.ondataavailable=e=>recordedChunks.push(e.data);
-    mediaRecorder.onstop=()=>{
-        currentFileUrl=URL.createObjectURL(new Blob(recordedChunks));
-        showResult(currentFileUrl,'video');
-    };
-    mediaRecorder.start();
-    const loop=()=>{
-        if(mediaRecorder.state==="recording"){
-            drawFrame(720,1280);
-            requestAnimationFrame(loop);
+    async function initCamera(){
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ 
+                video: { facingMode: "user" }, 
+                audio: true 
+            });
+            video.srcObject = stream;
+            document.getElementById('startScreen').style.display='none';
+        } catch (err) {
+            alert("Erro ao acessar câmera: " + err);
         }
-    };
-    loop();
-    setTimeout(()=>mediaRecorder.stop(),4000);
-}
-
-function startBoomerang(){
-    alert("Aqui você pode manter seu sistema original de boomerang.");
-}
-
-function showResult(url,type){
-    document.getElementById('resultUI').style.display='flex';
-    if(type==='image'){
-        canvasPreview.style.display='block';
-        canvasPreview.width=window.innerWidth;
-        canvasPreview.height=window.innerHeight;
-        canvasPreview.getContext('2d')
-            .drawImage(canvasFinal,0,0,canvasPreview.width,canvasPreview.height);
-    }else{
-        videoPreview.style.display='block';
-        videoPreview.src=url;
     }
-    document.getElementById('downloadBtn').onclick=()=>{
-        const a=document.createElement('a');
-        a.href=url;
-        a.download='registro.webm';
-        a.click();
-    };
-}
 
-function resetAll(){
-    document.getElementById('resultUI').style.display='none';
-    canvasPreview.style.display='none';
-    videoPreview.style.display='none';
-}
+    function drawFrame(w, h){
+        ctxFinal.drawImage(video, 0, 0, w, h);
+        const moldura = document.getElementById('molduraImagePreview');
+        ctxFinal.drawImage(moldura, 0, 0, w, h);
+    }
 
+    function takePhoto(){
+        canvasFinal.width = 1080;
+        canvasFinal.height = 1920;
+        drawFrame(1080, 1920);
+        canvasFinal.toBlob(blob => {
+            currentFileUrl = URL.createObjectURL(blob);
+            showResult(currentFileUrl, 'image');
+        }, 'image/jpeg', 0.95);
+    }
+
+    function startVideo(){
+        canvasFinal.width = 720;
+        canvasFinal.height = 1280;
+        const streamCanvas = canvasFinal.captureStream(30);
+        mediaRecorder = new MediaRecorder(streamCanvas, { mimeType: 'video/webm' });
+        recordedChunks = [];
+        
+        mediaRecorder.ondataavailable = e => { if(e.data.size > 0) recordedChunks.push(e.data); };
+        mediaRecorder.onstop = () => {
+            currentFileUrl = URL.createObjectURL(new Blob(recordedChunks, { type: 'video/webm' }));
+            showResult(currentFileUrl, 'video');
+        };
+
+        mediaRecorder.start();
+        
+        const loop = () => {
+            if(mediaRecorder.state === "recording"){
+                drawFrame(720, 1280);
+                requestAnimationFrame(loop);
+            }
+        };
+        loop();
+
+        // Grava por 4 segundos
+        setTimeout(() => { if(mediaRecorder.state === "recording") mediaRecorder.stop(); }, 4000);
+    }
+
+    function startBoomerang(){
+        alert("Iniciando Boomerang...");
+        // Adicione aqui sua lógica de captura rápida
+    }
+
+    function showResult(url, type){
+        document.getElementById('resultUI').style.display = 'flex';
+        if(type === 'image'){
+            canvasPreview.style.display = 'block';
+            canvasPreview.width = window.innerWidth;
+            canvasPreview.height = window.innerHeight;
+            canvasPreview.getContext('2d').drawImage(canvasFinal, 0, 0, canvasPreview.width, canvasPreview.height);
+        } else {
+            videoPreview.style.display = 'block';
+            videoPreview.src = url;
+            videoPreview.play();
+        }
+
+        document.getElementById('downloadBtn').onclick = () => {
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = type === 'image' ? 'foto.jpg' : 'video.webm';
+            a.click();
+        };
+    }
+
+    function resetAll(){
+        document.getElementById('resultUI').style.display = 'none';
+        canvasPreview.style.display = 'none';
+        videoPreview.style.display = 'none';
+        videoPreview.pause();
+        videoPreview.src = "";
+    }
 </script>
 
 </body>
