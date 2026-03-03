@@ -1,19 +1,29 @@
 <!DOCTYPE html>
-<!--
-© 2026 Cristiane Oliveira
-Material exclusivo para alunos.
-Proibida reprodução, distribuição ou revenda.
-Lei 9.610/98 – Direitos Autorais.
--->
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <title>Sou fã Cris</title>
+    <title>Sou fã Cris - Pro Edition</title>
     <style>
-        :root { --accent: #25D366; --record: #ff0000; --boom: #e1306c; }
+        :root { 
+            --accent: #25D366; 
+            --record: #ff3b30; 
+            --boom: #e1306c; 
+            --glass: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.3);
+        }
+        
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; background: #000; color: #fff; overflow: hidden; width: 100vw; height: 100dvh; font-family: sans-serif; }
+        
+        body { 
+            margin: 0; 
+            background: #000; 
+            color: #fff; 
+            overflow: hidden; 
+            width: 100vw; 
+            height: 100dvh; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+        }
         
         .stage { position: relative; width: 100%; height: 100%; overflow: hidden; background: #000; touch-action: none; }
         
@@ -25,57 +35,148 @@ Lei 9.610/98 – Direitos Autorais.
         #molduraImagePreview { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: bottom; pointer-events: none; z-index: 15; display: none; }
         #canvasFinal { display: none; }
         
-        /* Ajuste na UI Layer para focar no topo e lateral */
-        .ui-layer { position: absolute; inset: 0; pointer-events: none; z-index: 30; display: flex; flex-direction: column; padding: 40px 20px; }
-        .top-bar { display: flex; justify-content: space-between; pointer-events: auto; }
+        /* UI Layer */
+        .ui-layer { position: absolute; inset: 0; pointer-events: none; z-index: 30; display: flex; flex-direction: column; padding: 50px 20px; justify-content: space-between; }
         
-        #videoTimer { 
-            background: rgba(255, 0, 0, 0.7); 
-            padding: 5px 15px; 
-            border-radius: 10px; 
-            font-weight: bold; 
-            font-size: 18px; 
-            display: none; 
-            margin-bottom: 10px;
-            animation: pulse 1s infinite;
+        .top-bar { display: flex; justify-content: flex-end; pointer-events: auto; }
+        
+        /* Botões Estilizados */
+        .btn-ui { 
+            padding: 10px 20px; 
+            background: var(--glass); 
+            border: 1px solid var(--glass-border); 
+            border-radius: 50px; 
+            color: #fff; 
+            cursor: pointer; 
+            backdrop-filter: blur(10px);
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
         }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
 
-        .boom-loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.9); padding: 25px; border-radius: 20px; display: none; z-index: 100; border: 2px solid var(--boom); text-align: center; }
-        
-        /* POSICIONAMENTO LATERAL DIREITO */
         .controls-bottom { 
             position: absolute;
             right: 20px;
-            top: 55%;
-            transform: translateY(-50%);
+            bottom: 40px;
             display: flex; 
             flex-direction: column; 
             align-items: center; 
-            gap: 20px; 
+            gap: 15px; 
             pointer-events: auto; 
         }
-        
-        .btn-ui { padding: 10px 20px; background: rgba(0,0,0,0.6); border: 1px solid #fff; border-radius: 20px; color: #fff; cursor: pointer; backdrop-filter: blur(5px); }
-        
-        /* ALINHAMENTO VERTICAL DOS BOTÕES */
-        .capture-controls { display: flex; flex-direction: column; gap: 20px; align-items: center; }
-        
-        .btn-photo { width: 55px; height: 55px; border-radius: 50%; border: 2px solid #fff; background: rgba(255,255,255,0.2); font-size: 24px; cursor: pointer; }
-        .btn-boom { width: 60px; height: 60px; border-radius: 50%; border: 3px solid var(--boom); background: rgba(225, 48, 108, 0.2); font-size: 28px; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; }
-        .btn-gallery { width: 50px; height: 50px; border-radius: 10px; border: 1px solid #fff; background: rgba(0,0,0,0.5); font-size: 20px; cursor: pointer; }
 
-        .btn-video { width: 70px; height: 70px; border-radius: 50%; border: 5px solid #fff; background: rgba(255,255,255,0.1); cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        .btn-video.recording { border-color: var(--record); background: rgba(255,0,0,0.3); }
-        .stop-square { width: 25px; height: 25px; background: red; border-radius: 4px; }
+        .capture-controls { display: flex; flex-direction: column; gap: 15px; align-items: center; }
+
+        .capture-controls button {
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
         
-        #editUI { display: none; pointer-events: auto; text-align: center; }
-        #resultUI { position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 50px; z-index: 40; background: rgba(0,0,0,0.85); }
-        .actions-box { display: flex; flex-direction: column; gap: 15px; width: 85%; pointer-events: auto; }
-        .btn-res { padding: 20px; border-radius: 15px; border: none; font-weight: bold; font-size: 18px; cursor: pointer; text-align: center; text-decoration: none; color: #fff; }
+        .capture-controls button:active { transform: scale(0.9); }
+
+        .btn-gallery { 
+            width: 45px; height: 45px; 
+            border-radius: 12px; 
+            background: var(--glass); 
+            border: 1px solid var(--glass-border) !important;
+            font-size: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-photo { 
+            width: 55px; height: 55px; 
+            border-radius: 50%; 
+            background: #fff; 
+            font-size: 24px;
+        }
+
+        .btn-boom { 
+            width: 55px; height: 55px; 
+            border-radius: 50%; 
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            color: white; 
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        /* Botão de Vídeo Especial */
+        .btn-video { 
+            width: 75px; height: 75px; 
+            border-radius: 50%; 
+            border: 4px solid #fff !important; 
+            background: rgba(255,255,255,0.2); 
+            position: relative;
+        }
+
+        .btn-video::before {
+            content: '';
+            width: 55px;
+            height: 55px;
+            background: #fff;
+            border-radius: 50%;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .btn-video.recording::before {
+            width: 30px;
+            height: 30px;
+            background: var(--record);
+            border-radius: 6px;
+        }
+
+        #videoTimer { 
+            background: var(--record); 
+            padding: 5px 12px; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            font-size: 14px; 
+            display: none; 
+            margin-bottom: 5px;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+
+        /* Telas de Edição e Resultado */
+        #editUI, #resultUI { 
+            position: absolute; inset: 0; 
+            display: none; flex-direction: column; 
+            align-items: center; justify-content: flex-end; 
+            padding-bottom: 40px; z-index: 40; 
+            background: rgba(0,0,0,0.7); 
+            backdrop-filter: blur(5px);
+        }
         
-        #startScreen { position: absolute; inset: 0; background: #000 url('capajpg.jpg') center/cover no-repeat; display: flex; align-items: center; justify-content: center; z-index: 100; }
-        #startBtn { padding: 25px 55px; font-size: 24px; font-weight: bold; border: none; background: #FF5722; color: #fff; border-radius: 50px; cursor: pointer; }
+        .actions-box { display: flex; flex-direction: column; gap: 12px; width: 85%; pointer-events: auto; }
+        
+        .btn-res { 
+            padding: 18px; border-radius: 15px; border: none; 
+            font-weight: bold; font-size: 16px; cursor: pointer; 
+            color: #fff; text-transform: uppercase;
+        }
+
+        #startScreen { 
+            position: absolute; inset: 0; 
+            background: #000 url('capajpg.jpg') center/cover no-repeat; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; 
+        }
+
+        #startBtn { 
+            padding: 20px 50px; font-size: 18px; font-weight: bold; 
+            border: none; background: #fff; color: #000; 
+            border-radius: 50px; cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        .boom-loading { 
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            background: rgba(0,0,0,0.9); padding: 25px; border-radius: 20px; 
+            display: none; z-index: 100; border: 1px solid var(--boom); text-align: center; 
+        }
     </style>
 </head>
 <body>
@@ -87,49 +188,50 @@ Lei 9.610/98 – Direitos Autorais.
     <canvas id="canvasFinal"></canvas>
     <video id="videoPreview" playsinline controls loop></video>
     <img id="molduraImagePreview" src="" />
+    
     <div class="boom-loading" id="boomLoading">🚀 Criando seu Boomerang...</div>
 
     <div class="ui-layer" id="cameraUI" style="display:none;">
         <div class="top-bar">
-            <button class="btn-ui" id="switchBtn">🔄 INVERTER</button>
+            <button class="btn-ui" id="switchBtn">🔄 Inverter</button>
         </div>
         <div class="controls-bottom">
             <div id="videoTimer">00:00</div>
             <div class="capture-controls">
-                <button id="galleryBtn" class="btn-gallery">🖼️</button>
+                <button id="galleryBtn" class="btn-gallery" title="Galeria">🖼️</button>
                 <input type="file" id="fileInput" accept="image/*" style="display:none;">
-                <button id="capturePhotoBtn" class="btn-photo">📷</button>
-                <button id="captureVideoBtn" class="btn-video">
-                    <svg id="camIcon" viewBox="0 0 24 24" width="35" height="35" fill="white"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
-                    <div id="stopIcon" class="stop-square" style="display:none;"></div>
-                </button>
-                <button id="boomerangBtn" class="btn-boom">∞</button>
+                <button id="capturePhotoBtn" class="btn-photo" title="Foto">📷</button>
+                <button id="captureVideoBtn" class="btn-video" title="Vídeo"></button>
+                <button id="boomerangBtn" class="btn-boom" title="Boomerang">∞</button>
             </div>
         </div>
     </div>
 
-    <div class="ui-layer" id="editUI">
-        <div style="background:rgba(0,0,0,0.5); padding:10px; border-radius:10px;">Ajuste sua foto (Arraste e Zoom)</div>
-        <div class="controls-bottom">
-            <div class="actions-box" style="width:100%">
-                <button id="confirmEditBtn" class="btn-res" style="background:var(--accent);">✅ CONFIRMAR</button>
-                <button id="cancelEditBtn" class="btn-res" style="background:#444;">❌ CANCELAR</button>
-            </div>
+    <div id="editUI">
+        <div style="margin-bottom: 20px; background:rgba(255,255,255,0.2); padding:10px 20px; border-radius:20px; font-size:14px;">
+            Arraste e use dois dedos para zoom
+        </div>
+        <div class="actions-box">
+            <button id="confirmEditBtn" class="btn-res" style="background:var(--accent);">✅ Confirmar</button>
+            <button id="cancelEditBtn" class="btn-res" style="background:rgba(255,255,255,0.1);">Cancelar</button>
         </div>
     </div>
 
     <div id="resultUI">
         <div class="actions-box">
-            <button id="downloadBtn" class="btn-res" style="background:var(--accent);">📥 BAIXAR AGORA</button>
-            <button id="newBtn" class="btn-res" style="background:#444;">🔄 VOLTAR</button>
+            <button id="downloadBtn" class="btn-res" style="background:var(--accent);">📥 Baixar Agora</button>
+            <button id="newBtn" class="btn-res" style="background:rgba(255,255,255,0.1);">🔄 Voltar</button>
         </div>
     </div>
 
-    <div id="startScreen"><button id="startBtn">INICIAR CÂMERA</button></div>
+    <div id="startScreen">
+        <button id="startBtn">INICIAR CÂMERA</button>
+        <p style="margin-top:20px; font-size:12px; opacity:0.6;">© 2026 Cristiane Oliveira</p>
+    </div>
 </div>
 
 <script>
-/* MANTIDO EXATAMENTE COMO O ORIGINAL - SEM ALTERAÇÕES */
+/* Lógica Original Mantida e Integrada */
 let usingFrontCamera = true, stream = null, isRecording = false, mediaRecorder = null, recordedChunks = [];
 let currentFileUrl = null, boomFrames = [], currentType = 'image';
 let recordStartTime, timerInterval;
@@ -262,8 +364,6 @@ function startRecording(isBoom) {
         captureBoomerang(Date.now());
     } else {
         startTimer();
-        document.getElementById('camIcon').style.display = 'none';
-        document.getElementById('stopIcon').style.display = 'block';
         document.getElementById('captureVideoBtn').classList.add('recording');
         canvasFinal.width = 720; canvasFinal.height = 1280;
         const canvasStream = canvasFinal.captureStream(30);
@@ -283,8 +383,6 @@ function startRecording(isBoom) {
 function stopRecording() {
     isRecording = false;
     stopTimer();
-    document.getElementById('camIcon').style.display = 'block';
-    document.getElementById('stopIcon').style.display = 'none';
     document.getElementById('captureVideoBtn').classList.remove('recording');
     if(mediaRecorder) mediaRecorder.stop();
 }
@@ -387,6 +485,7 @@ function confirmGalleryEdit() {
 function showResult(url, type) {
     document.getElementById('resultUI').style.display = 'flex';
     document.getElementById('editUI').style.display = 'none';
+    document.getElementById('cameraUI').style.display = 'none';
     editorCanvas.style.display = 'none';
     if (type === 'image') {
         canvasPreview.style.display = 'block'; videoPreview.style.display = 'none';
@@ -405,11 +504,8 @@ function showResult(url, type) {
 
 function resetAll() {
     isEditingGallery = false; cancelAnimationFrame(animId);
-    
-    // CORREÇÃO DO ÁUDIO AQUI:
     videoPreview.pause();
     videoPreview.src = "";
-    
     document.getElementById('resultUI').style.display = 'none';
     document.getElementById('editUI').style.display = 'none';
     editorCanvas.style.display = 'none'; canvasPreview.style.display = 'none';
