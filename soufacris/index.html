@@ -1,4 +1,10 @@
 <!DOCTYPE html>
+<!--
+© 2026 Cristiane Oliveira
+Material exclusivo para alunos.
+Proibida reprodução, distribuição ou revenda.
+Lei 9.610/98 – Direitos Autorais.
+-->
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8" />
@@ -40,10 +46,16 @@
             border-radius: 50%; color: #fff; cursor: pointer; backdrop-filter: blur(10px);
         }
 
-        /* Controles Laterais Inferiores */
+        /* AJUSTE DE POSIÇÃO: Subindo os botões na lateral */
         .controls-bottom { 
-            position: absolute; right: 20px; bottom: 40px; 
-            display: flex; flex-direction: column; align-items: center; gap: 20px; pointer-events: auto; 
+            position: absolute; 
+            right: 20px; 
+            bottom: 120px; /* Aumentei de 40px para 120px para subir os botões */
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 20px; 
+            pointer-events: auto; 
         }
 
         .capture-controls { display: flex; flex-direction: column; gap: 18px; align-items: center; }
@@ -74,7 +86,6 @@
             color: white; font-weight: bold;
         }
 
-        /* Botão Vídeo com Animação CSS */
         .btn-video { 
             width: 70px; height: 70px; border-radius: 50%; 
             border: 4px solid #fff !important; background: transparent; position: relative;
@@ -105,11 +116,22 @@
             font-weight: bold; font-size: 15px; cursor: pointer; color: #fff; text-transform: uppercase;
         }
 
+        /* AJUSTE: Botão Iniciar Vermelho */
         #startScreen { 
             position: absolute; inset: 0; background: #000 url('capajpg.jpg') center/cover; 
             display: flex; align-items: center; justify-content: center; z-index: 100; 
         }
-        #startBtn { padding: 20px 40px; font-size: 18px; font-weight: bold; border: none; background: #fff; border-radius: 50px; }
+        #startBtn { 
+            padding: 20px 40px; 
+            font-size: 18px; 
+            font-weight: bold; 
+            border: none; 
+            background: var(--record); /* Cor de fundo vermelha */
+            color: #fff; /* Texto branco para contrastar */
+            border-radius: 50px; 
+            box-shadow: 0 4px 15px rgba(255, 59, 48, 0.4);
+            cursor: pointer;
+        }
 
         .boom-loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #000; padding: 30px; border-radius: 20px; display: none; z-index: 100; border: 1px solid var(--boom); text-align: center; }
         
@@ -170,7 +192,7 @@
 </div>
 
 <script>
-/* Toda a lógica de funcionamento original mantida */
+/* Lógica de funcionamento permanece idêntica à sua */
 let usingFrontCamera = true, stream = null, isRecording = false, mediaRecorder = null, recordedChunks = [];
 let currentFileUrl = null, boomFrames = [], currentType = 'image';
 let recordStartTime, timerInterval;
@@ -335,7 +357,7 @@ function captureBoomerang(startTime) {
             fCanvas.width = 720; fCanvas.height = 1280;
             const fCtx = fCanvas.getContext('2d');
             const cX = 720/2, cY = 1280/2;
-            fCtx.translate(cX, cY); fCtx.scale(currentScale, currentScale); fCtx.translate(-cX, -cY);
+            fCtx.translate(cX, cY); fCtx.scale(currentScale, currentScale); fCtx.translate(-cX, -centerY);
             fCtx.drawImage(video, 0, 0, 720, 1280);
             boomFrames.push(fCanvas);
         }
