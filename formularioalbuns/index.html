@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitação de Projeto - Cris Oliveira</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f4f9;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        form {
+            background: white;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+            padding-bottom: 30px;
+        }
+
+        .header-image {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .container-campos {
+            padding: 20px 30px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 13px;
+            color: #444;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .termos-box {
+            background: #f9f9f9;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #555;
+            height: 150px;
+            overflow-y: scroll;
+            margin-top: 15px;
+            line-height: 1.4;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #d32f2f;
+        }
+
+        .checkbox-container input {
+            width: auto;
+            margin: 0;
+        }
+
+        #resultado-valor {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+            border: 1px dashed #e67e22;
+        }
+
+        button {
+            width: 100%;
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 20px;
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        button:hover:not(:disabled) {
+            background: #128C7E;
+        }
+
+        .pix-destaque {
+            color: #2c3e50;
+            font-weight: bold;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+<form id="meuFormulario">
+    <img src="minha-arte.jpg" alt="Cris Oliveira Designer" class="header-image">
+
+    <div class="container-campos">
+        <h2>Solicitação de Projeto</h2>
+
+        <label>Nome do Fotógrafo:</label>
+        <input type="text" id="nome_fotografo" placeholder="Seu nome completo" required>
+
+        <label>Gráfica:</label>
+        <input type="text" id="grafica" placeholder="Nome da gráfica" required>
+
+        <label>Serviço:</label>
+        <select id="servico" onchange="calcular()" required>
+            <option value="">Selecione...</option>
+            <option value="Opção 1">Opção 1 - Diagramação</option>
+            <option value="Opção 2">Opção 2 - Capa de Álbum</option>
+        </select>
+
+        <div id="campo_laminas" style="display:none;">
+            <label>Quantidade de Lâminas:</label>
+            <input type="number" id="laminas" value="0" min="0" oninput="calcular()">
+        </div>
+
+        <label>Tamanho do Álbum:</label>
+        <input type="text" id="tamanho" placeholder="Ex: 30x30">
+
+        <label>Nome da Capa:</label>
+        <input type="text" id="nome_capa" placeholder="Texto que vai na capa">
+
+        <label>Tipo de Evento:</label>
+        <input type="text" id="tipo_evento" placeholder="Ex: Casamento, Infantil">
+
+        <label>Data do Evento:</label>
+        <input type="date" id="data_evento">
+
+        <label>Projeto tem Caixa?</label>
+        <select id="tem_caixa">
+            <option value="Não">Não</option>
+            <option value="Sim">Sim</option>
+        </select>
+
+        <div class="termos-box">
+            <strong>Termo de Responsabilidade:</strong><br>
+            Eu, Cris Oliveira como designer digital, estou à disposição para resolver quaisquer pendências no mundo digital.
+            <br><br>
+            Ofereço 3 rodadas de ajuste gratuito; a partir disto, será cobrada uma taxa de R$ 10,00 por abertura de projeto. Prazo de 3 dias úteis para apresentação do projeto. 
+            <br><br>
+            <strong>Atenção Fotógrafo:</strong> depois de aprovado, será enviado o projeto em alta definição e você precisa conferir todo o projeto. SUA REVISÃO É IMPORTANTE! Erros ortográficos, etc., poderão ser resolvidos gratuitamente no mundo digital. Uma vez enviado para o mundo gráfico, encerra-se meu compromisso, pois não me responsabilizo por danos de impressão.
+        </div>
+
+        <div class="checkbox-container">
+            <input type="checkbox" id="concordo" onchange="toggleBotao()">
+            <label for="concordo" style="color: #d32f2f; margin:0;">Li e Concordo com os termos</label>
+        </div>
+
+        <div id="resultado-valor">
+            <span>VALOR DO INVESTIMENTO:</span><br>
+            <strong id="valor_total" style="font-size: 24px;">R$ 0,00</strong><br><br>
+            <span>CHAVE PIX (Celular):</span><br>
+            <span class="pix-destaque">71993233142</span>
+        </div>
+
+        <button type="button" id="btnEnviar" disabled onclick="enviarWhats()">Enviar Pedido e Pagar</button>
+    </div>
+</form>
+
+<script>
+function calcular() {
+    let servico = document.getElementById("servico").value;
+    let laminas = parseInt(document.getElementById("laminas").value) || 0;
+    let total = 0;
+    let displayLaminas = document.getElementById("campo_laminas");
+
+    if (servico === "Opção 1") {
+        displayLaminas.style.display = "block";
+        total = (laminas * 4) + 35;
+    } else if (servico === "Opção 2") {
+        displayLaminas.style.display = "none";
+        total = 60;
+    } else {
+        displayLaminas.style.display = "none";
+    }
+
+    if (total > 0) {
+        document.getElementById("resultado-valor").style.display = "block";
+        document.getElementById("valor_total").innerText = "R$ " + total.toFixed(2).replace('.', ',');
+    } else {
+        document.getElementById("resultado-valor").style.display = "none";
+    }
+    return total;
+}
+
+function toggleBotao() {
+    let check = document.getElementById("concordo").checked;
+    document.getElementById("btnEnviar").disabled = !check;
+}
+
+function enviarWhats() {
+    let valorFinal = calcular();
+    let nome = document.getElementById("nome_fotografo").value;
+    let grafica = document.getElementById("grafica").value;
+    let servico = document.getElementById("servico").value;
+    let laminas = document.getElementById("laminas").value;
+    let tamanho = document.getElementById("tamanho").value;
+    let capa = document.getElementById("nome_capa").value;
+    let evento = document.getElementById("tipo_evento").value;
+    let data = document.getElementById("data_evento").value;
+    let caixa = document.getElementById("tem_caixa").value;
+
+    if(!nome || !servico) {
+        alert("Preencha os campos obrigatórios!");
+        return;
+    }
+
+    let msg = `📸 *NOVO PEDIDO DE PROJETO* 📸\n\n`;
+    msg += `👤 *Fotógrafo:* ${nome}\n`;
+    msg += `🏢 *Gráfica:* ${grafica}\n`;
+    msg += `🛠 *Serviço:* ${servico}\n`;
+    if(servico === "Opção 1") msg += `📄 *Lâminas:* ${laminas}\n`;
+    msg += `📏 *Tamanho:* ${tamanho}\n`;
+    msg += `📔 *Nome na Capa:* ${capa}\n`;
+    msg += `🎉 *Evento:* ${evento}\n`;
+    msg += `📅 *Data:* ${data}\n`;
+    msg += `📦 *Tem Caixa:* ${caixa}\n\n`;
+    msg += `💰 *VALOR TOTAL: R$ ${valorFinal.toFixed(2)}*\n`;
+    msg += `✅ *Li e concordo com os termos.*\n\n`;
+    msg += `_Aguardo confirmação do pagamento_`;
+
+    let numero = "5571993233142";
+    let url = "https://wa.me/" + numero + "?text=" + encodeURIComponent(msg);
+    window.open(url, '_blank');
+}
+</script>
+
+</body>
+</html>
