@@ -62,11 +62,13 @@
             border: 1px solid #ddd;
             box-sizing: border-box;
             font-size: 14px;
+            transition: border 0.3s;
         }
 
-        /* Estilo para campos inválidos que o navegador destaca */
-        input:invalid, select:invalid {
-            border-color: #ffcccc;
+        /* Destaque para erro */
+        .campo-erro {
+            border: 2px solid #d32f2f !important;
+            background-color: #fff8f8;
         }
 
         .termos-box {
@@ -146,16 +148,16 @@
         <h2>Solicitação de Projeto</h2>
 
         <label>Nome do Fotógrafo:</label>
-        <input type="text" id="nome_fotografo" placeholder="Seu nome completo" required>
+        <input type="text" id="nome_fotografo" placeholder="Seu nome completo">
 
         <label>E-mail:</label>
-        <input type="email" id="email_fotografo" placeholder="Ex: nome@email.com" required>
+        <input type="email" id="email_fotografo" placeholder="Ex: nome@email.com">
 
         <label>Gráfica:</label>
-        <input type="text" id="grafica" placeholder="Qual gráfica será impresso?" required>
+        <input type="text" id="grafica" placeholder="Qual gráfica será impresso?">
 
         <label>Serviço:</label>
-        <select id="servico" onchange="calcular()" required>
+        <select id="servico" onchange="calcular()">
             <option value="">Selecione o serviço...</option>
             <option value="Diagramação">Diagramação (Opção 1)</option>
             <option value="Capa de Álbum">Capa de Álbum (Opção 2)</option>
@@ -163,23 +165,23 @@
 
         <div id="campo_laminas" style="display:none;">
             <label>Quantidade de Lâminas:</label>
-            <input type="number" id="laminas" value="0" min="1" oninput="calcular()">
+            <input type="number" id="laminas" value="0" min="1">
         </div>
 
         <label>Tamanho do Álbum:</label>
-        <input type="text" id="tamanho" placeholder="Ex: 30x30, 20x25..." required>
+        <input type="text" id="tamanho" placeholder="Ex: 30x30, 20x25...">
 
         <label>Nome da Capa:</label>
-        <input type="text" id="nome_capa" placeholder="Nomes/Texto para a capa" required>
+        <input type="text" id="nome_capa" placeholder="Nomes/Texto para a capa">
 
         <label>Tipo de Evento:</label>
-        <input type="text" id="tipo_evento" placeholder="Ex: Casamento, 15 anos..." required>
+        <input type="text" id="tipo_evento" placeholder="Ex: Casamento, 15 anos...">
 
         <label>Data do Evento:</label>
-        <input type="date" id="data_evento" required>
+        <input type="date" id="data_evento">
 
         <label>Projeto tem Caixa?</label>
-        <select id="tem_caixa" required>
+        <select id="tem_caixa">
             <option value="">Selecione...</option>
             <option value="Não">Não</option>
             <option value="Sim">Sim</option>
@@ -206,16 +208,13 @@
             <span class="pix-destaque">71993233142</span>
         </div>
 
-        <button type="submit" id="btnEnviar" disabled>Enviar Pedido e Pagar</button>
+        <button type="button" id="btnEnviar" disabled onclick="validarEEnviar()">Enviar Pedido e Pagar</button>
     </div>
 </form>
 
 <script>
-// Captura o envio do formulário para validar tudo de uma vez
-document.getElementById("meuFormulario").onsubmit = function(e) {
-    e.preventDefault(); // Impede o envio padrão
-    enviarWhats();
-};
+// Monitora mudanças no campo de lâminas para atualizar o valor em tempo real
+document.getElementById("laminas").addEventListener("input", calcular);
 
 function calcular() {
     let servico = document.getElementById("servico").value;
@@ -226,15 +225,12 @@ function calcular() {
 
     if (servico === "Diagramação") {
         displayLaminas.style.display = "block";
-        laminasInput.required = true;
         total = (laminas * 4) + 35;
     } else if (servico === "Capa de Álbum") {
         displayLaminas.style.display = "none";
-        laminasInput.required = false;
         total = 60;
     } else {
         displayLaminas.style.display = "none";
-        laminasInput.required = false;
     }
 
     if (total > 0) {
@@ -251,10 +247,42 @@ function toggleBotao() {
     document.getElementById("btnEnviar").disabled = !check;
 }
 
+function validarEEnviar() {
+    // Lista de IDs dos campos para validar
+    let campos = [
+        "nome_fotografo", "email_fotografo", "grafica", 
+        "servico", "tamanho", "nome_capa", 
+        "tipo_evento", "data_evento", "tem_caixa"
+    ];
+    
+    let erro = false;
+
+    // Se for diagramação, valida as lâminas também
+    if(document.getElementById("servico").value === "Diagramação") {
+        campos.push("laminas");
+    }
+
+    campos.forEach(id => {
+        let campo = document.getElementById(id);
+        if (!campo.value || campo.value === "" || campo.value === "0") {
+            campo.classList.add("campo-erro");
+            erro = true;
+        } else {
+            campo.classList.remove("campo-erro");
+        }
+    });
+
+    if (erro) {
+        alert("Ops! Alguns campos importantes não foram preenchidos. Verifique os itens marcados em vermelho.");
+        return;
+    }
+
+    // Se chegou aqui, todos os campos estão ok.
+    enviarWhats();
+}
+
 function enviarWhats() {
     let valorFinal = calcular();
-    
-    // Pegando valores
     let nome = document.getElementById("nome_fotografo").value;
     let email = document.getElementById("email_fotografo").value;
     let grafica = document.getElementById("grafica").value;
@@ -266,7 +294,6 @@ function enviarWhats() {
     let data = document.getElementById("data_evento").value;
     let caixa = document.getElementById("tem_caixa").value;
 
-    // Formatação da data para o padrão brasileiro
     let dataBR = data.split('-').reverse().join('/');
 
     let msg = `📸 *NOVO PEDIDO DE PROJETO* 📸\n\n`;
