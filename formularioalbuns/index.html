@@ -65,7 +65,6 @@
             transition: border 0.3s;
         }
 
-        /* Destaque para erro */
         .campo-erro {
             border: 2px solid #d32f2f !important;
             background-color: #fff8f8;
@@ -121,6 +120,15 @@
             cursor: pointer;
             transition: background 0.3s;
             margin-top: 20px;
+        }
+
+        .btn-copiar {
+            background: #007bff;
+            padding: 8px;
+            font-size: 12px;
+            margin-top: 10px;
+            width: auto;
+            display: inline-block;
         }
 
         button:disabled {
@@ -205,7 +213,8 @@
             <span>VALOR DO INVESTIMENTO:</span><br>
             <strong id="valor_total" style="font-size: 24px;">R$ 0,00</strong><br><br>
             <span>CHAVE PIX (Celular):</span><br>
-            <span class="pix-destaque">71993233142</span>
+            <span class="pix-destaque" id="chave_pix">71993233142</span><br>
+            <button type="button" class="btn-copiar" onclick="copiarPix()">Copiar Chave Pix</button>
         </div>
 
         <button type="button" id="btnEnviar" disabled onclick="validarEEnviar()">Enviar Pedido e Pagar</button>
@@ -213,7 +222,6 @@
 </form>
 
 <script>
-// Monitora mudanças no campo de lâminas para atualizar o valor em tempo real
 document.getElementById("laminas").addEventListener("input", calcular);
 
 function calcular() {
@@ -242,29 +250,29 @@ function calcular() {
     return total;
 }
 
+function copiarPix() {
+    const chave = "71993233142";
+    navigator.clipboard.writeText(chave).then(() => {
+        alert("Chave Pix copiada com sucesso!");
+    });
+}
+
 function toggleBotao() {
     let check = document.getElementById("concordo").checked;
     document.getElementById("btnEnviar").disabled = !check;
 }
 
 function validarEEnviar() {
-    // Lista de IDs dos campos para validar
-    let campos = [
-        "nome_fotografo", "email_fotografo", "grafica", 
-        "servico", "tamanho", "nome_capa", 
-        "tipo_evento", "data_evento", "tem_caixa"
-    ];
-    
+    let campos = ["nome_fotografo", "email_fotografo", "grafica", "servico", "tamanho", "nome_capa", "tipo_evento", "data_evento", "tem_caixa"];
     let erro = false;
 
-    // Se for diagramação, valida as lâminas também
     if(document.getElementById("servico").value === "Diagramação") {
         campos.push("laminas");
     }
 
     campos.forEach(id => {
         let campo = document.getElementById(id);
-        if (!campo.value || campo.value === "" || campo.value === "0") {
+        if (!campo.value || campo.value === "" || (id === "laminas" && campo.value === "0")) {
             campo.classList.add("campo-erro");
             erro = true;
         } else {
@@ -273,11 +281,9 @@ function validarEEnviar() {
     });
 
     if (erro) {
-        alert("Ops! Alguns campos importantes não foram preenchidos. Verifique os itens marcados em vermelho.");
+        alert("Preencha todos os campos marcados em vermelho.");
         return;
     }
-
-    // Se chegou aqui, todos os campos estão ok.
     enviarWhats();
 }
 
@@ -309,7 +315,8 @@ function enviarWhats() {
     msg += `📦 *Tem Caixa:* ${caixa}\n\n`;
     msg += `💰 *VALOR TOTAL: R$ ${valorFinal.toFixed(2).replace('.', ',')}*\n`;
     msg += `✅ *Li e concordo com os termos.*\n\n`;
-    msg += `_Aguardo confirmação do pagamento_`;
+    msg += `_Aguardo confirmação do pagamento_\n`;
+    msg += `🔑 *Chave Pix Celular:* 71993233142`;
 
     let numero = "5571993233142";
     let url = "https://wa.me/" + numero + "?text=" + encodeURIComponent(msg);
