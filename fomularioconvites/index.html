@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedido de Convites - Cris Oliveira</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #fdf2f8; padding: 20px; display: flex; justify-content: center; }
+        form { background: white; border-radius: 15px; max-width: 550px; width: 100%; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow: hidden; padding-bottom: 30px; }
+        .header-image { width: 100%; height: auto; display: block; }
+        .container-campos { padding: 20px 30px; }
+        h2 { text-align: center; color: #d81b60; border-bottom: 2px solid #fce4ec; padding-bottom: 10px; }
+        label { display: block; margin-top: 15px; font-size: 13px; font-weight: bold; color: #444; }
+        input, select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; }
+        .campo-erro { border: 2px solid #d32f2f !important; background-color: #fff8f8; }
+        .sub-secao { background: #fff9fb; padding: 15px; border-radius: 10px; border-left: 4px solid #d81b60; margin-top: 15px; display: none; }
+        .termos-box { background: #f9f9f9; padding: 15px; border: 1px solid #eee; border-radius: 8px; font-size: 11px; color: #555; height: 120px; overflow-y: scroll; margin-top: 20px; line-height: 1.4; }
+        #resultado-valor { background: #fff3cd; padding: 15px; border-radius: 8px; text-align: center; margin-top: 20px; display: none; border: 1px dashed #e67e22; }
+        button { width: 100%; background: #25D366; color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 20px; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .btn-copiar { background: #007bff; padding: 8px; font-size: 12px; width: auto; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<form id="formConvites">
+    <img src="minha-arte-convites.jpg" alt="Cris Oliveira Designer" class="header-image">
+    
+    <div class="container-campos">
+        <h2>Pedido de Convite & Arte</h2>
+
+        <label>Nome do Responsável:</label>
+        <input type="text" id="nome_resp" placeholder="Quem está contratando?">
+
+        <label>Nome do Aniversariante:</label>
+        <input type="text" id="nome_niver" placeholder="Nome no convite">
+
+        <label>Idade:</label>
+        <input type="text" id="idade" placeholder="Ex: 5 anos / 15 anos">
+
+        <label>Tema da Festa:</label>
+        <input type="text" id="tema" placeholder="Ex: Patrulha Canina, Realeza...">
+
+        <label>Data, Hora e Local:</label>
+        <input type="text" id="detalhes_festa" placeholder="Ex: 20/10 às 18h no Salão X">
+
+        <label>O que deseja contratar?</label>
+        <select id="tipo_produto" onchange="mostrarSubSecao()">
+            <option value="">Selecione...</option>
+            <option value="Convite">1 - Convite</option>
+            <option value="Moldura">2 - Moldura para Fotos</option>
+            <option value="Retrospectiva">3 - Retrospectiva</option>
+        </select>
+
+        <div id="sec_convite" class="sub-secao">
+            <label>Modelo do Convite:</label>
+            <select id="modelo_convite" onchange="calcular()">
+                <option value="">Escolha o modelo...</option>
+                <option value="Retrato">Retrato (R$ 30,00)</option>
+                <option value="VideoAnimado">Vídeo Animado (R$ 50,00)</option>
+                <option value="InterativoUnica">Interativo Tela Única (R$ 50,00)</option>
+                <option value="InterativoTrailer">Interativo Vídeo Trailer (R$ 50,00)</option>
+                <option value="InterativoEstendida">Interativo Tela Estendida (R$ 70,00)</option>
+                <option value="InterativoSlide">Interativo Slide de Fotos (R$ 120,00)</option>
+                <option value="CineIndividual">Cinematográfico Lista Individual (R$ 150,00)</option>
+                <option value="CineQR">Cine Individual + Placa QR (R$ 250,00)</option>
+                <option value="InterativoForm">Interativo com Form de Presença (R$ 90,00)</option>
+                <option value="CineBotao">Cinematográfico (Por categoria)</option>
+                <option value="Tecnologico">Tecnológico Vídeo 2 botões</option>
+                <option value="Livrinho">Livrinho</option>
+            </select>
+
+            <div id="extra_video" style="display:none;">
+                <label>Quantidade de fotos (Acima de 2 fotos + R$ 2,00 cada):</label>
+                <input type="number" id="qtd_fotos_video" value="2" min="1" oninput="calcular()">
+            </div>
+
+            <div id="extra_botoes" style="display:none;">
+                <label>Quantidade de Botões (Acima de 3 botões + R$ 10,00 taxa):</label>
+                <input type="number" id="qtd_botoes" value="3" min="1" oninput="calcular()">
+            </div>
+
+            <div id="extra_categoria" style="display:none;">
+                <label>Categoria do Evento:</label>
+                <select id="categoria_evento" onchange="calcular()">
+                    <option value="Infantil">Infantil (R$ 90,00)</option>
+                    <option value="Adulto">Casamento / 15 anos / Adulto (R$ 150,00)</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="sec_moldura" class="sub-secao">
+            <label>Opções de Moldura:</label>
+            <select id="modelo_moldura" onchange="calcular()">
+                <option value="">Selecione...</option>
+                <option value="Unica">1 Moldura Única (R$ 40,00)</option>
+                <option value="Dupla">2 Molduras Dupla (R$ 60,00)</option>
+                <option value="Interativa">3 Molduras Interativa (R$ 60,00)</option>
+            </select>
+        </div>
+
+        <div id="sec_retro" class="sub-secao">
+            <label>Quantidade de Fotos:</label>
+            <select id="fotos_retro" onchange="calcular()">
+                <option value="">Selecione a faixa...</option>
+                <option value="30-50">De 30 até 50 fotos (R$ 99,99)</option>
+                <option value="51-80">De 51 até 80 fotos (R$ 129,99)</option>
+                <option value="81-100">De 81 até 100 fotos (R$ 149,99)</option>
+                <option value="101-120">De 101 até 120 fotos (R$ 169,99)</option>
+                <option value="121-150">De 121 até 150 fotos (R$ 199,99)</option>
+                <option value="151-200">De 151 até 200 fotos (R$ 249,99)</option>
+            </select>
+        </div>
+
+        <div class="termos-box">
+            <strong>Termo de Responsabilidade:</strong><br>
+            1. Design Autoral: Proibida cópia ou edição por terceiros.<br>
+            2. Produção: Inicia após confirmação do pagamento.<br>
+            3. Prazos: Convites prontos (3 dias), Convite do Zero (5 dias), Retrospectiva (7 dias).<br>
+            4. Alterações: 1 rodada gratuita. Extras: R$ 10,00 imagem/vídeo, R$ 5,00 cor/fonte/link.
+        </div>
+
+        <div class="checkbox-container">
+            <input type="checkbox" id="concordo" onchange="toggleBotao()">
+            <label for="concordo" style="color: #d81b60; cursor:pointer;"> Li e concordo com os termos</label>
+        </div>
+
+        <div id="resultado-valor">
+            <span>VALOR DO INVESTIMENTO:</span><br>
+            <strong id="valor_total" style="font-size: 24px;">R$ 0,00</strong><br>
+            <button type="button" class="btn-copiar" onclick="copiarPix()">Copiar Chave Pix Celular</button>
+        </div>
+
+        <button type="button" id="btnEnviar" disabled onclick="validarEEnviar()">Enviar Pedido no WhatsApp</button>
+    </div>
+</form>
+
+<script>
+function mostrarSubSecao() {
+    const tipo = document.getElementById("tipo_produto").value;
+    document.getElementById("sec_convite").style.display = tipo === "Convite" ? "block" : "none";
+    document.getElementById("sec_moldura").style.display = tipo === "Moldura" ? "block" : "none";
+    document.getElementById("sec_retro").style.display = tipo === "Retrospectiva" ? "block" : "none";
+    calcular();
+}
+
+function calcular() {
+    const tipo = document.getElementById("tipo_produto").value;
+    let total = 0;
+
+    if (tipo === "Convite") {
+        const mod = document.getElementById("modelo_convite").value;
+        document.getElementById("extra_video").style.display = (mod === "VideoAnimado") ? "block" : "none";
+        document.getElementById("extra_botoes").style.display = ["InterativoUnica", "InterativoTrailer", "InterativoEstendida"].includes(mod) ? "block" : "none";
+        document.getElementById("extra_categoria").style.display = ["CineBotao", "Tecnologico", "Livrinho"].includes(mod) ? "block" : "none";
+
+        if (mod === "Retrato") total = 30;
+        else if (mod === "VideoAnimado") {
+            let f = parseInt(document.getElementById("qtd_fotos_video").value) || 0;
+            total = 50 + (f > 2 ? (f - 2) * 2 : 0);
+        }
+        else if (["InterativoUnica", "InterativoTrailer"].includes(mod)) {
+            let b = parseInt(document.getElementById("qtd_botoes").value) || 0;
+            total = 50 + (b > 3 ? 10 : 0);
+        }
+        else if (mod === "InterativoEstendida") {
+            let b = parseInt(document.getElementById("qtd_botoes").value) || 0;
+            total = 70 + (b > 3 ? 10 : 0);
+        }
+        else if (mod === "InterativoSlide") total = 120;
+        else if (mod === "CineIndividual") total = 150;
+        else if (mod === "CineQR") total = 250;
+        else if (mod === "InterativoForm") total = 90;
+        else if (["CineBotao", "Tecnologico", "Livrinho"].includes(mod)) {
+            total = document.getElementById("categoria_evento").value === "Infantil" ? 90 : 150;
+        }
+    } else if (tipo === "Moldura") {
+        const m = document.getElementById("modelo_moldura").value;
+        total = m === "Unica" ? 40 : (m === "" ? 0 : 60);
+    } else if (tipo === "Retrospectiva") {
+        const r = document.getElementById("fotos_retro").value;
+        const preços = {"30-50": 99.99, "51-80": 129.99, "81-100": 149.99, "101-120": 169.99, "121-150": 199.99, "151-200": 249.99};
+        total = preços[r] || 0;
+    }
+
+    document.getElementById("resultado-valor").style.display = total > 0 ? "block" : "none";
+    document.getElementById("valor_total").innerText = "R$ " + total.toFixed(2).replace('.', ',');
+    return total;
+}
+
+function copiarPix() {
+    navigator.clipboard.writeText("71993233142").then(() => alert("Chave Pix Copiada!"));
+}
+
+function toggleBotao() {
+    document.getElementById("btnEnviar").disabled = !document.getElementById("concordo").checked;
+}
+
+function validarEEnviar() {
+    const campos = ["nome_resp", "nome_niver", "tema", "tipo_produto"];
+    let erro = false;
+    campos.forEach(id => {
+        let el = document.getElementById(id);
+        if (!el.value) { el.classList.add("campo-erro"); erro = true; }
+        else el.classList.remove("campo-erro");
+    });
+
+    if (erro) { alert("Preencha os campos obrigatórios!"); return; }
+    
+    let msg = `🎉 *NOVO PEDIDO - CRIS OLIVEIRA* 🎉\n\n`;
+    msg += `👤 *Responsável:* ${document.getElementById("nome_resp").value}\n`;
+    msg += `🎂 *Aniversariante:* ${document.getElementById("nome_niver").value}\n`;
+    msg += `🎈 *Tema:* ${document.getElementById("tema").value}\n`;
+    msg += `🛒 *Produto:* ${document.getElementById("tipo_produto").value}\n`;
+    msg += `💰 *VALOR TOTAL: ${document.getElementById("valor_total").innerText}*\n\n`;
+    msg += `_Chave Pix Celular: 71993233142_`;
+
+    window.open(`https://wa.me/5571993233142?text=${encodeURIComponent(msg)}`, '_blank');
+}
+</script>
+</body>
+</html>
