@@ -16,7 +16,6 @@
         .sub-secao { background: #fff9fb; padding: 15px; border-radius: 10px; border-left: 4px solid #d81b60; margin-top: 15px; display: none; }
         .termos-box { background: #f9f9f9; padding: 15px; border: 1px solid #eee; border-radius: 8px; font-size: 11px; color: #555; height: 120px; overflow-y: scroll; margin-top: 20px; line-height: 1.4; }
         
-        /* Ajuste do Checkbox */
         .checkbox-container { display: flex; align-items: center; gap: 10px; margin-top: 15px; }
         .checkbox-container input { width: auto; margin: 0; cursor: pointer; }
         .checkbox-container label { margin: 0; cursor: pointer; color: #d81b60; }
@@ -219,7 +218,6 @@ function validarEEnviar() {
 
     if (erro) { alert("Atenção! Preencha todos os campos destacados."); return; }
     
-    // Coleta as respostas detalhadas
     let nome = document.getElementById("nome_resp").value;
     let aniversariante = document.getElementById("nome_niver").value;
     let idade = document.getElementById("idade").value;
@@ -240,7 +238,6 @@ function validarEEnviar() {
     msg += `📍 *Local:* ${local}\n\n`;
     msg += `🛒 *Serviço:* ${tipo}\n`;
 
-    // Detalhes extras dependendo do serviço
     if(tipo === "Convite") {
         msg += `✨ *Modelo:* ${document.getElementById("modelo_convite").value}\n`;
         if(document.getElementById("modelo_convite").value === "VideoAnimado") {
@@ -250,8 +247,11 @@ function validarEEnviar() {
         msg += `🎞 *Faixa de Fotos:* ${document.getElementById("fotos_retro").options[document.getElementById("fotos_retro").selectedIndex].text}\n`;
     }
 
-    msg += `\n💰 *VALOR TOTAL: ${valor}*\n\n`;
-    msg += `✅ *Li e concordo com os termos.*`;
+    msg += `\n💰 *VALOR TOTAL: ${valor}*\n`;
+    msg += `✅ *Li e concordo com os termos.*\n\n`;
+    msg += `-------------------------------------------\n`;
+    msg += `📌 *CHAVE PIX CELULAR: 71993233142*\n`;
+    msg += `🕒 _Aguardando o comprovante para iniciar a produção._`;
 
     window.open(`https://wa.me/5571993233142?text=${encodeURIComponent(msg)}`, '_blank');
 }
