@@ -143,14 +143,17 @@
         <label>Nome do Fotógrafo:</label>
         <input type="text" id="nome_fotografo" placeholder="Seu nome completo" required>
 
+        <label>E-mail:</label>
+        <input type="email" id="email_fotografo" placeholder="Para envio do projeto" required>
+
         <label>Gráfica:</label>
         <input type="text" id="grafica" placeholder="Nome da gráfica" required>
 
         <label>Serviço:</label>
         <select id="servico" onchange="calcular()" required>
             <option value="">Selecione...</option>
-            <option value="Opção 1">Opção 1 - Diagramação</option>
-            <option value="Opção 2">Opção 2 - Capa de Álbum</option>
+            <option value="Diagramação">Diagramação (Opção 1)</option>
+            <option value="Capa de Álbum">Capa de Álbum (Opção 2)</option>
         </select>
 
         <div id="campo_laminas" style="display:none;">
@@ -187,7 +190,7 @@
 
         <div class="checkbox-container">
             <input type="checkbox" id="concordo" onchange="toggleBotao()">
-            <label for="concordo" style="color: #d32f2f; margin:0;">Li e Concordo com os termos</label>
+            <label for="concordo" style="color: #d32f2f; margin:0; cursor:pointer;">Li e Concordo com os termos</label>
         </div>
 
         <div id="resultado-valor">
@@ -208,10 +211,10 @@ function calcular() {
     let total = 0;
     let displayLaminas = document.getElementById("campo_laminas");
 
-    if (servico === "Opção 1") {
+    if (servico === "Diagramação") {
         displayLaminas.style.display = "block";
         total = (laminas * 4) + 35;
-    } else if (servico === "Opção 2") {
+    } else if (servico === "Capa de Álbum") {
         displayLaminas.style.display = "none";
         total = 60;
     } else {
@@ -235,6 +238,7 @@ function toggleBotao() {
 function enviarWhats() {
     let valorFinal = calcular();
     let nome = document.getElementById("nome_fotografo").value;
+    let email = document.getElementById("email_fotografo").value;
     let grafica = document.getElementById("grafica").value;
     let servico = document.getElementById("servico").value;
     let laminas = document.getElementById("laminas").value;
@@ -244,22 +248,23 @@ function enviarWhats() {
     let data = document.getElementById("data_evento").value;
     let caixa = document.getElementById("tem_caixa").value;
 
-    if(!nome || !servico) {
-        alert("Preencha os campos obrigatórios!");
+    if(!nome || !email || !servico) {
+        alert("Preencha Nome, E-mail e Serviço!");
         return;
     }
 
     let msg = `📸 *NOVO PEDIDO DE PROJETO* 📸\n\n`;
     msg += `👤 *Fotógrafo:* ${nome}\n`;
+    msg += `📧 *E-mail:* ${email}\n`;
     msg += `🏢 *Gráfica:* ${grafica}\n`;
     msg += `🛠 *Serviço:* ${servico}\n`;
-    if(servico === "Opção 1") msg += `📄 *Lâminas:* ${laminas}\n`;
+    if(servico === "Diagramação") msg += `📄 *Lâminas:* ${laminas}\n`;
     msg += `📏 *Tamanho:* ${tamanho}\n`;
     msg += `📔 *Nome na Capa:* ${capa}\n`;
     msg += `🎉 *Evento:* ${evento}\n`;
     msg += `📅 *Data:* ${data}\n`;
     msg += `📦 *Tem Caixa:* ${caixa}\n\n`;
-    msg += `💰 *VALOR TOTAL: R$ ${valorFinal.toFixed(2)}*\n`;
+    msg += `💰 *VALOR TOTAL: R$ ${valorFinal.toFixed(2).replace('.', ',')}*\n`;
     msg += `✅ *Li e concordo com os termos.*\n\n`;
     msg += `_Aguardo confirmação do pagamento_`;
 
