@@ -222,6 +222,7 @@
 </form>
 
 <script>
+// Mantém o cálculo ativo sempre que mexer nas lâminas
 document.getElementById("laminas").addEventListener("input", calcular);
 
 function calcular() {
@@ -253,7 +254,9 @@ function calcular() {
 function copiarPix() {
     const chave = "71993233142";
     navigator.clipboard.writeText(chave).then(() => {
-        alert("Chave Pix copiada com sucesso!");
+        alert("Chave Pix copiada com sucesso! Agora você pode colar no seu banco.");
+    }).catch(err => {
+        alert("Erro ao copiar. Por favor, anote o número: 71993233142");
     });
 }
 
@@ -266,13 +269,20 @@ function validarEEnviar() {
     let campos = ["nome_fotografo", "email_fotografo", "grafica", "servico", "tamanho", "nome_capa", "tipo_evento", "data_evento", "tem_caixa"];
     let erro = false;
 
+    // Se for diagramação, as lâminas são obrigatórias e não podem ser zero
     if(document.getElementById("servico").value === "Diagramação") {
-        campos.push("laminas");
+        let campoLaminas = document.getElementById("laminas");
+        if (!campoLaminas.value || campoLaminas.value === "0") {
+            campoLaminas.classList.add("campo-erro");
+            erro = true;
+        } else {
+            campoLaminas.classList.remove("campo-erro");
+        }
     }
 
     campos.forEach(id => {
         let campo = document.getElementById(id);
-        if (!campo.value || campo.value === "" || (id === "laminas" && campo.value === "0")) {
+        if (!campo.value || campo.value === "") {
             campo.classList.add("campo-erro");
             erro = true;
         } else {
@@ -281,9 +291,10 @@ function validarEEnviar() {
     });
 
     if (erro) {
-        alert("Preencha todos os campos marcados em vermelho.");
+        alert("Atenção! Por favor, preencha todos os campos destacados em vermelho antes de enviar.");
         return;
     }
+    
     enviarWhats();
 }
 
