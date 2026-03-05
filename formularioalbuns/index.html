@@ -64,6 +64,11 @@
             font-size: 14px;
         }
 
+        /* Estilo para campos inválidos que o navegador destaca */
+        input:invalid, select:invalid {
+            border-color: #ffcccc;
+        }
+
         .termos-box {
             background: #f9f9f9;
             padding: 15px;
@@ -144,37 +149,38 @@
         <input type="text" id="nome_fotografo" placeholder="Seu nome completo" required>
 
         <label>E-mail:</label>
-        <input type="email" id="email_fotografo" placeholder="Para envio do projeto" required>
+        <input type="email" id="email_fotografo" placeholder="Ex: nome@email.com" required>
 
         <label>Gráfica:</label>
-        <input type="text" id="grafica" placeholder="Nome da gráfica" required>
+        <input type="text" id="grafica" placeholder="Qual gráfica será impresso?" required>
 
         <label>Serviço:</label>
         <select id="servico" onchange="calcular()" required>
-            <option value="">Selecione...</option>
+            <option value="">Selecione o serviço...</option>
             <option value="Diagramação">Diagramação (Opção 1)</option>
             <option value="Capa de Álbum">Capa de Álbum (Opção 2)</option>
         </select>
 
         <div id="campo_laminas" style="display:none;">
             <label>Quantidade de Lâminas:</label>
-            <input type="number" id="laminas" value="0" min="0" oninput="calcular()">
+            <input type="number" id="laminas" value="0" min="1" oninput="calcular()">
         </div>
 
         <label>Tamanho do Álbum:</label>
-        <input type="text" id="tamanho" placeholder="Ex: 30x30">
+        <input type="text" id="tamanho" placeholder="Ex: 30x30, 20x25..." required>
 
         <label>Nome da Capa:</label>
-        <input type="text" id="nome_capa" placeholder="Texto que vai na capa">
+        <input type="text" id="nome_capa" placeholder="Nomes/Texto para a capa" required>
 
         <label>Tipo de Evento:</label>
-        <input type="text" id="tipo_evento" placeholder="Ex: Casamento, Infantil">
+        <input type="text" id="tipo_evento" placeholder="Ex: Casamento, 15 anos..." required>
 
         <label>Data do Evento:</label>
-        <input type="date" id="data_evento">
+        <input type="date" id="data_evento" required>
 
         <label>Projeto tem Caixa?</label>
-        <select id="tem_caixa">
+        <select id="tem_caixa" required>
+            <option value="">Selecione...</option>
             <option value="Não">Não</option>
             <option value="Sim">Sim</option>
         </select>
@@ -200,25 +206,35 @@
             <span class="pix-destaque">71993233142</span>
         </div>
 
-        <button type="button" id="btnEnviar" disabled onclick="enviarWhats()">Enviar Pedido e Pagar</button>
+        <button type="submit" id="btnEnviar" disabled>Enviar Pedido e Pagar</button>
     </div>
 </form>
 
 <script>
+// Captura o envio do formulário para validar tudo de uma vez
+document.getElementById("meuFormulario").onsubmit = function(e) {
+    e.preventDefault(); // Impede o envio padrão
+    enviarWhats();
+};
+
 function calcular() {
     let servico = document.getElementById("servico").value;
-    let laminas = parseInt(document.getElementById("laminas").value) || 0;
+    let laminasInput = document.getElementById("laminas");
+    let laminas = parseInt(laminasInput.value) || 0;
     let total = 0;
     let displayLaminas = document.getElementById("campo_laminas");
 
     if (servico === "Diagramação") {
         displayLaminas.style.display = "block";
+        laminasInput.required = true;
         total = (laminas * 4) + 35;
     } else if (servico === "Capa de Álbum") {
         displayLaminas.style.display = "none";
+        laminasInput.required = false;
         total = 60;
     } else {
         displayLaminas.style.display = "none";
+        laminasInput.required = false;
     }
 
     if (total > 0) {
@@ -237,6 +253,8 @@ function toggleBotao() {
 
 function enviarWhats() {
     let valorFinal = calcular();
+    
+    // Pegando valores
     let nome = document.getElementById("nome_fotografo").value;
     let email = document.getElementById("email_fotografo").value;
     let grafica = document.getElementById("grafica").value;
@@ -248,10 +266,8 @@ function enviarWhats() {
     let data = document.getElementById("data_evento").value;
     let caixa = document.getElementById("tem_caixa").value;
 
-    if(!nome || !email || !servico) {
-        alert("Preencha Nome, E-mail e Serviço!");
-        return;
-    }
+    // Formatação da data para o padrão brasileiro
+    let dataBR = data.split('-').reverse().join('/');
 
     let msg = `📸 *NOVO PEDIDO DE PROJETO* 📸\n\n`;
     msg += `👤 *Fotógrafo:* ${nome}\n`;
@@ -262,11 +278,11 @@ function enviarWhats() {
     msg += `📏 *Tamanho:* ${tamanho}\n`;
     msg += `📔 *Nome na Capa:* ${capa}\n`;
     msg += `🎉 *Evento:* ${evento}\n`;
-    msg += `📅 *Data:* ${data}\n`;
+    msg += `📅 *Data:* ${dataBR}\n`;
     msg += `📦 *Tem Caixa:* ${caixa}\n\n`;
     msg += `💰 *VALOR TOTAL: R$ ${valorFinal.toFixed(2).replace('.', ',')}*\n`;
     msg += `✅ *Li e concordo com os termos.*\n\n`;
-    msg += `_Aguardo confirmação do pagamento_`;
+    msg += `_Enviado via sistema Cris Oliveira_`;
 
     let numero = "5571993233142";
     let url = "https://wa.me/" + numero + "?text=" + encodeURIComponent(msg);
