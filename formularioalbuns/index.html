@@ -309,7 +309,7 @@ function enviarWhats() {
     msg += `📦 *Tem Caixa:* ${caixa}\n\n`;
     msg += `💰 *VALOR TOTAL: R$ ${valorFinal.toFixed(2).replace('.', ',')}*\n`;
     msg += `✅ *Li e concordo com os termos.*\n\n`;
-    msg += `_Enviado via sistema Cris Oliveira_`;
+    msg += `_Aguardo confirmação do pagamento_`;
 
     let numero = "5571993233142";
     let url = "https://wa.me/" + numero + "?text=" + encodeURIComponent(msg);
