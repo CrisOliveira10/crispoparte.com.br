@@ -15,10 +15,16 @@
         .campo-erro { border: 2px solid #d32f2f !important; background-color: #fff8f8; }
         .sub-secao { background: #fff9fb; padding: 15px; border-radius: 10px; border-left: 4px solid #d81b60; margin-top: 15px; display: none; }
         .termos-box { background: #f9f9f9; padding: 15px; border: 1px solid #eee; border-radius: 8px; font-size: 11px; color: #555; height: 120px; overflow-y: scroll; margin-top: 20px; line-height: 1.4; }
+        
+        /* Ajuste do Checkbox */
+        .checkbox-container { display: flex; align-items: center; gap: 10px; margin-top: 15px; }
+        .checkbox-container input { width: auto; margin: 0; cursor: pointer; }
+        .checkbox-container label { margin: 0; cursor: pointer; color: #d81b60; }
+
         #resultado-valor { background: #fff3cd; padding: 15px; border-radius: 8px; text-align: center; margin-top: 20px; display: none; border: 1px dashed #e67e22; }
         button { width: 100%; background: #25D366; color: white; border: none; padding: 15px; border-radius: 8px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 20px; }
         button:disabled { background: #ccc; cursor: not-allowed; }
-        .btn-copiar { background: #007bff; padding: 8px; font-size: 12px; width: auto; margin-top: 10px; }
+        .btn-copiar { background: #007bff; padding: 8px; font-size: 12px; width: auto; margin-top: 10px; border: none; color: white; border-radius: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -36,13 +42,19 @@
         <input type="text" id="nome_niver" placeholder="Nome no convite">
 
         <label>Idade:</label>
-        <input type="text" id="idade" placeholder="Ex: 5 anos / 15 anos">
+        <input type="text" id="idade" placeholder="Ex: 5 anos">
 
         <label>Tema da Festa:</label>
-        <input type="text" id="tema" placeholder="Ex: Patrulha Canina, Realeza...">
+        <input type="text" id="tema" placeholder="Ex: Patrulha Canina">
 
-        <label>Data, Hora e Local:</label>
-        <input type="text" id="detalhes_festa" placeholder="Ex: 20/10 às 18h no Salão X">
+        <label>Data do Evento:</label>
+        <input type="date" id="data_evento">
+
+        <label>Hora do Evento:</label>
+        <input type="time" id="hora_evento">
+
+        <label>Local do Evento:</label>
+        <input type="text" id="local_evento" placeholder="Endereço ou nome do salão">
 
         <label>O que deseja contratar?</label>
         <select id="tipo_produto" onchange="mostrarSubSecao()">
@@ -71,12 +83,12 @@
             </select>
 
             <div id="extra_video" style="display:none;">
-                <label>Quantidade de fotos (Acima de 2 fotos + R$ 2,00 cada):</label>
+                <label>Quantidade de fotos:</label>
                 <input type="number" id="qtd_fotos_video" value="2" min="1" oninput="calcular()">
             </div>
 
             <div id="extra_botoes" style="display:none;">
-                <label>Quantidade de Botões (Acima de 3 botões + R$ 10,00 taxa):</label>
+                <label>Quantidade de Botões:</label>
                 <input type="number" id="qtd_botoes" value="3" min="1" oninput="calcular()">
             </div>
 
@@ -122,7 +134,7 @@
 
         <div class="checkbox-container">
             <input type="checkbox" id="concordo" onchange="toggleBotao()">
-            <label for="concordo" style="color: #d81b60; cursor:pointer;"> Li e concordo com os termos</label>
+            <label for="concordo">Li e concordo com os termos</label>
         </div>
 
         <div id="resultado-valor">
@@ -197,7 +209,7 @@ function toggleBotao() {
 }
 
 function validarEEnviar() {
-    const campos = ["nome_resp", "nome_niver", "tema", "tipo_produto"];
+    const campos = ["nome_resp", "nome_niver", "tema", "tipo_produto", "data_evento", "hora_evento", "local_evento"];
     let erro = false;
     campos.forEach(id => {
         let el = document.getElementById(id);
@@ -205,15 +217,41 @@ function validarEEnviar() {
         else el.classList.remove("campo-erro");
     });
 
-    if (erro) { alert("Preencha os campos obrigatórios!"); return; }
+    if (erro) { alert("Atenção! Preencha todos os campos destacados."); return; }
     
+    // Coleta as respostas detalhadas
+    let nome = document.getElementById("nome_resp").value;
+    let aniversariante = document.getElementById("nome_niver").value;
+    let idade = document.getElementById("idade").value;
+    let tema = document.getElementById("tema").value;
+    let data = document.getElementById("data_evento").value.split('-').reverse().join('/');
+    let hora = document.getElementById("hora_evento").value;
+    let local = document.getElementById("local_evento").value;
+    let tipo = document.getElementById("tipo_produto").value;
+    let valor = document.getElementById("valor_total").innerText;
+
     let msg = `🎉 *NOVO PEDIDO - CRIS OLIVEIRA* 🎉\n\n`;
-    msg += `👤 *Responsável:* ${document.getElementById("nome_resp").value}\n`;
-    msg += `🎂 *Aniversariante:* ${document.getElementById("nome_niver").value}\n`;
-    msg += `🎈 *Tema:* ${document.getElementById("tema").value}\n`;
-    msg += `🛒 *Produto:* ${document.getElementById("tipo_produto").value}\n`;
-    msg += `💰 *VALOR TOTAL: ${document.getElementById("valor_total").innerText}*\n\n`;
-    msg += `_Chave Pix Celular: 71993233142_`;
+    msg += `👤 *Responsável:* ${nome}\n`;
+    msg += `🎂 *Aniversariante:* ${aniversariante}\n`;
+    msg += `🎁 *Idade:* ${idade}\n`;
+    msg += `🎈 *Tema:* ${tema}\n\n`;
+    msg += `📅 *Data:* ${data}\n`;
+    msg += `⏰ *Hora:* ${hora}\n`;
+    msg += `📍 *Local:* ${local}\n\n`;
+    msg += `🛒 *Serviço:* ${tipo}\n`;
+
+    // Detalhes extras dependendo do serviço
+    if(tipo === "Convite") {
+        msg += `✨ *Modelo:* ${document.getElementById("modelo_convite").value}\n`;
+        if(document.getElementById("modelo_convite").value === "VideoAnimado") {
+            msg += `📷 *Fotos:* ${document.getElementById("qtd_fotos_video").value}\n`;
+        }
+    } else if(tipo === "Retrospectiva") {
+        msg += `🎞 *Faixa de Fotos:* ${document.getElementById("fotos_retro").options[document.getElementById("fotos_retro").selectedIndex].text}\n`;
+    }
+
+    msg += `\n💰 *VALOR TOTAL: ${valor}*\n\n`;
+    msg += `✅ *Li e concordo com os termos.*`;
 
     window.open(`https://wa.me/5571993233142?text=${encodeURIComponent(msg)}`, '_blank');
 }
