@@ -242,8 +242,8 @@ function calcular() {
         displayLaminas.style.display = "block";
         total = (laminas * 4) + 35;
     } else if (servico === "Capa de Álbum") {
-        displayLaminas.style.display = "none";
-        total = 60;
+        displayLaminas.style.display = "block";
+        total = 60; // Valor Fixo para Capa
     } else {
         displayLaminas.style.display = "none";
     }
@@ -275,8 +275,9 @@ function validarEEnviar() {
     let campos = ["nome_fotografo", "email_fotografo", "grafica", "servico", "tamanho", "nome_capa", "tipo_evento", "data_evento", "tem_caixa"];
     let erro = false;
 
-    // Se for diagramação, as lâminas são obrigatórias e não podem ser zero
-    if(document.getElementById("servico").value === "Diagramação") {
+    // Lâminas obrigatórias se o serviço for Diagramação ou Capa
+    let servicoValor = document.getElementById("servico").value;
+    if(servicoValor === "Diagramação" || servicoValor === "Capa de Álbum") {
         let campoLaminas = document.getElementById("laminas");
         if (!campoLaminas.value || campoLaminas.value === "0") {
             campoLaminas.classList.add("campo-erro");
@@ -324,7 +325,10 @@ function enviarWhats() {
     msg += `📧 *E-mail:* ${email}\n`;
     msg += `🏢 *Gráfica:* ${grafica}\n`;
     msg += `🛠 *Serviço:* ${servico}\n`;
-    if(servico === "Diagramação") msg += `📄 *Lâminas:* ${laminas}\n`;
+    
+    // Sempre envia a quantidade de lâminas no WhatsApp para ambos
+    if(servico === "Diagramação" || servico === "Capa de Álbum") msg += `📄 *Lâminas:* ${laminas}\n`;
+    
     msg += `📏 *Tamanho:* ${tamanho}\n`;
     msg += `📔 *Nome na Capa:* ${capa}\n`;
     msg += `🎉 *Evento:* ${evento}\n`;
