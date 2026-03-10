@@ -8,7 +8,7 @@ Lei 9.610/98 – Direitos Autorais.
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     
     <title>Convite Luana - 8 Anos</title>
     <meta property="og:title" content="Convite especial: Luana - 8 Anos!">
@@ -22,34 +22,53 @@ Lei 9.610/98 – Direitos Autorais.
         :root {
             /* EDIÇÃO MANUAL */
             --cor-botao-x: #9b59b6; 
-            --cor-botao-som: #9b59b6; /* Cor do botão de áudio */
-            --distancia-botoes-rodape: 200px;
-            --espaco-entre-botoes: 40px; /* Aumentado conforme solicitado */
-            --tamanho-clicavel: 75px; 
+            --cor-botao-som: #9b59b6; 
+            --tamanho-clicavel: 15%; /* Botões proporcionais à largura da imagem */
         }
 
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; font-family: sans-serif; background: #000; }
+        body, html { 
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            height: 100dvh; /* Uso de dvh para evitar cortes no Safari */
+            overflow: hidden; 
+            font-family: sans-serif; 
+            background: #000; 
+        }
 
         /* Estrutura das Telas */
         .page {
             position: fixed;
             top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
+            width: 100%; 
+            height: 100dvh;
             display: none;
+            justify-content: center;
+            align-items: center;
         }
 
-        .active { display: block; }
+        .active { display: flex; }
 
-        #principal { background-image: url('pagina.png'); }
-        #sugestao { background-image: url('pagina2.png'); background-color: #fff; }
+        /* Container que mantém a proporção da arte sem cortar */
+        .media-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .art-bg {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain; /* Garante que a arte apareça inteira */
+        }
 
         /* Botão de Som (Superior Direito) */
         .btn-audio {
             position: fixed;
-            top: 25px;
+            top: env(safe-area-inset-top, 25px); /* Respeita o notch do iPhone */
             right: 25px;
             width: 45px;
             height: 45px;
@@ -67,19 +86,34 @@ Lei 9.610/98 – Direitos Autorais.
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Container dos Hotspots */
+        /* Container dos Hotspots Relativo à Imagem */
+        .hotspot-area {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            /* Opcional: aspect-ratio deve bater com o da sua imagem (ex: 9/16) */
+            aspect-ratio: 9 / 16; 
+            max-height: 100dvh;
+            max-width: calc(100dvh * (9/16));
+        }
+
         .hotspot-container {
             position: absolute;
-            bottom: var(--distancia-botoes-rodape);
+            bottom: 12%; /* Ajuste essa % para subir ou descer os botões na arte */
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: var(--espaco-entre-botoes);
+            gap: 20px;
+            width: 80%;
+            justify-content: center;
         }
 
         .hotspot {
-            width: var(--tamanho-clicavel);
-            height: var(--tamanho-clicavel);
+            width: 60px;
+            height: 60px;
             background: rgba(255, 255, 255, 0); 
             border-radius: 50%;
             cursor: pointer;
@@ -92,7 +126,7 @@ Lei 9.610/98 – Direitos Autorais.
         .btn-x {
             position: absolute;
             top: 25px;
-            left: 25px; /* Mudei para a esquerda para não conflitar com o som, ou pode manter no mesmo lugar */
+            left: 25px;
             width: 50px;
             height: 50px;
             background-color: var(--cor-botao-x);
@@ -120,28 +154,34 @@ Lei 9.610/98 – Direitos Autorais.
 </head>
 <body onclick="iniciarAudioAutomatico()">
 
-    <audio id="musica" loop>
+    <audio id="musica" loop playsinline>
         <source src="audio.mp3" type="audio/mpeg">
     </audio>
 
     <button class="btn-audio" onclick="toggleAudio(event)" id="audioControl">🔊</button>
 
     <div id="principal" class="page active">
-        <div class="hotspot-container">
-            <div class="hotspot" onclick="window.open('https://wa.me/5571993233142?text=confirmo%20presença%20neste%20dia%20especial')"></div>
-            <div class="hotspot" onclick="window.open('https://maps.app.goo.gl/AvxVqge85ax4M46U9')"></div>
-            <div class="hotspot" onclick="irParaSugestao()"></div>
+        <div class="media-wrapper">
+            <img src="pagina.png" class="art-bg" alt="Convite Principal">
+            <div class="hotspot-area">
+                <div class="hotspot-container">
+                    <div class="hotspot" onclick="window.open('https://wa.me/5571993233142?text=confirmo%20presença%20neste%20dia%20especial')"></div>
+                    <div class="hotspot" onclick="window.open('https://maps.app.goo.gl/AvxVqge85ax4M46U9')"></div>
+                    <div class="hotspot" onclick="irParaSugestao()"></div>
+                </div>
+            </div>
         </div>
     </div>
 
     <div id="sugestao" class="page">
-        <button class="btn-x" onclick="irParaPrincipal()">✕</button>
+        <div class="media-wrapper">
+            <img src="pagina2.png" class="art-bg" alt="Sugestão de Presente">
+            <button class="btn-x" onclick="irParaPrincipal()">✕</button>
+        </div>
     </div>
 
     <div class="copyright" aria-hidden="true">
         © 2026 Cristiane Oliveira. Todos os direitos reservados. 
-        Este software, design e algoritmos estão protegidos pela Lei de Direitos Autorais (Lei nº 9.610/98). 
-        A extração, cópia ou redistribuição deste código sem autorização expressa da Cristiane Oliveira é terminantemente proibida.
     </div>
 
     <script>
@@ -149,18 +189,16 @@ Lei 9.610/98 – Direitos Autorais.
         const btnAudio = document.getElementById('audioControl');
         let audioIniciado = false;
 
-        // Inicia o áudio no primeiro clique na página
         function iniciarAudioAutomatico() {
             if (!audioIniciado) {
-                audio.play();
+                audio.play().catch(e => console.log("Interação necessária para áudio"));
                 audioIniciado = true;
                 btnAudio.innerHTML = "🔊";
             }
         }
 
-        // Função de Play/Pause
         function toggleAudio(event) {
-            event.stopPropagation(); // Impede que o clique dispare o iniciarAudioAutomatico
+            event.stopPropagation(); 
             if (audio.paused) {
                 audio.play();
                 btnAudio.innerHTML = "🔊";
