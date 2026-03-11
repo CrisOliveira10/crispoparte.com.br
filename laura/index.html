@@ -46,12 +46,12 @@
 
         /* Botões invisíveis (Hotspots) */
         .btn-photo, .btn-boom, .btn-gallery, .btn-video { 
-            opacity: 0.7 !important; 
-            border: red !important; 
-            background: transparent !important; 
-            cursor: pointer; 
-            outline: none; 
-            -webkit-tap-highlight-color: transparent;
+    opacity: 0.7 !important; 
+    background: red !important; /* Ficando vermelho, você vê onde eles estão */
+    border: 1px solid white !important;
+    cursor: pointer;
+    position: absolute; /* ISSO LIBERA ELES DO RODAPÉ */
+}
         }
         
         /* Tamanhos exatos dos hotspots do Código 1 */
