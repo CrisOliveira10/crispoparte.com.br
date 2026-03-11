@@ -35,7 +35,6 @@ Lei 9.610/98 – Direitos Autorais.
         
         .controls-bottom { display: flex; flex-direction: column; align-items: center; pointer-events: auto; width: 100%; }
 
-        /* Wrapper fixo cobrindo a tela toda — a imagem e os botões ficam dentro */
         .custom-controls-wrapper {
             position: fixed;
             top: 0; left: 0;
@@ -44,20 +43,16 @@ Lei 9.610/98 – Direitos Autorais.
             z-index: 31;
         }
 
-        /* Imagem ocupa a tela toda (igual à moldura) */
+        /* ✅ ÚNICA MUDANÇA: z-index 1 → 0 para ficar atrás dos hotspots */
         .arte-botoes-bg {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
             object-fit: cover;
             pointer-events: none;
-            z-index: 1;
+            z-index: 0;
         }
 
-        /* Botões invisíveis posicionados sobre cada ícone da imagem.
-           Ícones ficam no lado direito da imagem (~87% da largura).
-           Alturas calculadas a partir das posições visuais na arte:
-           Galeria ~37%, Foto ~50%, Vídeo ~62%, Boomerang ~74%          */
         .btn-photo, .btn-boom, .btn-gallery, .btn-video {
             position: absolute;
             opacity: 0.5 !important;
@@ -68,7 +63,6 @@ Lei 9.610/98 – Direitos Autorais.
             pointer-events: auto;
             transform: translate(-50%, -50%);
             border-radius: 50%;
-            /* Tamanho generoso para facilitar o toque */
             width: 14vw;
             height: 14vw;
         }
@@ -109,7 +103,6 @@ Lei 9.610/98 – Direitos Autorais.
         </div>
     </div>
 
-    <!-- Wrapper fixo: imagem de fundo + botões sobrepostos com posição absoluta -->
     <div class="custom-controls-wrapper" id="botoesWrapper" style="display:none;">
         <img src="botoes.png" class="arte-botoes-bg" id="arteBotoes">
         <input type="file" id="fileInput" accept="image/*" style="display:none;">
@@ -140,9 +133,6 @@ Lei 9.610/98 – Direitos Autorais.
 </div>
 
 <script>
-// ==========================================
-//   PAINEL DE CONTROLE - MUDE AQUI
-// ==========================================
 const CLIENTE = {
     nomeEvento: "Ana Laura 10 Anos",
     tituloPagina: "Ana Laura 10 Anos",
@@ -152,7 +142,6 @@ const CLIENTE = {
 
 document.title = CLIENTE.tituloPagina;
 document.getElementById('startScreen').style.backgroundImage = `url('${CLIENTE.arquivoCapa}')`;
-// ==========================================
 
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 let usingFrontCamera = true, stream = null, isRecording = false, mediaRecorder = null, recordedChunks = [];
@@ -187,7 +176,6 @@ document.getElementById('galleryBtn').onclick = () => fileInput.click();
 document.getElementById('cancelEditBtn').onclick = resetAll;
 document.getElementById('confirmEditBtn').onclick = confirmGalleryEdit;
 
-// --- GESTOS ---
 mainStage.addEventListener('touchstart', (e) => {
     if (isEditingGallery) {
         if (e.touches.length === 1) {
