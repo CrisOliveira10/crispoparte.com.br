@@ -35,22 +35,24 @@ Lei 9.610/98 – Direitos Autorais.
         
         .controls-bottom { display: flex; flex-direction: column; align-items: center; pointer-events: auto; width: 100%; }
 
+        /* botoes.png: separado, z-index 29 (abaixo dos hotspots que ficam em 31) */
+        #arteBotoes {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+            z-index: 29;
+            display: none;
+        }
+
+        /* Wrapper só com os hotspots, z-index 31 */
         .custom-controls-wrapper {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             pointer-events: none;
             z-index: 31;
-        }
-
-        /* ✅ ÚNICA MUDANÇA: z-index 1 → 0 para ficar atrás dos hotspots */
-        .arte-botoes-bg {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            object-fit: cover;
-            pointer-events: none;
-            z-index: 0;
         }
 
         .btn-photo, .btn-boom, .btn-gallery, .btn-video {
@@ -102,35 +104,38 @@ Lei 9.610/98 – Direitos Autorais.
             <div id="videoTimer">00:00</div>
         </div>
     </div>
-
-    <div class="custom-controls-wrapper" id="botoesWrapper" style="display:none;">
-        <img src="botoes.png" class="arte-botoes-bg" id="arteBotoes">
-        <input type="file" id="fileInput" accept="image/*" style="display:none;">
-        <button id="galleryBtn"      class="btn-gallery">G</button>
-        <button id="capturePhotoBtn" class="btn-photo">P</button>
-        <button id="captureVideoBtn" class="btn-video">V</button>
-        <button id="boomerangBtn"    class="btn-boom">B</button>
-    </div>
-
-    <div class="ui-layer" id="editUI">
-        <div style="background:rgba(0,0,0,0.5); padding:10px; border-radius:10px;">Ajuste sua foto (Arraste e Zoom)</div>
-        <div class="controls-bottom">
-            <div class="actions-box" style="width:100%">
-                <button id="confirmEditBtn" class="btn-res" style="background:var(--accent);">✅ CONFIRMAR</button>
-                <button id="cancelEditBtn" class="btn-res" style="background:#444;">❌ CANCELAR</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="resultUI">
-        <div class="actions-box">
-            <button id="downloadBtn" class="btn-res" style="background:var(--accent); font-size: 18px;">📤 COMPARTILHAR / SALVAR</button>
-            <button id="newBtn" class="btn-res" style="background:#444;">🔄 VOLTAR</button>
-        </div>
-    </div>
-
-    <div id="startScreen"><button id="startBtn">INICIAR CÂMERA</button></div>
 </div>
+
+<!-- botoes.png FORA do stage, z-index 29 -->
+<img src="botoes.png" id="arteBotoes" />
+
+<!-- Wrapper dos hotspots, z-index 31 -->
+<div class="custom-controls-wrapper" id="botoesWrapper" style="display:none;">
+    <input type="file" id="fileInput" accept="image/*" style="display:none;">
+    <button id="galleryBtn"      class="btn-gallery">G</button>
+    <button id="capturePhotoBtn" class="btn-photo">P</button>
+    <button id="captureVideoBtn" class="btn-video">V</button>
+    <button id="boomerangBtn"    class="btn-boom">B</button>
+</div>
+
+<div class="ui-layer" id="editUI" style="z-index:32;">
+    <div style="background:rgba(0,0,0,0.5); padding:10px; border-radius:10px;">Ajuste sua foto (Arraste e Zoom)</div>
+    <div class="controls-bottom">
+        <div class="actions-box" style="width:100%">
+            <button id="confirmEditBtn" class="btn-res" style="background:var(--accent);">✅ CONFIRMAR</button>
+            <button id="cancelEditBtn" class="btn-res" style="background:#444;">❌ CANCELAR</button>
+        </div>
+    </div>
+</div>
+
+<div id="resultUI">
+    <div class="actions-box">
+        <button id="downloadBtn" class="btn-res" style="background:var(--accent); font-size: 18px;">📤 COMPARTILHAR / SALVAR</button>
+        <button id="newBtn" class="btn-res" style="background:#444;">🔄 VOLTAR</button>
+    </div>
+</div>
+
+<div id="startScreen"><button id="startBtn">INICIAR CÂMERA</button></div>
 
 <script>
 const CLIENTE = {
@@ -164,7 +169,8 @@ const video = document.getElementById('camera'),
       mainStage = document.getElementById('mainStage'),
       fileInput = document.getElementById('fileInput'),
       videoTimer = document.getElementById('videoTimer'),
-      botoesWrapper = document.getElementById('botoesWrapper');
+      botoesWrapper = document.getElementById('botoesWrapper'),
+      arteBotoes = document.getElementById('arteBotoes');
 
 document.getElementById('startBtn').onclick = initCamera;
 document.getElementById('switchBtn').onclick = switchCamera;
@@ -221,6 +227,7 @@ async function initCamera() {
             document.getElementById('startScreen').style.display = 'none';
             document.getElementById('cameraUI').style.display = 'flex';
             botoesWrapper.style.display = 'block';
+            arteBotoes.style.display = 'block';
             molduraImg.src = CLIENTE.arquivoMoldura; 
             molduraImg.style.display = 'block';
         };
@@ -261,6 +268,7 @@ function showResult(url, type) {
     document.getElementById('resultUI').style.display = 'flex';
     document.getElementById('cameraUI').style.display = 'none';
     botoesWrapper.style.display = 'none';
+    arteBotoes.style.display = 'none';
     currentType = type;
     currentFileUrl = url;
     if (type === 'image') {
@@ -353,6 +361,7 @@ fileInput.onchange = e => {
                 isEditingGallery = true;
                 document.getElementById('cameraUI').style.display = 'none';
                 botoesWrapper.style.display = 'none';
+                arteBotoes.style.display = 'none';
                 document.getElementById('editUI').style.display = 'flex';
                 editorCanvas.style.display = 'block';
                 editorCanvas.width = window.innerWidth; editorCanvas.height = window.innerHeight;
@@ -401,6 +410,7 @@ function resetAll() {
     editorCanvas.style.display = 'none';
     document.getElementById('cameraUI').style.display = 'flex';
     botoesWrapper.style.display = 'block';
+    arteBotoes.style.display = 'block';
     fileInput.value = "";
 }
 
