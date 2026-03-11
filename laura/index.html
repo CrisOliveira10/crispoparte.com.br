@@ -34,19 +34,51 @@ Lei 9.610/98 – Direitos Autorais.
         .boom-loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.9); padding: 25px; border-radius: 20px; display: none; z-index: 100; border: 2px solid var(--boom); text-align: center; }
         
         .controls-bottom { display: flex; flex-direction: column; align-items: center; pointer-events: auto; width: 100%; }
-        .custom-controls-wrapper { position: relative; width: 100%; display: flex; justify-content: center; align-items: center; min-height: 150px; }
-        .arte-botoes-bg { position: absolute; bottom: -20px; width: 100vw; height: auto; max-width: 500px; pointer-events: none; z-index: 1; }
 
-        /* ── ÚNICO AJUSTE: botões agora em coluna ── */
-        .capture-controls { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 10px; align-items: center; }
+        /* Wrapper fixo cobrindo a tela toda — a imagem e os botões ficam dentro */
+        .custom-controls-wrapper {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 31;
+        }
 
-        .btn-photo, .btn-boom, .btn-gallery, .btn-video { opacity: 0 !important; border: none !important; background: transparent !important; cursor: pointer; outline: none; }
+        /* Imagem ocupa a tela toda (igual à moldura) */
+        .arte-botoes-bg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Botões invisíveis posicionados sobre cada ícone da imagem.
+           Ícones ficam no lado direito da imagem (~87% da largura).
+           Alturas calculadas a partir das posições visuais na arte:
+           Galeria ~37%, Foto ~50%, Vídeo ~62%, Boomerang ~74%          */
+        .btn-photo, .btn-boom, .btn-gallery, .btn-video {
+            position: absolute;
+            opacity: 0 !important;
+            border: none !important;
+            background: transparent !important;
+            cursor: pointer;
+            outline: none;
+            pointer-events: auto;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            /* Tamanho generoso para facilitar o toque */
+            width: 14vw;
+            height: 14vw;
+        }
+
+        #galleryBtn      { left: 87%; top: 37%; }
+        #capturePhotoBtn { left: 87%; top: 50%; }
+        #captureVideoBtn { left: 87%; top: 62%; }
+        #boomerangBtn    { left: 87%; top: 74%; }
+
         .btn-ui { padding: 10px 20px; background: rgba(0,0,0,0.6); border: 1px solid #fff; border-radius: 20px; color: #fff; cursor: pointer; backdrop-filter: blur(5px); }
-        
-        .btn-gallery { width: 55px; height: 55px; }
-        .btn-photo { width: 75px; height: 75px; }
-        .btn-video { width: 90px; height: 90px; }
-        .btn-boom { width: 65px; height: 65px; }
         
         #editUI { display: none; pointer-events: auto; text-align: center; }
         #resultUI { position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 50px; z-index: 40; background: rgba(0,0,0,0.85); }
@@ -74,17 +106,17 @@ Lei 9.610/98 – Direitos Autorais.
         <div class="top-bar"><button class="btn-ui" id="switchBtn">🔄 INVERTER</button></div>
         <div class="controls-bottom">
             <div id="videoTimer">00:00</div>
-            <div class="custom-controls-wrapper">
-                <img src="botoes.png" class="arte-botoes-bg" id="arteBotoes">
-                <div class="capture-controls">
-                    <button id="galleryBtn" class="btn-gallery">G</button>
-                    <input type="file" id="fileInput" accept="image/*" style="display:none;">
-                    <button id="capturePhotoBtn" class="btn-photo">P</button>
-                    <button id="captureVideoBtn" class="btn-video">V</button>
-                    <button id="boomerangBtn" class="btn-boom">B</button>
-                </div>
-            </div>
         </div>
+    </div>
+
+    <!-- Wrapper fixo: imagem de fundo + botões sobrepostos com posição absoluta -->
+    <div class="custom-controls-wrapper" id="botoesWrapper" style="display:none;">
+        <img src="botoes.png" class="arte-botoes-bg" id="arteBotoes">
+        <input type="file" id="fileInput" accept="image/*" style="display:none;">
+        <button id="galleryBtn"      class="btn-gallery">G</button>
+        <button id="capturePhotoBtn" class="btn-photo">P</button>
+        <button id="captureVideoBtn" class="btn-video">V</button>
+        <button id="boomerangBtn"    class="btn-boom">B</button>
     </div>
 
     <div class="ui-layer" id="editUI">
@@ -112,13 +144,12 @@ Lei 9.610/98 – Direitos Autorais.
 //   PAINEL DE CONTROLE - MUDE AQUI
 // ==========================================
 const CLIENTE = {
-    nomeEvento: "Ana Laura 10 Anos",      // Nome no compartilhamento
-    tituloPagina: "Ana Laura 10 Anos",    // Nome na aba do navegador
-    arquivoMoldura: "moldura1.png",     // Nome do arquivo da moldura
-    arquivoCapa: "capajpg.jpg"          // Nome do arquivo da capa inicial
+    nomeEvento: "Ana Laura 10 Anos",
+    tituloPagina: "Ana Laura 10 Anos",
+    arquivoMoldura: "moldura1.png",
+    arquivoCapa: "capajpg.jpg"
 };
 
-// Aplicar configurações iniciais
 document.title = CLIENTE.tituloPagina;
 document.getElementById('startScreen').style.backgroundImage = `url('${CLIENTE.arquivoCapa}')`;
 // ==========================================
@@ -143,7 +174,8 @@ const video = document.getElementById('camera'),
       ctxFinal = canvasFinal.getContext('2d', { alpha: false }),
       mainStage = document.getElementById('mainStage'),
       fileInput = document.getElementById('fileInput'),
-      videoTimer = document.getElementById('videoTimer');
+      videoTimer = document.getElementById('videoTimer'),
+      botoesWrapper = document.getElementById('botoesWrapper');
 
 document.getElementById('startBtn').onclick = initCamera;
 document.getElementById('switchBtn').onclick = switchCamera;
@@ -200,6 +232,7 @@ async function initCamera() {
             video.play();
             document.getElementById('startScreen').style.display = 'none';
             document.getElementById('cameraUI').style.display = 'flex';
+            botoesWrapper.style.display = 'block';
             molduraImg.src = CLIENTE.arquivoMoldura; 
             molduraImg.style.display = 'block';
         };
@@ -218,7 +251,6 @@ function drawFrame(ctx, w, h) {
     if (molduraImg.complete) ctx.drawImage(molduraImg, 0, 0, w, h);
 }
 
-// --- COMPARTILHAMENTO ---
 async function handleShare(url, type) {
     try {
         const response = await fetch(url);
@@ -226,7 +258,6 @@ async function handleShare(url, type) {
         const extension = type === 'image' ? 'jpg' : 'mp4';
         const mimeType = type === 'image' ? 'image/jpeg' : 'video/mp4';
         const file = new File([blob], `registro_${Date.now()}.${extension}`, { type: mimeType });
-
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
             await navigator.share({ files: [file], title: CLIENTE.nomeEvento });
         } else {
@@ -241,9 +272,9 @@ async function handleShare(url, type) {
 function showResult(url, type) {
     document.getElementById('resultUI').style.display = 'flex';
     document.getElementById('cameraUI').style.display = 'none';
+    botoesWrapper.style.display = 'none';
     currentType = type;
     currentFileUrl = url;
-    
     if (type === 'image') {
         iosImageResult.src = url; 
         iosImageResult.style.display = 'block';
@@ -272,7 +303,6 @@ function startRecording(isBoom) {
         canvasFinal.width = 720; canvasFinal.height = 1280;
         const canvasStream = canvasFinal.captureStream(30);
         try { if (stream.getAudioTracks().length > 0) canvasStream.addTrack(stream.getAudioTracks()[0]); } catch(e){}
-        
         const mimeType = MediaRecorder.isTypeSupported('video/mp4') ? 'video/mp4' : 'video/webm';
         mediaRecorder = new MediaRecorder(canvasStream, { mimeType });
         mediaRecorder.ondataavailable = e => { if(e.data.size > 0) recordedChunks.push(e.data); };
@@ -326,7 +356,6 @@ function processBoomerang() {
     }, 33);
 }
 
-// --- GALERIA ---
 fileInput.onchange = e => {
     if (e.target.files[0]) {
         const reader = new FileReader();
@@ -335,6 +364,7 @@ fileInput.onchange = e => {
             galleryImg.onload = () => {
                 isEditingGallery = true;
                 document.getElementById('cameraUI').style.display = 'none';
+                botoesWrapper.style.display = 'none';
                 document.getElementById('editUI').style.display = 'flex';
                 editorCanvas.style.display = 'block';
                 editorCanvas.width = window.innerWidth; editorCanvas.height = window.innerHeight;
@@ -377,9 +407,13 @@ function confirmGalleryEdit() {
 function resetAll() {
     isEditingGallery = false; if (animId) cancelAnimationFrame(animId);
     videoPreview.pause(); videoPreview.src = ""; videoPreview.style.display = "none";
-    iosImageResult.style.display = "none"; document.getElementById('resultUI').style.display = 'none';
-    document.getElementById('editUI').style.display = 'none'; editorCanvas.style.display = 'none';
-    document.getElementById('cameraUI').style.display = 'flex'; fileInput.value = "";
+    iosImageResult.style.display = "none";
+    document.getElementById('resultUI').style.display = 'none';
+    document.getElementById('editUI').style.display = 'none';
+    editorCanvas.style.display = 'none';
+    document.getElementById('cameraUI').style.display = 'flex';
+    botoesWrapper.style.display = 'block';
+    fileInput.value = "";
 }
 
 function startTimer() { videoTimer.style.display = 'block'; recordStartTime = Date.now(); timerInterval = setInterval(() => { const seconds = Math.floor((Date.now() - recordStartTime) / 1000); videoTimer.innerText = `${Math.floor(seconds/60).toString().padStart(2,'0')}:${(seconds%60).toString().padStart(2,'0')}`; }, 1000); }
