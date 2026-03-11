@@ -297,13 +297,27 @@ function startRecording(isBoom) {
     } else {
         startTimer();
         canvasFinal.width = 720; canvasFinal.height = 1280;
+
         const canvasStream = canvasFinal.captureStream(30);
-        try { if (stream.getAudioTracks().length > 0) canvasStream.addTrack(stream.getAudioTracks()[0]); } catch(e){}
-        const mimeType = MediaRecorder.isTypeSupported('video/mp4') ? 'video/mp4' : 'video/webm';
+        const audioTracks = stream.getAudioTracks();
+        if (audioTracks.length > 0) {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const source = audioCtx.createMediaStreamSource(new MediaStream(audioTracks));
+            const dest = audioCtx.createMediaStreamDestination();
+            source.connect(dest);
+            dest.stream.getAudioTracks().forEach(t => canvasStream.addTrack(t));
+        }
+
+        const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')
+            ? 'video/webm;codecs=vp8,opus'
+            : MediaRecorder.isTypeSupported('video/webm')
+            ? 'video/webm'
+            : 'video/mp4';
+
         mediaRecorder = new MediaRecorder(canvasStream, { mimeType });
         mediaRecorder.ondataavailable = e => { if(e.data.size > 0) recordedChunks.push(e.data); };
         mediaRecorder.onstop = () => {
-            const blob = new Blob(recordedChunks, { type: 'video/mp4' });
+            const blob = new Blob(recordedChunks, { type: mimeType });
             showResult(URL.createObjectURL(blob), 'video');
         };
         mediaRecorder.start();
