@@ -104,6 +104,25 @@ Lei 9.610/98 – Direitos Autorais.
             <div id="videoTimer">00:00</div>
         </div>
     </div>
+
+    <div class="ui-layer" id="editUI" style="display:none;">
+        <div style="background:rgba(0,0,0,0.5); padding:10px; border-radius:10px;">Ajuste sua foto (Arraste e Zoom)</div>
+        <div class="controls-bottom">
+            <div class="actions-box" style="width:100%">
+                <button id="confirmEditBtn" class="btn-res" style="background:var(--accent);">✅ CONFIRMAR</button>
+                <button id="cancelEditBtn" class="btn-res" style="background:#444;">❌ CANCELAR</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="resultUI">
+        <div class="actions-box">
+            <button id="downloadBtn" class="btn-res" style="background:var(--accent); font-size: 18px;">📤 COMPARTILHAR / SALVAR</button>
+            <button id="newBtn" class="btn-res" style="background:#444;">🔄 VOLTAR</button>
+        </div>
+    </div>
+
+    <div id="startScreen"><button id="startBtn">INICIAR CÂMERA</button></div>
 </div>
 
 <!-- botoes.png FORA do stage, z-index 29 -->
@@ -117,25 +136,6 @@ Lei 9.610/98 – Direitos Autorais.
     <button id="captureVideoBtn" class="btn-video">V</button>
     <button id="boomerangBtn"    class="btn-boom">B</button>
 </div>
-
-<div class="ui-layer" id="editUI" style="z-index:32;">
-    <div style="background:rgba(0,0,0,0.5); padding:10px; border-radius:10px;">Ajuste sua foto (Arraste e Zoom)</div>
-    <div class="controls-bottom">
-        <div class="actions-box" style="width:100%">
-            <button id="confirmEditBtn" class="btn-res" style="background:var(--accent);">✅ CONFIRMAR</button>
-            <button id="cancelEditBtn" class="btn-res" style="background:#444;">❌ CANCELAR</button>
-        </div>
-    </div>
-</div>
-
-<div id="resultUI">
-    <div class="actions-box">
-        <button id="downloadBtn" class="btn-res" style="background:var(--accent); font-size: 18px;">📤 COMPARTILHAR / SALVAR</button>
-        <button id="newBtn" class="btn-res" style="background:#444;">🔄 VOLTAR</button>
-    </div>
-</div>
-
-<div id="startScreen"><button id="startBtn">INICIAR CÂMERA</button></div>
 
 <script>
 const CLIENTE = {
