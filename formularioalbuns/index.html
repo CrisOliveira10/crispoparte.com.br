@@ -167,6 +167,9 @@ Lei 9.610/98 – Direitos Autorais.
         <label>E-mail:</label>
         <input type="email" id="email_fotografo" placeholder="Ex: nome@email.com">
 
+        <label>Link das Fotos (Opcional):</label>
+        <input type="url" id="link_fotos" placeholder="Link do Wetransfer, Drive, Select, etc.">
+
         <label>Gráfica:</label>
         <input type="text" id="grafica" placeholder="Qual gráfica será impresso?">
 
@@ -228,7 +231,6 @@ Lei 9.610/98 – Direitos Autorais.
 </form>
 
 <script>
-// Mantém o cálculo ativo sempre que mexer nas lâminas
 document.getElementById("laminas").addEventListener("input", calcular);
 
 function calcular() {
@@ -243,7 +245,7 @@ function calcular() {
         total = (laminas * 4) + 35;
     } else if (servico === "Capa de Álbum") {
         displayLaminas.style.display = "block";
-        total = 60; // Valor Fixo para Capa
+        total = 60; 
     } else {
         displayLaminas.style.display = "none";
     }
@@ -275,7 +277,6 @@ function validarEEnviar() {
     let campos = ["nome_fotografo", "email_fotografo", "grafica", "servico", "tamanho", "nome_capa", "tipo_evento", "data_evento", "tem_caixa"];
     let erro = false;
 
-    // Lâminas obrigatórias se o serviço for Diagramação ou Capa
     let servicoValor = document.getElementById("servico").value;
     if(servicoValor === "Diagramação" || servicoValor === "Capa de Álbum") {
         let campoLaminas = document.getElementById("laminas");
@@ -309,6 +310,7 @@ function enviarWhats() {
     let valorFinal = calcular();
     let nome = document.getElementById("nome_fotografo").value;
     let email = document.getElementById("email_fotografo").value;
+    let link = document.getElementById("link_fotos").value; // NOVO CAMPO
     let grafica = document.getElementById("grafica").value;
     let servico = document.getElementById("servico").value;
     let laminas = document.getElementById("laminas").value;
@@ -323,10 +325,14 @@ function enviarWhats() {
     let msg = `📸 *NOVO PEDIDO DE PROJETO* 📸\n\n`;
     msg += `👤 *Fotógrafo:* ${nome}\n`;
     msg += `📧 *E-mail:* ${email}\n`;
+    
+    if(link !== "") {
+        msg += `🔗 *Link das Fotos:* ${link}\n`;
+    }
+    
     msg += `🏢 *Gráfica:* ${grafica}\n`;
     msg += `🛠 *Serviço:* ${servico}\n`;
     
-    // Sempre envia a quantidade de lâminas no WhatsApp para ambos
     if(servico === "Diagramação" || servico === "Capa de Álbum") msg += `📄 *Lâminas:* ${laminas}\n`;
     
     msg += `📏 *Tamanho:* ${tamanho}\n`;
