@@ -444,25 +444,37 @@ function drawFrame(ctx, w, h) {
     }
 }
 
-// ── Compartilhar ──
+// ── Compartilhar / Salvar ──
 async function handleShare(url, type) {
-    try {
-        const response  = await fetch(url);
-        const blob      = await response.blob();
-        const extension = type === 'image' ? 'jpg' : 'mp4';
-        const mimeType  = type === 'image' ? 'image/jpeg' : 'video/mp4';
-        const file      = new File([blob], `registro_${Date.now()}.${extension}`, { type: mimeType });
+    const extension = type === 'image' ? 'jpg' : 'mp4';
+    const mimeType  = type === 'image' ? 'image/jpeg' : 'video/mp4';
+    const fileName  = `registro_${Date.now()}.${extension}`;
 
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            await navigator.share({ files: [file], title: CLIENTE.nomeEvento });
-        } else {
-            const a = document.createElement('a');
-            a.href     = url;
-            a.download = `registro.${extension}`;
-            a.click();
+    // iOS: usa share sheet (único jeito de salvar na galeria no iOS)
+    if (isIOS) {
+        try {
+            const response = await fetch(url);
+            const blob     = await response.blob();
+            const file     = new File([blob], fileName, { type: mimeType });
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                await navigator.share({ files: [file], title: CLIENTE.nomeEvento });
+                return;
+            }
+        } catch (err) {
+            console.error("Erro no share iOS:", err);
         }
+    }
+
+    // Android e demais: download direto → Android salva na galeria automaticamente
+    try {
+        const a = document.createElement('a');
+        a.href     = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
     } catch (err) {
-        console.error("Erro no compartilhamento:", err);
+        console.error("Erro no download:", err);
     }
 }
 
@@ -485,7 +497,9 @@ function showResult(url, type) {
         videoPreview.play().catch(() => {});
     }
 
-    document.getElementById('downloadBtn').onclick = () => handleShare(currentFileUrl, currentType);
+    const downloadBtn = document.getElementById('downloadBtn');
+    downloadBtn.innerText = isIOS ? '📤 COMPARTILHAR / SALVAR' : '💾 SALVAR NA GALERIA';
+    downloadBtn.onclick = () => handleShare(currentFileUrl, currentType);
 }
 
 // ── Foto ──
