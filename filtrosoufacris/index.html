@@ -9,128 +9,132 @@ Lei 9.610/98 – Direitos Autorais.
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
-    <title>Sou fã Cris - SVG Edition</title>
+    <title>Ana Laura 10 Anos</title>
     <style>
-        :root { 
-            --accent: #25D366; 
-            --record: #ff3b30; 
-            --boom: #e1306c; 
-            --glass: rgba(255, 255, 255, 0.15);
-            --glass-border: rgba(255, 255, 255, 0.3);
-        }
-        
+        :root { --accent: #25D366; --record: #ff0000; --boom: #e1306c; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
-        body { 
-            margin: 0; background: #000; color: #fff; overflow: hidden; 
-            width: 100vw; height: 100dvh; 
-            font-family: -apple-system, system-ui, sans-serif; 
-        }
-        
-        .stage { position: relative; width: 100%; height: 100%; overflow: hidden; background: #000; }
-        #camera { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.1s linear; }
-        
-        #editorCanvas, #canvasPreview, #videoPreview { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: black; display: none; z-index: 10; }
-        #molduraImagePreview { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: bottom; pointer-events: none; z-index: 15; display: none; }
+        body { margin: 0; background: #000; color: #fff; overflow: hidden; width: 100vw; height: 100dvh; font-family: sans-serif; }
+
+        .stage { position: relative; width: 100%; height: 100%; overflow: hidden; background: #000; touch-action: none; }
+        #camera { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.1s linear; z-index: 1; }
+
+        #editorCanvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 7; background: #000; display: none; }
+        #canvasPreview, #videoPreview { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; background: black; display: none; z-index: 10; }
+
+        #iosImageResult { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; z-index: 20; display: none; pointer-events: auto; }
+        #molduraImagePreview { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; object-position: bottom; pointer-events: none; z-index: 15; display: none; }
         #canvasFinal { display: none; }
-        
-        /* UI Layer - Reajustada para garantir cliques */
-        .ui-layer { 
-            position: absolute; inset: 0; pointer-events: none; z-index: 30; 
-            display: flex; flex-direction: column; padding: 60px 20px 40px; 
-            justify-content: space-between; 
+
+        /* ── Timer ── */
+        #videoTimer {
+            position: fixed;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 0, 0, 0.82);
+            padding: 5px 18px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 18px;
+            display: none;
+            z-index: 50;
+            animation: pulse 1s infinite;
+            pointer-events: none;
         }
-        
-        .top-bar { display: flex; justify-content: flex-end; pointer-events: auto; }
-        
-        /* Botão Inverter */
-        .btn-ui { 
-            width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;
-            background: var(--glass); border: 1px solid var(--glass-border); 
-            border-radius: 50%; color: #fff; cursor: pointer; backdrop-filter: blur(10px);
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.65; } }
+
+        /* ── Tela de conversão ── */
+        #convertScreen {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.93);
+            z-index: 200;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 22px;
+            text-align: center;
+            padding: 30px;
+        }
+        #convertScreen .conv-icon { font-size: 48px; }
+        #convertScreen .conv-title { font-size: 20px; font-weight: bold; color: #fff; }
+        #convertScreen .conv-sub { font-size: 14px; color: #aaa; }
+        #convertBar {
+            width: 80%;
+            max-width: 320px;
+            height: 8px;
+            background: #333;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        #convertBarFill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #25D366, #00c6ff);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        #convertLog { font-size: 12px; color: #666; min-height: 18px; }
+
+        /* ── Botão inverter ── */
+        .ui-layer { position: absolute; inset: 0; pointer-events: none; z-index: 30; display: flex; flex-direction: column; justify-content: flex-start; padding: 14px 16px; }
+        .top-bar { display: flex; justify-content: flex-start; pointer-events: auto; }
+        .btn-ui { padding: 10px 20px; background: rgba(0,0,0,0.6); border: 1px solid #fff; border-radius: 20px; color: #fff; cursor: pointer; backdrop-filter: blur(5px); }
+
+        /* ── Loading boomerang ── */
+        .boom-loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.9); padding: 25px; border-radius: 20px; display: none; z-index: 100; border: 2px solid var(--boom); text-align: center; }
+
+        /* ── Arte botões ── */
+        #arteBotoes {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+            z-index: 29;
+            display: none;
         }
 
-        /* Controles Laterais - Ajustado o 'margin-bottom' para subir sem quebrar o clique */
-        .controls-bottom { 
-            display: flex; flex-direction: column; align-items: center; 
-            gap: 20px; pointer-events: auto; align-self: flex-end;
-            margin-bottom: 80px; /* Isso sobe o bloco todo de forma segura */
+        /* ── Hotspots ── */
+        .custom-controls-wrapper {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 31;
+        }
+        .btn-photo, .btn-boom, .btn-gallery, .btn-video {
+            position: absolute;
+            opacity: 0 !important;
+            border: none !important;
+            background: transparent !important;
+            cursor: pointer;
+            outline: none;
+            pointer-events: auto;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            width: 14vw;
+            height: 14vw;
+            min-width: 44px;
+            min-height: 44px;
         }
 
-        .capture-controls { display: flex; flex-direction: column; gap: 18px; align-items: center; }
+        /* ⬇️ AJUSTE AQUI conforme sua arte botoes.png */
+        #galleryBtn      { left: 87%; top: 37%; }
+        #capturePhotoBtn { left: 87%; top: 50%; }
+        #captureVideoBtn { left: 87%; top: 62%; }
+        #boomerangBtn    { left: 87%; top: 74%; }
 
-        .capture-controls button {
-            border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
-            transition: transform 0.2s, opacity 0.2s; background: none; padding: 0;
-        }
-        
-        .capture-controls button:active { transform: scale(0.9); }
+        /* ── Edição e resultado ── */
+        #editUI { position: absolute; inset: 0; display: none; pointer-events: auto; flex-direction: column; justify-content: space-between; padding: 20px; z-index: 35; }
+        #resultUI { position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 50px; z-index: 40; background: rgba(0,0,0,0.85); }
+        .actions-box { display: flex; flex-direction: column; gap: 10px; width: 85%; pointer-events: auto; }
+        .btn-res { padding: 18px; border-radius: 15px; border: none; font-weight: bold; font-size: 16px; cursor: pointer; text-align: center; text-decoration: none; color: #fff; }
 
-        /* Estilos dos Botões */
-        .btn-gallery { 
-            width: 40px; height: 40px; border-radius: 8px; 
-            background: var(--glass) !important; border: 1px solid var(--glass-border) !important;
-            backdrop-filter: blur(10px);
-        }
-
-        .btn-photo { 
-            width: 50px; height: 50px; border-radius: 50%; 
-            background: var(--glass) !important; border: 2px solid #fff !important;
-            backdrop-filter: blur(10px);
-        }
-
-        .btn-boom { 
-            width: 50px; height: 50px; border-radius: 50%; 
-            background: linear-gradient(45deg, #f09433, #dc2743, #bc1888) !important;
-            color: white;
-        }
-
-        .btn-video { 
-            width: 70px; height: 70px; border-radius: 50%; 
-            border: 4px solid #fff !important; background: transparent !important; position: relative;
-        }
-        .btn-video::before {
-            content: ''; width: 50px; height: 50px; background: #fff; border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-        .btn-video.recording::before {
-            width: 25px; height: 25px; background: var(--record); border-radius: 4px;
-        }
-
-        #videoTimer { 
-            background: var(--record); padding: 4px 10px; border-radius: 6px; 
-            font-weight: bold; font-size: 13px; display: none; animation: pulse 1s infinite;
-            margin-bottom: 5px;
-        }
-        
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
-
-        /* Telas de Edição e Resultado */
-        #editUI, #resultUI { 
-            position: absolute; inset: 0; display: none; flex-direction: column; 
-            align-items: center; justify-content: flex-end; padding-bottom: 50px; z-index: 40; 
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
-        }
-        .actions-box { display: flex; flex-direction: column; gap: 12px; width: 80%; pointer-events: auto; }
-        .btn-res { 
-            padding: 18px; border-radius: 12px; border: none; 
-            font-weight: bold; font-size: 15px; cursor: pointer; color: #fff; text-transform: uppercase;
-        }
-
-        /* Botão Iniciar Vermelho */
-        #startScreen { 
-            position: absolute; inset: 0; background: #000 url('capajpg.jpg') center/cover; 
-            display: flex; align-items: center; justify-content: center; z-index: 100; 
-        }
-        #startBtn { 
-            padding: 20px 40px; font-size: 18px; font-weight: bold; border: none; 
-            background: var(--record); color: #fff; border-radius: 50px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3); cursor: pointer;
-        }
-
-        .boom-loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #000; padding: 30px; border-radius: 20px; display: none; z-index: 100; border: 1px solid var(--boom); text-align: center; }
-        
-        svg { fill: white; width: 24px; height: 24px; pointer-events: none; }
+        /* ── Tela inicial ── */
+        #startScreen { position: absolute; inset: 0; background-color: #000; background-position: center; background-size: cover; background-repeat: no-repeat; display: flex; align-items: center; justify-content: center; z-index: 100; }
+        #startBtn { padding: 20px 40px; font-size: 14px; font-weight: bold; border: none; background: #FF5722; color: #fff; border-radius: 50px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -138,100 +142,240 @@ Lei 9.610/98 – Direitos Autorais.
 <div class="stage" id="mainStage">
     <video id="camera" autoplay playsinline muted></video>
     <canvas id="editorCanvas"></canvas>
-    <canvas id="canvasPreview"></canvas> 
+    <canvas id="canvasPreview"></canvas>
     <canvas id="canvasFinal"></canvas>
     <video id="videoPreview" playsinline controls loop></video>
+    <img id="iosImageResult" alt="Resultado Final" />
     <img id="molduraImagePreview" src="" />
-    
+
     <div class="boom-loading" id="boomLoading">🚀 Criando seu Boomerang...</div>
+    <div id="videoTimer">⏺ 00:00</div>
 
     <div class="ui-layer" id="cameraUI" style="display:none;">
         <div class="top-bar">
-            <button class="btn-ui" id="switchBtn">
-                <svg viewBox="0 0 24 24"><path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/></svg>
-            </button>
-        </div>
-        
-        <div class="controls-bottom">
-            <div id="videoTimer">00:00</div>
-            <div class="capture-controls">
-                <button id="galleryBtn" class="btn-gallery">
-                    <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
-                </button>
-                <input type="file" id="fileInput" accept="image/*" style="display:none;">
-                
-                <button id="capturePhotoBtn" class="btn-photo">
-                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/></svg>
-                </button>
-                
-                <button id="captureVideoBtn" class="btn-video"></button>
-                
-                <button id="boomerangBtn" class="btn-boom">
-                    <svg viewBox="0 0 24 24"><path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z"/></svg>
-                </button>
-            </div>
+            <button class="btn-ui" id="switchBtn">🔄 INVERTER</button>
         </div>
     </div>
 
     <div id="editUI">
-        <div class="actions-box">
-            <button id="confirmEditBtn" class="btn-res" style="background:var(--accent);">✅ Confirmar</button>
-            <button id="cancelEditBtn" class="btn-res" style="background:#333;">Cancelar</button>
+        <div style="background:rgba(0,0,0,0.5); padding:10px; border-radius:10px; pointer-events:none;">Ajuste sua foto (Arraste e Zoom)</div>
+        <div class="actions-box" style="width:100%; margin-top:auto;">
+            <button id="confirmEditBtn" class="btn-res" style="background:var(--accent);">✅ CONFIRMAR</button>
+            <button id="cancelEditBtn"  class="btn-res" style="background:#444;">❌ CANCELAR</button>
         </div>
     </div>
 
     <div id="resultUI">
         <div class="actions-box">
-            <button id="downloadBtn" class="btn-res" style="background:var(--accent);">📥 Baixar Agora</button>
-            <button id="newBtn" class="btn-res" style="background:#333;">🔄 Voltar</button>
+            <button id="downloadBtn" class="btn-res" style="background:var(--accent); font-size:18px;">📤 COMPARTILHAR / SALVAR</button>
+            <button id="newBtn"      class="btn-res" style="background:#444;">🔄 VOLTAR</button>
         </div>
     </div>
 
     <div id="startScreen"><button id="startBtn">INICIAR CÂMERA</button></div>
 </div>
 
+<!-- Tela de conversão (fora do stage para ficar acima de tudo) -->
+<div id="convertScreen">
+    <div class="conv-icon">🎬</div>
+    <div class="conv-title" id="convertTitle">Convertendo para MP4...</div>
+    <div id="convertBar"><div id="convertBarFill"></div></div>
+    <div class="conv-sub" id="convertLog">Aguarde...</div>
+</div>
+
+<img src="botoes.png" id="arteBotoes" alt="" />
+
+<div class="custom-controls-wrapper" id="botoesWrapper" style="display:none;">
+    <input type="file" id="fileInput" accept="image/*" style="display:none;">
+    <button id="galleryBtn"      class="btn-gallery" aria-label="Galeria">G</button>
+    <button id="capturePhotoBtn" class="btn-photo"   aria-label="Foto">P</button>
+    <button id="captureVideoBtn" class="btn-video"   aria-label="Vídeo">V</button>
+    <button id="boomerangBtn"    class="btn-boom"    aria-label="Boomerang">B</button>
+</div>
+
+<!-- FFmpeg.wasm via CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ffmpeg/0.12.6/ffmpeg.min.js"></script>
+
 <script>
-/* Lógica original mantida exatamente como você enviou no seu último código funcional */
-let usingFrontCamera = true, stream = null, isRecording = false, mediaRecorder = null, recordedChunks = [];
-let currentFileUrl = null, boomFrames = [], currentType = 'image';
+// ==========================================
+//   PAINEL DE CONTROLE - MUDE AQUI
+// ==========================================
+const CLIENTE = {
+    nomeEvento:     "Ana Laura 10 Anos",
+    tituloPagina:   "Ana Laura 10 Anos",
+    arquivoMoldura: "moldura1.png",
+    arquivoCapa:    "capajpg.jpg"
+};
+document.title = CLIENTE.tituloPagina;
+document.getElementById('startScreen').style.backgroundImage = `url('${CLIENTE.arquivoCapa}')`;
+// ==========================================
+
+// ── FFmpeg setup ──
+let ffmpegReady  = false;
+let ffmpegLoading = false;
+let ffmpegInstance = null;
+
+async function loadFFmpeg() {
+    if (ffmpegReady) return true;
+    if (ffmpegLoading) return false;
+    ffmpegLoading = true;
+    try {
+        const { FFmpeg } = FFmpegWASM;
+        ffmpegInstance = new FFmpeg();
+        ffmpegInstance.on('progress', ({ progress }) => {
+            const pct = Math.round(progress * 100);
+            document.getElementById('convertBarFill').style.width = pct + '%';
+            document.getElementById('convertLog').innerText = `${pct}% concluído`;
+        });
+        ffmpegInstance.on('log', ({ message }) => {
+            console.log('[ffmpeg]', message);
+        });
+        setConvertLog('Carregando conversor... (primeira vez pode demorar)');
+        await ffmpegInstance.load({
+            coreURL: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js',
+            wasmURL: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.wasm',
+        });
+        ffmpegReady = true;
+        ffmpegLoading = false;
+        return true;
+    } catch (e) {
+        ffmpegLoading = false;
+        console.error('FFmpeg load error:', e);
+        return false;
+    }
+}
+
+// Pré-carregar FFmpeg assim que a página abrir (em background)
+window.addEventListener('load', () => {
+    setTimeout(() => loadFFmpeg(), 2000);
+});
+
+// ── Converte blob webm → mp4 real ──
+async function convertToMp4(inputBlob) {
+    showConvertScreen('Convertendo para MP4...', 0);
+
+    const ok = await loadFFmpeg();
+    if (!ok) {
+        // Se FFmpeg falhar, retorna o blob original com nome .mp4
+        console.warn('FFmpeg indisponível, retornando webm com extensão mp4');
+        hideConvertScreen();
+        return { blob: inputBlob, fallback: true };
+    }
+
+    try {
+        const { fetchFile } = FFmpegWASM;
+        const inputName  = 'input.webm';
+        const outputName = 'output.mp4';
+
+        setConvertLog('Preparando arquivo...');
+        await ffmpegInstance.writeFile(inputName, await fetchFile(inputBlob));
+
+        setConvertLog('Convertendo...');
+        await ffmpegInstance.exec([
+            '-i', inputName,
+            '-c:v', 'libx264',
+            '-preset', 'ultrafast',
+            '-crf', '28',
+            '-c:a', 'aac',
+            '-b:a', '128k',
+            '-movflags', '+faststart',
+            '-pix_fmt', 'yuv420p',
+            outputName
+        ]);
+
+        setConvertLog('Finalizando...');
+        const data = await ffmpegInstance.readFile(outputName);
+        const mp4Blob = new Blob([data.buffer], { type: 'video/mp4' });
+
+        // Limpeza
+        try { await ffmpegInstance.deleteFile(inputName);  } catch(e){}
+        try { await ffmpegInstance.deleteFile(outputName); } catch(e){}
+
+        hideConvertScreen();
+        return { blob: mp4Blob, fallback: false };
+    } catch (e) {
+        console.error('Conversão falhou:', e);
+        hideConvertScreen();
+        return { blob: inputBlob, fallback: true };
+    }
+}
+
+function showConvertScreen(title, pct = 0) {
+    document.getElementById('convertTitle').innerText = title;
+    document.getElementById('convertBarFill').style.width = pct + '%';
+    document.getElementById('convertLog').innerText = 'Aguarde...';
+    document.getElementById('convertScreen').style.display = 'flex';
+}
+function hideConvertScreen() {
+    document.getElementById('convertScreen').style.display = 'none';
+}
+function setConvertLog(msg) {
+    document.getElementById('convertLog').innerText = msg;
+}
+
+// ── Estado global ──
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+let usingFrontCamera = true;
+let stream            = null;
+let isRecording       = false;
+let mediaRecorder     = null;
+let recordedChunks    = [];
+let currentMimeType   = 'video/mp4';
+let currentFileUrl    = null;
+let boomFrames        = [];
+let currentType       = 'image';
 let recordStartTime, timerInterval;
-const BOOM_CAPTURE_TIME = 1200; 
+const BOOM_CAPTURE_TIME = 1200;
+
 let currentScale = 1, startDistance = 0, baseScale = 1;
-let isEditingGallery = false, galleryImg = new Image(), animId = null;
+let isEditingGallery = false;
+let galleryImg = new Image();
+let animId = null;
 let galleryTransform = { x: 0, y: 0, sc: 1, lx: 0, ly: 0, ld: 0 };
 
-const video = document.getElementById('camera'), 
-      canvasFinal = document.getElementById('canvasFinal'),
-      canvasPreview = document.getElementById('canvasPreview'),
-      videoPreview = document.getElementById('videoPreview'),
-      molduraImg = document.getElementById('molduraImagePreview'),
-      editorCanvas = document.getElementById('editorCanvas'),
-      eCtx = editorCanvas.getContext('2d'),
-      ctxFinal = canvasFinal.getContext('2d', { alpha: false }),
-      mainStage = document.getElementById('mainStage'),
-      fileInput = document.getElementById('fileInput'),
-      videoTimer = document.getElementById('videoTimer');
+// ── Referências DOM ──
+const video          = document.getElementById('camera');
+const canvasFinal    = document.getElementById('canvasFinal');
+const videoPreview   = document.getElementById('videoPreview');
+const iosImageResult = document.getElementById('iosImageResult');
+const molduraImg     = document.getElementById('molduraImagePreview');
+const editorCanvas   = document.getElementById('editorCanvas');
+const eCtx           = editorCanvas.getContext('2d');
+const ctxFinal       = canvasFinal.getContext('2d', { alpha: false });
+const mainStage      = document.getElementById('mainStage');
+const fileInput      = document.getElementById('fileInput');
+const videoTimer     = document.getElementById('videoTimer');
+const botoesWrapper  = document.getElementById('botoesWrapper');
+const arteBotoes     = document.getElementById('arteBotoes');
 
-document.getElementById('startBtn').onclick = () => initCamera();
-document.getElementById('switchBtn').onclick = switchCamera;
+// ── Eventos ──
+document.getElementById('startBtn').onclick        = initCamera;
+document.getElementById('switchBtn').onclick       = switchCamera;
 document.getElementById('capturePhotoBtn').onclick = takePhoto;
 document.getElementById('captureVideoBtn').onclick = () => isRecording ? stopRecording() : startRecording(false);
-document.getElementById('boomerangBtn').onclick = () => startRecording(true);
-document.getElementById('newBtn').onclick = () => resetAll();
-document.getElementById('galleryBtn').onclick = () => fileInput.click();
-document.getElementById('cancelEditBtn').onclick = resetAll;
-document.getElementById('confirmEditBtn').onclick = confirmGalleryEdit;
+document.getElementById('boomerangBtn').onclick    = () => startRecording(true);
+document.getElementById('newBtn').onclick          = resetAll;
+document.getElementById('galleryBtn').onclick      = () => fileInput.click();
+document.getElementById('cancelEditBtn').onclick   = resetAll;
+document.getElementById('confirmEditBtn').onclick  = confirmGalleryEdit;
 
+// ── Gestos ──
 mainStage.addEventListener('touchstart', (e) => {
     if (isEditingGallery) {
         if (e.touches.length === 1) {
             galleryTransform.lx = e.touches[0].clientX - galleryTransform.x;
             galleryTransform.ly = e.touches[0].clientY - galleryTransform.y;
         } else if (e.touches.length === 2) {
-            galleryTransform.ld = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+            galleryTransform.ld = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
         }
     } else if (e.touches.length === 2) {
-        startDistance = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
+        startDistance = Math.hypot(
+            e.touches[0].pageX - e.touches[1].pageX,
+            e.touches[0].pageY - e.touches[1].pageY
+        );
         baseScale = currentScale;
     }
 });
@@ -243,235 +387,447 @@ mainStage.addEventListener('touchmove', (e) => {
             galleryTransform.x = e.touches[0].clientX - galleryTransform.lx;
             galleryTransform.y = e.touches[0].clientY - galleryTransform.ly;
         } else if (e.touches.length === 2) {
-            const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+            const d = Math.hypot(
+                e.touches[0].clientX - e.touches[1].clientX,
+                e.touches[0].clientY - e.touches[1].clientY
+            );
             galleryTransform.sc *= (d / galleryTransform.ld);
             galleryTransform.ld = d;
         }
     } else if (e.touches.length === 2 && startDistance > 0) {
-        const d = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
+        const d = Math.hypot(
+            e.touches[0].pageX - e.touches[1].pageX,
+            e.touches[0].pageY - e.touches[1].pageY
+        );
         currentScale = Math.min(Math.max(1, baseScale * (d / startDistance)), 4);
-        applyZoom();
+        video.style.transform = `${usingFrontCamera ? 'scaleX(-1)' : 'scaleX(1)'} scale(${currentScale})`;
     }
 }, { passive: false });
 
-function applyZoom() {
-    video.style.transform = `${usingFrontCamera ? 'scaleX(-1)' : 'scaleX(1)'} scale(${currentScale})`;
-}
-
-function startTimer() {
-    videoTimer.style.display = 'block';
-    videoTimer.innerText = "00:00";
-    recordStartTime = Date.now();
-    timerInterval = setInterval(() => {
-        const seconds = Math.floor((Date.now() - recordStartTime) / 1000);
-        const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-        const s = (seconds % 60).toString().padStart(2, '0');
-        videoTimer.innerText = `${m}:${s}`;
-    }, 1000);
-}
-
-function stopTimer() {
-    clearInterval(timerInterval);
-    videoTimer.style.display = 'none';
-}
-
+// ── Câmera ──
 async function initCamera() {
     if (stream) stream.getTracks().forEach(t => t.stop());
     try {
         stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: usingFrontCamera ? 'user' : 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
+            video: {
+                facingMode: usingFrontCamera ? 'user' : 'environment',
+                width:  { ideal: 1280 },
+                height: { ideal: 720 }
+            },
             audio: true
         });
         video.srcObject = stream;
         video.onloadedmetadata = () => {
             video.play();
             document.getElementById('startScreen').style.display = 'none';
-            document.getElementById('cameraUI').style.display = 'flex';
-            molduraImg.src = 'moldura1.png'; 
+            document.getElementById('cameraUI').style.display    = 'flex';
+            botoesWrapper.style.display = 'block';
+            arteBotoes.style.display    = 'block';
+            molduraImg.src = CLIENTE.arquivoMoldura;
             molduraImg.style.display = 'block';
-            currentScale = 1; applyZoom();
         };
-    } catch (e) { alert("Câmera não disponível."); }
+    } catch (e) {
+        alert("Câmera não disponível: " + e.message);
+    }
 }
 
 function drawFrame(ctx, w, h) {
     ctx.save();
-    const centerX = w / 2, centerY = h / 2;
     if (usingFrontCamera) { ctx.translate(w, 0); ctx.scale(-1, 1); }
-    ctx.translate(centerX, centerY);
+    ctx.translate(w / 2, h / 2);
     ctx.scale(currentScale, currentScale);
-    ctx.translate(-centerX, -centerY);
+    ctx.translate(-w / 2, -h / 2);
     ctx.drawImage(video, 0, 0, w, h);
     ctx.restore();
-    if (molduraImg.complete) ctx.drawImage(molduraImg, 0, 0, w, h);
+    if (molduraImg.complete && molduraImg.naturalWidth > 0) {
+        ctx.drawImage(molduraImg, 0, 0, w, h);
+    }
 }
 
-function takePhoto() {
-    currentType = 'image';
-    canvasFinal.width = 1080; canvasFinal.height = 1920;
-    drawFrame(ctxFinal, 1080, 1920);
-    canvasFinal.toBlob(blob => {
-        currentFileUrl = URL.createObjectURL(blob);
-        showResult(currentFileUrl, 'image');
-    }, 'image/png', 1.0);
-}
+// ── Compartilhar / Salvar ──
+// Mesma lógica base do código horizontal (que funciona no XR),
+// com camadas extras de proteção para erros de memória e iOS antigo.
+async function handleShare(url, type) {
+    const extension = type === 'image' ? 'jpg' : 'mp4';
+    const mimeType  = type === 'image' ? 'image/jpeg' : 'video/mp4';
+    const fileName  = `registro_${Date.now()}.${extension}`;
 
-function startRecording(isBoom) {
-    isRecording = true; recordedChunks = []; boomFrames = [];
-    currentType = 'video';
-    if (isBoom) {
-        captureBoomerang(Date.now());
+    // Passo 1: tenta fetch/blob — igual ao horizontal
+    let file = null;
+    try {
+        const response = await fetch(url);
+        const blob     = await response.blob();
+        file = new File([blob], fileName, { type: mimeType });
+    } catch (fetchErr) {
+        // Blob muito grande ou erro de memória no Safari
+        console.warn("Falha ao ler blob:", fetchErr);
+        if (isIOS) { showIOSFallback(url, type); return; }
+        downloadDireto(url, fileName);
+        return;
+    }
+
+    // Passo 2: tenta navigator.share com arquivo (igual ao horizontal)
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+            await navigator.share({ files: [file], title: CLIENTE.nomeEvento });
+            return;
+        } catch (shareErr) {
+            // AbortError = cliente fechou o Share Sheet sem escolher — ignorar silenciosamente
+            if (shareErr.name === 'AbortError') return;
+            // Outro erro no share → cai para o próximo passo
+            console.warn("Share falhou:", shareErr);
+        }
+    }
+
+    // Passo 3: fallback por plataforma
+    if (isIOS) {
+        showIOSFallback(url, type);
     } else {
-        startTimer();
-        document.getElementById('captureVideoBtn').classList.add('recording');
-        canvasFinal.width = 720; canvasFinal.height = 1280;
-        const canvasStream = canvasFinal.captureStream(30);
-        if (stream.getAudioTracks().length > 0) canvasStream.addTrack(stream.getAudioTracks()[0]);
-        mediaRecorder = new MediaRecorder(canvasStream, { mimeType: 'video/webm;codecs=vp9' });
-        mediaRecorder.ondataavailable = e => { if(e.data.size > 0) recordedChunks.push(e.data); };
-        mediaRecorder.onstop = () => {
-            currentFileUrl = URL.createObjectURL(new Blob(recordedChunks, { type: 'video/webm' }));
-            showResult(currentFileUrl, 'video');
-        };
-        mediaRecorder.start();
-        const loop = () => { if(isRecording) { drawFrame(ctxFinal, 720, 1280); requestAnimationFrame(loop); } };
-        loop();
+        downloadDireto(url, fileName);
     }
 }
 
-function stopRecording() {
-    isRecording = false;
-    stopTimer();
-    document.getElementById('captureVideoBtn').classList.remove('recording');
-    if(mediaRecorder) mediaRecorder.stop();
+function downloadDireto(url, fileName) {
+    const a = document.createElement('a');
+    a.href     = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 }
 
-function captureBoomerang(startTime) {
-    canvasFinal.width = 720; canvasFinal.height = 1280;
-    const interval = setInterval(() => {
-        if (Date.now() - startTime >= BOOM_CAPTURE_TIME) {
-            clearInterval(interval); isRecording = false; processBoomerang();
-        } else {
-            const fCanvas = document.createElement('canvas');
-            fCanvas.width = 720; fCanvas.height = 1280;
-            const fCtx = fCanvas.getContext('2d');
-            const cX = 720/2, cY = 1280/2;
-            fCtx.translate(cX, cY); fCtx.scale(currentScale, currentScale); fCtx.translate(-cX, -cY);
-            fCtx.drawImage(video, 0, 0, 720, 1280);
-            boomFrames.push(fCanvas);
-        }
-    }, 40); 
-}
+// ── Fallback iOS antigo: mostra mídia com instrução para segurar e salvar ──
+function showIOSFallback(url, type) {
+    const overlay = document.createElement('div');
+    overlay.id = 'iosFallbackOverlay';
+    overlay.style.cssText = `
+        position: fixed; inset: 0; background: rgba(0,0,0,0.96);
+        z-index: 999; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: 20px; padding: 24px;
+    `;
 
-function processBoomerang() {
-    document.getElementById('boomLoading').style.display = 'block';
-    const pingPong = [...boomFrames, ...[...boomFrames].reverse()];
-    const finalSequence = [...pingPong, ...pingPong, ...pingPong];
-    const streamBoom = canvasFinal.captureStream(30);
-    const rec = new MediaRecorder(streamBoom, { mimeType: 'video/webm;codecs=vp9' });
-    rec.ondataavailable = e => { if(e.data.size > 0) recordedChunks.push(e.data); };
-    rec.onstop = () => {
-        document.getElementById('boomLoading').style.display = 'none';
-        currentFileUrl = URL.createObjectURL(new Blob(recordedChunks, { type: 'video/webm' }));
-        showResult(currentFileUrl, 'video');
-    };
-    rec.start();
-    let idx = 0;
-    const playInterval = setInterval(() => {
-        if (idx >= finalSequence.length) { clearInterval(playInterval); rec.stop(); } 
-        else {
-            ctxFinal.clearRect(0,0,720,1280);
-            ctxFinal.save();
-            if (usingFrontCamera) { ctxFinal.translate(720,0); ctxFinal.scale(-1,1); }
-            ctxFinal.drawImage(finalSequence[idx], 0, 0, 720, 1280);
-            ctxFinal.restore();
-            if (molduraImg.complete) ctxFinal.drawImage(molduraImg, 0, 0, 720, 1280);
-            idx++;
-        }
-    }, 33);
-}
+    const dica = type === 'image'
+        ? '👆 Segure o dedo na imagem abaixo até aparecer o menu, depois toque em <strong>"Adicionar à Fotos"</strong>'
+        : '👆 Toque nos 3 pontinhos do vídeo abaixo e escolha <strong>"Salvar vídeo"</strong>';
 
-fileInput.onchange = e => {
-    if (e.target.files[0]) {
-        const reader = new FileReader();
-        reader.onload = ev => {
-            galleryImg = new Image();
-            galleryImg.onload = () => {
-                isEditingGallery = true;
-                document.getElementById('cameraUI').style.display = 'none';
-                document.getElementById('editUI').style.display = 'flex';
-                editorCanvas.style.display = 'block';
-                editorCanvas.width = window.innerWidth;
-                editorCanvas.height = window.innerHeight;
-                galleryTransform.sc = editorCanvas.height / galleryImg.height;
-                galleryTransform.x = (editorCanvas.width - (galleryImg.width * galleryTransform.sc)) / 2;
-                galleryTransform.y = 0;
-                renderEditor();
-            };
-            galleryImg.src = ev.target.result;
-        };
-        reader.readAsDataURL(e.target.files[0]);
+    const dicaBox = document.createElement('div');
+    dicaBox.style.cssText = `
+        background:#1a1a1a; border:2px solid #25D366; border-radius:16px;
+        padding:18px 22px; text-align:center; max-width:320px;
+    `;
+    dicaBox.innerHTML = `
+        <div style="font-size:28px; margin-bottom:8px;">📱</div>
+        <div style="font-size:15px; line-height:1.6; color:#fff;">${dica}</div>
+    `;
+    overlay.appendChild(dicaBox);
+
+    if (type === 'image') {
+        const img = document.createElement('img');
+        img.src = url;
+        img.style.cssText = 'max-width:85vw; max-height:50vh; border-radius:12px; object-fit:contain;';
+        overlay.appendChild(img);
+    } else {
+        const vid = document.createElement('video');
+        vid.src      = url;
+        vid.controls = true;
+        vid.loop     = true;
+        vid.setAttribute('playsinline', '');
+        vid.style.cssText = 'max-width:85vw; max-height:50vh; border-radius:12px;';
+        overlay.appendChild(vid);
+        vid.play().catch(() => {});
     }
-};
 
-function renderEditor() {
-    if (!isEditingGallery) return;
-    eCtx.fillStyle = "#000"; eCtx.fillRect(0, 0, editorCanvas.width, editorCanvas.height);
-    eCtx.save();
-    eCtx.translate(galleryTransform.x, galleryTransform.y);
-    eCtx.scale(galleryTransform.sc, galleryTransform.sc);
-    eCtx.drawImage(galleryImg, 0, 0);
-    eCtx.restore();
-    animId = requestAnimationFrame(renderEditor);
-}
+    const btnFechar = document.createElement('button');
+    btnFechar.innerText = '✅ JÁ SALVEI — VOLTAR';
+    btnFechar.style.cssText = `
+        padding:16px 32px; background:#444; border:none; border-radius:14px;
+        color:#fff; font-size:15px; font-weight:bold; cursor:pointer; width:85%;
+    `;
+    btnFechar.onclick = () => document.body.removeChild(overlay);
+    overlay.appendChild(btnFechar);
 
-function confirmGalleryEdit() {
-    isEditingGallery = false; cancelAnimationFrame(animId);
-    currentType = 'image'; canvasFinal.width = 1080; canvasFinal.height = 1920;
-    const s = 1080 / editorCanvas.width;
-    ctxFinal.fillStyle = "#000"; ctxFinal.fillRect(0,0,1080,1920);
-    ctxFinal.save();
-    ctxFinal.translate(galleryTransform.x * s, galleryTransform.y * s);
-    ctxFinal.scale(galleryTransform.sc * s, galleryTransform.sc * s);
-    ctxFinal.drawImage(galleryImg, 0, 0); ctxFinal.restore();
-    if (molduraImg.complete) ctxFinal.drawImage(molduraImg, 0, 0, 1080, 1920);
-    canvasFinal.toBlob(blob => {
-        currentFileUrl = URL.createObjectURL(blob);
-        showResult(currentFileUrl, 'image');
-    }, 'image/png');
+    document.body.appendChild(overlay);
 }
 
 function showResult(url, type) {
     document.getElementById('resultUI').style.display = 'flex';
     document.getElementById('cameraUI').style.display = 'none';
-    editorCanvas.style.display = 'none';
+    botoesWrapper.style.display = 'none';
+    arteBotoes.style.display    = 'none';
+    currentType    = type;
+    currentFileUrl = url;
+
     if (type === 'image') {
-        canvasPreview.style.display = 'block'; videoPreview.style.display = 'none';
-        canvasPreview.width = window.innerWidth; canvasPreview.height = window.innerHeight;
-        canvasPreview.getContext('2d').drawImage(canvasFinal, 0, 0, canvasPreview.width, canvasPreview.height);
+        iosImageResult.src = url;
+        iosImageResult.style.display = 'block';
+        videoPreview.style.display   = 'none';
     } else {
-        canvasPreview.style.display = 'none'; videoPreview.style.display = 'block'; 
-        videoPreview.src = url; videoPreview.play();
+        iosImageResult.style.display = 'none';
+        videoPreview.style.display   = 'block';
+        videoPreview.src = url;
+        videoPreview.play().catch(() => {});
     }
-    document.getElementById('downloadBtn').onclick = () => {
-        const a = document.createElement('a'); a.href = url;
-        a.download = `meu_registro_${Date.now()}.${type === 'image' ? 'png' : 'webm'}`;
-        a.click();
-    };
+
+    const downloadBtn = document.getElementById('downloadBtn');
+    downloadBtn.innerText = isIOS ? '📤 COMPARTILHAR / SALVAR' : '💾 SALVAR NA GALERIA';
+    downloadBtn.onclick = () => handleShare(currentFileUrl, currentType);
 }
 
+// ── Foto ──
+function takePhoto() {
+    canvasFinal.width  = 1080;
+    canvasFinal.height = 1920;
+    drawFrame(ctxFinal, 1080, 1920);
+    showResult(canvasFinal.toDataURL('image/jpeg', 0.95), 'image');
+}
+
+// ── Gravação de vídeo ──
+function startRecording(isBoom) {
+    isRecording    = true;
+    recordedChunks = [];
+    boomFrames     = [];
+
+    if (isBoom) {
+        captureBoomerang(Date.now());
+        return;
+    }
+
+    startTimer();
+
+    canvasFinal.width  = 720;
+    canvasFinal.height = 1280;
+
+    const canvasStream = canvasFinal.captureStream(30);
+
+    // Áudio: direto sem AudioContext (compatível iOS)
+    try {
+        const audioTracks = stream ? stream.getAudioTracks() : [];
+        if (audioTracks.length > 0) canvasStream.addTrack(audioTracks[0]);
+    } catch (e) { console.warn("Áudio não adicionado:", e); }
+
+    // Melhor formato disponível para gravação (webm tem melhor suporte)
+    const formats = [
+        'video/webm;codecs=vp8,opus',
+        'video/webm;codecs=vp9,opus',
+        'video/webm',
+        'video/mp4'
+    ];
+    currentMimeType = formats.find(f => {
+        try { return MediaRecorder.isTypeSupported(f); } catch(e) { return false; }
+    }) || '';
+
+    try {
+        mediaRecorder = currentMimeType
+            ? new MediaRecorder(canvasStream, { mimeType: currentMimeType })
+            : new MediaRecorder(canvasStream);
+    } catch (e) {
+        mediaRecorder = new MediaRecorder(canvasStream);
+        currentMimeType = '';
+    }
+
+    mediaRecorder.ondataavailable = e => {
+        if (e.data && e.data.size > 0) recordedChunks.push(e.data);
+    };
+
+    mediaRecorder.onstop = async () => {
+        const rawBlob = new Blob(recordedChunks, { type: currentMimeType || 'video/webm' });
+        const { blob: mp4Blob, fallback } = await convertToMp4(rawBlob);
+        if (fallback) {
+            console.warn('Usando arquivo sem conversão real');
+        }
+        showResult(URL.createObjectURL(mp4Blob), 'video');
+    };
+
+    mediaRecorder.start(100);
+
+    const loop = () => {
+        if (isRecording) {
+            drawFrame(ctxFinal, 720, 1280);
+            requestAnimationFrame(loop);
+        }
+    };
+    loop();
+}
+
+function stopRecording() {
+    if (!isRecording) return;
+    isRecording = false;
+    stopTimer();
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+    }
+}
+
+// ── Boomerang ──
+function captureBoomerang(startTime) {
+    const interval = setInterval(() => {
+        if (Date.now() - startTime >= BOOM_CAPTURE_TIME) {
+            clearInterval(interval);
+            processBoomerang();
+        } else {
+            const fCanvas = document.createElement('canvas');
+            fCanvas.width  = 720;
+            fCanvas.height = 1280;
+            const fCtx = fCanvas.getContext('2d');
+            if (usingFrontCamera) { fCtx.translate(720, 0); fCtx.scale(-1, 1); }
+            fCtx.drawImage(video, 0, 0, 720, 1280);
+            if (usingFrontCamera) fCtx.setTransform(1,0,0,1,0,0);
+            if (molduraImg.complete && molduraImg.naturalWidth > 0) {
+                fCtx.drawImage(molduraImg, 0, 0, 720, 1280);
+            }
+            boomFrames.push(fCanvas);
+        }
+    }, 40);
+}
+
+async function processBoomerang() {
+    document.getElementById('boomLoading').style.display = 'block';
+    recordedChunks = [];
+
+    const pingPong      = [...boomFrames, ...[...boomFrames].reverse()];
+    const finalSequence = [...pingPong, ...pingPong];
+
+    canvasFinal.width  = 720;
+    canvasFinal.height = 1280;
+
+    const streamBoom = canvasFinal.captureStream(30);
+    const boomMimeRec = MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')
+        ? 'video/webm;codecs=vp8,opus'
+        : 'video/webm';
+
+    let rec;
+    try {
+        rec = new MediaRecorder(streamBoom, { mimeType: boomMimeRec });
+    } catch (e) {
+        rec = new MediaRecorder(streamBoom);
+    }
+
+    rec.ondataavailable = e => { if (e.data && e.data.size > 0) recordedChunks.push(e.data); };
+
+    rec.onstop = async () => {
+        document.getElementById('boomLoading').style.display = 'none';
+        const rawBlob = new Blob(recordedChunks, { type: boomMimeRec });
+        const { blob: mp4Blob } = await convertToMp4(rawBlob);
+        showResult(URL.createObjectURL(mp4Blob), 'video');
+    };
+
+    rec.start();
+
+    let idx = 0;
+    const playInterval = setInterval(() => {
+        if (idx >= finalSequence.length) {
+            clearInterval(playInterval);
+            rec.stop();
+        } else {
+            ctxFinal.drawImage(finalSequence[idx], 0, 0, 720, 1280);
+            idx++;
+        }
+    }, 33);
+}
+
+// ── Galeria ──
+fileInput.onchange = e => {
+    if (!e.target.files[0]) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+        galleryImg = new Image();
+        galleryImg.onload = () => {
+            isEditingGallery = true;
+            document.getElementById('cameraUI').style.display = 'none';
+            botoesWrapper.style.display = 'none';
+            arteBotoes.style.display    = 'none';
+            document.getElementById('editUI').style.display   = 'flex';
+            editorCanvas.style.display = 'block';
+            editorCanvas.width  = window.innerWidth;
+            editorCanvas.height = window.innerHeight;
+            const ratio = Math.min(
+                editorCanvas.width  / galleryImg.width,
+                editorCanvas.height / galleryImg.height
+            );
+            galleryTransform.sc = ratio;
+            galleryTransform.x  = (editorCanvas.width  - galleryImg.width  * ratio) / 2;
+            galleryTransform.y  = (editorCanvas.height - galleryImg.height * ratio) / 2;
+            renderEditor();
+        };
+        galleryImg.src = ev.target.result;
+    };
+    reader.readAsDataURL(e.target.files[0]);
+};
+
+function renderEditor() {
+    if (!isEditingGallery) return;
+    eCtx.fillStyle = "#000";
+    eCtx.fillRect(0, 0, editorCanvas.width, editorCanvas.height);
+    eCtx.save();
+    eCtx.translate(galleryTransform.x, galleryTransform.y);
+    eCtx.scale(galleryTransform.sc, galleryTransform.sc);
+    eCtx.drawImage(galleryImg, 0, 0);
+    eCtx.restore();
+    if (molduraImg.complete && molduraImg.naturalWidth > 0) {
+        eCtx.drawImage(molduraImg, 0, 0, editorCanvas.width, editorCanvas.height);
+    }
+    animId = requestAnimationFrame(renderEditor);
+}
+
+function confirmGalleryEdit() {
+    isEditingGallery = false;
+    cancelAnimationFrame(animId);
+    canvasFinal.width  = 1080;
+    canvasFinal.height = 1920;
+    const s = 1080 / editorCanvas.width;
+    ctxFinal.save();
+    ctxFinal.translate(galleryTransform.x * s, galleryTransform.y * s);
+    ctxFinal.scale(galleryTransform.sc * s, galleryTransform.sc * s);
+    ctxFinal.drawImage(galleryImg, 0, 0);
+    ctxFinal.restore();
+    if (molduraImg.complete && molduraImg.naturalWidth > 0) {
+        ctxFinal.drawImage(molduraImg, 0, 0, 1080, 1920);
+    }
+    editorCanvas.style.display = 'none';
+    showResult(canvasFinal.toDataURL('image/jpeg', 0.95), 'image');
+}
+
+// ── Reset ──
 function resetAll() {
-    isEditingGallery = false; cancelAnimationFrame(animId);
-    videoPreview.pause(); videoPreview.src = "";
+    isEditingGallery = false;
+    if (animId) cancelAnimationFrame(animId);
+    isRecording = false;
+    stopTimer();
+    videoPreview.pause();
+    videoPreview.src             = "";
+    videoPreview.style.display   = 'none';
+    iosImageResult.style.display = 'none';
     document.getElementById('resultUI').style.display = 'none';
-    document.getElementById('editUI').style.display = 'none';
-    editorCanvas.style.display = 'none'; canvasPreview.style.display = 'none';
-    videoPreview.style.display = 'none'; videoTimer.style.display = 'none';
+    document.getElementById('editUI').style.display   = 'none';
+    editorCanvas.style.display = 'none';
     document.getElementById('cameraUI').style.display = 'flex';
+    botoesWrapper.style.display = 'block';
+    arteBotoes.style.display    = 'block';
     fileInput.value = "";
 }
 
-function switchCamera() { usingFrontCamera = !usingFrontCamera; initCamera(); }
+// ── Timer ──
+function startTimer() {
+    videoTimer.style.display = 'block';
+    recordStartTime = Date.now();
+    timerInterval = setInterval(() => {
+        const s  = Math.floor((Date.now() - recordStartTime) / 1000);
+        const mm = Math.floor(s / 60).toString().padStart(2, '0');
+        const ss = (s % 60).toString().padStart(2, '0');
+        videoTimer.innerText = `⏺ ${mm}:${ss}`;
+    }, 500);
+}
+function stopTimer() {
+    clearInterval(timerInterval);
+    videoTimer.style.display = 'none';
+    videoTimer.innerText     = '⏺ 00:00';
+}
+
+function switchCamera() {
+    usingFrontCamera = !usingFrontCamera;
+    currentScale = 1;
+    initCamera();
+}
 </script>
 </body>
 </html>
