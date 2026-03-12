@@ -450,22 +450,34 @@ async function handleShare(url, type) {
     const mimeType  = type === 'image' ? 'image/jpeg' : 'video/mp4';
     const fileName  = `registro_${Date.now()}.${extension}`;
 
-    // iOS: usa share sheet (único jeito de salvar na galeria no iOS)
+    // iOS: tenta share sheet com arquivo
     if (isIOS) {
         try {
             const response = await fetch(url);
             const blob     = await response.blob();
             const file     = new File([blob], fileName, { type: mimeType });
+
             if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                await navigator.share({ files: [file], title: CLIENTE.nomeEvento });
+                try {
+                    await navigator.share({ files: [file], title: CLIENTE.nomeEvento });
+                } catch (shareErr) {
+                    // AbortError = cliente fechou o Share Sheet sem escolher nada — ignorar
+                    if (shareErr.name !== 'AbortError') {
+                        // Outro erro (ex: iOS 14) → fallback manual
+                        showIOSFallback(url, type);
+                    }
+                }
                 return;
             }
         } catch (err) {
-            console.error("Erro no share iOS:", err);
+            console.error("Erro ao preparar share iOS:", err);
         }
+        // iOS sem suporte a share com arquivos → fallback manual
+        showIOSFallback(url, type);
+        return;
     }
 
-    // Android e demais: download direto → Android salva na galeria automaticamente
+    // Android e demais: download direto → salva na galeria automaticamente
     try {
         const a = document.createElement('a');
         a.href     = url;
@@ -476,6 +488,59 @@ async function handleShare(url, type) {
     } catch (err) {
         console.error("Erro no download:", err);
     }
+}
+
+// ── Fallback iOS antigo: mostra mídia com instrução para segurar e salvar ──
+function showIOSFallback(url, type) {
+    const overlay = document.createElement('div');
+    overlay.id = 'iosFallbackOverlay';
+    overlay.style.cssText = `
+        position: fixed; inset: 0; background: rgba(0,0,0,0.96);
+        z-index: 999; display: flex; flex-direction: column;
+        align-items: center; justify-content: center; gap: 20px; padding: 24px;
+    `;
+
+    const dica = type === 'image'
+        ? '👆 Segure o dedo na imagem abaixo até aparecer o menu, depois toque em <strong>"Adicionar à Fotos"</strong>'
+        : '👆 Toque nos 3 pontinhos do vídeo abaixo e escolha <strong>"Salvar vídeo"</strong>';
+
+    const dicaBox = document.createElement('div');
+    dicaBox.style.cssText = `
+        background:#1a1a1a; border:2px solid #25D366; border-radius:16px;
+        padding:18px 22px; text-align:center; max-width:320px;
+    `;
+    dicaBox.innerHTML = `
+        <div style="font-size:28px; margin-bottom:8px;">📱</div>
+        <div style="font-size:15px; line-height:1.6; color:#fff;">${dica}</div>
+    `;
+    overlay.appendChild(dicaBox);
+
+    if (type === 'image') {
+        const img = document.createElement('img');
+        img.src = url;
+        img.style.cssText = 'max-width:85vw; max-height:50vh; border-radius:12px; object-fit:contain;';
+        overlay.appendChild(img);
+    } else {
+        const vid = document.createElement('video');
+        vid.src      = url;
+        vid.controls = true;
+        vid.loop     = true;
+        vid.setAttribute('playsinline', '');
+        vid.style.cssText = 'max-width:85vw; max-height:50vh; border-radius:12px;';
+        overlay.appendChild(vid);
+        vid.play().catch(() => {});
+    }
+
+    const btnFechar = document.createElement('button');
+    btnFechar.innerText = '✅ JÁ SALVEI — VOLTAR';
+    btnFechar.style.cssText = `
+        padding:16px 32px; background:#444; border:none; border-radius:14px;
+        color:#fff; font-size:15px; font-weight:bold; cursor:pointer; width:85%;
+    `;
+    btnFechar.onclick = () => document.body.removeChild(overlay);
+    overlay.appendChild(btnFechar);
+
+    document.body.appendChild(overlay);
 }
 
 function showResult(url, type) {
