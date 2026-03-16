@@ -46,9 +46,6 @@
 
   /* ✏️ COR DO HINT "deslize para navegar" */
   --hint-color: rgba(255,255,255,0.92);
-
-  /* ✏️ COR DO CONTADOR ex: "1 / 6" */
-  --counter-color: rgba(255,255,255,0.7);
 }
 
 html, body {
@@ -56,39 +53,57 @@ html, body {
   overflow: hidden;
   background: var(--bg-color); /* ✏️ fundo — edite --bg-color acima */
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   font-family: sans-serif;
   user-select: none;
   touch-action: none;
 }
 
 /* ══════════════════════════════════════
-   LIVRO — ocupa toda a altura da tela
-   mantendo proporção A4 (210×297mm)
+   LAYOUT GERAL — livro + rodapé
 ══════════════════════════════════════ */
 .book-scene {
   position: relative;
   width: 100%;
-  height: 100%;
+  flex: 1;                /* ocupa todo espaço acima do rodapé */
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
+
+/* Rodapé fixo com setas + dots + som */
+.footer-bar {
+  width: 100%;
+  height: 60px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  background: var(--bg-color);
+  position: relative;
+  z-index: 50;
+  /* Separador sutil */
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+
+/* ══════════════════════════════════════
+   LIVRO — proporcional ao espaço restante
+══════════════════════════════════════ */
 
 .book {
   position: relative;
-  /* Proporção A4: altura = largura × 1.4142               */
-  /* Preenche a altura toda; largura se ajusta pela proporção */
-  height: 100vh;
-  width: calc(100vh / 1.4142);
+  /* Proporção A4 dentro do espaço disponível (tela - rodapé 60px) */
+  height: calc(100vh - 60px);
+  width: calc((100vh - 60px) / 1.4142);
   max-width: 100vw;
-  /* Se a largura vazar, reduz pelo vw */
   max-height: calc(100vw * 1.4142);
   perspective: 1400px;
-  /* Sombra de livro físico nas laterais */
-  filter: drop-shadow(0 8px 32px rgba(0,0,0,0.22))
-          drop-shadow(-4px 0 12px rgba(0,0,0,0.10));
+  filter: drop-shadow(0 8px 32px rgba(0,0,0,0.18))
+          drop-shadow(-4px 0 10px rgba(0,0,0,0.08));
 }
 
 /* ══════════════════════════════════════
@@ -138,10 +153,7 @@ html, body {
 .page img.loading { opacity: 0; }
 
 /* Quando em zoom, esconde controles para não atrapalhar */
-.book.zoomed .nav-btn,
-.book.zoomed .dots,
-.book.zoomed .counter,
-.book.zoomed .btn-sound,
+.book.zoomed .btn-zoom-reset ~ *,
 .book.zoomed .swipe-hint {
   opacity: 0;
   pointer-events: none;
@@ -217,41 +229,31 @@ html, body {
 }
 
 /* ══════════════════════════════════════
-   BOTÕES DE NAVEGAÇÃO — sobre a imagem
+   BOTÕES DE NAVEGAÇÃO — no rodapé
 ══════════════════════════════════════ */
 .nav-btn {
-  position: absolute;
-  top: 50%; transform: translateY(-50%);
-  width: 44px; height: 44px;
+  width: 48px; height: 48px;
   border-radius: 50%;
-  background: rgba(0,0,0,0.28);
-  border: 1px solid rgba(255,255,255,0.25);
-  color: white;
-  font-size: 20px;
+  background: rgba(0,0,0,0.08);
+  border: 1px solid rgba(0,0,0,0.12);
+  color: #333;
+  font-size: 22px;
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s;
-  z-index: 30;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  transition: all 0.18s;
+  flex-shrink: 0;
 }
-.nav-btn:hover  { background: rgba(0,0,0,0.5); transform: translateY(-50%) scale(1.08); }
-.nav-btn:active { transform: translateY(-50%) scale(0.93); }
-.nav-btn.disabled { opacity: 0; pointer-events: none; }
-
-/* Botões dentro da área do livro */
-.btn-prev { left:  8px; }
-.btn-next { right: 8px; }
+.nav-btn:hover  { background: rgba(201,168,76,0.2); }
+.nav-btn:active { transform: scale(0.93); }
+.nav-btn.disabled { opacity: 0.2; pointer-events: none; }
 
 /* ══════════════════════════════════════
-   DOTS — sobre a imagem, embaixo
+   DOTS — no rodapé, centro
 ══════════════════════════════════════ */
 .dots {
-  position: absolute;
-  bottom: 14px;
-  left: 50%; transform: translateX(-50%);
-  display: flex; gap: 8px;
-  z-index: 30;
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 .dot {
   width: 7px; height: 7px;
@@ -260,8 +262,6 @@ html, body {
   cursor: pointer;
   transition: all 0.25s;
   border: none; padding: 0;
-  /* Sombra para contraste sobre imagem clara */
-  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
 }
 .dot.active {
   background: var(--gold);
@@ -269,37 +269,30 @@ html, body {
 }
 
 /* ══════════════════════════════════════
-   CONTADOR — canto inferior direito
-══════════════════════════════════════ */
-.counter {
-  position: absolute;
-  bottom: 14px; right: 14px;
-  color: var(--counter-color);
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  z-index: 30;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
-}
-
-/* ══════════════════════════════════════
-   BOTÃO SOM — canto superior direito
+   BOTÃO SOM — no rodapé, direita
 ══════════════════════════════════════ */
 .btn-sound {
   position: absolute;
-  top: 12px; right: 12px;
-  width: 36px; height: 36px;
+  right: 14px;
+  width: 38px; height: 38px;
   border-radius: 50%;
-  background: rgba(0,0,0,0.28);
-  border: 1px solid rgba(255,255,255,0.25);
-  color: white; font-size: 15px;
+  background: rgba(0,0,0,0.07);
+  border: 1px solid rgba(0,0,0,0.10);
+  color: #444; font-size: 15px;
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  z-index: 30;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
   transition: background 0.2s;
 }
-.btn-sound:hover { background: rgba(0,0,0,0.5); }
+.btn-sound:hover { background: rgba(201,168,76,0.2); }
+
+/* Esconde controles do rodapé quando em zoom */
+.footer-bar.zoomed .nav-btn,
+.footer-bar.zoomed .dots,
+.footer-bar.zoomed .btn-sound {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
 
 /* ══════════════════════════════════════
    HINT "deslize para navegar"
@@ -307,7 +300,7 @@ html, body {
 ══════════════════════════════════════ */
 .swipe-hint {
   position: absolute;
-  bottom: 48px;               /* acima dos dots */
+  bottom: 14px;               /* acima dos dots do rodapé */
   left: 50%;
   transform: translateX(-50%);
   color: var(--hint-color);
@@ -318,8 +311,6 @@ html, body {
   white-space: nowrap;
   z-index: 30;
   text-shadow: 0 1px 6px rgba(0,0,0,0.6);
-
-  /* animação de piscar */
   animation: hintBlink 1.4s ease-in-out infinite;
 }
 .swipe-hint.hidden {
@@ -375,14 +366,6 @@ html, body {
 <div class="book-scene">
   <div class="book" id="book">
 
-    <!-- Botões dentro do livro, sobre a imagem -->
-    <button class="nav-btn btn-prev disabled" id="btnPrev" onclick="prevPage()">‹</button>
-    <button class="nav-btn btn-next"          id="btnNext" onclick="nextPage()">›</button>
-
-    <!-- Dots e contador sobre a imagem -->
-    <div class="dots"    id="dots"></div>
-    <div class="counter" id="counter"></div>
-
     <!-- Hint piscando — some após passar da página 1 -->
     <div class="swipe-hint" id="swipeHint">
       deslize para navegar <span class="hint-arrow">›</span>
@@ -392,11 +375,16 @@ html, body {
     <button class="btn-zoom-reset" id="btnZoomReset" onclick="resetZoom()">✕</button>
     <div class="zoom-level" id="zoomLevel">1×</div>
 
-    <!-- Botão de som -->
-    <button class="btn-sound" id="btnSound">🔊</button>
-
   </div><!-- /book -->
 </div><!-- /book-scene -->
+
+<!-- ══ RODAPÉ — setas + dots + som ══ -->
+<div class="footer-bar" id="footerBar">
+  <button class="nav-btn disabled" id="btnPrev" onclick="prevPage()">‹</button>
+  <div class="dots" id="dots"></div>
+  <button class="nav-btn" id="btnNext" onclick="nextPage()">›</button>
+  <button class="btn-sound" id="btnSound">🔊</button>
+</div>
 
 
 <script>
@@ -496,7 +484,6 @@ function syncUI() {
   document.querySelectorAll('.dot').forEach((d, i) => {
     d.classList.toggle('active', i + 1 === current);
   });
-  document.getElementById('counter').textContent = `${current} / ${TOTAL_PAGES}`;
   document.getElementById('btnPrev').classList.toggle('disabled', current === 1);
   document.getElementById('btnNext').classList.toggle('disabled', current === TOTAL_PAGES);
 }
@@ -729,15 +716,18 @@ function applyZoom() {
     `translate(${zoomOffsetX}px, ${zoomOffsetY}px) scale(${zoomScale})`;
 
   // Atualiza estado zoomed
-  const book = document.getElementById('book');
+  const book   = document.getElementById('book');
+  const footer = document.getElementById('footerBar');
   if (zoomScale > 1.05) {
     isZoomed = true;
     book.classList.add('zoomed');
+    footer.classList.add('zoomed');
     document.getElementById('zoomLevel').textContent =
       zoomScale.toFixed(1).replace('.0','') + '×';
   } else {
     isZoomed = false;
     book.classList.remove('zoomed');
+    footer.classList.remove('zoomed');
   }
 }
 
@@ -752,6 +742,7 @@ function resetZoom(animate = true) {
   img.style.transform = 'none';
   setTimeout(() => { if (img) img.style.transition = 'none'; }, 350);
   document.getElementById('book').classList.remove('zoomed');
+  document.getElementById('footerBar').classList.remove('zoomed');
 }
 
 // ── PINCH ──────────────────────────────
