@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>SilvaJardim | Portfólio</title>
+<title>Instituto Motivar | Portfólio</title>
 
 <!--
   ╔══════════════════════════════════════════════════════════╗
@@ -296,7 +296,7 @@ html, body {
 
 /* ══════════════════════════════════════
    HINT "deslize para navegar"
-   — pisca até o usuário passar da página 1
+   — pisca até o usuário passar da página 2
 ══════════════════════════════════════ */
 .swipe-hint {
   position: absolute;
@@ -340,8 +340,59 @@ html, body {
 }
 
 /* ══════════════════════════════════════
-   LOADING PLACEHOLDER
+   BOTÃO INSCREVA-SE — última página
 ══════════════════════════════════════ */
+.btn-subscribe {
+  position: fixed;
+  bottom: 62px; /* logo acima do rodapé (60px) + 2px gap */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 45;
+
+  background: transparent;
+  border: 2px solid #1d7932;
+  color: #1d7932;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 9px 28px;
+  border-radius: 30px;
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  /* Pulse suave */
+  animation: subscribePulse 2.2s ease-in-out infinite;
+
+  /* Transição de entrada/saída */
+  transition: opacity 0.4s, transform 0.4s;
+}
+
+.btn-subscribe:hover {
+  background: rgba(29,121,50,0.08);
+  animation-play-state: paused;
+}
+
+.btn-subscribe.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(8px);
+}
+
+@keyframes subscribePulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(29,121,50,0.35),
+                0 2px 12px rgba(29,121,50,0.12);
+  }
+  50% {
+    box-shadow: 0 0 0 7px rgba(29,121,50,0),
+                0 2px 16px rgba(29,121,50,0.2);
+  }
+}
 .page-loader {
   position: absolute; inset: 0;
   background: #ede9e3;  /* ✏️ cor do placeholder de carregamento */
@@ -377,6 +428,13 @@ html, body {
 
   </div><!-- /book -->
 </div><!-- /book-scene -->
+
+<!-- ══ BOTÃO INSCREVA-SE — aparece só na última página ══ -->
+<!-- ✏️ Troque o href abaixo pelo link do seu formulário    -->
+<a class="btn-subscribe hidden" id="btnSubscribe"
+   href="https://seu-link-do-formulario.com" target="_blank">
+  ✦ Inscreva-se
+</a>
 
 <!-- ══ RODAPÉ — setas + dots + som ══ -->
 <div class="footer-bar" id="footerBar">
@@ -487,6 +545,10 @@ function syncUI() {
   });
   document.getElementById('btnPrev').classList.toggle('disabled', current === 1);
   document.getElementById('btnNext').classList.toggle('disabled', current === TOTAL_PAGES);
+
+  // Botão Inscreva-se: aparece SOMENTE na última página
+  const btnSub = document.getElementById('btnSubscribe');
+  if (btnSub) btnSub.classList.toggle('hidden', current !== TOTAL_PAGES);
 }
 
 /* ============================================================
