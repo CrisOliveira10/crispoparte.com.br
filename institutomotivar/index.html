@@ -458,8 +458,9 @@ function buildPages() {
     };
     page.appendChild(img);
 
-    // Insere antes dos controles (que já estão no DOM via HTML)
-    book.insertBefore(page, document.getElementById('btnPrev'));
+    // Insere antes dos elementos de controle que ficam dentro do book
+    const hint = document.getElementById('swipeHint');
+    book.insertBefore(page, hint);
   }
 }
 
