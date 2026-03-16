@@ -83,7 +83,7 @@ html, body {
 .book {
   position: relative;
   width:  min(390px, 88vw);
-  height: min(693px, 84vh);
+  height: min(552px, calc(88vw * 1.4142)); /* proporção A4 exata (210×297mm) */
   perspective: 1400px;
 }
 
@@ -281,6 +281,12 @@ html, body {
   .btn-prev:active, .btn-next:active { transform: scale(0.94); }
   .dots    { bottom: -66px; }
   .counter { bottom: -92px; }
+
+  /* No celular, garante que o livro caiba na tela com proporção A4 */
+  .book {
+    width:  min(340px, 92vw);
+    height: min(481px, calc(92vw * 1.4142));
+  }
 }
 </style>
 </head>
