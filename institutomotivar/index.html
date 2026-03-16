@@ -14,6 +14,7 @@
   ║                                                          ║
   ║  /seu-repositorio                                        ║
   ║    ├── index.html      ← este arquivo                    ║
+  ║    ├── flip.mp3        ← som de virar página (opcional)  ║
   ║    └── pages/                                            ║
   ║          ├── 1.jpg                                       ║
   ║          ├── 2.jpg                                       ║
@@ -26,6 +27,13 @@
   ║  3. Coloque na pasta pages/                              ║
   ║  4. Mude: const TOTAL_PAGES = 6  →  7 (ou mais)         ║
   ║                                                          ║
+  ║  🎵 SOM:                                                 ║
+  ║  Coloque flip.mp3 na mesma pasta do index.html           ║
+  ║  Se não colocar, usa som sintetizado automaticamente     ║
+  ║                                                          ║
+  ║  🎨 COR DE FUNDO:                                        ║
+  ║  Procure por --bg-color no CSS e troque o valor          ║
+  ║                                                          ║
   ╚══════════════════════════════════════════════════════════╝
 -->
 
@@ -34,17 +42,25 @@
 
 :root {
   --gold:   #c9a84c;
-  --dark:   #0e1a12;
-  --shadow: rgba(0,0,0,0.55);
+  --shadow: rgba(0,0,0,0.25);
+
+  /* ✏️ COR DE FUNDO — troque o valor abaixo quando quiser mudar */
+  --bg-color: #f8f5f5;
+
+  /* ✏️ COR DOS DOTS inativos — círculos de navegação */
+  --dot-color: rgba(0,0,0,0.2);
+
+  /* ✏️ COR DO CONTADOR DE PÁGINAS (ex: "1 / 6") */
+  --counter-color: rgba(0,0,0,0.3);
+
+  /* ✏️ COR DO HINT "deslize para navegar" */
+  --hint-color: rgba(0,0,0,0.25);
 }
 
 html, body {
   width: 100%; height: 100%;
   overflow: hidden;
-  background: var(--dark);
-  background-image:
-    radial-gradient(ellipse at 20% 20%, #1a3a22 0%, transparent 55%),
-    radial-gradient(ellipse at 80% 80%, #0a1a0e 0%, transparent 55%);
+  background: var(--bg-color); /* ✏️ fundo — edite --bg-color acima */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -155,9 +171,9 @@ html, body {
   top: 50%; transform: translateY(-50%);
   width: 46px; height: 46px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.18);
-  color: white;
+  background: rgba(0,0,0,0.07);       /* ✏️ fundo dos botões de seta */
+  border: 1px solid rgba(0,0,0,0.12); /* ✏️ borda dos botões de seta */
+  color: #333;                         /* ✏️ cor da seta */
   font-size: 22px;
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
@@ -166,7 +182,7 @@ html, body {
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
 }
-.nav-btn:hover  { background: rgba(201,168,76,0.3); transform: translateY(-50%) scale(1.08); }
+.nav-btn:hover  { background: rgba(201,168,76,0.25); transform: translateY(-50%) scale(1.08); }
 .nav-btn:active { transform: translateY(-50%) scale(0.94); }
 .nav-btn.disabled { opacity: 0.2; pointer-events: none; }
 .btn-prev { left:  -58px; }
@@ -183,7 +199,7 @@ html, body {
 .dot {
   width: 7px; height: 7px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.25);
+  background: var(--dot-color); /* ✏️ edite --dot-color no :root */
   cursor: pointer;
   transition: all 0.25s;
   border: none; padding: 0;
@@ -195,7 +211,7 @@ html, body {
   position: absolute;
   bottom: -70px;
   left: 50%; transform: translateX(-50%);
-  color: rgba(255,255,255,0.3);
+  color: var(--counter-color); /* ✏️ edite --counter-color no :root */
   font-size: 11px;
   letter-spacing: 0.16em;
   white-space: nowrap;
@@ -207,9 +223,9 @@ html, body {
   top: 14px; right: 14px;
   width: 38px; height: 38px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.18);
-  color: white; font-size: 16px;
+  background: rgba(0,0,0,0.07);       /* ✏️ fundo do botão de som */
+  border: 1px solid rgba(0,0,0,0.12); /* ✏️ borda do botão de som */
+  color: #444; font-size: 16px;
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   z-index: 100;
@@ -217,13 +233,13 @@ html, body {
   -webkit-backdrop-filter: blur(6px);
   transition: background 0.2s;
 }
-.btn-sound:hover { background: rgba(201,168,76,0.3); }
+.btn-sound:hover { background: rgba(201,168,76,0.25); }
 
 /* ─── HINT ─── */
 .swipe-hint {
   position: fixed;
   bottom: 18px; left: 50%; transform: translateX(-50%);
-  color: rgba(255,255,255,0.28);
+  color: var(--hint-color); /* ✏️ edite --hint-color no :root */
   font-size: 11px; letter-spacing: 0.12em;
   pointer-events: none;
   transition: opacity 0.6s;
@@ -235,17 +251,17 @@ html, body {
 /* ─── LOADING PLACEHOLDER ─── */
 .page-loader {
   position: absolute; inset: 0;
-  background: #1a2e1f;
+  background: #ede9e3; /* ✏️ cor do placeholder enquanto a imagem carrega */
   display: flex; align-items: center; justify-content: center;
   flex-direction: column;
   gap: 12px;
-  color: rgba(255,255,255,0.2);
+  color: rgba(0,0,0,0.25);
   font-size: 12px; letter-spacing: 0.1em;
   z-index: 1;
 }
 .spinner {
   width: 28px; height: 28px;
-  border: 2px solid rgba(255,255,255,0.1);
+  border: 2px solid rgba(0,0,0,0.08);
   border-top-color: var(--gold);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
@@ -292,6 +308,10 @@ const TOTAL_PAGES  = 6;       // ← mude para o número total de páginas
 const PAGES_FOLDER = 'pages/'; // ← pasta das imagens (não mude se seguir a estrutura)
 const IMG_EXT      = 'jpg';    // ← extensão: 'jpg', 'png' ou 'webp'
 
+// ✏️ ARQUIVO DE SOM — coloque flip.mp3 na mesma pasta do index.html
+// Se o arquivo não existir, o som sintetizado é usado automaticamente
+const FLIP_SOUND_FILE = 'flip.mp3';
+
 /* ============================================================
    ESTADO INTERNO
    ============================================================ */
@@ -300,6 +320,28 @@ let animating = false;
 let soundOn   = true;
 let audioCtx  = null;
 let hinted    = false;
+
+// Áudio MP3
+let flipAudio      = null;  // elemento <audio> para o MP3
+let mp3Available   = false; // true se flip.mp3 carregou com sucesso
+
+/* ============================================================
+   CARREGA flip.mp3 — com fallback para som sintetizado
+   ============================================================ */
+function loadFlipAudio() {
+  flipAudio = new Audio(FLIP_SOUND_FILE);
+  flipAudio.preload = 'auto';
+  flipAudio.volume  = 0.7; // ✏️ volume do MP3: 0.0 (mudo) a 1.0 (máximo)
+
+  flipAudio.addEventListener('canplaythrough', () => {
+    mp3Available = true;
+  }, { once: true });
+
+  flipAudio.addEventListener('error', () => {
+    // flip.mp3 não encontrado → usa som sintetizado automaticamente
+    mp3Available = false;
+  }, { once: true });
+}
 
 /* ============================================================
    MONTA AS PÁGINAS
@@ -363,7 +405,7 @@ function syncUI() {
 }
 
 /* ============================================================
-   SOM — sintetizado, sem arquivos externos
+   SOM — tenta MP3 primeiro, fallback para síntese
    ============================================================ */
 function initAudio() {
   if (!audioCtx) {
@@ -372,7 +414,23 @@ function initAudio() {
 }
 
 function playFlip(fwd) {
-  if (!soundOn || !audioCtx) return;
+  if (!soundOn) return;
+
+  // ── Tenta tocar o MP3 ──
+  if (mp3Available && flipAudio) {
+    try {
+      flipAudio.currentTime = 0;
+      flipAudio.play().catch(() => playSynth(fwd)); // fallback se bloqueado
+      return;
+    } catch(e) {}
+  }
+
+  // ── Fallback: som sintetizado ──
+  playSynth(fwd);
+}
+
+function playSynth(fwd) {
+  if (!audioCtx) return;
   try {
     const freqs = fwd ? [900, 600, 380] : [380, 600, 900];
     freqs.forEach((f, i) => {
@@ -390,7 +448,6 @@ function playFlip(fwd) {
       g.gain.exponentialRampToValueAtTime(0.001, t + 0.13);
       osc.start(t); osc.stop(t + 0.16);
     });
-
     // Ruído de papel
     const sr  = audioCtx.sampleRate;
     const buf = audioCtx.createBuffer(1, ~~(sr * 0.13), sr);
@@ -525,6 +582,7 @@ function preload(i) {
 buildPages();
 buildDots();
 syncUI();
+loadFlipAudio(); // carrega flip.mp3 se existir
 
 // Pré-carrega página 2 logo de início
 preload(2);
