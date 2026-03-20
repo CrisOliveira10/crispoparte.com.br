@@ -27,7 +27,6 @@
     min-height: 100vh;
   }
 
-  /* ── HEADER ── */
   #cabecalho {
     width: 100%;
     height: 400px;
@@ -80,14 +79,12 @@
     margin-top: -1px;
   }
 
-  /* ── CONTAINER ── */
   .container {
     max-width: 820px;
     margin: 0 auto;
     padding: 40px 24px 60px;
   }
 
-  /* ── SECTION ── */
   .section {
     background: var(--section-bg);
     border: 1px solid var(--border);
@@ -112,7 +109,6 @@
     gap: 16px;
   }
 
-  /* ── FIELDS ── */
   .field-group {
     display: flex;
     flex-direction: column;
@@ -162,7 +158,6 @@
     min-height: 80px;
   }
 
-  /* ── RADIO / CHECKBOX GROUPS ── */
   .radio-group, .checkbox-group {
     display: flex;
     flex-wrap: wrap;
@@ -189,7 +184,6 @@
     cursor: pointer;
   }
 
-  /* ── 2-COL GRID ── */
   .two-col {
     grid-template-columns: 1fr 1fr;
   }
@@ -199,7 +193,6 @@
     #cabecalho .placeholder-msg h1 { font-size: 1.8rem; }
   }
 
-  /* ── REQUIRED BADGE ── */
   .obrig-note {
     font-size: 0.78rem;
     color: var(--warm-gray);
@@ -207,7 +200,6 @@
     margin-bottom: -8px;
   }
 
-  /* ── SEND BUTTONS ── */
   .send-bar {
     display: flex;
     gap: 16px;
@@ -258,7 +250,6 @@
     border: 2px solid var(--rose);
   }
 
-  /* ── ERROR STATE ── */
   .invalid {
     border-color: #e55 !important;
     box-shadow: 0 0 0 3px rgba(220,50,50,0.12) !important;
@@ -271,7 +262,6 @@
   }
 
   .show-error { display: block; }
-
 
   /* ── CONTACT FOOTER ── */
   .contact-footer {
@@ -296,6 +286,7 @@
     flex-direction: column;
     gap: 10px;
   }
+
   @media (max-width: 600px) {
     .contact-footer { padding: 18px 16px; }
     .contact-item { font-size: 0.83rem; align-items: flex-start; }
@@ -315,11 +306,20 @@
   }
 
   .contact-icon {
-    font-size: 1.1rem;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
   }
 
-  /* ── PRINT ── */
+  .contact-icon svg {
+    width: 20px;
+    height: 20px;
+    fill: white;
+  }
+
   @media print {
     * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     body { background: white; font-size: 11pt; }
@@ -327,8 +327,6 @@
     .container { max-width: 100%; padding: 0 10px; }
     #cabecalho { height: auto; max-height: 160px; }
     #cabecalho img { max-height: 160px; object-fit: contain; }
-
-    /* Seções viram blocos de documento */
     .section {
       box-shadow: none !important;
       border: none !important;
@@ -347,8 +345,6 @@
       border-bottom: 1pt solid #9b7bb0 !important;
     }
     .section-body { padding: 6pt 10pt !important; gap: 6pt !important; }
-
-    /* Cada campo: label + resposta em linha corrida */
     .field-group {
       display: block !important;
       margin-bottom: 5pt !important;
@@ -362,13 +358,6 @@
       text-transform: none !important;
     }
     .field-group label .req { display: none !important; }
-
-    /* Mostra valor dos inputs como texto corrido após o label */
-    .field-group input[type="text"]::after,
-    .field-group input[type="date"]::after,
-    .field-group input[type="tel"]::after,
-    .field-group input[type="email"]::after { content: attr(value); }
-
     .field-group input[type="text"],
     .field-group input[type="date"],
     .field-group input[type="tel"],
@@ -393,8 +382,6 @@
       overflow: visible !important;
       resize: none !important;
     }
-
-    /* Radio e checkbox - mostrar o selecionado */
     .radio-group, .checkbox-group {
       display: inline !important;
       gap: 0 !important;
@@ -411,14 +398,8 @@
       display: inline !important;
       accent-color: #7356a0 !important;
     }
-
-    /* Two-col vira uma coluna */
     .two-col { grid-template-columns: 1fr !important; }
-
-    /* Obrig note oculto */
     .obrig-note { display: none !important; }
-
-    /* Rodapé de impressão */
     .print-footer {
       display: block !important;
       text-align: center;
@@ -433,7 +414,6 @@
 </head>
 <body>
 
-<!-- ══════════════ CABEÇALHO 1600×400 ══════════════ -->
 <div id="cabecalho">
   <img id="header-img" src="minha-arte.jpg" onerror="this.style.display='none'" alt="Cabeçalho Anamnese Valéria" style="display:block;width:100%;height:100%;object-fit:cover;">
   <div class="placeholder-msg" id="header-placeholder" style="display:none;">
@@ -442,7 +422,6 @@
   </div>
 </div>
 
-<!-- Dica para inserir a imagem minha-arte -->
 <div class="img-upload-hint" id="header-file-row" style="display:none;">
   📁 Para exibir seu cabeçalho <strong>minha-arte</strong> (1600×400 px), clique aqui e selecione o arquivo:
   <input type="file" accept="image/*" style="margin-top:8px;display:block;margin:6px auto 0;" onchange="loadHeader(event)">
@@ -453,7 +432,7 @@
 
   <form id="anamneseForm" novalidate>
 
-    <!-- ══ 1. DADOS DE IDENTIFICAÇÃO ══ -->
+    <!-- 1. DADOS DE IDENTIFICAÇÃO -->
     <div class="section">
       <div class="section-title">1 · Dados de Identificação</div>
       <div class="section-body">
@@ -538,7 +517,7 @@
       </div>
     </div>
 
-    <!-- ══ 2. DADOS FAMILIARES ══ -->
+    <!-- 2. DADOS FAMILIARES -->
     <div class="section">
       <div class="section-title">2 · Dados Familiares</div>
       <div class="section-body">
@@ -570,7 +549,6 @@
             <label><input type="radio" name="formouPai" value="Não"> Não</label>
           </div>
         </div>
-
         <div class="field-group">
           <label>Nome da Mãe <span class="req">*</span></label>
           <input type="text" name="nomeMae" required>
@@ -599,7 +577,6 @@
             <label><input type="radio" name="formouMae" value="Não"> Não</label>
           </div>
         </div>
-
         <div class="section-body two-col" style="padding:0;gap:16px;">
           <div class="field-group">
             <label>Quantos irmãos? <span class="req">*</span></label>
@@ -623,7 +600,7 @@
       </div>
     </div>
 
-    <!-- ══ 3. MOTIVO DA CONSULTA ══ -->
+    <!-- 3. MOTIVO DA CONSULTA -->
     <div class="section">
       <div class="section-title">3 · Motivo da Consulta (Queixa)</div>
       <div class="section-body">
@@ -634,7 +611,7 @@
       </div>
     </div>
 
-    <!-- ══ 4. GESTAÇÃO ══ -->
+    <!-- 4. GESTAÇÃO -->
     <div class="section">
       <div class="section-title">4 · Concepção e Gestação</div>
       <div class="section-body">
@@ -673,7 +650,7 @@
       </div>
     </div>
 
-    <!-- ══ 5. PARTO ══ -->
+    <!-- 5. PARTO -->
     <div class="section">
       <div class="section-title">5 · Parto</div>
       <div class="section-body">
@@ -709,15 +686,15 @@
       </div>
     </div>
 
-    <!-- ══ 6. AMAMENTAÇÃO / ALIMENTAÇÃO ══ -->
+    <!-- 6. AMAMENTAÇÃO / ALIMENTAÇÃO -->
     <div class="section">
       <div class="section-title">6 · Amamentação e Alimentação</div>
       <div class="section-body">
         <div class="field-group">
           <label>Mamou no peito? <span class="req">*</span></label>
           <div class="radio-group">
-            <label><input type="radio" name="mамouPeito" value="Sim" required> Sim</label>
-            <label><input type="radio" name="мамouPeito" value="Não"> Não</label>
+            <label><input type="radio" name="mamouPeito" value="Sim" required> Sim</label>
+            <label><input type="radio" name="mamouPeito" value="Não"> Não</label>
           </div>
         </div>
         <div class="field-group">
@@ -766,7 +743,7 @@
       </div>
     </div>
 
-    <!-- ══ 7. ELIMINAÇÃO ══ -->
+    <!-- 7. ELIMINAÇÃO -->
     <div class="section">
       <div class="section-title">7 · Eliminação</div>
       <div class="section-body">
@@ -777,7 +754,7 @@
       </div>
     </div>
 
-    <!-- ══ 8. EVOLUÇÃO PSICOMOTORA ══ -->
+    <!-- 8. EVOLUÇÃO PSICOMOTORA -->
     <div class="section">
       <div class="section-title">8 · Evolução Psicomotora</div>
       <div class="section-body">
@@ -865,7 +842,7 @@
       </div>
     </div>
 
-    <!-- ══ 9. LINGUAGEM ══ -->
+    <!-- 9. LINGUAGEM -->
     <div class="section">
       <div class="section-title">9 · Linguagem</div>
       <div class="section-body">
@@ -960,7 +937,7 @@
       </div>
     </div>
 
-    <!-- ══ 10. SONO ══ -->
+    <!-- 10. SONO -->
     <div class="section">
       <div class="section-title">10 · Sono</div>
       <div class="section-body">
@@ -1019,7 +996,7 @@
       </div>
     </div>
 
-    <!-- ══ 11. HISTÓRICO CLÍNICO ══ -->
+    <!-- 11. HISTÓRICO CLÍNICO -->
     <div class="section">
       <div class="section-title">11 · Histórico Clínico</div>
       <div class="section-body">
@@ -1116,7 +1093,7 @@
       </div>
     </div>
 
-    <!-- ══ 12. HISTÓRIA DA FAMÍLIA ══ -->
+    <!-- 12. HISTÓRIA DA FAMÍLIA -->
     <div class="section">
       <div class="section-title">12 · História da Família</div>
       <div class="section-body">
@@ -1199,7 +1176,7 @@
       </div>
     </div>
 
-    <!-- ══ 13. ESTIMULAÇÃO ══ -->
+    <!-- 13. ESTIMULAÇÃO -->
     <div class="section">
       <div class="section-title">13 · Estimulação</div>
       <div class="section-body">
@@ -1269,7 +1246,7 @@
       </div>
     </div>
 
-    <!-- ══ 14. HISTÓRIA ESCOLAR ══ -->
+    <!-- 14. HISTÓRIA ESCOLAR -->
     <div class="section">
       <div class="section-title">14 · História Escolar</div>
       <div class="section-body">
@@ -1372,7 +1349,7 @@
       </div>
     </div>
 
-    <!-- ══ 15. OBSERVAÇÕES FINAIS ══ -->
+    <!-- 15. OBSERVAÇÕES FINAIS -->
     <div class="section">
       <div class="section-title">15 · Observações Finais</div>
       <div class="section-body">
@@ -1383,32 +1360,51 @@
       </div>
     </div>
 
-
-
-    <!-- ══ RODAPÉ DE CONTATO ══ -->
+    <!-- RODAPÉ DE CONTATO -->
     <div class="contact-footer">
       <p class="contact-title">Maiores informações:</p>
       <div class="contact-grid">
+
+        <!-- Nome -->
         <div class="contact-item">
-          <span class="contact-icon">👩‍💼</span>
+          <span class="contact-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+            </svg>
+          </span>
           <span><strong>Valéria Lampes</strong> — Psicopedagoga</span>
         </div>
+
+        <!-- Instagram -->
         <div class="contact-item">
-          <span class="contact-icon">✉️</span>
-          <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="d9a9aab0bab6a9bcbdb8beb6beb8afb8b5bcabb0b8b5b8b4a9bcaa99beb4b8b0b5f7bab6b4">[email&#160;protected]</a></span>
-        </div>
-        <div class="contact-item">
-          <span class="contact-icon">📸</span>
+          <span class="contact-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+          </span>
           <span>@psicopedagoga_valeria_lampes</span>
         </div>
+
+        <!-- TikTok -->
         <div class="contact-item">
-          <span class="contact-icon">🎵</span>
+          <span class="contact-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.75a4.85 4.85 0 01-1.01-.06z"/>
+            </svg>
+          </span>
           <span>valerialampes</span>
         </div>
+
+        <!-- WhatsApp / Telefone -->
         <div class="contact-item">
-          <span class="contact-icon">📱</span>
+          <span class="contact-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+          </span>
           <span>(22) 9.9613-9293</span>
         </div>
+
       </div>
     </div>
 
@@ -1424,13 +1420,13 @@
     </div>
 
   </form>
+
   <div class="print-footer" style="display:none;">
-    Valéria Lampes — Psicopedagoga | <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c4b4b7ada7abb4a1a0a5a3aba3a5b2a5a8a1b6ada5a8a5a9b4a1b784a3a9a5ada8eaa7aba9">[email&#160;protected]</a> | (22) 9.9613-9293
+    Valéria Lampes — Psicopedagoga | (22) 9.9613-9293
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-// ── Load header image ──
+<script>
 function loadHeader(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -1444,10 +1440,8 @@ function loadHeader(e) {
   reader.readAsDataURL(file);
 }
 
-// ── Collect form data as text ──
 function coletarDados() {
   const form = document.getElementById('anamneseForm');
-  const data = new FormData(form);
   const sections = document.querySelectorAll('.section');
   let texto = '📋 *ANAMNESE VALÉRIA*\n';
   texto += '━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n';
@@ -1464,20 +1458,17 @@ function coletarDados() {
       if (!lbl) return;
       const labelText = lbl.textContent.replace('*','').trim();
 
-      // radio
       const checkedRadio = fg.querySelector('input[type="radio"]:checked');
       if (checkedRadio) {
         texto += `• ${labelText}: ${checkedRadio.value}\n`;
         return;
       }
-      // checkboxes
       const checkboxes = fg.querySelectorAll('input[type="checkbox"]:checked');
       if (checkboxes.length > 0) {
         const vals = Array.from(checkboxes).map(c => c.value).join(', ');
         texto += `• ${labelText}: ${vals}\n`;
         return;
       }
-      // text / textarea / select
       const input = fg.querySelector('input:not([type="radio"]):not([type="checkbox"]), textarea, select');
       if (input && input.value.trim()) {
         texto += `• ${labelText}: ${input.value.trim()}\n`;
@@ -1489,18 +1480,15 @@ function coletarDados() {
   return texto;
 }
 
-// ── Validate required ──
 function validar() {
   const form = document.getElementById('anamneseForm');
   let ok = true;
 
-  // text / textarea / email / tel / date inputs
   form.querySelectorAll('input[required]:not([type="radio"]):not([type="checkbox"]), textarea[required]').forEach(el => {
     if (!el.value.trim()) { el.classList.add('invalid'); ok = false; }
     else el.classList.remove('invalid');
   });
 
-  // radio groups (at least one checked per name)
   const radioNames = new Set(
     Array.from(form.querySelectorAll('input[type="radio"][required]')).map(r => r.name)
   );
@@ -1519,9 +1507,25 @@ function validar() {
   return ok;
 }
 
-// ── WhatsApp ──
-function enviarWhatsApp() {
+function enviarTudo() {
   if (!validar()) return;
-  const num = '5522996139293'; // WhatsApp Valéria Lampes
+
   const texto = coletarDados();
-  const url = `https://wa.me/${num}?text=${encodeURIComponent(texto)}`;
+
+  // 1º — Abre WhatsApp imediatamente
+  const num = '5522996139293';
+  const urlWpp = `https://wa.me/${num}?text=${encodeURIComponent(texto)}`;
+  window.open(urlWpp, '_blank');
+
+  // 2º — Abre email após 3 segundos
+  setTimeout(() => {
+    const destEmail = 'crispoparte@gmail.com';
+    const assunto = encodeURIComponent('Anamnese Valéria — Novo Formulário');
+    const corpo = encodeURIComponent(texto);
+    const urlEmail = `mailto:${destEmail}?subject=${assunto}&body=${corpo}`;
+    window.location.href = urlEmail;
+  }, 3000);
+}
+</script>
+</body>
+</html>
