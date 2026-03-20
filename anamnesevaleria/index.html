@@ -415,7 +415,7 @@
 <body>
 
 <div id="cabecalho">
-  <img id="header-img" src="minha-arte.jpg" onerror="this.style.display='none'" alt="Cabeçalho Anamnese Valéria" style="display:block;width:100%;height:100%;object-fit:cover;">
+  <img id="header-img" src="minha-arte1.jpg" onerror="this.style.display='none'" alt="Cabeçalho Anamnese Valéria" style="display:block;width:100%;height:100%;object-fit:cover;">
   <div class="placeholder-msg" id="header-placeholder" style="display:none;">
     <h1>ANAMNESE</h1>
     <p>Avaliação Psicopedagógica • Valéria</p>
@@ -1507,24 +1507,54 @@ function validar() {
   return ok;
 }
 
-function enviarTudo() {
+async function enviarFormspree(texto) {
+  // ─── Formspree: troque o ID abaixo pelo seu após criar conta em formspree.io ───
+  const FORMSPREE_ID = 'xjgazyav'; // ID de teste — substitua pelo seu
+  const url = `https://formspree.io/f/${FORMSPREE_ID}`;
+
+  try {
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        _subject: 'Anamnese Valéria — Novo Formulário',
+        _replyto: 'crispoparte@gmail.com',
+        mensagem: texto
+      })
+    });
+    return resp.ok;
+  } catch (e) {
+    return false;
+  }
+}
+
+async function enviarTudo() {
   if (!validar()) return;
 
   const texto = coletarDados();
 
-  // 1º — Abre WhatsApp imediatamente
+  // Desabilita botão para evitar duplo envio
+  const btn = document.querySelector('.btn-send');
+  btn.disabled = true;
+  btn.innerHTML = '⏳ Enviando...';
+
+  // 1º — Envia silenciosamente por email via Formspree
+  const emailOk = await enviarFormspree(texto);
+
+  // 2º — Abre WhatsApp
   const num = '5522996139293';
   const urlWpp = `https://wa.me/${num}?text=${encodeURIComponent(texto)}`;
   window.open(urlWpp, '_blank');
 
-  // 2º — Abre email após 3 segundos
-  setTimeout(() => {
-    const destEmail = 'crispoparte@gmail.com';
-    const assunto = encodeURIComponent('Anamnese Valéria — Novo Formulário');
-    const corpo = encodeURIComponent(texto);
-    const urlEmail = `mailto:${destEmail}?subject=${assunto}&body=${corpo}`;
-    window.location.href = urlEmail;
-  }, 3000);
+  // Feedback ao usuário
+  if (emailOk) {
+    btn.innerHTML = '✅ Enviado com sucesso!';
+    btn.style.background = 'linear-gradient(135deg, #7356a0, #9b7bb0)';
+  } else {
+    btn.innerHTML = '⚠️ WhatsApp aberto — email falhou';
+    btn.style.background = '#e07b00';
+    btn.disabled = false;
+  }
 }
 </script>
 </body>
