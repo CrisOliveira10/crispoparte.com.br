@@ -91,7 +91,11 @@ Lei 9.610/98 – Direitos Autorais.
 <body>
 
 <div id="cabecalho">
-  <img id="header-img" src="minha-arte1.jpg" onerror="this.style.display='none'" alt="Cabeçalho Entrevista Escolar Valéria" style="display:block;width:100%;height:100%;object-fit:cover;">
+  <picture style="width:100%;height:100%;display:block;">
+    <source media="(min-width: 601px)" srcset="minha-arte1.jpg">
+    <source media="(max-width: 600px)" srcset="minha-arte.jpg">
+    <img id="header-img" src="minha-arte1.jpg" alt="Cabeçalho Entrevista Escolar Valéria" style="display:block;width:100%;height:100%;object-fit:cover;">
+  </picture>
   <div class="placeholder-msg" id="header-placeholder" style="display:none;">
     <h1>ENTREVISTA ESCOLAR</h1>
     <p>Avaliação Psicopedagógica • Valéria</p>
