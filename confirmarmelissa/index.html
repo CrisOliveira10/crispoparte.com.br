@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<!--
+© 2026 Cristiane Oliveira
+Material exclusivo para alunos.
+Proibida reprodução, distribuição ou revenda.
+Lei 9.610/98 – Direitos Autorais.
+-->
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmação de Presença</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #fdfdfd;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        form {
+            background: white;
+            border-radius: 15px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+            padding-bottom: 30px;
+        }
+
+        .header-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        .container-campos {
+            padding: 0 30px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #666;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #128C7E;
+        }
+    </style>
+</head>
+
+<body>
+
+<form id="meuFormulario">
+    <img src="minha-arte.jpg" alt="Banner do Evento" class="header-image">
+
+    <div class="container-campos">
+        <h2>Confirmar Presença</h2>
+
+        <label for="nome">Seu Nome:</label>
+        <input type="text" id="nome" placeholder="Digite seu nome completo" required>
+
+        <label for="convidados">Nome dos acompanhantes:</label>
+        <input type="text" id="convidados" placeholder="Ex: Maria e João" required>
+
+        <label for="participa">Você poderá ir?</label>
+        <select id="participa" required>
+            <option value="">Selecione uma opção</option>
+            <option value="Sim, com certeza!">Sim, eu vou!</option>
+            <option value="Infelizmente não poderei">Não poderei ir</option>
+        </select>
+
+        <label for="qtd_adultos">Quantos adultos?</label>
+        <select id="qtd_adultos">
+            <option value="0">Nenhum</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4+">4 ou mais</option>
+        </select>
+
+        <label for="qtd_criancas">Quantas crianças?</label>
+        <select id="qtd_criancas">
+            <option value="0">Nenhuma</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4+">4 ou mais</option>
+        </select>
+
+        <label for="idade_criancas">Idade das crianças:</label>
+        <input type="text" id="idade_criancas" placeholder="Ex: 2 anos e 5 anos (se houver)">
+
+        <button type="button" onclick="enviarWhats()">Enviar para WhatsApp</button>
+    </div>
+</form>
+
+<script>
+function enviarWhats() {
+    let nome = document.getElementById("nome").value;
+    let convidados = document.getElementById("convidados").value;
+    let participa = document.getElementById("participa").value;
+    let adultos = document.getElementById("qtd_adultos").value;
+    let criancas = document.getElementById("qtd_criancas").value;
+    let idades = document.getElementById("idade_criancas").value; // Captura a idade
+
+    if(nome === "" || participa === "") {
+        alert("Por favor, preencha seu nome e se você vai participar.");
+        return;
+    }
+
+    // Adiciona a informação de idade apenas se o usuário preencher algo
+    let infoIdade = idades ? idades : "Não informado";
+
+    let mensagem = 
+`✨ *CONFIRMAÇÃO DE PRESENÇA* ✨
+
+👤 *Nome:* ${nome}
+🙌 *Vai participar?* ${participa}
+👥 *Acompanhantes:* ${convidados}
+👨‍👩‍👧‍👦 *Total de Adultos:* ${adultos}
+👶 *Total de Crianças:* ${criancas}
+🎂 *Idade das Crianças:* ${infoIdade}
+
+_Enviado via Formulário_`;
+
+    let numero = "5571993233142"; 
+    let url = "https://wa.me/" + numero + "?text=" + encodeURIComponent(mensagem);
+
+    window.open(url, '_blank');
+}
+</script>
+
+</body>
+</html>
