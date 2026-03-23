@@ -431,8 +431,9 @@
     }
 
     /* ── FADE IN ── */
-    .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
-    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    .fade-in { opacity: 1; transform: translateY(0); transition: opacity 0.8s ease, transform 0.8s ease; }
+    .js-loaded .fade-in { opacity: 0; transform: translateY(30px); }
+    .js-loaded .fade-in.visible { opacity: 1; transform: translateY(0); }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
@@ -545,7 +546,7 @@
       <!-- PRODUTO 1 -->
       <div class="produto-card fade-in">
         <div class="produto-img">
-          <img src="produto1.jpg" alt="Convite Clássico Floral"
+          <img src="imagens/produto1.jpg" alt="Convite Clássico Floral"
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="placeholder" style="display:none"><span>💌</span><p>foto em breve</p></div>
           <span class="produto-badge">Mais Pedido</span>
@@ -564,7 +565,7 @@
       <!-- PRODUTO 2 -->
       <div class="produto-card fade-in">
         <div class="produto-img">
-          <img src="produto2.jpg" alt="Jardim Encantado"
+          <img src="imagens/produto2.jpg" alt="Jardim Encantado"
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="placeholder" style="display:none"><span>🌸</span><p>foto em breve</p></div>
         </div>
@@ -582,7 +583,7 @@
       <!-- PRODUTO 3 -->
       <div class="produto-card fade-in">
         <div class="produto-img">
-          <img src="produto3.jpg" alt="Conquista Dourada"
+          <img src="imagens/produto3.jpg" alt="Conquista Dourada"
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="placeholder" style="display:none"><span>🎓</span><p>foto em breve</p></div>
           <span class="produto-badge" style="background:var(--teal);color:var(--dark);">Novo</span>
@@ -601,7 +602,7 @@
       <!-- PRODUTO 4 -->
       <div class="produto-card fade-in">
         <div class="produto-img">
-          <img src="produto4.jpg" alt="Festa em Cores"
+          <img src="imagens/produto4.jpg" alt="Festa em Cores"
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="placeholder" style="display:none"><span>🎂</span><p>foto em breve</p></div>
         </div>
@@ -619,7 +620,7 @@
       <!-- PRODUTO 5 -->
       <div class="produto-card fade-in">
         <div class="produto-img">
-          <img src="produto5.jpg" alt="Amor Eterno"
+          <img src="imagens/produto5.jpg" alt="Amor Eterno"
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="placeholder" style="display:none"><span>💛</span><p>foto em breve</p></div>
         </div>
@@ -637,7 +638,7 @@
       <!-- PRODUTO 6 -->
       <div class="produto-card fade-in">
         <div class="produto-img">
-          <img src="produto6.jpg" alt="Céu Estrelado"
+          <img src="imagens/produto6.jpg" alt="Céu Estrelado"
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="placeholder" style="display:none"><span>👶</span><p>foto em breve</p></div>
           <span class="produto-badge">Popular</span>
@@ -658,7 +659,7 @@
 
       <div class="produto-card fade-in">
         <div class="produto-img">
-          <img src="produto7.jpg" alt="Nome do Produto"
+          <img src="imagens/produto7.jpg" alt="Nome do Produto"
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="placeholder" style="display:none"><span>💌</span><p>foto em breve</p></div>
         </div>
@@ -773,6 +774,7 @@
     });
 
     // Fade in ao rolar
+    document.body.classList.add('js-loaded');
     const observer = new IntersectionObserver(entries => {
       entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
     }, { threshold: 0.08 });
@@ -805,6 +807,11 @@
         const res  = await fetch(url);
         const data = await res.json();
 
+        if (data.error) {
+          status.innerHTML = '⚠️ Erro da API (' + data.error.code + '): ' + data.error.message;
+          return;
+        }
+
         if (!data.items || data.items.length === 0) {
           status.textContent = '😕 Nenhum vídeo encontrado para "' + termo + '". Tente outro tema!';
           return;
@@ -834,4 +841,10 @@
         });
 
       } catch (err) {
-        status.
+        status.innerHTML = '⚠️ Erro: ' + err.message;
+        console.error(err);
+      }
+    }
+  </script>
+</body>
+</html>
