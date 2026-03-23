@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cris Pop Arte — Convites Personalizados</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --cream: #f8f4ff;
+      --blush: #e8d5f5;
+      --rose: #b44fc8;
+      --terracota: #8a3aaa;
+      --dark: #1a1030;
+      --muted: #7a6090;
+      --white: #ffffff;
+      --teal: #1ec8b0;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Jost', sans-serif;
+      background: var(--cream);
+      color: var(--dark);
+      overflow-x: hidden;
+    }
+
+    /* ── CURSOR ── */
+    body { cursor: none; }
+    #cursor {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--rose); position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9999;
+      transition: transform 0.15s ease; mix-blend-mode: multiply;
+    }
+    #cursor-ring {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid var(--rose); position: fixed; top: 0; left: 0;
+      pointer-events: none; z-index: 9998;
+      transition: transform 0.4s ease; opacity: 0.5;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 4rem;
+      background: rgba(248,244,255,0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(180,79,200,0.12);
+    }
+    .nav-logo img { height: 52px; width: auto; display: block; }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.78rem; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--muted);
+      text-decoration: none; transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--rose); }
+    .nav-cta {
+      background: var(--rose); color: var(--white) !important;
+      padding: 0.5rem 1.4rem; border-radius: 2px;
+    }
+    .nav-cta:hover { background: var(--terracota); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh; display: grid;
+      grid-template-columns: 1fr 1fr; padding-top: 74px;
+    }
+    .hero-text {
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 5rem 4rem 4rem 6rem;
+    }
+    .hero-tag {
+      font-size: 0.72rem; letter-spacing: 0.3em;
+      text-transform: uppercase; color: var(--rose); margin-bottom: 1.5rem;
+    }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 5vw, 5rem);
+      font-weight: 300; line-height: 1.05;
+      color: var(--dark); margin-bottom: 2rem;
+    }
+    .hero-title em { font-style: italic; color: var(--rose); }
+    .hero-desc {
+      font-size: 0.95rem; line-height: 1.8;
+      color: var(--muted); max-width: 420px; margin-bottom: 3rem;
+    }
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--dark); color: var(--white);
+      padding: 0.9rem 2.2rem; font-size: 0.8rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      text-decoration: none; border: none; cursor: none;
+      transition: background 0.3s; display: inline-block;
+    }
+    .btn-primary:hover { background: var(--rose); }
+    .btn-outline {
+      border: 1px solid var(--dark); color: var(--dark);
+      padding: 0.9rem 2.2rem; font-size: 0.8rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      text-decoration: none; cursor: none;
+      transition: all 0.3s; display: inline-block;
+    }
+    .btn-outline:hover { background: var(--dark); color: var(--white); }
+
+    .hero-visual {
+      position: relative; background: var(--blush); overflow: hidden;
+    }
+    .hero-visual::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 60% 40%, rgba(30,200,176,0.15) 0%, transparent 70%);
+    }
+    .hero-deco {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hero-deco svg { width: 80%; max-width: 460px; opacity: 0.3; }
+    .hero-card {
+      position: absolute; background: var(--white); border-radius: 3px;
+      padding: 1.8rem 1.5rem;
+      box-shadow: 0 20px 60px rgba(26,16,48,0.15);
+      text-align: center; animation: floatCard 5s ease-in-out infinite;
+    }
+    .hero-card-1 { width: 190px; bottom: 15%; left: 8%; }
+    .hero-card-2 { width: 175px; top: 18%; right: 7%; animation-delay: -2.5s; }
+    @keyframes floatCard {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+    .card-label {
+      font-size: 0.62rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--rose); margin-bottom: 0.4rem;
+    }
+    .card-title-sm {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem; color: var(--dark); margin-bottom: 0.3rem;
+    }
+    .card-price { font-size: 0.8rem; color: var(--muted); }
+    .card-icon { font-size: 2rem; margin-bottom: 0.7rem; }
+
+    /* ── SECTION HEADER ── */
+    .section-header { text-align: center; padding: 5rem 2rem 3rem; }
+    .section-tag {
+      font-size: 0.7rem; letter-spacing: 0.3em;
+      text-transform: uppercase; color: var(--rose); margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 4vw, 3.5rem);
+      font-weight: 300; color: var(--dark);
+    }
+    .section-title em { font-style: italic; color: var(--rose); }
+
+    /* ── CATEGORIAS ── */
+    .categorias {
+      display: flex; justify-content: center;
+      gap: 0.8rem; flex-wrap: wrap; padding: 0 2rem 4rem;
+    }
+    .cat-btn {
+      padding: 0.55rem 1.6rem; border: 1px solid var(--blush);
+      background: transparent; font-family: 'Jost', sans-serif;
+      font-size: 0.78rem; letter-spacing: 0.1em;
+      color: var(--muted); cursor: none;
+      transition: all 0.3s; border-radius: 100px;
+    }
+    .cat-btn:hover, .cat-btn.active {
+      background: var(--rose); border-color: var(--rose); color: var(--white);
+    }
+
+    /* ── GRID PRODUTOS ── */
+    .produtos {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 2rem; padding: 0 4rem 6rem;
+      max-width: 1300px; margin: 0 auto;
+    }
+    .produto-card {
+      background: var(--white); border-radius: 4px; overflow: hidden;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+      position: relative;
+    }
+    .produto-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 24px 60px rgba(26,16,48,0.13);
+    }
+
+    /* Proporção 9:16 para as fotos dos convites */
+    .produto-img {
+      position: relative; width: 100%;
+      padding-bottom: 177.78%; /* 9:16 */
+      background: var(--blush); overflow: hidden;
+    }
+    .produto-img img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+      transition: transform 0.5s ease;
+    }
+    .produto-card:hover .produto-img img { transform: scale(1.04); }
+
+    /* Aparece quando a foto ainda não foi adicionada */
+    .produto-img .placeholder {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 0.8rem; color: var(--muted);
+    }
+    .produto-img .placeholder span { font-size: 3.5rem; }
+    .produto-img .placeholder p {
+      font-size: 0.72rem; letter-spacing: 0.1em;
+      text-transform: uppercase; opacity: 0.6;
+    }
+
+    .produto-badge {
+      position: absolute; top: 1rem; left: 1rem;
+      background: var(--rose); color: var(--white);
+      font-size: 0.62rem; letter-spacing: 0.15em;
+      text-transform: uppercase; padding: 0.3rem 0.8rem;
+      border-radius: 100px; z-index: 1;
+    }
+    .produto-info { padding: 1.4rem; }
+    .produto-categoria {
+      font-size: 0.68rem; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--rose); margin-bottom: 0.4rem;
+    }
+    .produto-nome {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem; font-weight: 400;
+      color: var(--dark); margin-bottom: 0.5rem;
+    }
+    .produto-desc {
+      font-size: 0.82rem; color: var(--muted);
+      line-height: 1.6; margin-bottom: 1.2rem;
+    }
+    .produto-footer {
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .produto-preco {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.35rem; font-weight: 600; color: var(--dark);
+    }
+    .produto-preco small {
+      font-family: 'Jost', sans-serif;
+      font-size: 0.68rem; color: var(--muted); font-weight: 300;
+    }
+    .btn-wpp {
+      background: #25D366; color: var(--white); border: none;
+      padding: 0.6rem 1.1rem; font-size: 0.75rem;
+      letter-spacing: 0.08em; cursor: none; border-radius: 2px;
+      text-decoration: none; transition: background 0.3s;
+      display: flex; align-items: center; gap: 0.4rem;
+      font-family: 'Jost', sans-serif;
+    }
+    .btn-wpp:hover { background: #128C7E; }
+
+    /* ── BANNER ── */
+    .banner {
+      background: var(--dark); color: var(--white);
+      display: grid; grid-template-columns: 1fr 1fr;
+      min-height: 360px; margin: 2rem 0;
+    }
+    .banner-text {
+      padding: 5rem 5rem 5rem 6rem;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .banner-tag {
+      font-size: 0.7rem; letter-spacing: 0.3em;
+      text-transform: uppercase; color: var(--teal); margin-bottom: 1.2rem;
+    }
+    .banner-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-weight: 300; line-height: 1.15; margin-bottom: 1.5rem;
+    }
+    .banner-title em { font-style: italic; color: var(--teal); }
+    .banner-desc {
+      font-size: 0.88rem; color: rgba(255,255,255,0.6);
+      line-height: 1.8; margin-bottom: 2rem;
+    }
+    .btn-teal {
+      background: var(--teal); color: var(--dark);
+      padding: 0.9rem 2rem; font-size: 0.78rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      text-decoration: none; cursor: none;
+      display: inline-block; transition: opacity 0.3s; width: fit-content;
+    }
+    .btn-teal:hover { opacity: 0.85; }
+    .banner-deco {
+      background: var(--rose);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 8rem; position: relative; overflow: hidden;
+    }
+    .banner-deco::before {
+      content: '✉'; position: absolute;
+      font-size: 18rem; opacity: 0.08; transform: rotate(-15deg);
+    }
+
+    /* ── DEPOIMENTOS ── */
+    .depoimentos-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem; padding: 0 4rem 6rem;
+      max-width: 1200px; margin: 0 auto;
+    }
+    .dep-card {
+      background: var(--white); border: 1px solid rgba(180,79,200,0.12);
+      padding: 2rem; border-radius: 3px; position: relative;
+    }
+    .dep-stars { color: var(--teal); font-size: 0.85rem; letter-spacing: 0.1em; margin-bottom: 1rem; }
+    .dep-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem; font-style: italic;
+      line-height: 1.7; color: var(--dark); margin-bottom: 1.2rem;
+    }
+    .dep-author { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+    .dep-quote {
+      position: absolute; top: 1.5rem; right: 1.5rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3rem; color: var(--blush); line-height: 1;
+    }
+
+    /* ── WPP FLOAT ── */
+    .wpp-float {
+      position: fixed; bottom: 2rem; right: 2rem;
+      background: #25D366; color: var(--white);
+      width: 58px; height: 58px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; text-decoration: none;
+      box-shadow: 0 8px 28px rgba(37,211,102,0.4);
+      z-index: 500; transition: transform 0.3s; cursor: none;
+    }
+    .wpp-float:hover { transform: scale(1.12); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--dark); color: rgba(255,255,255,0.5);
+      text-align: center; padding: 3rem 2rem;
+      font-size: 0.8rem; letter-spacing: 0.05em;
+    }
+    footer strong {
+      color: var(--teal); font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; font-weight: 400;
+    }
+    .footer-links {
+      display: flex; justify-content: center; gap: 2rem;
+      margin: 1.5rem 0; list-style: none;
+    }
+    .footer-links a {
+      color: rgba(255,255,255,0.4); text-decoration: none;
+      font-size: 0.75rem; letter-spacing: 0.1em;
+      text-transform: uppercase; transition: color 0.3s;
+    }
+    .footer-links a:hover { color: var(--teal); }
+
+    /* ── BUSCA DE VÍDEOS ── */
+    .busca-section {
+      background: var(--dark); padding: 5rem 2rem;
+      text-align: center;
+    }
+    .busca-section .section-tag { color: var(--teal); }
+    .busca-section .section-title { color: var(--white); }
+    .busca-section .section-title em { color: var(--teal); }
+
+    .busca-box {
+      display: flex; gap: 0; max-width: 580px;
+      margin: 2.5rem auto 0; border-radius: 3px; overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    .busca-input {
+      flex: 1; padding: 1rem 1.4rem;
+      font-family: 'Jost', sans-serif; font-size: 0.95rem;
+      border: none; outline: none;
+      background: var(--white); color: var(--dark);
+    }
+    .busca-input::placeholder { color: var(--muted); }
+    .busca-btn {
+      background: var(--teal); color: var(--dark);
+      border: none; padding: 1rem 1.6rem;
+      font-family: 'Jost', sans-serif; font-size: 0.82rem;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      cursor: none; transition: opacity 0.3s; white-space: nowrap;
+    }
+    .busca-btn:hover { opacity: 0.85; }
+
+    .busca-status {
+      margin-top: 1.5rem; font-size: 0.85rem;
+      color: rgba(255,255,255,0.5); min-height: 1.5rem;
+    }
+
+    .videos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.5rem; max-width: 1100px;
+      margin: 2rem auto 0; padding: 0 2rem;
+      text-align: left;
+    }
+    .video-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(180,79,200,0.2);
+      border-radius: 4px; overflow: hidden;
+      transition: transform 0.3s, border-color 0.3s;
+      text-decoration: none;
+    }
+    .video-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--rose);
+    }
+    .video-thumb {
+      width: 100%; aspect-ratio: 16/9;
+      object-fit: cover; display: block;
+    }
+    .video-info { padding: 0.9rem 1rem; }
+    .video-titulo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem; color: var(--white);
+      line-height: 1.4; margin-bottom: 0.3rem;
+      display: -webkit-box; -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .video-canal {
+      font-size: 0.72rem; color: var(--teal);
+      letter-spacing: 0.08em; text-transform: uppercase;
+    }
+    .video-assistir {
+      display: inline-block; margin-top: 0.6rem;
+      font-size: 0.72rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--rose);
+    }
+
+    /* ── FADE IN ── */
+    .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      .hero { grid-template-columns: 1fr; }
+      .hero-visual { display: none; }
+      .hero-text { padding: 5rem 1.5rem 3rem; }
+      .produtos { padding: 0 1.2rem 4rem; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+      .depoimentos-grid { grid-template-columns: 1fr; padding: 0 1.5rem 4rem; }
+      .banner { grid-template-columns: 1fr; }
+      .banner-deco { display: none; }
+      .banner-text { padding: 3rem 1.5rem; }
+    }
+    @media (max-width: 480px) {
+      .produtos { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">
+      <img src="logo.png" alt="Cris Pop Arte">
+    </a>
+    <ul class="nav-links">
+      <li><a href="#produtos">Produtos</a></li>
+      <li><a href="#depoimentos">Avaliações</a></li>
+      <li><a href="#buscar">Buscar Vídeo</a></li>
+      <li><a href="https://wa.me/5571993233142" class="nav-cta">Encomendar</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-text">
+      <p class="hero-tag">✦ Papelaria personalizada com amor</p>
+      <h1 class="hero-title">
+        Cada convite,<br>
+        uma <em>história</em><br>
+        a contar.
+      </h1>
+      <p class="hero-desc">
+        Criamos convites únicos para os momentos mais especiais da sua vida.
+        Do casamento ao aniversário, cada peça é feita com carinho e atenção aos detalhes.
+      </p>
+      <div class="hero-btns">
+        <a href="https://www.youtube.com/playlist?list=PL6tR3NMsh7aJf7fj0ggpP5Ydi7VyZbmvF" target="_blank" class="btn-primary">Ver Coleção</a>
+        <a href="https://wa.me/5571993233142" class="btn-outline">Falar no WhatsApp</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-deco">
+        <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="200" cy="200" r="150" fill="none" stroke="#b44fc8" stroke-width="0.5"/>
+          <circle cx="200" cy="200" r="100" fill="none" stroke="#b44fc8" stroke-width="0.5"/>
+          <circle cx="200" cy="200" r="50"  fill="none" stroke="#b44fc8" stroke-width="0.5"/>
+          <g stroke="#b44fc8" stroke-width="0.8" fill="none">
+            <ellipse cx="200" cy="80"  rx="18" ry="35" fill="rgba(180,79,200,0.25)"/>
+            <ellipse cx="200" cy="320" rx="18" ry="35" fill="rgba(180,79,200,0.25)"/>
+            <ellipse cx="80"  cy="200" rx="35" ry="18" fill="rgba(180,79,200,0.25)"/>
+            <ellipse cx="320" cy="200" rx="35" ry="18" fill="rgba(180,79,200,0.25)"/>
+            <ellipse cx="120" cy="120" rx="18" ry="35" transform="rotate(45 120 120)"  fill="rgba(180,79,200,0.15)"/>
+            <ellipse cx="280" cy="280" rx="18" ry="35" transform="rotate(45 280 280)"  fill="rgba(180,79,200,0.15)"/>
+            <ellipse cx="280" cy="120" rx="18" ry="35" transform="rotate(-45 280 120)" fill="rgba(180,79,200,0.15)"/>
+            <ellipse cx="120" cy="280" rx="18" ry="35" transform="rotate(-45 120 280)" fill="rgba(180,79,200,0.15)"/>
+          </g>
+          <circle cx="200" cy="200" r="22" fill="rgba(180,79,200,0.4)" stroke="#b44fc8" stroke-width="1"/>
+          <circle cx="200" cy="200" r="10" fill="#b44fc8"/>
+        </svg>
+      </div>
+      <div class="hero-card hero-card-1">
+        <div class="card-icon">💌</div>
+        <div class="card-label">Mais Pedido</div>
+        <div class="card-title-sm">Casamento Clássico</div>
+        <div class="card-price">A partir de R$ 3,50/un</div>
+      </div>
+      <div class="hero-card hero-card-2">
+        <div class="card-icon">🌸</div>
+        <div class="card-label">Novo</div>
+        <div class="card-title-sm">Jardim Romântico</div>
+        <div class="card-price">A partir de R$ 4,20/un</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUTOS -->
+  <section id="produtos">
+    <div class="section-header fade-in">
+      <p class="section-tag">✦ Nossa Coleção</p>
+      <h2 class="section-title">Peças que <em>encantam</em></h2>
+    </div>
+
+    <div class="categorias fade-in">
+      <button class="cat-btn active">Todos</button>
+      <button class="cat-btn">Casamento</button>
+      <button class="cat-btn">Aniversário</button>
+      <button class="cat-btn">Chá de Bebê</button>
+      <button class="cat-btn">Formatura</button>
+      <button class="cat-btn">Bodas</button>
+    </div>
+
+    <!--
+    ╔═════════════════════════════════════════════════════════════╗
+    ║  💡 COMO ADICIONAR UM NOVO PRODUTO                          ║
+    ║                                                             ║
+    ║  1. Copie o bloco de comentário "MODELO" no final           ║
+    ║  2. Remova os <!-- e --> do bloco copiado                   ║
+    ║  3. Troque "produto7.jpg" pelo nome da sua foto             ║
+    ║  4. Atualize: categoria, nome, descrição e preço            ║
+    ║  5. Suba a foto na pasta /imagens/ do GitHub                ║
+    ╚═════════════════════════════════════════════════════════════╝
+    -->
+    <div class="produtos">
+
+      <!-- PRODUTO 1 -->
+      <div class="produto-card fade-in">
+        <div class="produto-img">
+          <img src="imagens/produto1.jpg" alt="Convite Clássico Floral"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="placeholder" style="display:none"><span>💌</span><p>foto em breve</p></div>
+          <span class="produto-badge">Mais Pedido</span>
+        </div>
+        <div class="produto-info">
+          <p class="produto-categoria">Casamento</p>
+          <h3 class="produto-nome">Convite Clássico Floral</h3>
+          <p class="produto-desc">Papel perolado 300g com impressão offset e envelope kraft personalizado.</p>
+          <div class="produto-footer">
+            <div class="produto-preco">R$ 3,50 <small>/unidade</small></div>
+            <a href="https://wa.me/5571993233142?text=Olá Cris! Tenho interesse no Convite Clássico Floral." class="btn-wpp">💬 Pedir</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRODUTO 2 -->
+      <div class="produto-card fade-in">
+        <div class="produto-img">
+          <img src="imagens/produto2.jpg" alt="Jardim Encantado"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="placeholder" style="display:none"><span>🌸</span><p>foto em breve</p></div>
+        </div>
+        <div class="produto-info">
+          <p class="produto-categoria">Chá de Bebê</p>
+          <h3 class="produto-nome">Jardim Encantado</h3>
+          <p class="produto-desc">Design aquarelado com flores delicadas. Inclui laço de cetim.</p>
+          <div class="produto-footer">
+            <div class="produto-preco">R$ 4,20 <small>/unidade</small></div>
+            <a href="https://wa.me/5571993233142?text=Olá Cris! Tenho interesse no Convite Jardim Encantado." class="btn-wpp">💬 Pedir</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRODUTO 3 -->
+      <div class="produto-card fade-in">
+        <div class="produto-img">
+          <img src="imagens/produto3.jpg" alt="Conquista Dourada"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="placeholder" style="display:none"><span>🎓</span><p>foto em breve</p></div>
+          <span class="produto-badge" style="background:var(--teal);color:var(--dark);">Novo</span>
+        </div>
+        <div class="produto-info">
+          <p class="produto-categoria">Formatura</p>
+          <h3 class="produto-nome">Conquista Dourada</h3>
+          <p class="produto-desc">Hot stamping dourado sobre papel vergê. Sofisticado e elegante.</p>
+          <div class="produto-footer">
+            <div class="produto-preco">R$ 5,80 <small>/unidade</small></div>
+            <a href="https://wa.me/5571993233142?text=Olá Cris! Tenho interesse no Convite Conquista Dourada." class="btn-wpp">💬 Pedir</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRODUTO 4 -->
+      <div class="produto-card fade-in">
+        <div class="produto-img">
+          <img src="imagens/produto4.jpg" alt="Festa em Cores"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="placeholder" style="display:none"><span>🎂</span><p>foto em breve</p></div>
+        </div>
+        <div class="produto-info">
+          <p class="produto-categoria">Aniversário</p>
+          <h3 class="produto-nome">Festa em Cores</h3>
+          <p class="produto-desc">Colorido, alegre e personalizado com nome e foto. Ideal para festas infantis.</p>
+          <div class="produto-footer">
+            <div class="produto-preco">R$ 2,90 <small>/unidade</small></div>
+            <a href="https://wa.me/5571993233142?text=Olá Cris! Tenho interesse no Convite Festa em Cores." class="btn-wpp">💬 Pedir</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRODUTO 5 -->
+      <div class="produto-card fade-in">
+        <div class="produto-img">
+          <img src="imagens/produto5.jpg" alt="Amor Eterno"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="placeholder" style="display:none"><span>💛</span><p>foto em breve</p></div>
+        </div>
+        <div class="produto-info">
+          <p class="produto-categoria">Bodas</p>
+          <h3 class="produto-nome">Amor Eterno</h3>
+          <p class="produto-desc">Para celebrar anos de amor. Arte exclusiva em pergaminho texturizado.</p>
+          <div class="produto-footer">
+            <div class="produto-preco">R$ 6,50 <small>/unidade</small></div>
+            <a href="https://wa.me/5571993233142?text=Olá Cris! Tenho interesse no Convite Amor Eterno." class="btn-wpp">💬 Pedir</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRODUTO 6 -->
+      <div class="produto-card fade-in">
+        <div class="produto-img">
+          <img src="imagens/produto6.jpg" alt="Céu Estrelado"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="placeholder" style="display:none"><span>👶</span><p>foto em breve</p></div>
+          <span class="produto-badge">Popular</span>
+        </div>
+        <div class="produto-info">
+          <p class="produto-categoria">Chá de Bebê</p>
+          <h3 class="produto-nome">Céu Estrelado</h3>
+          <p class="produto-desc">Azul bebê com estrelinhas douradas. Fofo e delicado para receber o novo amor.</p>
+          <div class="produto-footer">
+            <div class="produto-preco">R$ 3,80 <small>/unidade</small></div>
+            <a href="https://wa.me/5571993233142?text=Olá Cris! Tenho interesse no Convite Céu Estrelado." class="btn-wpp">💬 Pedir</a>
+          </div>
+        </div>
+      </div>
+
+      <!--
+      MODELO PARA NOVO PRODUTO — copie daqui até o fim do comentário e remova as marcações de comentário:
+
+      <div class="produto-card fade-in">
+        <div class="produto-img">
+          <img src="imagens/produto7.jpg" alt="Nome do Produto"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="placeholder" style="display:none"><span>💌</span><p>foto em breve</p></div>
+        </div>
+        <div class="produto-info">
+          <p class="produto-categoria">Categoria</p>
+          <h3 class="produto-nome">Nome do Produto</h3>
+          <p class="produto-desc">Descrição do produto aqui.</p>
+          <div class="produto-footer">
+            <div class="produto-preco">R$ 0,00 <small>/unidade</small></div>
+            <a href="https://wa.me/5571993233142?text=Olá Cris! Tenho interesse no Nome do Produto." class="btn-wpp">💬 Pedir</a>
+          </div>
+        </div>
+      </div>
+      -->
+
+    </div>
+  </section>
+
+  <!-- BANNER -->
+  <section class="banner fade-in">
+    <div class="banner-text">
+      <p class="banner-tag">✦ Personalização Total</p>
+      <h2 class="banner-title">
+        Seu convite,<br>
+        do jeito que você <em>sonhou</em>
+      </h2>
+      <p class="banner-desc">
+        Trabalhamos com arte exclusiva criada especialmente para você.
+        Envie suas referências e cores favoritas — a Cris transforma em papelaria inesquecível.
+      </p>
+      <a href="https://wa.me/5571993233142?text=Olá Cris! Quero um convite personalizado." class="btn-teal">Solicitar orçamento</a>
+    </div>
+    <div class="banner-deco">💌</div>
+  </section>
+
+  <!-- DEPOIMENTOS -->
+  <section id="depoimentos">
+    <div class="section-header fade-in">
+      <p class="section-tag">✦ Avaliações</p>
+      <h2 class="section-title">O que nossas <em>clientes</em> dizem</h2>
+    </div>
+    <div class="depoimentos-grid">
+      <div class="dep-card fade-in">
+        <div class="dep-quote">"</div>
+        <div class="dep-stars">★★★★★</div>
+        <p class="dep-text">Os convites do meu casamento ficaram lindíssimos! Todos os convidados elogiaram muito. Qualidade impecável e entrega no prazo.</p>
+        <p class="dep-author">Ana Clara M. — Casamento</p>
+      </div>
+      <div class="dep-card fade-in">
+        <div class="dep-quote">"</div>
+        <div class="dep-stars">★★★★★</div>
+        <p class="dep-text">Encomendei para o chá de bebê da minha filha e superou todas as expectativas. Atendimento carinhoso e produto de altíssima qualidade.</p>
+        <p class="dep-author">Juliana F. — Chá de Bebê</p>
+      </div>
+      <div class="dep-card fade-in">
+        <div class="dep-quote">"</div>
+        <div class="dep-stars">★★★★★</div>
+        <p class="dep-text">Atenção aos detalhes incrível! Pedi personalizado para a formatura e ficou exatamente como eu imaginei. Super recomendo!</p>
+        <p class="dep-author">Mariana S. — Formatura</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUSCA DE VÍDEOS -->
+  <section class="busca-section" id="buscar">
+    <div class="section-header" style="padding-top:0; padding-bottom:0;">
+      <p class="section-tag">✦ Encontre seu convite</p>
+      <h2 class="section-title">Buscar nos meus <em>vídeos</em></h2>
+    </div>
+    <p style="color:rgba(255,255,255,0.5); font-size:0.9rem; margin-top:1rem;">
+      Digite o tema e encontre o convite certo no meu canal do YouTube
+    </p>
+    <div class="busca-box">
+      <input class="busca-input" id="buscaInput" type="text"
+             placeholder="Ex: Mundo Bita, Frozen, Dinossauro...">
+      <button class="busca-btn" onclick="buscarVideos()">🔍 Buscar</button>
+    </div>
+    <p class="busca-status" id="buscaStatus"></p>
+    <div class="videos-grid" id="videosGrid"></div>
+  </section>
+
+    <!-- WPP FLOAT -->
+  <a href="https://wa.me/5571993233142" class="wpp-float" title="Falar no WhatsApp">💬</a>
+
+  <!-- FOOTER -->
+  <footer>
+    <strong>Cris Pop Arte</strong>
+    <ul class="footer-links">
+      <li><a href="#produtos">Coleção</a></li>
+      <li><a href="https://wa.me/5571993233142">WhatsApp</a></li>
+      <li><a href="https://www.instagram.com/crisoliveiraconvitestop10/" target="_blank">Instagram</a></li>
+      <li><a href="mailto:crispoparte@gmail.com">E-mail</a></li>
+    </ul>
+    <p>© 2025 Cris Oliveira — Cris Pop Arte · Feito com 💜 para momentos especiais</p>
+  </footer>
+
+  <script>
+    // Cursor personalizado
+    const cursor = document.getElementById('cursor');
+    const ring   = document.getElementById('cursor-ring');
+    document.addEventListener('mousemove', e => {
+      cursor.style.transform = `translate(${e.clientX - 5}px, ${e.clientY - 5}px)`;
+      ring.style.transform   = `translate(${e.clientX - 18}px, ${e.clientY - 18}px)`;
+    });
+
+    // Filtro de categorias
+    document.querySelectorAll('.cat-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+
+    // Fade in ao rolar
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // ── BUSCA DE VÍDEOS NO YOUTUBE ──
+    const API_KEY    = 'AIzaSyClkbu4d1C5ft0UcasVStpupzb5kmgXp_Q';
+    const CHANNEL_ID = 'UC8Fn0m_tXJOxDtWbZZNvIZA';
+
+    // Permite buscar pressionando Enter
+    document.getElementById('buscaInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') buscarVideos();
+    });
+
+    async function buscarVideos() {
+      const termo = document.getElementById('buscaInput').value.trim();
+      const status = document.getElementById('buscaStatus');
+      const grid   = document.getElementById('videosGrid');
+
+      if (!termo) {
+        status.textContent = 'Digite algo para buscar 😊';
+        return;
+      }
+
+      status.textContent = '🔍 Buscando nos vídeos da Cris...';
+      grid.innerHTML = '';
+
+      try {
+        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&q=${encodeURIComponent(termo)}&type=video&maxResults=8&key=${API_KEY}`;
+        const res  = await fetch(url);
+        const data = await res.json();
+
+        if (!data.items || data.items.length === 0) {
+          status.textContent = '😕 Nenhum vídeo encontrado para "' + termo + '". Tente outro tema!';
+          return;
+        }
+
+        status.textContent = `✨ ${data.items.length} vídeo(s) encontrado(s) para "${termo}"`;
+
+        data.items.forEach(item => {
+          const vid   = item.id.videoId;
+          const title = item.snippet.title;
+          const thumb = item.snippet.thumbnails.medium.url;
+
+          const card = document.createElement('a');
+          card.className = 'video-card';
+          card.href      = `https://www.youtube.com/watch?v=${vid}`;
+          card.target    = '_blank';
+          card.rel       = 'noopener noreferrer';
+          card.innerHTML = `
+            <img class="video-thumb" src="${thumb}" alt="${title}">
+            <div class="video-info">
+              <p class="video-titulo">${title}</p>
+              <p class="video-canal">Cris Pop Arte</p>
+              <span class="video-assistir">▶ Assistir no YouTube</span>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+
+      } catch (err) {
+        status.textContent = '⚠️ Erro ao buscar. Verifique sua conexão e tente novamente.';
+        console.error(err);
+      }
+    }
+  </script>
+</body>
+</html>
