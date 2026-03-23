@@ -539,23 +539,13 @@
       <button class="cat-btn">Bodas</button>
     </div>
 
-    <!--
-    ╔═════════════════════════════════════════════════════════════╗
-    ║  💡 COMO ADICIONAR UM NOVO PRODUTO                          ║
-    ║                                                             ║
-    ║  1. Copie o bloco de comentário "MODELO" no final           ║
-    ║  2. Remova os <!-- e --> do bloco copiado                   ║
-    ║  3. Troque "produto7.jpg" pelo nome da sua foto             ║
-    ║  4. Atualize: categoria, nome, descrição e preço            ║
-    ║  5. Suba a foto na pasta /imagens/ do GitHub                ║
-    ╚═════════════════════════════════════════════════════════════╝
-    -->
+    <!-- Para adicionar produtos: copie um bloco produto-card, troque o nome da imagem e atualize os textos -->
     <div class="produtos">
 
       <!-- PRODUTO 1 -->
       <div class="produto-card fade-in">
         <div class="produto-img">
-          <img src="imagens/produto1.jpg" alt="Convite Clássico Floral"
+          <img src="produto1.jpg" alt="Convite Clássico Floral"
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="placeholder" style="display:none"><span>💌</span><p>foto em breve</p></div>
           <span class="produto-badge">Mais Pedido</span>
@@ -574,7 +564,7 @@
       <!-- PRODUTO 2 -->
       <div class="produto-card fade-in">
         <div class="produto-img">
-          <img src="imagens/produto2.jpg" alt="Jardim Encantado"
+          <img src="produto2.jpg" alt="Jardim Encantado"
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="placeholder" style="display:none"><span>🌸</span><p>foto em breve</p></div>
         </div>
@@ -592,7 +582,7 @@
       <!-- PRODUTO 3 -->
       <div class="produto-card fade-in">
         <div class="produto-img">
-          <img src="imagens/produto3.jpg" alt="Conquista Dourada"
+          <img src="produto3.jpg" alt="Conquista Dourada"
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="placeholder" style="display:none"><span>🎓</span><p>foto em breve</p></div>
           <span class="produto-badge" style="background:var(--teal);color:var(--dark);">Novo</span>
@@ -611,7 +601,7 @@
       <!-- PRODUTO 4 -->
       <div class="produto-card fade-in">
         <div class="produto-img">
-          <img src="imagens/produto4.jpg" alt="Festa em Cores"
+          <img src="produto4.jpg" alt="Festa em Cores"
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="placeholder" style="display:none"><span>🎂</span><p>foto em breve</p></div>
         </div>
@@ -629,7 +619,7 @@
       <!-- PRODUTO 5 -->
       <div class="produto-card fade-in">
         <div class="produto-img">
-          <img src="imagens/produto5.jpg" alt="Amor Eterno"
+          <img src="produto5.jpg" alt="Amor Eterno"
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="placeholder" style="display:none"><span>💛</span><p>foto em breve</p></div>
         </div>
@@ -647,7 +637,7 @@
       <!-- PRODUTO 6 -->
       <div class="produto-card fade-in">
         <div class="produto-img">
-          <img src="imagens/produto6.jpg" alt="Céu Estrelado"
+          <img src="produto6.jpg" alt="Céu Estrelado"
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="placeholder" style="display:none"><span>👶</span><p>foto em breve</p></div>
           <span class="produto-badge">Popular</span>
@@ -668,7 +658,7 @@
 
       <div class="produto-card fade-in">
         <div class="produto-img">
-          <img src="imagens/produto7.jpg" alt="Nome do Produto"
+          <img src="produto7.jpg" alt="Nome do Produto"
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="placeholder" style="display:none"><span>💌</span><p>foto em breve</p></div>
         </div>
@@ -760,12 +750,12 @@
       <li><a href="#produtos">Coleção</a></li>
       <li><a href="https://wa.me/5571993233142">WhatsApp</a></li>
       <li><a href="https://www.instagram.com/crisoliveiraconvitestop10/" target="_blank">Instagram</a></li>
-      <li><a href="mailto:crispoparte@gmail.com">E-mail</a></li>
+      <li><a href="/cdn-cgi/l/email-protection#9ffcedf6eceff0effeedebfadff8f2fef6f3b1fcf0f2">E-mail</a></li>
     </ul>
     <p>© 2025 Cris Oliveira — Cris Pop Arte · Feito com 💜 para momentos especiais</p>
   </footer>
 
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     // Cursor personalizado
     const cursor = document.getElementById('cursor');
     const ring   = document.getElementById('cursor-ring');
@@ -844,10 +834,4 @@
         });
 
       } catch (err) {
-        status.textContent = '⚠️ Erro ao buscar. Verifique sua conexão e tente novamente.';
-        console.error(err);
-      }
-    }
-  </script>
-</body>
-</html>
+        status.
