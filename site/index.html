@@ -215,6 +215,24 @@
       text-transform: uppercase; opacity: 0.6;
     }
 
+    /* Hotspot invisível sobre a imagem — abre o convite ao clicar */
+    .produto-link {
+      position: absolute; inset: 0;
+      z-index: 2; display: block;
+      cursor: pointer;
+    }
+    .produto-link::after {
+      content: '👁 Ver convite';
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: rgba(26,16,48,0.75);
+      color: var(--white); font-size: 0.75rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      text-align: center; padding: 0.7rem;
+      opacity: 0; transition: opacity 0.3s;
+      font-family: 'Jost', sans-serif;
+    }
+    .produto-img:hover .produto-link::after { opacity: 1; }
+
     .produto-badge {
       position: absolute; top: 1rem; left: 1rem;
       background: var(--rose); color: var(--white);
@@ -538,6 +556,8 @@
       <button class="cat-btn">Chá de Bebê</button>
       <button class="cat-btn">Formatura</button>
       <button class="cat-btn">Bodas</button>
+      <button class="cat-btn">Identidade Visual</button>
+      <button class="cat-btn">Logomarca</button>
     </div>
 
     <!-- Para adicionar produtos: copie um bloco produto-card, troque o nome da imagem e atualize os textos -->
@@ -549,6 +569,7 @@
           <img src="imagens/produto1.jpg" alt="Convite Clássico Floral"
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="placeholder" style="display:none"><span>💌</span><p>foto em breve</p></div>
+          <a class="produto-link" href="https://LINK-DO-CONVITE-1.com" target="_blank" rel="noopener noreferrer" title="Ver convite"></a>
           <span class="produto-badge">Mais Pedido</span>
         </div>
         <div class="produto-info">
@@ -568,6 +589,7 @@
           <img src="imagens/produto2.jpg" alt="Jardim Encantado"
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="placeholder" style="display:none"><span>🌸</span><p>foto em breve</p></div>
+          <a class="produto-link" href="https://LINK-DO-CONVITE-2.com" target="_blank" rel="noopener noreferrer" title="Ver convite"></a>
         </div>
         <div class="produto-info">
           <p class="produto-categoria">Chá de Bebê</p>
@@ -586,6 +608,7 @@
           <img src="imagens/produto3.jpg" alt="Conquista Dourada"
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="placeholder" style="display:none"><span>🎓</span><p>foto em breve</p></div>
+          <a class="produto-link" href="https://LINK-DO-CONVITE-3.com" target="_blank" rel="noopener noreferrer" title="Ver convite"></a>
           <span class="produto-badge" style="background:var(--teal);color:var(--dark);">Novo</span>
         </div>
         <div class="produto-info">
@@ -605,6 +628,7 @@
           <img src="imagens/produto4.jpg" alt="Festa em Cores"
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="placeholder" style="display:none"><span>🎂</span><p>foto em breve</p></div>
+          <a class="produto-link" href="https://LINK-DO-CONVITE-4.com" target="_blank" rel="noopener noreferrer" title="Ver convite"></a>
         </div>
         <div class="produto-info">
           <p class="produto-categoria">Aniversário</p>
@@ -623,6 +647,7 @@
           <img src="imagens/produto5.jpg" alt="Amor Eterno"
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="placeholder" style="display:none"><span>💛</span><p>foto em breve</p></div>
+          <a class="produto-link" href="https://LINK-DO-CONVITE-5.com" target="_blank" rel="noopener noreferrer" title="Ver convite"></a>
         </div>
         <div class="produto-info">
           <p class="produto-categoria">Bodas</p>
@@ -641,6 +666,7 @@
           <img src="imagens/produto6.jpg" alt="Céu Estrelado"
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="placeholder" style="display:none"><span>👶</span><p>foto em breve</p></div>
+          <a class="produto-link" href="https://LINK-DO-CONVITE-6.com" target="_blank" rel="noopener noreferrer" title="Ver convite"></a>
           <span class="produto-badge">Popular</span>
         </div>
         <div class="produto-info">
@@ -654,14 +680,55 @@
         </div>
       </div>
 
+      <!-- PRODUTO 7 -->
+      <div class="produto-card fade-in">
+        <div class="produto-img">
+          <img src="imagens/produto7.jpg" alt="Identidade Visual para Evento"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="placeholder" style="display:none"><span>🎨</span><p>foto em breve</p></div>
+          <a class="produto-link" href="https://LINK-DO-CONVITE-7.com" target="_blank" rel="noopener noreferrer" title="Ver convite"></a>
+          <span class="produto-badge" style="background:var(--teal);color:var(--dark);">Novo</span>
+        </div>
+        <div class="produto-info">
+          <p class="produto-categoria">Identidade Visual</p>
+          <h3 class="produto-nome">Id. Visual para Evento</h3>
+          <p class="produto-desc">Criação completa de identidade visual para o seu evento. Arte exclusiva e personalizada.</p>
+          <div class="produto-footer">
+            <div class="produto-preco">Sob consulta</div>
+            <a href="https://wa.me/5571993233142?text=Olá Cris! Tenho interesse na Identidade Visual para Evento." class="btn-wpp">💬 Pedir</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRODUTO 8 -->
+      <div class="produto-card fade-in">
+        <div class="produto-img">
+          <img src="imagens/produto8.jpg" alt="Logomarca e Id Visual"
+               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="placeholder" style="display:none"><span>✏️</span><p>foto em breve</p></div>
+          <a class="produto-link" href="https://LINK-DO-CONVITE-8.com" target="_blank" rel="noopener noreferrer" title="Ver convite"></a>
+          <span class="produto-badge" style="background:var(--teal);color:var(--dark);">Novo</span>
+        </div>
+        <div class="produto-info">
+          <p class="produto-categoria">Logomarca</p>
+          <h3 class="produto-nome">Logomarca + Id. Visual</h3>
+          <p class="produto-desc">Criação de logomarca profissional com identidade visual completa para sua marca.</p>
+          <div class="produto-footer">
+            <div class="produto-preco">Sob consulta</div>
+            <a href="https://wa.me/5571993233142?text=Olá Cris! Tenho interesse na Logomarca e Id. Visual." class="btn-wpp">💬 Pedir</a>
+          </div>
+        </div>
+      </div>
+
       <!--
-      MODELO PARA NOVO PRODUTO — copie daqui até o fim do comentário e remova as marcações de comentário:
+      MODELO PARA NOVO PRODUTO — copie o bloco abaixo e substitua os dados:
 
       <div class="produto-card fade-in">
         <div class="produto-img">
-          <img src="imagens/produto7.jpg" alt="Nome do Produto"
+          <img src="imagens/produto9.jpg" alt="Nome do Produto"
                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
           <div class="placeholder" style="display:none"><span>💌</span><p>foto em breve</p></div>
+          <a class="produto-link" href="https://SEU-LINK-AQUI.com" target="_blank" rel="noopener noreferrer" title="Ver convite"></a>
         </div>
         <div class="produto-info">
           <p class="produto-categoria">Categoria</p>
