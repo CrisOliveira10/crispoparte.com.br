@@ -118,7 +118,8 @@
       position: absolute; inset: 0;
       display: flex; align-items: center; justify-content: center;
     }
-    .hero-deco svg { width: 80%; max-width: 460px; opacity: 0.3; }
+
+    /* ── CARDS FLUTUANTES ── */
     .hero-card {
       position: absolute; background: var(--white); border-radius: 3px;
       padding: 1.8rem 1.5rem;
@@ -188,10 +189,9 @@
       box-shadow: 0 24px 60px rgba(26,16,48,0.13);
     }
 
-    /* Proporção 9:16 para as fotos dos convites */
     .produto-img {
       position: relative; width: 100%;
-      padding-bottom: 177.78%; /* 9:16 */
+      padding-bottom: 177.78%;
       background: var(--blush); overflow: hidden;
     }
     .produto-img img {
@@ -202,7 +202,6 @@
     }
     .produto-card:hover .produto-img img { transform: scale(1.04); }
 
-    /* Aparece quando a foto ainda não foi adicionada */
     .produto-img .placeholder {
       position: absolute; inset: 0;
       display: flex; flex-direction: column;
@@ -215,7 +214,6 @@
       text-transform: uppercase; opacity: 0.6;
     }
 
-    /* Hotspot invisível sobre a imagem — abre o convite ao clicar */
     .produto-link {
       position: absolute; inset: 0;
       z-index: 2; display: block;
@@ -509,23 +507,9 @@
     </div>
     <div class="hero-visual">
       <div class="hero-deco">
-        <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="200" cy="200" r="150" fill="none" stroke="#b44fc8" stroke-width="0.5"/>
-          <circle cx="200" cy="200" r="100" fill="none" stroke="#b44fc8" stroke-width="0.5"/>
-          <circle cx="200" cy="200" r="50"  fill="none" stroke="#b44fc8" stroke-width="0.5"/>
-          <g stroke="#b44fc8" stroke-width="0.8" fill="none">
-            <ellipse cx="200" cy="80"  rx="18" ry="35" fill="rgba(180,79,200,0.25)"/>
-            <ellipse cx="200" cy="320" rx="18" ry="35" fill="rgba(180,79,200,0.25)"/>
-            <ellipse cx="80"  cy="200" rx="35" ry="18" fill="rgba(180,79,200,0.25)"/>
-            <ellipse cx="320" cy="200" rx="35" ry="18" fill="rgba(180,79,200,0.25)"/>
-            <ellipse cx="120" cy="120" rx="18" ry="35" transform="rotate(45 120 120)"  fill="rgba(180,79,200,0.15)"/>
-            <ellipse cx="280" cy="280" rx="18" ry="35" transform="rotate(45 280 280)"  fill="rgba(180,79,200,0.15)"/>
-            <ellipse cx="280" cy="120" rx="18" ry="35" transform="rotate(-45 280 120)" fill="rgba(180,79,200,0.15)"/>
-            <ellipse cx="120" cy="280" rx="18" ry="35" transform="rotate(-45 120 280)" fill="rgba(180,79,200,0.15)"/>
-          </g>
-          <circle cx="200" cy="200" r="22" fill="rgba(180,79,200,0.4)" stroke="#b44fc8" stroke-width="1"/>
-          <circle cx="200" cy="200" r="10" fill="#b44fc8"/>
-        </svg>
+        <!-- ✅ ALTERAÇÃO: logo.png no lugar do SVG decorativo -->
+        <img src="logo.png" alt="Cris Pop Arte"
+             style="width: 72%; max-width: 420px; object-fit: contain; opacity: 0.85; filter: drop-shadow(0 12px 40px rgba(180,79,200,0.25));">
       </div>
       <div class="hero-card hero-card-1">
         <div class="card-icon">💌</div>
@@ -560,7 +544,6 @@
       <button class="cat-btn">Retrospectiva</button>
     </div>
 
-    <!-- Para adicionar produtos: copie um bloco produto-card, troque o nome da imagem e atualize os textos -->
     <div class="produtos">
 
       <!-- PRODUTO 1 -->
@@ -720,28 +703,6 @@
         </div>
       </div>
 
-      <!--
-      MODELO PARA NOVO PRODUTO — copie o bloco abaixo e substitua os dados:
-
-      <div class="produto-card fade-in">
-        <div class="produto-img">
-          <img src="imagens/produto9.jpg" alt="Nome do Produto"
-               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-          <div class="placeholder" style="display:none"><span>💌</span><p>foto em breve</p></div>
-          <a class="produto-link" href="https://SEU-LINK-AQUI.com" target="_blank" rel="noopener noreferrer" title="Ver convite"></a>
-        </div>
-        <div class="produto-info">
-          <p class="produto-categoria">Categoria</p>
-          <h3 class="produto-nome">Nome do Produto</h3>
-          <p class="produto-desc">Descrição do produto aqui.</p>
-          <div class="produto-footer">
-            <div class="produto-preco">R$ 0,00 <small>/unidade</small></div>
-            <a href="https://wa.me/5571993233142?text=Olá Cris! Tenho interesse no Nome do Produto." class="btn-wpp">💬 Pedir</a>
-          </div>
-        </div>
-      </div>
-      -->
-
     </div>
   </section>
 
@@ -812,7 +773,7 @@
     <div class="videos-grid" id="videosGrid"></div>
   </section>
 
-    <!-- WPP FLOAT -->
+  <!-- WPP FLOAT -->
   <a href="https://wa.me/5571993233142" class="wpp-float" title="Falar no WhatsApp">💬</a>
 
   <!-- FOOTER -->
@@ -827,7 +788,8 @@
     <p>© 2026 Cris Oliveira — Cris Pop Arte · Feito com 💜 para momentos especiais</p>
   </footer>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+  <script>
     // Cursor personalizado
     const cursor = document.getElementById('cursor');
     const ring   = document.getElementById('cursor-ring');
@@ -855,7 +817,6 @@
     const API_KEY    = 'AIzaSyCIkbu4d1C5ft0UcasVStpupzb5kmgXp_Q';
     const CHANNEL_ID = 'UC8Fn0m_tXJOxDtWbZZNvIZA';
 
-    // Permite buscar pressionando Enter
     document.getElementById('buscaInput').addEventListener('keydown', e => {
       if (e.key === 'Enter') buscarVideos();
     });
