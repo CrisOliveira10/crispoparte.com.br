@@ -274,7 +274,7 @@
     .btn-wpp:hover { background: #128C7E; }
 
     /* ══════════════════════════════════════════
-       ── MINI-CATÁLOGO POR TEMAS (NOVO) ──
+       ── MINI-CATÁLOGO POR TEMAS ──
     ══════════════════════════════════════════ */
     .catalogo-section {
       background: var(--dark);
@@ -327,12 +327,6 @@
       padding: 0 1rem;
     }
 
-    /* ══════════════════════════════════════
-       COMO ADICIONAR TEMAS EM DESTAQUE:
-       Duplique um bloco .tema-destaque-card
-       e preencha data-tema="Nome do Tema"
-       A thumbnail vem automatica do YouTube!
-    ══════════════════════════════════════ */
     .tema-destaque-card {
       position: relative;
       border-radius: 4px;
@@ -369,7 +363,9 @@
       text-shadow: 0 2px 8px rgba(0,0,0,0.5);
     }
 
-    /* ── Os mais buscados ── */
+    /* ══════════════════════════════════════
+       ── OS MAIS BUSCADOS — ACORDEÃO ──
+    ══════════════════════════════════════ */
     .mais-buscados-wrap {
       max-width: 1100px;
       margin: 0 auto;
@@ -391,21 +387,91 @@
       border: 1px solid rgba(180,79,200,0.2);
       border-top: none;
       border-radius: 0 0 4px 4px;
-      padding: 1.8rem 2rem;
+      overflow: hidden;
     }
 
-    /* ══════════════════════════════════════
-       COMO ADICIONAR TEMAS NA LISTA:
-       No array TEMAS_MAIS_BUSCADOS (no JS),
-       adicione o nome entre aspas e vírgula.
-       Ex: 'Meu Novo Tema',
-       A lista se reorganiza automaticamente!
-    ══════════════════════════════════════ */
-    .mais-buscados-grid {
+    /* ── Grupos do acordeão ── */
+    .mb-grupo {
+      border-bottom: 1px solid rgba(180,79,200,0.15);
+    }
+    .mb-grupo:last-child {
+      border-bottom: none;
+    }
+    .mb-letra-btn {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1.4rem;
+      background: none;
+      border: none;
+      cursor: none;
+      color: var(--blush);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: background 0.2s;
+    }
+    .mb-letra-btn:hover {
+      background: rgba(180,79,200,0.12);
+      cursor: pointer;
+    }
+    .mb-letra-esquerda {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    .mb-letra {
+      color: var(--rose);
+      font-size: 1.05rem;
+      font-weight: 700;
+      min-width: 18px;
+    }
+    .mb-preview {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.4);
+      font-weight: 300;
+      letter-spacing: 0.05em;
+      text-transform: none;
+    }
+    .mb-direita {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .mb-count {
+      font-size: 0.68rem;
+      color: rgba(255,255,255,0.3);
+      font-weight: 300;
+    }
+    .mb-arrow {
+      font-size: 0.6rem;
+      color: rgba(255,255,255,0.35);
+      transition: transform 0.25s ease;
+      display: inline-block;
+    }
+    .mb-grupo.aberto .mb-arrow {
+      transform: rotate(90deg);
+    }
+
+    /* ── Lista retrátil ── */
+    .mb-lista {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
-      gap: 0.3rem 1rem;
+      gap: 0.1rem 0.5rem;
+      padding: 0 1.5rem;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.35s ease;
     }
+    .mb-grupo.aberto .mb-lista {
+      max-height: 500px;
+      padding: 0.5rem 1.5rem 1rem;
+    }
+
+    /* ── Itens da lista (reusa .tema-item) ── */
     .tema-item {
       display: flex;
       align-items: center;
@@ -529,7 +595,6 @@
     }
     .modal-video-card:hover .modal-video-thumb { transform: scale(1.05); }
 
-    /* Botão play marca d'água */
     .play-btn {
       position: absolute;
       inset: 0;
@@ -810,12 +875,12 @@
       .banner-deco { display: none; }
       .banner-text { padding: 3rem 1.5rem; }
       .temas-destaque-grid { grid-template-columns: repeat(2, 1fr); }
-      .mais-buscados-grid { grid-template-columns: repeat(2, 1fr); }
+      .mb-lista { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 480px) {
       .produtos { grid-template-columns: 1fr; }
       .temas-destaque-grid { grid-template-columns: repeat(2, 1fr); }
-      .mais-buscados-grid { grid-template-columns: repeat(1, 1fr); }
+      .mb-lista { grid-template-columns: repeat(1, 1fr); }
     }
   </style>
 </head>
@@ -1056,9 +1121,7 @@
     </div>
   </section>
 
-  <!-- ══════════════════════════════════════════
-       MINI-CATÁLOGO POR TEMAS (NOVA SEÇÃO)
-  ══════════════════════════════════════════ -->
+  <!-- MINI-CATÁLOGO POR TEMAS -->
   <section id="catalogo" class="catalogo-section">
     <div class="section-header">
       <p class="section-tag">✦ Catálogo de Temas</p>
@@ -1069,14 +1132,6 @@
     <!-- TEMAS EM DESTAQUE -->
     <div class="temas-destaque-titulo">Temas em destaque</div>
 
-    <!--
-    ╔══════════════════════════════════════════════╗
-    ║  COMO ADICIONAR TEMAS EM DESTAQUE:           ║
-    ║  Copie um bloco .tema-destaque-card abaixo   ║
-    ║  e altere apenas o data-tema="Nome do Tema"  ║
-    ║  A thumbnail vem automática do YouTube!      ║
-    ╚══════════════════════════════════════════════╝
-    -->
     <div class="temas-destaque-grid" id="temasDestaqueGrid">
       <div class="tema-destaque-card" data-tema="365 Dias de Sorrisos">
         <img src="" alt="365 Dias de Sorrisos" class="td-thumb">
@@ -1128,13 +1183,11 @@
       </div>
     </div>
 
-    <!-- OS MAIS BUSCADOS -->
+    <!-- OS MAIS BUSCADOS — ACORDEÃO POR LETRAS -->
     <div class="mais-buscados-wrap">
       <div class="mais-buscados-header">Os mais buscados</div>
       <div class="mais-buscados-body">
-        <div class="mais-buscados-grid" id="maisBuscadosGrid">
-          <!-- preenchido pelo JS -->
-        </div>
+        <div id="mbBody"></div>
       </div>
     </div>
   </section>
@@ -1275,7 +1328,7 @@
     //  LISTA DE TEMAS "OS MAIS BUSCADOS"
     //  Para adicionar: coloque o nome entre aspas
     //  seguido de vírgula. Ex: 'Meu Tema',
-    //  A lista se reorganiza automaticamente!
+    //  A lista se reorganiza automaticamente por letra!
     // ════════════════════════════════════════════════
     const TEMAS_MAIS_BUSCADOS = [
       'A Casa Mágica da Gabby', 'Arco Íris', 'Aurora', 'Barbie',
@@ -1290,18 +1343,66 @@
       'Super Mário', 'Toy Story', 'Ursinho Pooh', 'Ursinho Aviador'
     ];
 
-    // ── Preenche lista "Os mais buscados" ──
-    const maisBuscadosGrid = document.getElementById('maisBuscadosGrid');
-    TEMAS_MAIS_BUSCADOS.sort().forEach(tema => {
-      const item = document.createElement('div');
-      item.className = 'tema-item';
-      item.textContent = tema;
-      item.addEventListener('click', () => abrirModalTema(tema));
-      maisBuscadosGrid.appendChild(item);
-    });
+    // ════════════════════════════════════════════════
+    //  ACORDEÃO "OS MAIS BUSCADOS" — agrupado por letra
+    // ════════════════════════════════════════════════
+    function normLetra(str) {
+      return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '')[0].toUpperCase();
+    }
 
-    // ── Thumbnails dos temas em destaque ──
-    // Busca o primeiro vídeo de cada tema para pegar a thumbnail automaticamente
+    (function construirAcordeao() {
+      const grupos = {};
+      TEMAS_MAIS_BUSCADOS
+        .slice()
+        .sort((a, b) => a.localeCompare(b, 'pt-BR'))
+        .forEach(tema => {
+          const letra = normLetra(tema);
+          if (!grupos[letra]) grupos[letra] = [];
+          grupos[letra].push(tema);
+        });
+
+      const mbBody = document.getElementById('mbBody');
+
+      Object.keys(grupos).sort().forEach(letra => {
+        const temas = grupos[letra];
+        const preview = temas.slice(0, 3).join(', ') + (temas.length > 3 ? '…' : '');
+
+        const div = document.createElement('div');
+        div.className = 'mb-grupo';
+
+        div.innerHTML = `
+          <button class="mb-letra-btn">
+            <span class="mb-letra-esquerda">
+              <span class="mb-letra">${letra}</span>
+              <span class="mb-preview">${preview}</span>
+            </span>
+            <span class="mb-direita">
+              <span class="mb-count">${temas.length} tema${temas.length > 1 ? 's' : ''}</span>
+              <span class="mb-arrow">▶</span>
+            </span>
+          </button>
+          <div class="mb-lista">
+            ${temas.map(t => `<div class="tema-item">${t}</div>`).join('')}
+          </div>
+        `;
+
+        // Abre/fecha ao clicar no botão da letra
+        div.querySelector('.mb-letra-btn').addEventListener('click', () => {
+          div.classList.toggle('aberto');
+        });
+
+        // Clique em cada tema abre o modal de vídeos
+        div.querySelectorAll('.tema-item').forEach(item => {
+          item.addEventListener('click', () => abrirModalTema(item.textContent.trim()));
+        });
+
+        mbBody.appendChild(div);
+      });
+    })();
+
+    // ════════════════════════════════════════════════
+    //  THUMBNAILS DOS TEMAS EM DESTAQUE
+    // ════════════════════════════════════════════════
     async function carregarThumbsDestaque() {
       const cards = document.querySelectorAll('.tema-destaque-card');
       for (const card of cards) {
@@ -1320,7 +1421,9 @@
     }
     carregarThumbsDestaque();
 
-    // ── Modal de vídeos por tema ──
+    // ════════════════════════════════════════════════
+    //  MODAL DE VÍDEOS POR TEMA
+    // ════════════════════════════════════════════════
     const catalogoModal  = document.getElementById('catalogoModal');
     const modalTemaNome  = document.getElementById('modalTemaNome');
     const modalStatus    = document.getElementById('modalStatus');
@@ -1384,12 +1487,13 @@
       catalogoModal.classList.remove('aberto');
       document.body.style.overflow = '';
     }
-    // Fechar clicando fora
     catalogoModal.addEventListener('click', e => {
       if (e.target === catalogoModal) fecharModal();
     });
 
-    // ── Player inline ──
+    // ════════════════════════════════════════════════
+    //  PLAYER INLINE
+    // ════════════════════════════════════════════════
     const playerOverlay = document.getElementById('videoPlayerOverlay');
     const videoIframe   = document.getElementById('videoIframe');
 
@@ -1405,12 +1509,13 @@
       if (e.target === playerOverlay) fecharPlayer();
     });
 
-    // Fechar com ESC
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') { fecharPlayer(); fecharModal(); }
     });
 
-    // ── BUSCA DE VÍDEOS NO YOUTUBE ──
+    // ════════════════════════════════════════════════
+    //  BUSCA DE VÍDEOS NO YOUTUBE
+    // ════════════════════════════════════════════════
     document.getElementById('buscaInput').addEventListener('keydown', e => {
       if (e.key === 'Enter') buscarVideos();
     });
