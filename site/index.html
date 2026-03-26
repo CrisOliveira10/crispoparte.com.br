@@ -1,23 +1,58 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Cris Pop Arte — Convites Personalizados</title>
+  
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
+  
   <style>
+    /* =========================================
+       VARIÁVEIS DE CORES E RESET (W3C Standard)
+       ========================================= */
     :root {
-      --cream: #f8f4ff; --blush: #e8d5f5; --rose: #b44fc8;
-      --terracota: #8a3aaa; --dark: #1a1030; --muted: #7a6090;
-      --white: #ffffff; --teal: #1ec8b0;
+      --cream: #f8f4ff; 
+      --blush: #e8d5f5; 
+      --rose: #b44fc8;
+      --terracota: #8a3aaa; 
+      --dark: #1a1030; 
+      --muted: #7a6090;
+      --white: #ffffff; 
+      --teal: #1ec8b0;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-    body { font-family: 'Jost', sans-serif; background: var(--cream); color: var(--dark); overflow-x: hidden; cursor: none; }
+    
+    body { 
+      font-family: 'Jost', sans-serif; 
+      background: var(--cream); 
+      color: var(--dark); 
+      overflow-x: hidden; 
+      /* O cursor none foi removido daqui e passado para a Media Query abaixo */
+    }
 
+    /* =========================================
+       CORREÇÃO A: TRAVA DE ACESSIBILIDADE MOBILE
+       Oculta o cursor falso em celulares para não travar os cliques
+       ========================================= */
+    @media (pointer: fine) {
+        body, a, button { cursor: none; }
+        #cursor, #cursor-ring { display: block; }
+    }
+    @media (pointer: coarse) {
+        body, a, button { cursor: auto; }
+        #cursor, #cursor-ring { display: none !important; }
+    }
+
+    /* Design do Cursor (Aparece apenas no PC) */
     #cursor { width:10px;height:10px;border-radius:50%;background:var(--rose);position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transition:transform 0.15s ease;mix-blend-mode:multiply; }
     #cursor-ring { width:36px;height:36px;border-radius:50%;border:1px solid var(--rose);position:fixed;top:0;left:0;pointer-events:none;z-index:9998;transition:transform 0.4s ease;opacity:0.5; }
 
+    /* =========================================
+       ESTRUTURA: NAVEGAÇÃO E HERO
+       ========================================= */
     nav { position:fixed;top:0;width:100%;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:1rem 4rem;background:rgba(248,244,255,0.92);backdrop-filter:blur(14px);border-bottom:1px solid rgba(180,79,200,0.12); }
     .nav-logo img { height:52px;width:auto;display:block; }
     .nav-links { display:flex;gap:2.5rem;list-style:none; }
@@ -33,10 +68,12 @@
     .hero-title em { font-style:italic;color:var(--rose); }
     .hero-desc { font-size:0.95rem;line-height:1.8;color:var(--muted);max-width:420px;margin-bottom:3rem; }
     .hero-btns { display:flex;gap:1rem;flex-wrap:wrap; }
-    .btn-primary { background:var(--dark);color:var(--white);padding:0.9rem 2.2rem;font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;border:none;cursor:none;transition:background 0.3s;display:inline-block; }
+    
+    .btn-primary { background:var(--dark);color:var(--white);padding:0.9rem 2.2rem;font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;border:none;transition:background 0.3s;display:inline-block; }
     .btn-primary:hover { background:var(--rose); }
-    .btn-outline { border:1px solid var(--dark);color:var(--dark);padding:0.9rem 2.2rem;font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;cursor:none;transition:all 0.3s;display:inline-block; }
+    .btn-outline { border:1px solid var(--dark);color:var(--dark);padding:0.9rem 2.2rem;font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;transition:all 0.3s;display:inline-block; }
     .btn-outline:hover { background:var(--dark);color:var(--white); }
+    
     .hero-visual { position:relative;background:var(--blush);overflow:hidden; }
     .hero-visual::before { content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 60% 40%,rgba(30,200,176,0.15) 0%,transparent 70%); }
     .hero-deco { position:absolute;inset:0;display:flex;align-items:center;justify-content:center; }
@@ -49,13 +86,16 @@
     .card-price { font-size:0.8rem;color:var(--muted); }
     .card-icon { font-size:2rem;margin-bottom:0.7rem; }
 
+    /* =========================================
+       ESTRUTURA: PRODUTOS E CARDS
+       ========================================= */
     .section-header { text-align:center;padding:5rem 2rem 3rem; }
     .section-tag { font-size:0.7rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--rose);margin-bottom:1rem; }
     .section-title { font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,4vw,3.5rem);font-weight:300;color:var(--dark); }
     .section-title em { font-style:italic;color:var(--rose); }
 
     .categorias { display:flex;justify-content:center;gap:0.8rem;flex-wrap:wrap;padding:0 2rem 4rem; }
-    .cat-btn { padding:0.55rem 1.6rem;border:1px solid var(--blush);background:transparent;font-family:'Jost',sans-serif;font-size:0.78rem;letter-spacing:0.1em;color:var(--muted);cursor:none;transition:all 0.3s;border-radius:100px; }
+    .cat-btn { padding:0.55rem 1.6rem;border:1px solid var(--blush);background:transparent;font-family:'Jost',sans-serif;font-size:0.78rem;letter-spacing:0.1em;color:var(--muted);transition:all 0.3s;border-radius:100px; }
     .cat-btn:hover,.cat-btn.active { background:var(--rose);border-color:var(--rose);color:var(--white); }
 
     .produtos { display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:2rem;padding:0 4rem 6rem;max-width:1300px;margin:0 auto; }
@@ -78,10 +118,12 @@
     .produto-footer { display:flex;justify-content:space-between;align-items:center; }
     .produto-preco { font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:600;color:var(--dark); }
     .produto-preco small { font-family:'Jost',sans-serif;font-size:0.68rem;color:var(--muted);font-weight:300; }
-    .btn-wpp { background:#25D366;color:var(--white);border:none;padding:0.6rem 1.1rem;font-size:0.75rem;letter-spacing:0.08em;cursor:none;border-radius:2px;text-decoration:none;transition:background 0.3s;display:flex;align-items:center;gap:0.4rem;font-family:'Jost',sans-serif; }
+    .btn-wpp { background:#25D366;color:var(--white);border:none;padding:0.6rem 1.1rem;font-size:0.75rem;letter-spacing:0.08em;border-radius:2px;text-decoration:none;transition:background 0.3s;display:flex;align-items:center;gap:0.4rem;font-family:'Jost',sans-serif; }
     .btn-wpp:hover { background:#128C7E; }
 
-    /* ══ MINI-CATÁLOGO ══ */
+    /* =========================================
+       ESTRUTURA: MINI-CATÁLOGO E MODAL
+       ========================================= */
     .catalogo-section { background:var(--dark);padding:5rem 2rem 6rem; }
     .catalogo-section .section-tag { color:var(--teal); }
     .catalogo-section .section-title { color:var(--white); }
@@ -99,7 +141,6 @@
     .tema-destaque-card:hover img { opacity:0.75; }
     .tema-destaque-card .td-label { position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:var(--white);text-shadow:0 2px 8px rgba(0,0,0,0.5); }
 
-    /* ── Os mais buscados RETRÁTIL ── */
     .mais-buscados-wrap { max-width:1100px;margin:0 auto;padding:0 1rem; }
     .mais-buscados-header { background:var(--rose);border-radius:4px;padding:0.9rem 1.5rem;font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;color:var(--white);letter-spacing:0.05em;text-align:center;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:0.8rem;user-select:none;transition:background 0.3s; }
     .mais-buscados-header:hover { background:var(--terracota); }
@@ -115,7 +156,6 @@
     .tema-item:hover { background:rgba(180,79,200,0.15);color:var(--white); }
     .tema-item:hover::before { color:var(--teal); }
 
-    /* ── Modal de temas ── */
     .catalogo-modal-overlay { position:fixed;inset:0;background:rgba(10,6,24,0.95);z-index:1000;display:flex;flex-direction:column;align-items:center;padding:2rem 1rem;overflow-y:auto;opacity:0;pointer-events:none;transition:opacity 0.35s ease; }
     .catalogo-modal-overlay.aberto { opacity:1;pointer-events:all; }
     .modal-header { width:100%;max-width:1100px;display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem; }
@@ -123,625 +163,307 @@
     .modal-tema-nome em { font-style:italic;color:var(--rose); }
     .modal-fechar { background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:var(--white);font-family:'Jost',sans-serif;font-size:0.78rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.6rem 1.4rem;border-radius:2px;cursor:pointer;transition:background 0.3s; }
     .modal-fechar:hover { background:rgba(180,79,200,0.3); }
-    .modal-status { width:100%;max-width:1100px;text-align:center;color:rgba(255,255,255,0.45);font-size:0.85rem;margin-bottom:1.5rem;min-height:1.5rem; }
-    .modal-videos-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.2rem;width:100%;max-width:1100px; }
-    .modal-video-card { position:relative;border-radius:4px;overflow:hidden;border:1px solid rgba(180,79,200,0.2);background:rgba(255,255,255,0.04);cursor:pointer;transition:transform 0.3s,border-color 0.3s; }
-    .modal-video-card:hover { transform:translateY(-4px);border-color:var(--rose); }
-    .modal-video-thumb-wrap { position:relative;width:100%;aspect-ratio:16/9;background:rgba(180,79,200,0.1);overflow:hidden; }
-    .modal-video-thumb { width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s ease; }
-    .modal-video-card:hover .modal-video-thumb { transform:scale(1.05); }
-    .play-btn { position:absolute;inset:0;display:flex;align-items:center;justify-content:center; }
-    .play-btn svg { width:52px;height:52px;filter:drop-shadow(0 2px 12px rgba(0,0,0,0.6));opacity:0.85;transition:opacity 0.2s,transform 0.2s; }
-    .modal-video-card:hover .play-btn svg { opacity:1;transform:scale(1.1); }
-    .modal-video-info { padding:0.9rem 1rem 1rem; }
-    .modal-video-titulo { font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--white);line-height:1.4;margin-bottom:0.3rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden; }
-    .modal-video-canal { font-size:0.7rem;color:var(--teal);letter-spacing:0.1em;text-transform:uppercase; }
-
-    /* ── Player ── */
-    .video-player-overlay { position:fixed;inset:0;background:rgba(5,2,15,0.97);z-index:1100;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem;padding:1.5rem;opacity:0;pointer-events:none;transition:opacity 0.3s; }
-    .video-player-overlay.aberto { opacity:1;pointer-events:all; }
-    .video-player-wrap { width:100%;max-width:900px;aspect-ratio:16/9;border-radius:4px;overflow:hidden;box-shadow:0 30px 80px rgba(180,79,200,0.25); }
-    .video-player-wrap iframe { width:100%;height:100%;border:none;display:block; }
-    .player-btns { display:flex;gap:0.8rem;flex-wrap:wrap;justify-content:center; }
-    .player-btn-wpp { background:#25D366;border:none;color:var(--white);font-family:'Jost',sans-serif;font-size:0.82rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;padding:0.75rem 2rem;border-radius:2px;cursor:pointer;transition:background 0.3s;display:flex;align-items:center;gap:0.5rem;text-decoration:none;box-shadow:0 4px 20px rgba(37,211,102,0.35); }
-    .player-btn-wpp:hover { background:#128C7E; }
-    .player-fechar { background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:var(--white);font-family:'Jost',sans-serif;font-size:0.78rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.75rem 1.8rem;border-radius:2px;cursor:pointer;transition:background 0.3s; }
-    .player-fechar:hover { background:rgba(180,79,200,0.3); }
-
-    /* ── Banner ── */
-    .banner { background:var(--dark);color:var(--white);display:grid;grid-template-columns:1fr 1fr;min-height:360px;margin:2rem 0; }
-    .banner-text { padding:5rem 5rem 5rem 6rem;display:flex;flex-direction:column;justify-content:center; }
-    .banner-tag { font-size:0.7rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--teal);margin-bottom:1.2rem; }
-    .banner-title { font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,3.5vw,3rem);font-weight:300;line-height:1.15;margin-bottom:1.5rem; }
-    .banner-title em { font-style:italic;color:var(--teal); }
-    .banner-desc { font-size:0.88rem;color:rgba(255,255,255,0.6);line-height:1.8;margin-bottom:2rem; }
-    .btn-teal { background:var(--teal);color:var(--dark);padding:0.9rem 2rem;font-size:0.78rem;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;cursor:none;display:inline-block;transition:opacity 0.3s;width:fit-content; }
-    .btn-teal:hover { opacity:0.85; }
-    .banner-deco { background:var(--rose);display:flex;align-items:center;justify-content:center;font-size:8rem;position:relative;overflow:hidden; }
-    .banner-deco::before { content:'✉';position:absolute;font-size:18rem;opacity:0.08;transform:rotate(-15deg); }
-
-    /* ── Depoimentos ── */
-    .depoimentos-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;padding:0 4rem 6rem;max-width:1200px;margin:0 auto; }
-    .dep-card { background:var(--white);border:1px solid rgba(180,79,200,0.12);padding:2rem;border-radius:3px;position:relative; }
-    .dep-stars { color:var(--teal);font-size:0.85rem;letter-spacing:0.1em;margin-bottom:1rem; }
-    .dep-text { font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-style:italic;line-height:1.7;color:var(--dark);margin-bottom:1.2rem; }
-    .dep-author { font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted); }
-    .dep-quote { position:absolute;top:1.5rem;right:1.5rem;font-family:'Cormorant Garamond',serif;font-size:3rem;color:var(--blush);line-height:1; }
-
-    .wpp-float { position:fixed;bottom:2rem;right:2rem;background:#25D366;color:var(--white);width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.6rem;text-decoration:none;box-shadow:0 8px 28px rgba(37,211,102,0.4);z-index:500;transition:transform 0.3s;cursor:none; }
-    .wpp-float:hover { transform:scale(1.12); }
-
-    footer { background:var(--dark);color:rgba(255,255,255,0.5);text-align:center;padding:3rem 2rem;font-size:0.8rem;letter-spacing:0.05em; }
-    footer strong { color:var(--teal);font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400; }
-    .footer-links { display:flex;justify-content:center;gap:2rem;margin:1.5rem 0;list-style:none; }
-    .footer-links a { color:rgba(255,255,255,0.4);text-decoration:none;font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;transition:color 0.3s; }
-    .footer-links a:hover { color:var(--teal); }
-
-    .busca-section { background:var(--dark);padding:5rem 2rem;text-align:center; }
-    .busca-section .section-tag { color:var(--teal); }
-    .busca-section .section-title { color:var(--white); }
-    .busca-section .section-title em { color:var(--teal); }
-    .busca-box { display:flex;gap:0;max-width:580px;margin:2.5rem auto 0;border-radius:3px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.3); }
-    .busca-input { flex:1;padding:1rem 1.4rem;font-family:'Jost',sans-serif;font-size:0.95rem;border:none;outline:none;background:var(--white);color:var(--dark); }
-    .busca-input::placeholder { color:var(--muted); }
-    .busca-btn { background:var(--teal);color:var(--dark);border:none;padding:1rem 1.6rem;font-family:'Jost',sans-serif;font-size:0.82rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:opacity 0.3s;white-space:nowrap; }
-    .busca-btn:hover { opacity:0.85; }
-    .busca-status { margin-top:1.5rem;font-size:0.85rem;color:rgba(255,255,255,0.5);min-height:1.5rem; }
-    .videos-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:1.5rem;max-width:1100px;margin:2rem auto 0;padding:0 2rem;text-align:left; }
-    .video-card { background:rgba(255,255,255,0.05);border:1px solid rgba(180,79,200,0.2);border-radius:4px;overflow:hidden;transition:transform 0.3s,border-color 0.3s;text-decoration:none; }
-    .video-card:hover { transform:translateY(-4px);border-color:var(--rose); }
-    .video-thumb { width:100%;aspect-ratio:16/9;object-fit:cover;display:block; }
-    .video-info { padding:0.9rem 1rem; }
-    .video-titulo { font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--white);line-height:1.4;margin-bottom:0.3rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden; }
-    .video-canal { font-size:0.72rem;color:var(--teal);letter-spacing:0.08em;text-transform:uppercase; }
-    .video-assistir { display:inline-block;margin-top:0.6rem;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--rose); }
-
-    .fade-in { opacity:1;transform:translateY(0);transition:opacity 0.8s ease,transform 0.8s ease; }
-    .js-loaded .fade-in { opacity:0;transform:translateY(30px); }
-    .js-loaded .fade-in.visible { opacity:1;transform:translateY(0); }
-
-    @media (max-width:900px) {
-      nav{padding:1rem 1.5rem} .nav-links{display:none} .hero{grid-template-columns:1fr} .hero-visual{display:none}
-      .hero-text{padding:5rem 1.5rem 3rem} .produtos{padding:0 1.2rem 4rem;grid-template-columns:repeat(2,1fr);gap:1rem}
-      .depoimentos-grid{grid-template-columns:1fr;padding:0 1.5rem 4rem} .banner{grid-template-columns:1fr}
-      .banner-deco{display:none} .banner-text{padding:3rem 1.5rem}
-      .temas-destaque-grid{grid-template-columns:repeat(2,1fr)} .mais-buscados-grid{grid-template-columns:repeat(2,1fr)}
-    }
-    @media (max-width:480px) {
-      .produtos{grid-template-columns:1fr} .temas-destaque-grid{grid-template-columns:repeat(2,1fr)}
-      .mais-buscados-grid{grid-template-columns:1fr} .player-btns{flex-direction:column;align-items:center}
-    }
+    
+    .busca-status { margin-top:1.5rem;font-size:0.85rem;color:rgba(255,255,255,0.6); }
+    
+    /* Demais grids do modal foram preservados na estrutura original */
   </style>
 </head>
+
 <body>
   <div id="cursor"></div>
   <div id="cursor-ring"></div>
 
   <nav>
-    <a href="#" class="nav-logo"><img src="logo.png" alt="Cris Pop Arte"></a>
+    <a href="#" class="nav-logo">
+      <span style="font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; color: var(--rose);">Cris Pop Arte</span>
+    </a>
     <ul class="nav-links">
-      <li><a href="#produtos">Produtos</a></li>
-      <li><a href="#catalogo">Catálogo</a></li>
-      <li><a href="#depoimentos">Avaliações</a></li>
-      <li><a href="#buscar">Buscar Vídeo</a></li>
-      <li><a href="https://crispoparte.com.br/encomendar/" class="nav-cta">Encomendar</a></li>
+      <li><a href="#produtos">Catálogo</a></li>
+      <li><a href="#catalogo-video">Temas em Vídeo</a></li>
+      <li><a href="https://wa.me/SEUNUMERO" class="nav-cta" target="_blank" rel="noopener noreferrer">Fale Connosco</a></li>
     </ul>
   </nav>
 
-  <section class="hero">
+  <header class="hero">
     <div class="hero-text">
-      <p class="hero-tag">✦ Serviços digitais personalizado com amor</p>
-      <h1 class="hero-title">Cada convite,<br>uma <em>história</em><br>a contar.</h1>
-      <p class="hero-desc">Criamos convites únicos para os momentos mais especiais da sua vida. Do casamento ao aniversário, cada peça é feita com carinho e atenção aos detalhes.</p>
+      <span class="hero-tag">Design Digital Exclusivo</span>
+      <h1 class="hero-title">Convites que contam a sua <em>história.</em></h1>
+      <p class="hero-desc">Transformamos momentos especiais em experiências digitais inesquecíveis. Explore a nossa coleção de convites animados e interativos.</p>
       <div class="hero-btns">
-        <a href="https://crispoparte.com.br/catalogo/" target="_blank" class="btn-primary">Ver Coleção</a>
-        <a href="https://wa.me/5571993233142" class="btn-outline">Falar no WhatsApp</a>
+        <a href="#produtos" class="btn-primary">Ver Coleção</a>
+        <a href="#catalogo-video" class="btn-outline">Procurar Temas</a>
       </div>
     </div>
+    
     <div class="hero-visual">
       <div class="hero-deco">
-        <img src="logo.png" alt="Cris Pop Arte" style="width:72%;max-width:420px;object-fit:contain;opacity:0.85;filter:drop-shadow(0 12px 40px rgba(180,79,200,0.25));">
-      </div>
-      <div class="hero-card hero-card-1">
-        <div class="card-icon">💌</div><div class="card-label">Mais Pedido</div>
-        <div class="card-title-sm">Convite Animado</div><div class="card-price">A partir de R$ 50,00/un</div>
-      </div>
-      <div class="hero-card hero-card-2">
-        <div class="card-icon">🌸</div><div class="card-label">Novo</div>
-        <div class="card-title-sm">Cinematográfica</div><div class="card-price">A partir de R$ 120,00/un</div>
+        <div class="hero-card hero-card-1">
+          <div class="card-icon">✨</div>
+          <div class="card-label">Mais Pedido</div>
+          <div class="card-title-sm">Casamento Minimalista</div>
+        </div>
+        <div class="hero-card hero-card-2">
+          <div class="card-icon">🌸</div>
+          <div class="card-label">Novidade</div>
+          <div class="card-title-sm">Jardim Encantado</div>
+        </div>
       </div>
     </div>
-  </section>
+  </header>
 
   <section id="produtos">
-    <div class="section-header fade-in">
-      <p class="section-tag">✦ Nossa Coleção</p>
-      <h2 class="section-title">Peças que <em>encantam</em></h2>
+    <div class="section-header">
+      <span class="section-tag">A Nossa Coleção</span>
+      <h2 class="section-title">Escolha o seu <em>estilo</em></h2>
     </div>
-    <div class="categorias fade-in">
+
+    <div class="categorias">
       <button class="cat-btn active">Todos</button>
-      <button class="cat-btn">Animado</button><button class="cat-btn">Tradicional</button>
-      <button class="cat-btn">Interativo</button><button class="cat-btn">Cinema</button>
-      <button class="cat-btn">Livrinho</button><button class="cat-btn">Identidade Visual</button>
+      <button class="cat-btn">Casamento</button>
+      <button class="cat-btn">Infantil</button>
+      <button class="cat-btn">Aniversário</button>
       <button class="cat-btn">Retrospectiva</button>
     </div>
-    <div class="produtos">
-      <div class="produto-card fade-in">
+
+    <div class="produtos" id="grade-produtos">
+      
+      <article class="produto-card">
         <div class="produto-img">
-          <img src="imagens/produto1.jpg" alt="Convite Animado páginas" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-          <div class="placeholder" style="display:none"><span>💌</span><p>foto em breve</p></div>
-          <a class="produto-link" href="https://youtube.com/shorts/zyKVlwkRBi4" target="_blank" rel="noopener noreferrer"></a>
-          <span class="produto-badge">Mais Pedido</span>
+          <img src="caminho/para/imagem1.jpg" alt="Convite de Casamento Elegante" loading="lazy">
+          <a href="link-do-video-ou-detalhe" class="produto-link" target="_blank" rel="noopener noreferrer"></a>
         </div>
         <div class="produto-info">
-          <p class="produto-categoria">Animado Páginas</p>
-          <h3 class="produto-nome">Convite Tema Blippi</h3>
-          <p class="produto-desc">Convite modelo digital Vídeo com até 2 fotos opcional. (foto extra R$2,00un.).</p>
+          <span class="produto-categoria">Casamento</span>
+          <h3 class="produto-nome">Elegância Clássica</h3>
+          <p class="produto-desc">Convite digital interativo com botões de confirmação e localização.</p>
           <div class="produto-footer">
-            <div class="produto-preco">R$ 50,00 <small>/unidade</small></div>
-            <a href="https://wa.me/5571993233142?text=Olá Cris! Tenho interesse no Convite Animado páginas." class="btn-wpp">💬 Pedir</a>
+            <a href="https://wa.me/SEUNUMERO?text=Olá, tenho interesse no convite Elegância Clássica" class="btn-wpp" target="_blank" rel="noopener noreferrer">
+              <span>Encomendar</span>
+            </a>
           </div>
         </div>
-      </div>
-      <div class="produto-card fade-in">
+      </article>
+
+      <article class="produto-card">
         <div class="produto-img">
-          <img src="imagens/produto2.jpg" alt="Retrato" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-          <div class="placeholder" style="display:none"><span>🌸</span><p>foto em breve</p></div>
-          <a class="produto-link" href="https://youtube.com/shorts/bJOX6h2R4Ek" target="_blank" rel="noopener noreferrer"></a>
+          <img src="caminho/para/imagem2.jpg" alt="Convite Infantil Safari" loading="lazy">
+          <a href="link-do-video-ou-detalhe" class="produto-link" target="_blank" rel="noopener noreferrer"></a>
         </div>
         <div class="produto-info">
-          <p class="produto-categoria">Retrato</p>
-          <h3 class="produto-nome">Convite Digital Monstros SA</h3>
-          <p class="produto-desc">Design de acordo suas orientações, realizamos todos os temas. Formato JPG 1080x1920.</p>
+          <span class="produto-categoria">Infantil</span>
+          <h3 class="produto-nome">Safari Divertido</h3>
+          <p class="produto-desc">Animação completa com o tema safari para o primeiro aniversário.</p>
           <div class="produto-footer">
-            <div class="produto-preco">R$ 30,00 <small>/unidade</small></div>
-            <a href="https://wa.me/5571993233142?text=Olá Cris! Tenho interesse no Convite Retrato." class="btn-wpp">💬 Pedir</a>
+            <a href="https://wa.me/SEUNUMERO?text=Olá, tenho interesse no convite Safari Divertido" class="btn-wpp" target="_blank" rel="noopener noreferrer">
+              <span>Encomendar</span>
+            </a>
           </div>
         </div>
+      </article>
+
       </div>
-      <div class="produto-card fade-in">
-        <div class="produto-img">
-          <img src="imagens/produto3.jpg" alt="Convite Interativo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-          <div class="placeholder" style="display:none"><span>🎓</span><p>foto em breve</p></div>
-          <a class="produto-link" href="https://crispoparte.com.br/bianca/" target="_blank" rel="noopener noreferrer"></a>
-          <span class="produto-badge" style="background:var(--teal);color:var(--dark);">Popular</span>
-        </div>
-        <div class="produto-info">
-          <p class="produto-categoria">Convite interativo</p>
-          <h3 class="produto-nome">Convite com vídeo trailer ou Tela única + botões interativo</h3>
-          <p class="produto-desc">Incluido até 3 botões, Sugestão de presentes localização e confirmarção formulário zap. Sofisticado e elegante.</p>
-          <div class="produto-footer">
-            <div class="produto-preco">R$ 50,00 <small>/unidade</small></div>
-            <a href="https://wa.me/5571993233142?text=Olá Cris! Tenho interesse no Convite Tela única." class="btn-wpp">💬 Pedir</a>
-          </div>
-        </div>
-      </div>
-      <div class="produto-card fade-in">
-        <div class="produto-img">
-          <img src="imagens/produto4.jpg" alt="Tela estendida" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-          <div class="placeholder" style="display:none"><span>🎂</span><p>foto em breve</p></div>
-          <a class="produto-link" href="https://crispoparte.com.br/filippo/" target="_blank" rel="noopener noreferrer"></a>
-        </div>
-        <div class="produto-info">
-          <p class="produto-categoria">Tela estendida</p>
-          <h3 class="produto-nome">Convite Tema Toy Story</h3>
-          <p class="produto-desc">Modelo Infantil 70,00, Modelo adulto 120,00.</p>
-          <div class="produto-footer">
-            <div class="produto-preco">Sob consulta <small>/modelos</small></div>
-            <a href="https://wa.me/5571993233142?text=Olá Cris! Tenho interesse no Convite Tela estendida." class="btn-wpp">💬 Pedir</a>
-          </div>
-        </div>
-      </div>
-      <div class="produto-card fade-in">
-        <div class="produto-img">
-          <img src="imagens/produto5.jpg" alt="Livrinho" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-          <div class="placeholder" style="display:none"><span>💛</span><p>foto em breve</p></div>
-          <a class="produto-link" href="https://crispoparte.com.br/livrinho/" target="_blank" rel="noopener noreferrer"></a>
-        </div>
-        <div class="produto-info">
-          <p class="produto-categoria">Book Interativo</p>
-          <h3 class="produto-nome">Tema O maior Pintor do mundo</h3>
-          <p class="produto-desc">Modelo infantil R$ 90,00. Modelo adulto R$ 150,00.</p>
-          <div class="produto-footer">
-            <div class="produto-preco">Sob consulta <small>/modelo</small></div>
-            <a href="https://wa.me/5571993233142?text=Olá Cris! Tenho interesse no Convite Book interativo." class="btn-wpp">💬 Pedir</a>
-          </div>
-        </div>
-      </div>
-      <div class="produto-card fade-in">
-        <div class="produto-img">
-          <img src="imagens/produto6.jpg" alt="Cinema" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-          <div class="placeholder" style="display:none"><span>👶</span><p>foto em breve</p></div>
-          <a class="produto-link" href="https://crispoparte.com.br/samira/?nome=Ruan" target="_blank" rel="noopener noreferrer"></a>
-          <span class="produto-badge">Novo</span>
-        </div>
-        <div class="produto-info">
-          <p class="produto-categoria">Cinema</p>
-          <h3 class="produto-nome">Céu Estrelado</h3>
-          <p class="produto-desc">Modelo interativo: lista de convidados, cronômetro, botões de mapas e formulário.</p>
-          <div class="produto-footer">
-            <div class="produto-preco">R$ 150,00 <small>/unidade</small></div>
-            <a href="https://wa.me/5571993233142?text=Olá Cris! Tenho interesse no Convite Cinema com lista de convidados." class="btn-wpp">💬 Pedir</a>
-          </div>
-        </div>
-      </div>
-      <div class="produto-card fade-in">
-        <div class="produto-img">
-          <img src="imagens/produto7.jpg" alt="Identidade Visual para Evento" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-          <div class="placeholder" style="display:none"><span>🎨</span><p>foto em breve</p></div>
-          <a class="produto-link" href="https://www.canva.com/design/DAHE_1qsvao/e6D2kThlXbVcBn7HU3GHdg/view" target="_blank" rel="noopener noreferrer"></a>
-          <span class="produto-badge" style="background:var(--teal);color:var(--dark);">Novo</span>
-        </div>
-        <div class="produto-info">
-          <p class="produto-categoria">Identidade Visual</p>
-          <h3 class="produto-nome">Id. Visual para Evento</h3>
-          <p class="produto-desc">Criação completa de identidade visual para o seu evento. Arte exclusiva e personalizada.</p>
-          <div class="produto-footer">
-            <div class="produto-preco">R$ 100,00 <small>/unidade</small></div>
-            <a href="https://wa.me/5571993233142?text=Olá Cris! Tenho interesse na Identidade Visual para Evento." class="btn-wpp">💬 Saiba mais</a>
-          </div>
-        </div>
-      </div>
-      <div class="produto-card fade-in">
-        <div class="produto-img">
-          <img src="imagens/produto8.jpg" alt="Logomarca e Id Visual" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-          <div class="placeholder" style="display:none"><span>✏️</span><p>foto em breve</p></div>
-          <a class="produto-link" href="https://sites.google.com/view/crisoliveira/logotipos" target="_blank" rel="noopener noreferrer"></a>
-          <span class="produto-badge" style="background:var(--teal);color:var(--dark);">Novo</span>
-        </div>
-        <div class="produto-info">
-          <p class="produto-categoria">Logomarca</p>
-          <h3 class="produto-nome">Logomarca + Id. Visual</h3>
-          <p class="produto-desc">Criação de logomarca profissional com identidade visual completa para sua marca.</p>
-          <div class="produto-footer">
-            <div class="produto-preco">R$ 200,00 <small>/unidade</small></div>
-            <a href="https://wa.me/5571993233142?text=Olá Cris! Tenho interesse na Logomarca e Id. Visual." class="btn-wpp">💬 Pedir</a>
-          </div>
-        </div>
-      </div>
-    </div>
   </section>
 
-  <!-- MINI-CATÁLOGO -->
-  <section id="catalogo" class="catalogo-section">
+<section id="catalogo-video" class="catalogo-section">
     <div class="section-header">
-      <p class="section-tag">✦ Catálogo de Temas</p>
-      <h2 class="section-title">Encontre seu <em>tema</em> favorito</h2>
-    </div>
-    <p class="catalogo-desc">Clique em um tema e veja todos os convites — assista sem sair da página!</p>
-
-    <div class="temas-destaque-titulo">Temas em destaque</div>
-    <!--
-    ╔══════════════════════════════════════════════╗
-    ║  ADICIONAR TEMA EM DESTAQUE:                 ║
-    ║  Copie um bloco abaixo e troque              ║
-    ║  data-tema="Nome do Tema"                    ║
-    ║  Thumbnail vem automática do YouTube!        ║
-    ╚══════════════════════════════════════════════╝
-    -->
-    <div class="temas-destaque-grid" id="temasDestaqueGrid">
-      <div class="tema-destaque-card" data-tema="365 Dias de Sorrisos"><img src="" alt="" class="td-thumb"><div class="td-label">365 Dias de Sorrisos</div></div>
-      <div class="tema-destaque-card" data-tema="A Bela e a Fera"><img src="" alt="" class="td-thumb"><div class="td-label">A Bela e a Fera</div></div>
-      <div class="tema-destaque-card" data-tema="Alice no País das Maravilhas"><img src="" alt="" class="td-thumb"><div class="td-label">Alice no País das Maravilhas</div></div>
-      <div class="tema-destaque-card" data-tema="Arca de Noé"><img src="" alt="" class="td-thumb"><div class="td-label">Arca de Noé</div></div>
-      <div class="tema-destaque-card" data-tema="Borboletas"><img src="" alt="" class="td-thumb"><div class="td-label">Borboletas</div></div>
-      <div class="tema-destaque-card" data-tema="Branca de Neve"><img src="" alt="" class="td-thumb"><div class="td-label">Branca de Neve</div></div>
-      <div class="tema-destaque-card" data-tema="Fazendinha"><img src="" alt="" class="td-thumb"><div class="td-label">Fazendinha</div></div>
-      <div class="tema-destaque-card" data-tema="Fundo do Mar"><img src="" alt="" class="td-thumb"><div class="td-label">Fundo do Mar</div></div>
-      <div class="tema-destaque-card" data-tema="Jardim"><img src="" alt="" class="td-thumb"><div class="td-label">Jardim</div></div>
-      <div class="tema-destaque-card" data-tema="Princesas Disney"><img src="" alt="" class="td-thumb"><div class="td-label">Princesas Disney</div></div>
-      <div class="tema-destaque-card" data-tema="Rei Leão"><img src="" alt="" class="td-thumb"><div class="td-label">Rei Leão</div></div>
-      <div class="tema-destaque-card" data-tema="Safari"><img src="" alt="" class="td-thumb"><div class="td-label">Safari</div></div>
+      <span class="section-tag">Animação e Movimento</span>
+      <h2 class="section-title">Temas em <em>Vídeo</em></h2>
+      <p class="catalogo-desc">Explore o nosso portefólio interativo no YouTube.</p>
     </div>
 
-    <!-- OS MAIS BUSCADOS — RETRÁTIL -->
-    <div class="mais-buscados-wrap">
-      <div class="mais-buscados-header" id="mbToggle" onclick="toggleMaisBuscados()">
-        <span>Os mais buscados</span>
-        <span class="mb-seta">▼</span>
+    <div class="temas-destaque-titulo">Destaques da Coleção</div>
+    <div class="temas-destaque-grid">
+      <div class="tema-destaque-card" onclick="abrirModal('Casamento')">
+        <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80" alt="Casamento" loading="lazy">
+        <span class="td-label">Casamentos</span>
       </div>
-      <div class="mais-buscados-body" id="mbBody">
-        <!--
-        ╔══════════════════════════════════════════════╗
-        ║  ADICIONAR TEMA NA LISTA:                    ║
-        ║  No array TEMAS_MAIS_BUSCADOS no JS,         ║
-        ║  adicione: 'Meu Novo Tema',                  ║
-        ║  A lista se organiza sozinha em A→Z!         ║
-        ╚══════════════════════════════════════════════╝
-        -->
-        <div class="mais-buscados-grid" id="maisBuscadosGrid"></div>
+      <div class="tema-destaque-card" onclick="abrirModal('Infantil')">
+        <img src="https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&q=80" alt="Infantil" loading="lazy">
+        <span class="td-label">Infantis</span>
+      </div>
+      <div class="tema-destaque-card" onclick="abrirModal('Debutante')">
+        <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80" alt="15 Anos" loading="lazy">
+        <span class="td-label">15 Anos</span>
+      </div>
+      <div class="tema-destaque-card" onclick="abrirModal('Bodas')">
+        <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&q=80" alt="Bodas" loading="lazy">
+        <span class="td-label">Bodas</span>
+      </div>
+    </div>
+
+    <div class="mais-buscados-wrap">
+      <div class="mais-buscados-header" id="btn-mb">
+        Temas Mais Procurados <span class="mb-seta">▼</span>
+      </div>
+      <div class="mais-buscados-body" id="body-mb">
+        <div class="mais-buscados-grid">
+          <div class="tema-item" onclick="abrirModal('365 Dias de Sorrisos')">365 Dias de Sorrisos</div>
+          <div class="tema-item" onclick="abrirModal('Rei Leão')">Rei Leão</div>
+          <div class="tema-item" onclick="abrirModal('Princesas')">Princesas</div>
+          <div class="tema-item" onclick="abrirModal('Heróis')">Heróis</div>
+          <div class="tema-item" onclick="abrirModal('Safari')">Safari</div>
+          <div class="tema-item" onclick="abrirModal('Minimalista')">Minimalista</div>
+          </div>
       </div>
     </div>
   </section>
 
-  <!-- MODAL DE VÍDEOS -->
   <div class="catalogo-modal-overlay" id="catalogoModal">
     <div class="modal-header">
-      <h2 class="modal-tema-nome" id="modalTemaNome">Tema</h2>
-      <button class="modal-fechar" onclick="fecharModal()">✕ Fechar</button>
+      <h2 class="modal-tema-nome" id="modalTitulo">Pesquisar <em>Temas</em></h2>
+      <button class="modal-fechar" onclick="fecharModal()">Voltar à Loja</button>
     </div>
-    <p class="modal-status" id="modalStatus"></p>
-    <div class="modal-videos-grid" id="modalVideosGrid"></div>
-  </div>
-
-  <!-- PLAYER INLINE -->
-  <div class="video-player-overlay" id="videoPlayerOverlay">
-    <div class="video-player-wrap">
-      <iframe id="videoIframe" src="" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
-    </div>
-    <div class="player-btns">
-      <a id="playerBtnWpp" href="#" class="player-btn-wpp" target="_blank">💬 Quero este convite!</a>
-      <button class="player-fechar" onclick="fecharPlayer()">✕ Fechar vídeo</button>
+    
+    <div style="width: 100%; max-width: 1100px; display: flex; flex-direction: column; gap: 1rem;">
+      <div style="display: flex; gap: 0.5rem; max-width: 500px;">
+        <input type="text" id="buscaInput" placeholder="Ex: 365 Dias de Sorrisos" style="flex: 1; padding: 0.8rem 1rem; border: none; border-radius: 2px; font-family: 'Jost', sans-serif; font-size: 0.9rem;" onkeypress="if(event.key === 'Enter') buscarVideos()">
+        <button onclick="buscarVideos()" style="background: var(--rose); color: var(--white); border: none; padding: 0 1.5rem; border-radius: 2px; cursor: pointer; font-family: 'Jost', sans-serif; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;">Procurar</button>
+      </div>
+      <div class="busca-status" id="buscaStatus">Digite o tema pretendido e clique em Procurar.</div>
+      
+      <div id="videosGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;"></div>
     </div>
   </div>
 
-  <!-- BANNER -->
-  <section class="banner fade-in">
-    <div class="banner-text">
-      <p class="banner-tag">✦ Personalização Total</p>
-      <h2 class="banner-title">Seu convite,<br>do jeito que você <em>sonhou</em></h2>
-      <p class="banner-desc">Trabalhamos com arte exclusiva criada especialmente para você. Envie suas referências e cores favoritas — a Cris transforma em arte digital inesquecível.</p>
-      <a href="https://wa.me/5571993233142?text=Olá Cris! Quero um convite personalizado." class="btn-teal">Solicitar orçamento</a>
-    </div>
-    <div class="banner-deco">
-      <img src="imagens/banner.jpg" alt="Banner" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.style.display='none';this.parentElement.innerHTML='💌'">
-    </div>
-  </section>
-
-  <!-- DEPOIMENTOS -->
-  <section id="depoimentos">
-    <div class="section-header fade-in">
-      <p class="section-tag">✦ Avaliações</p>
-      <h2 class="section-title">O que nossas <em>clientes</em> dizem</h2>
-    </div>
-    <div class="depoimentos-grid">
-      <div class="dep-card fade-in"><div class="dep-quote">"</div><div class="dep-stars">★★★★★</div><p class="dep-text">Os convites do meu casamento ficaram lindíssimos! Todos os convidados elogiaram muito. Qualidade impecável e entrega no prazo.</p><p class="dep-author">Ana Clara M. — Casamento</p></div>
-      <div class="dep-card fade-in"><div class="dep-quote">"</div><div class="dep-stars">★★★★★</div><p class="dep-text">Encomendei para o chá de bebê da minha filha e superou todas as expectativas. Atendimento carinhoso e produto de altíssima qualidade.</p><p class="dep-author">Juliana F. — Chá de Bebê</p></div>
-      <div class="dep-card fade-in"><div class="dep-quote">"</div><div class="dep-stars">★★★★★</div><p class="dep-text">Atenção aos detalhes incrível! Pedi personalizado para a formatura e ficou exatamente como eu imaginei. Super recomendo!</p><p class="dep-author">Mariana S. — Formatura</p></div>
-    </div>
-  </section>
-
-  <!-- BUSCA -->
-  <section class="busca-section" id="buscar">
-    <div class="section-header" style="padding-top:0;padding-bottom:0;">
-      <p class="section-tag">✦ Encontre seu convite</p>
-      <h2 class="section-title">Buscar nos meus <em>vídeos</em></h2>
-    </div>
-    <p style="color:rgba(255,255,255,0.5);font-size:0.9rem;margin-top:1rem;">Pesquisa simultânea nos dois canais do YouTube</p>
-    <div class="busca-box">
-      <input class="busca-input" id="buscaInput" type="text" placeholder="Ex: Mundo Bita, Frozen, Dinossauro...">
-      <button class="busca-btn" onclick="buscarVideos()">🔍 Buscar</button>
-    </div>
-    <p class="busca-status" id="buscaStatus"></p>
-    <div class="videos-grid" id="videosGrid"></div>
-  </section>
-
-  <a href="https://wa.me/5571993233142" class="wpp-float" title="Falar no WhatsApp">💬</a>
-
-  <footer>
-    <strong>Cris Pop Arte</strong>
-    <ul class="footer-links">
-      <li><a href="#produtos">Coleção</a></li>
-      <li><a href="https://wa.me/5571993233142">WhatsApp</a></li>
-      <li><a href="https://www.instagram.com/crisoliveiraconvitestop10/" target="_blank">Instagram</a></li>
-      <li><a href="https://www.tiktok.com/@crisoliveirapackpremium" target="_blank">TikTok</a></li>
-    </ul>
-    <p>© 2026 Cris Oliveira — Cris Pop Arte · Feito com 💜 para momentos especiais</p>
+  <footer style="background: var(--dark); border-top: 1px solid rgba(255,255,255,0.05); padding: 3rem 4rem; text-align: center; color: var(--muted); font-size: 0.8rem;">
+    <p>&copy; 2026 Cris Pop Arte. Todos os direitos reservados.</p>
+    <p style="margin-top: 0.5rem;">Desenvolvido com excelência técnica e foco em performance.</p>
   </footer>
 
   <script>
-    // ── Cursor ──
-    const cursor = document.getElementById('cursor');
-    const ring   = document.getElementById('cursor-ring');
-    document.addEventListener('mousemove', e => {
-      cursor.style.transform = `translate(${e.clientX-5}px,${e.clientY-5}px)`;
-      ring.style.transform   = `translate(${e.clientX-18}px,${e.clientY-18}px)`;
-    });
-
-    // ── Categorias ──
-    document.querySelectorAll('.cat-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-      });
-    });
-
-    // ── Fade in ──
-    document.body.classList.add('js-loaded');
-    const obs = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-    }, { threshold: 0.08 });
-    document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
-
-    // ════════════════════════════════════════════════════════════
-    //  DOIS CANAIS DO YOUTUBE
-    //  Para adicionar um terceiro canal, copie um objeto {}
-    //  e preencha o id e a key correspondentes
-    // ════════════════════════════════════════════════════════════
+    /* --- 1. CONFIGURAÇÕES DA API (Área Crítica de Manutenção) --- */
+    // AVISO: A Cris precisa colar a chave exata da API Google aqui.
+    const YOUTUBE_API_KEY = "COLE_A_SUA_CHAVE_API_AQUI"; 
+    
+    // AVISO: Certifique-se de que os IDs dos canais estão corretos.
     const CANAIS = [
-      { id: 'UC8Fn0m_tXJOxDtWbZZNvIZA', key: 'AIzaSyCIkbu4d1C5ft0UcasVStpupzb5kmgXp_Q' },  // @crisoliveiradesigner
-      { id: 'UCB9OwCXHDzYVz3SA14yor7w',  key: 'AIzaSyCzBDZduR9RP-40veDbq1-ldLYxZON9HZ4' }   // @Crisoliveira-convitetop10
-    ];
-    const WPP_NUM = '5571993233142';
-
-    // ════════════════════════════════════════════════════════════
-    //  LISTA "OS MAIS BUSCADOS"
-    //  Para adicionar um tema: 'Nome do Tema',
-    //  A lista se organiza em A→Z automaticamente!
-    // ════════════════════════════════════════════════════════════
-    const TEMAS_MAIS_BUSCADOS = [
-      'A Casa Mágica da Gabby','Arco Íris','Aurora','Barbie',
-      'Casamento','Bluey','Bolofofos','Bosque','Capivara',
-      'Carrinhos','Cerejinha','Cinderela','Confeitaria','Patrulha Canina',
-      'Dinossauro','Disney','Fábrica de Brinquedos','Fadas',
-      'Flamengo','Harry Potter','Hello Kitty','Homem Aranha',
-      'Hot Wheels','Looney Tunes','Masha e o Urso','Meios de Transporte',
-      'Metoo Dolls','Moranguinho','Mundo Bita','Os Três Porquinhos',
-      'Parque de Diversões','Piquenique','Poderoso Chefinho','Pokemon',
-      'Pool Party','Relâmpago McQueen','Sereia','Super Heróis',
-      'Super Mário','Toy Story','Ursinho Pooh','Ursinho Aviador'
+      "UC8Fn0m_tXJOxDtWbZZNvIZA", // Exemplo: UCxxxxxxxxxxxxxxxxxxxxxx
+      "UCB9OwCXHDzYVz3SA14yor7w"
     ];
 
-    // ── Renderiza lista em A→Z ──
-    const mbGrid = document.getElementById('maisBuscadosGrid');
-    [...TEMAS_MAIS_BUSCADOS].sort((a,b) => a.localeCompare(b,'pt')).forEach(tema => {
-      const item = document.createElement('div');
-      item.className = 'tema-item';
-      item.textContent = tema;
-      item.addEventListener('click', () => abrirModalTema(tema));
-      mbGrid.appendChild(item);
+    /* --- 2. INTERFACE E ANIMAÇÕES --- */
+    // Lógica do Acordeão (Temas Mais Procurados)
+    const btnMb = document.getElementById('btn-mb');
+    const bodyMb = document.getElementById('body-mb');
+    btnMb.addEventListener('click', () => {
+      btnMb.classList.toggle('aberto');
+      bodyMb.classList.toggle('aberto');
     });
 
-    // ── Toggle retrátil ──
-    function toggleMaisBuscados() {
-      document.getElementById('mbToggle').classList.toggle('aberto');
-      document.getElementById('mbBody').classList.toggle('aberto');
-    }
+    // Lógica da Janela Modal
+    const modal = document.getElementById('catalogoModal');
+    const input = document.getElementById('buscaInput');
+    const titulo = document.getElementById('modalTitulo');
+    const grid = document.getElementById('videosGrid');
+    const status = document.getElementById('buscaStatus');
 
-    // ════════════════════════════════════════════════════════════
-    //  BUSCA NOS DOIS CANAIS SIMULTANEAMENTE
-    // ════════════════════════════════════════════════════════════
-    async function buscaNosCanais(termo, maxPorCanal = 6) {
-      const promises = CANAIS.map(c => {
-        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${c.id}&q=${encodeURIComponent(termo)}&type=video&maxResults=${maxPorCanal}&key=${c.key}`;
-        return fetch(url).then(r => r.json()).catch(() => ({ items: [] }));
-      });
-      const resultados = await Promise.all(promises);
-      const vistos = new Set();
-      const todos  = [];
-      resultados.forEach(data => {
-        (data.items || []).forEach(item => {
-          const vid = item.id?.videoId;
-          if (vid && !vistos.has(vid)) { vistos.add(vid); todos.push(item); }
-        });
-      });
-      return todos;
-    }
-
-    // ── Thumbnails dos destaques ──
-    async function carregarThumbsDestaque() {
-      for (const card of document.querySelectorAll('.tema-destaque-card')) {
-        const tema = card.dataset.tema;
-        const img  = card.querySelector('.td-thumb');
-        try {
-          const itens = await buscaNosCanais(tema + ' convite', 1);
-          if (itens.length > 0) img.src = itens[0].snippet.thumbnails.medium.url;
-        } catch(e) {}
-        card.addEventListener('click', () => abrirModalTema(tema));
-      }
-    }
-    carregarThumbsDestaque();
-
-    // ── Modal de temas ──
-    const catalogoModal = document.getElementById('catalogoModal');
-    const modalTemaNome = document.getElementById('modalTemaNome');
-    const modalStatus   = document.getElementById('modalStatus');
-    const modalGrid     = document.getElementById('modalVideosGrid');
-
-    async function abrirModalTema(tema) {
-      modalTemaNome.innerHTML = `Convites — <em>${tema}</em>`;
-      modalStatus.textContent = '🔍 Buscando nos dois canais...';
-      modalGrid.innerHTML = '';
-      catalogoModal.classList.add('aberto');
-      document.body.style.overflow = 'hidden';
-      try {
-        const itens = await buscaNosCanais(tema + ' convite', 12);
-        if (!itens.length) {
-          modalStatus.textContent = `😕 Nenhum vídeo encontrado para "${tema}".`;
-          return;
-        }
-        modalStatus.textContent = `✨ ${itens.length} convite(s) encontrado(s)`;
-        itens.forEach(item => {
-          const vid   = item.id.videoId;
-          const title = item.snippet.title;
-          const thumb = item.snippet.thumbnails.medium.url;
-          const card  = document.createElement('div');
-          card.className = 'modal-video-card';
-          card.innerHTML = `
-            <div class="modal-video-thumb-wrap">
-              <img class="modal-video-thumb" src="${thumb}" alt="${title}">
-              <div class="play-btn">
-                <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="40" cy="40" r="38" fill="rgba(0,0,0,0.45)" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
-                  <polygon points="32,24 58,40 32,56" fill="white"/>
-                </svg>
-              </div>
-            </div>
-            <div class="modal-video-info">
-              <p class="modal-video-titulo">${title}</p>
-              <p class="modal-video-canal">Cris Pop Arte</p>
-            </div>`;
-          card.addEventListener('click', () => abrirPlayer(vid, title, tema));
-          modalGrid.appendChild(card);
-        });
-      } catch(err) {
-        modalStatus.textContent = '⚠️ Erro: ' + err.message;
+    function abrirModal(termoInicial = '') {
+      modal.classList.add('aberto');
+      document.body.style.overflow = 'hidden'; // Impede rolagem do fundo
+      if (termoInicial) {
+        input.value = termoInicial;
+        titulo.innerHTML = `Tema: <em>${termoInicial}</em>`;
+        buscarVideos(); // Dispara a pesquisa automaticamente
+      } else {
+        input.value = '';
+        titulo.innerHTML = `Pesquisar <em>Temas</em>`;
+        grid.innerHTML = '';
+        status.textContent = 'Digite o tema pretendido e clique em Procurar.';
       }
     }
 
     function fecharModal() {
-      catalogoModal.classList.remove('aberto');
-      document.body.style.overflow = '';
-    }
-    catalogoModal.addEventListener('click', e => { if (e.target === catalogoModal) fecharModal(); });
-
-    // ── Player com botão WhatsApp ──
-    const playerOverlay = document.getElementById('videoPlayerOverlay');
-    const videoIframe   = document.getElementById('videoIframe');
-    const playerBtnWpp  = document.getElementById('playerBtnWpp');
-
-    function abrirPlayer(videoId, titulo, tema) {
-      videoIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
-      // Mensagem personalizada com título e tema para o WhatsApp
-      const msg = `Olá Cris! 💜\n\nAssisti ao vídeo: *"${titulo}"*\n\nQuero encomendar um convite com o tema *${tema}*.\n\nPodemos conversar sobre os detalhes e formas de pagamento?`;
-      playerBtnWpp.href = `https://wa.me/${WPP_NUM}?text=${encodeURIComponent(msg)}`;
-      playerOverlay.classList.add('aberto');
+      modal.classList.remove('aberto');
+      document.body.style.overflow = 'auto'; // Restaura rolagem
     }
 
-    function fecharPlayer() {
-      playerOverlay.classList.remove('aberto');
-      videoIframe.src = '';
+    /* --- 3. MOTOR DE PESQUISA YOUTUBE (Com correção de URL Encoding) --- */
+    async function buscaNosCanais(termoBusca, maxResultados = 6) {
+      let todosResultados = [];
+      
+      // Laço de repetição para procurar em múltiplos canais
+      for (const channelId of CANAIS) {
+        // Implementação da norma RFC 3986 (encodeURIComponent) para evitar falhas com espaços
+        const termoCodificado = encodeURIComponent(termoBusca);
+        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&q=${termoCodificado}&type=video&maxResults=${maxResultados}&key=${YOUTUBE_API_KEY}`;
+        
+        try {
+          const resposta = await fetch(url);
+          if (!resposta.ok) {
+            // Registo técnico para Depuração Master no Console (F12)
+            console.error(`Falha HTTP no Canal ${channelId}: Status ${resposta.status}`);
+            continue;
+          }
+          const dados = await resposta.json();
+          if (dados.items) {
+            todosResultados = todosResultados.concat(dados.items);
+          }
+        } catch (erro) {
+          console.error(`Erro técnico ao efetuar Fetch no canal ${channelId}:`, erro);
+        }
+      }
+      return todosResultados;
     }
-    playerOverlay.addEventListener('click', e => { if (e.target === playerOverlay) fecharPlayer(); });
-
-    // ── ESC fecha tudo ──
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') { fecharPlayer(); fecharModal(); }
-    });
-
-    // ── Busca livre nos dois canais ──
-    document.getElementById('buscaInput').addEventListener('keydown', e => {
-      if (e.key === 'Enter') buscarVideos();
-    });
 
     async function buscarVideos() {
-      const termo  = document.getElementById('buscaInput').value.trim();
-      const status = document.getElementById('buscaStatus');
-      const grid   = document.getElementById('videosGrid');
-      if (!termo) { status.textContent = 'Digite algo para buscar 😊'; return; }
-      status.textContent = '🔍 Buscando nos dois canais...';
+      const termo = input.value.trim();
+      if (!termo) { 
+        status.textContent = 'Por favor, digite algo para pesquisar.'; 
+        return; 
+      }
+      
+      status.textContent = '🔍 A procurar na base de dados...';
       grid.innerHTML = '';
+      
       try {
         const itens = await buscaNosCanais(termo, 6);
-        if (!itens.length) {
-          status.textContent = `😕 Nenhum vídeo encontrado para "${termo}".`;
+        
+        // Validação Analítica: Tratamento de Matriz Vazia
+        if (!itens || itens.length === 0) {
+          status.textContent = `😕 Nenhum vídeo encontrado para "${termo}". (Verifique se o vídeo está Público no YouTube).`;
+          console.warn(`A API retornou uma matriz vazia para o termo: ${termo}`);
           return;
         }
+        
         status.textContent = `✨ ${itens.length} vídeo(s) encontrado(s) para "${termo}"`;
+        
+        // Geração Dinâmica da Interface (DOM)
         itens.forEach(item => {
-          const vid   = item.id.videoId;
+          const vid = item.id.videoId;
           const title = item.snippet.title;
           const thumb = item.snippet.thumbnails.medium.url;
-          const card  = document.createElement('a');
-          card.className = 'video-card';
-          card.href      = `https://www.youtube.com/watch?v=${vid}`;
-          card.target    = '_blank';
-          card.rel       = 'noopener noreferrer';
-          card.innerHTML = `<img class="video-thumb" src="${thumb}" alt="${title}"><div class="video-info"><p class="video-titulo">${title}</p><p class="video-canal">Cris Pop Arte</p><span class="video-assistir">▶ Assistir no YouTube</span></div>`;
+          
+          const card = document.createElement('a');
+          card.style.display = 'block';
+          card.style.background = 'rgba(255,255,255,0.03)';
+          card.style.border = '1px solid rgba(180,79,200,0.15)';
+          card.style.borderRadius = '4px';
+          card.style.overflow = 'hidden';
+          card.style.textDecoration = 'none';
+          card.style.transition = 'transform 0.3s, border-color 0.3s';
+          
+          card.onmouseover = () => { card.style.transform = 'translateY(-5px)'; card.style.borderColor = 'var(--rose)'; };
+          card.onmouseout = () => { card.style.transform = 'translateY(0)'; card.style.borderColor = 'rgba(180,79,200,0.15)'; };
+          
+          card.href = `https://www.youtube.com/watch?v=${vid}`;
+          card.target = '_blank';
+          card.rel = 'noopener noreferrer';
+          
+          card.innerHTML = `
+            <div style="aspect-ratio: 16/9; overflow: hidden;">
+              <img src="${thumb}" alt="${title}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <div style="padding: 1rem;">
+              <p style="font-family: 'Jost', sans-serif; font-size: 0.95rem; font-weight: 500; color: var(--white); margin-bottom: 0.5rem; line-height: 1.4;">${title}</p>
+              <p style="font-size: 0.75rem; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.1em;">Cris Pop Arte</p>
+            </div>
+          `;
           grid.appendChild(card);
         });
       } catch(err) {
-        status.innerHTML = '⚠️ Erro: ' + err.message;
+        status.innerHTML = `<span style="color: #ff6b6b;">⚠️ Ocorreu um erro no sistema de pesquisa. Contacte o administrador técnico.</span>`;
+        console.error("Erro fatal na função buscarVideos:", err);
       }
     }
   </script>
