@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<!--
+© 2026 Cristiane Oliveira
+Material exclusivo para alunos.
+Proibida reprodução, distribuição ou revenda.
+Lei 9.610/98 – Direitos Autorais.
+-->
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedido de Convite - Crispoparte</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primaria: #a34fce;   --secundaria: #19bbb5; --destaque: #fd5682;
+            --texto: #443654;      --fundo: #d8d6dc;       --branco: #ffffff;
+        }
+
+        body { font-family: 'Nunito', sans-serif; background: var(--fundo); padding: 20px; display: flex; justify-content: center; color: var(--texto); }
+        form { background: white; border-radius: 20px; max-width: 650px; width: 100%; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; padding-bottom: 30px; }
+        .header-image { width: 100%; height: auto; display: block; }
+        .container-campos { padding: 25px; }
+        
+        h2 { text-align: center; color: var(--primaria); border-bottom: 2px solid var(--secundaria); padding-bottom: 10px; margin-bottom: 20px; font-size: 1.6rem; }
+        label { display: block; margin-top: 18px; font-size: 14px; font-weight: 800; color: var(--texto); }
+        
+        input, select, textarea { 
+            width: 100%; padding: 12px; margin-top: 5px; border-radius: 10px; 
+            border: 2px solid #eee; box-sizing: border-box; font-family: inherit; font-size: 14px;
+        }
+        input:focus { border-color: var(--secundaria); outline: none; }
+
+        .sub-secao { background: #fdfaff; padding: 15px; border-radius: 12px; border: 1px solid #efe5f5; margin-top: 15px; display: none; }
+        .bloco-pergunta { background: #f8f9fa; padding: 15px; border-radius: 12px; margin-top: 15px; border: 1px solid #eee; }
+
+        .resumo-box { background: #fffcf0; border: 2px solid #f3e5ab; padding: 15px; border-radius: 12px; margin-top: 20px; }
+        .item-lista { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 14px; }
+        .btn-remover { color: var(--destaque); cursor: pointer; font-weight: bold; margin-left: 10px; }
+
+        .termos-container { background: #f9f9f9; padding: 15px; border-radius: 12px; margin-top: 25px; border: 1px solid #eee; }
+        .checkbox-alinhado { display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 700; color: var(--primaria); font-size: 14px; }
+
+        #total-container { text-align: center; margin-top: 20px; padding: 20px; background: #f0fdfa; border-radius: 15px; border: 2px dashed var(--secundaria); }
+        .valor-grande { font-size: 32px; font-weight: 800; color: var(--primaria); display: block; margin: 5px 0; }
+        
+        .btn-acao { border: none; border-radius: 12px; padding: 15px; font-weight: 800; cursor: pointer; transition: 0.3s; width: 100%; }
+        .btn-incluir { background: var(--secundaria); color: white; margin-top: 10px; font-size: 14px; }
+        .btn-whatsapp { background: #25D366; color: white; font-size: 18px; margin-top: 15px; }
+        button:disabled { background: #ccc !important; cursor: not-allowed; }
+        
+        .btn-pix { background: var(--primaria); color: white; padding: 6px 12px; border-radius: 8px; font-size: 12px; width: auto; display: inline-block; margin-top: 10px; cursor:pointer; }
+
+        /* Estilo para itens de preço fixo */
+        .preco-fixo-info { background: #f0fdfa; border: 2px solid var(--secundaria); border-radius: 10px; padding: 12px 15px; margin-top: 10px; font-size: 15px; color: var(--texto); }
+        .preco-fixo-info strong { color: var(--primaria); font-size: 18px; }
+    </style>
+</head>
+<body>
+
+<form id="formCrispoparte">
+    <img src="minha-arte.jpg" alt="Crispoparte" class="header-image">
+    
+    <div class="container-campos">
+        <h2>Solicitação de Pedido</h2>
+
+        <label>Nome do responsável:*</label>
+        <input type="text" id="resp_nome">
+
+        <label>WhatsApp do responsável:*</label>
+        <input type="text" id="resp_wa">
+
+        <label>Aniversário para quantas pessoas?</label>
+        <select id="extra_aniv" onchange="atualizarSoma()">
+            <option value="0">Uma pessoa (R$ 0,00)</option>
+            <option value="10">Duas pessoas (+ R$ 10,00)</option>
+        </select>
+
+        <label>Nome aniversariante(s):*</label>
+        <input type="text" id="ev_nome">
+
+        <label>Idade:*</label>
+        <input type="text" id="ev_idade">
+
+        <label>Tema:*</label>
+        <input type="text" id="ev_tema">
+
+        <div style="display: flex; gap: 10px;">
+            <div style="flex:1;"><label>Data:*</label><input type="date" id="ev_data"></div>
+            <div style="flex:1;"><label>Hora:*</label><input type="time" id="ev_hora"></div>
+        </div>
+
+        <label>Local (Nome do espaço):*</label>
+        <input type="text" id="ev_local">
+
+        <label>Endereço completo:*</label>
+        <textarea id="ev_end" rows="2"></textarea>
+
+        <div class="bloco-pergunta">
+            <label>Fotos (0 a 2 inclusas. R$ 2,00 por foto extra):</label>
+            <input type="number" id="qtd_fotos" value="0" min="0" oninput="atualizarSoma()">
+
+            <label>Alterar Música do Convite?</label>
+            <select id="opt_musica" onchange="atualizarSoma()">
+                <option value="0">Manter original (R$ 0,00)</option>
+                <option value="2">Trocar música (+ R$ 2,00)</option>
+            </select>
+            <input type="text" id="link_musica" placeholder="Link da música (YouTube)">
+
+            <label>Alterar as frases (Cenas 02 e 04)?</label>
+            <select id="opt_frases">
+                <option value="Padrão">Manter frases originais</option>
+                <option value="Personalizada">Quero personalizar as frases</option>
+            </select>
+            <textarea id="txt_frases" rows="2" placeholder="Digite aqui o que deseja alterar..."></textarea>
+
+            <label>Observação especial (Cena 06):</label>
+            <textarea id="txt_obs" rows="2" placeholder="Ex: Traje esporte fino..."></textarea>
+
+            <label>Taxa de Urgência (Entrega em 24h úteis)?</label>
+            <select id="opt_urgencia" onchange="atualizarSoma()">
+                <option value="0">Não (Prazo normal 3 dias)</option>
+                <option value="20">Sim, tenho pressa! (+ R$ 20,00)</option>
+            </select>
+        </div>
+
+        <label style="color: var(--primaria); font-size: 16px; margin-top: 30px;">O que deseja contratar?</label>
+        <select id="tipo_produto" onchange="mostrarSecao()">
+            <option value="">Selecione um serviço...</option>
+            <option value="Convite">1 - Convite</option>
+            <option value="Moldura">2 - Moldura para Fotos</option>
+            <option value="Retrospectiva">3 - Retrospectiva</option>
+            <option value="Idparaevento">4 - ID para Evento (R$ 100,00)</option>
+            <option value="Idparamarca">5 - ID para Marca (R$ 200,00)</option>
+            <option value="Mascotinho">6 - Mascotinho</option>
+            <option value="Musica">7 - Música Personalizada (R$ 60,00)</option>
+        </select>
+
+        <!-- SEÇÃO 1: Convite -->
+        <div id="sec_convite" class="sub-secao">
+            <label>Modelo do Convite:</label>
+            <select id="mod_convite" onchange="checarCategoria()">
+                <option value="Retrato|30">Retrato (R$ 30,00)</option>
+                <option value="Vídeo Animado|50">Vídeo Animado (R$ 50,00)</option>
+                <option value="Interativo Tela Única|50">Interativo Tela Única (R$ 50,00)</option>
+                <option value="Interativo Trailer|50">Interativo Trailer (R$ 50,00)</option>
+                <option value="Interativo Estendida|70">Interativo Tela Estendida (R$ 70,00)</option>
+                <option value="Interativo Slide|120">Interativo Slide de Fotos (R$ 120,00)</option>
+                <option value="Cine Individual|150">Cinematográfico Lista Individual (R$ 150,00)</option>
+                <option value="Cine QR|250">Cine Individual + Placa QR (R$ 250,00)</option>
+                <option value="Interativo Form|90">Interativo com Form de Presença (R$ 90,00)</option>
+                <option value="Cine Categoria|90">Cinematográfico por Categoria (Infantil/Adulto)</option>
+                <option value="Tecnológico|90">Tecnológico Vídeo 2 botões</option>
+                <option value="Livrinho|90">Livrinho</option>
+            </select>
+            <div id="extra_cat" style="display:none; margin-top:10px;">
+                <label>Categoria do Evento:</label>
+                <select id="cat_evento" onchange="atualizarPrecoCine()">
+                    <option value="90">Infantil (R$ 90,00)</option>
+                    <option value="150">Casamento / 15 anos / Adulto (R$ 150,00)</option>
+                </select>
+            </div>
+            <button type="button" class="btn-acao btn-incluir" onclick="add('Convite')">Incluir no meu pedido</button>
+        </div>
+
+        <!-- SEÇÃO 2: Moldura -->
+        <div id="sec_moldura" class="sub-secao">
+            <label>Opções de Moldura:</label>
+            <select id="mod_moldura">
+                <option value="Única|40">1 Moldura Única (R$ 40,00)</option>
+                <option value="Dupla|60">2 Molduras Dupla (R$ 60,00)</option>
+                <option value="Interativa|60">3 Molduras Interativa (R$ 60,00)</option>
+            </select>
+            <button type="button" class="btn-acao btn-incluir" onclick="add('Moldura')">Incluir no meu pedido</button>
+        </div>
+
+        <!-- SEÇÃO 3: Retrospectiva -->
+        <div id="sec_retro" class="sub-secao">
+            <label>Faixa de Fotos:</label>
+            <select id="mod_retro">
+                <option value="30 a 50 fotos|99.99">De   1 até 50 fotos (R$ 99,99)</option>
+                <option value="51 a 80 fotos|129.99">De 51 até 80 fotos (R$ 129,99)</option>
+                <option value="81 a 100 fotos|149.99">De 81 até 100 fotos (R$ 149,99)</option>
+                <option value="101 a 120 fotos|169.99">De 101 até 120 fotos (R$ 169,99)</option>
+                <option value="121 a 150 fotos|199.99">De 121 até 150 fotos (R$ 199,99)</option>
+                <option value="151 a 200 fotos|249.99">De 151 até 200 fotos (R$ 249,99)</option>
+            </select>
+            <button type="button" class="btn-acao btn-incluir" onclick="add('Retro')">Incluir no meu pedido</button>
+        </div>
+
+        <!-- SEÇÃO 4: ID para Evento (preço fixo R$ 100,00) -->
+        <div id="sec_idparaevento" class="sub-secao">
+            <div class="preco-fixo-info">
+                📋 <strong>ID para Evento</strong><br>
+                Valor: <strong>R$ 100,00</strong>
+            </div>
+            <button type="button" class="btn-acao btn-incluir" onclick="addFixo('ID para Evento', 100)">Incluir no meu pedido</button>
+        </div>
+
+        <!-- SEÇÃO 5: ID para Marca (preço fixo R$ 200,00) -->
+        <div id="sec_idparamarca" class="sub-secao">
+            <div class="preco-fixo-info">
+                🏷️ <strong>ID para Marca</strong><br>
+                Valor: <strong>R$ 200,00</strong>
+            </div>
+            <button type="button" class="btn-acao btn-incluir" onclick="addFixo('ID para Marca', 200)">Incluir no meu pedido</button>
+        </div>
+
+        <!-- SEÇÃO 6: Mascotinho -->
+        <div id="sec_mascotinho" class="sub-secao">
+            <label>Opções de Mascotinho:</label>
+            <select id="mod_mascotinho">
+                <option value="1 variação|60">1 Mascotinho (R$ 60,00)</option>
+                <option value="2 variações|90">2 Mascotinhos variação (R$ 90,00)</option>
+                <option value="3 variações|120">3 Mascotinhos variações (R$ 120,00)</option>
+            </select>
+            <button type="button" class="btn-acao btn-incluir" onclick="add('Mascotinho')">Incluir no meu pedido</button>
+        </div>
+
+        <!-- SEÇÃO 7: Música Personalizada (preço fixo R$ 60,00) -->
+        <div id="sec_musica" class="sub-secao">
+            <div class="preco-fixo-info">
+                🎵 <strong>Música Personalizada</strong><br>
+                Valor: <strong>R$ 60,00</strong>
+            </div>
+            <button type="button" class="btn-acao btn-incluir" onclick="addFixo('Música Personalizada', 60)">Incluir no meu pedido</button>
+        </div>
+
+        <!-- Resumo do carrinho -->
+        <div class="resumo-box" id="caixa_resumo" style="display:none;">
+            <strong style="color: var(--primaria);">Ítens no Pedido:</strong>
+            <div id="lista_carrinho" style="margin-top:10px;"></div>
+        </div>
+
+        <div class="termos-container">
+            <label class="checkbox-alinhado">
+                <input type="checkbox" id="check_termos" onchange="validar()">
+                Li e concordo com os termos da Crispoparte
+            </label>
+        </div>
+
+        <div id="total-container">
+            <span>TOTAL À VISTA (PIX):</span>
+            <strong class="valor-grande" id="res_total">R$ 0,00</strong>
+            <div class="btn-pix" onclick="copiarPix()">Copiar Chave Pix Celular</div>
+        </div>
+
+        <button type="button" class="btn-acao btn-whatsapp" id="btnEnviar" disabled onclick="enviar()">
+            Enviar Pedido Detalhado no WhatsApp 💌
+        </button>
+    </div>
+</form>
+
+<script>
+let itens = [];
+
+// ============================================================
+// FUNÇÃO: mostrarSecao
+// Exibe a seção correta conforme o serviço selecionado.
+//
+// ✅ COMO ADICIONAR UM NOVO ITEM FUTURAMENTE:
+// 1. Adicione um <option value="NomeChave"> no <select id="tipo_produto">
+// 2. Crie um <div id="sec_nomechave" class="sub-secao"> no HTML
+// 3. Adicione uma linha aqui embaixo no formato:
+//    document.getElementById("sec_nomechave").style.display = t === "NomeChave" ? "block" : "none";
+// 4. Se for preço fixo: use o botão onclick="addFixo('Nome do Item', PRECO)"
+//    Se tiver opções de modelo: use onclick="add('NomeChave')" e adicione o ID do select no mapa abaixo
+// ============================================================
+function mostrarSecao() {
+    const t = document.getElementById("tipo_produto").value;
+
+    // Lista de todas as seções - adicione novos IDs aqui
+    const todasSecoes = [
+        "sec_convite", "sec_moldura", "sec_retro",
+        "sec_idparaevento", "sec_idparamarca",
+        "sec_mascotinho", "sec_musica"
+    ];
+
+    // Esconde todas primeiro
+    todasSecoes.forEach(id => document.getElementById(id).style.display = "none");
+
+    // Mapeamento: valor do option → ID da seção
+    const mapa = {
+        "Convite":      "sec_convite",
+        "Moldura":      "sec_moldura",
+        "Retrospectiva":"sec_retro",
+        "Idparaevento": "sec_idparaevento",
+        "Idparamarca":  "sec_idparamarca",
+        "Mascotinho":   "sec_mascotinho",
+        "Musica":       "sec_musica"
+    };
+
+    if (mapa[t]) document.getElementById(mapa[t]).style.display = "block";
+}
+
+function checarCategoria() {
+    const mod = document.getElementById("mod_convite").value.split('|')[0];
+    const listaExtra = ["Cine Categoria", "Tecnológico", "Livrinho"];
+    document.getElementById("extra_cat").style.display = listaExtra.includes(mod) ? "block" : "none";
+}
+
+// ============================================================
+// FUNÇÃO: add
+// Para serviços que têm um <select> com opções de modelo.
+// Mapeamento: tipo → ID do select correspondente
+// ============================================================
+function add(tipo) {
+    // Mapa: tipo → ID do select de modelo
+    const mapaSelects = {
+        "Convite":    "mod_convite",
+        "Moldura":    "mod_moldura",
+        "Retro":      "mod_retro",
+        "Mascotinho": "mod_mascotinho"
+    };
+
+    const sid = mapaSelects[tipo];
+    if (!sid) return;
+
+    const sel = document.getElementById(sid);
+    const d = sel.value.split('|');
+    let nomeFinal = tipo + " " + d[0];
+    let precoFinal = parseFloat(d[1]);
+
+    // Caso especial: Convite com categoria (Cine Categoria, Tecnológico, Livrinho)
+    if (tipo === 'Convite' && document.getElementById("extra_cat").style.display === "block") {
+        precoFinal = parseFloat(document.getElementById("cat_evento").value);
+        nomeFinal += " (" + document.getElementById("cat_evento").selectedOptions[0].text.split(' ')[0] + ")";
+    }
+
+    itens.push({ nome: nomeFinal, preco: precoFinal });
+    render();
+    atualizarSoma();
+}
+
+// ============================================================
+// FUNÇÃO: addFixo
+// Para serviços com preço fixo, sem opções de modelo.
+// Uso: addFixo('Nome do Item', 100)
+// ============================================================
+function addFixo(nome, preco) {
+    itens.push({ nome: nome, preco: preco });
+    render();
+    atualizarSoma();
+}
+
+function remover(i) { itens.splice(i, 1); render(); atualizarSoma(); }
+
+function render() {
+    const l = document.getElementById("lista_carrinho");
+    const c = document.getElementById("caixa_resumo");
+    c.style.display = itens.length ? "block" : "none";
+    l.innerHTML = itens.map((it, idx) =>
+        `<div class="item-lista">
+            <span>${it.nome}</span>
+            <span>R$ ${it.preco.toFixed(2).replace('.',',')} 
+            <span class="btn-remover" onclick="remover(${idx})">x</span></span>
+        </div>`
+    ).join('');
+}
+
+function atualizarSoma() {
+    let total = itens.reduce((a, b) => a + b.preco, 0);
+    if (total > 0) {
+        total += parseFloat(document.getElementById("extra_aniv").value);
+        total += parseFloat(document.getElementById("opt_musica").value);
+        total += parseFloat(document.getElementById("opt_urgencia").value);
+        const f = parseInt(document.getElementById("qtd_fotos").value) || 0;
+        total += (f > 2 ? (f - 2) * 2 : 0);
+    }
+    document.getElementById("res_total").innerText = "R$ " + total.toFixed(2).replace('.', ',');
+}
+
+function validar() { document.getElementById("btnEnviar").disabled = !document.getElementById("check_termos").checked; }
+function copiarPix() { navigator.clipboard.writeText("71993233142"); alert("Chave Pix Copiada!"); }
+
+function enviar() {
+    const nomeR = document.getElementById("resp_nome").value;
+    const tema = document.getElementById("ev_tema").value;
+    if (!nomeR || !tema || itens.length === 0) return alert("Preencha Responsável, Tema e Adicione um serviço!");
+
+    let msg = `✨ *PEDIDO CONFIRMADO - CRISPOPARTE* ✨\n\n`;
+    msg += `🎂 *Aniversariante:* ${document.getElementById("ev_nome").value} (${document.getElementById("ev_idade").value})\n`;
+    msg += `⚽ *Tema:* ${tema}\n`;
+    msg += `📅 *Data:* ${document.getElementById("ev_data").value.split('-').reverse().join('/')} às ${document.getElementById("ev_hora").value}\n`;
+    msg += `📍 *Local:* ${document.getElementById("ev_local").value}\n`;
+    msg += `🏠 *Endereço:* ${document.getElementById("ev_end").value}\n\n`;
+
+    msg += `📋 *DADOS DE CRIAÇÃO:* \n`;
+    msg += `- Fotos: ${document.getElementById("qtd_fotos").value}\n`;
+    msg += `- Frases (Cenas 02/04): ${document.getElementById("txt_frases").value || document.getElementById("opt_frases").value}\n`;
+    msg += `- Música: ${document.getElementById("link_musica").value || document.getElementById("opt_musica").selectedOptions[0].text}\n`;
+    msg += `- Obs (Cena 06): ${document.getElementById("txt_obs").value || 'Nenhuma'}\n`;
+    msg += `- Urgência: ${document.getElementById("opt_urgencia").selectedOptions[0].text}\n\n`;
+
+    msg += `🛒 *ÍTENS DO PEDIDO:* \n`;
+    itens.forEach(it => msg += `* ${it.nome}: R$ ${it.preco.toFixed(2).replace('.',',')}\n`);
+
+    msg += `\n💰 *TOTAL À VISTA (PIX):* \n`;
+    msg += `*${document.getElementById("res_total").innerText}*\n\n`;
+    msg += `✅ _Li e concordo com os termos. A produção inicia após o envio do comprovante._`;
+
+    window.open(`https://wa.me/5571993233142?text=${encodeURIComponent(msg)}`, '_blank');
+}
+</script>
+</body>
+</html>
