@@ -273,6 +273,352 @@
     }
     .btn-wpp:hover { background: #128C7E; }
 
+    /* ══════════════════════════════════════════
+       ── MINI-CATÁLOGO POR TEMAS (NOVO) ──
+    ══════════════════════════════════════════ */
+    .catalogo-section {
+      background: var(--dark);
+      padding: 5rem 2rem 6rem;
+    }
+    .catalogo-section .section-tag { color: var(--teal); }
+    .catalogo-section .section-title { color: var(--white); }
+    .catalogo-section .section-title em { color: var(--teal); }
+    .catalogo-section .section-header { padding-top: 0; }
+
+    .catalogo-desc {
+      text-align: center;
+      color: rgba(255,255,255,0.5);
+      font-size: 0.9rem;
+      margin-top: 0.8rem;
+      margin-bottom: 3rem;
+    }
+
+    /* ── Temas em destaque ── */
+    .temas-destaque-titulo {
+      text-align: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: var(--white);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+    }
+    .temas-destaque-titulo::before,
+    .temas-destaque-titulo::after {
+      content: '';
+      display: block;
+      height: 1px;
+      width: 60px;
+      background: rgba(180,79,200,0.4);
+    }
+
+    /* ── Grid temas destaque ── */
+    .temas-destaque-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.8rem;
+      max-width: 1100px;
+      margin: 0 auto 3rem;
+      padding: 0 1rem;
+    }
+
+    /* ══════════════════════════════════════
+       COMO ADICIONAR TEMAS EM DESTAQUE:
+       Duplique um bloco .tema-destaque-card
+       e preencha data-tema="Nome do Tema"
+       A thumbnail vem automatica do YouTube!
+    ══════════════════════════════════════ */
+    .tema-destaque-card {
+      position: relative;
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+      aspect-ratio: 16/7;
+      background: rgba(180,79,200,0.15);
+      border: 1px solid rgba(180,79,200,0.2);
+      transition: transform 0.3s, border-color 0.3s;
+    }
+    .tema-destaque-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--rose);
+    }
+    .tema-destaque-card img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      opacity: 0.55;
+      transition: opacity 0.3s;
+    }
+    .tema-destaque-card:hover img { opacity: 0.75; }
+    .tema-destaque-card .td-label {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--white);
+      text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+
+    /* ── Os mais buscados ── */
+    .mais-buscados-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+    .mais-buscados-header {
+      background: var(--rose);
+      border-radius: 4px 4px 0 0;
+      padding: 0.9rem 1.5rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: var(--white);
+      letter-spacing: 0.05em;
+      text-align: center;
+    }
+    .mais-buscados-body {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(180,79,200,0.2);
+      border-top: none;
+      border-radius: 0 0 4px 4px;
+      padding: 1.8rem 2rem;
+    }
+
+    /* ══════════════════════════════════════
+       COMO ADICIONAR TEMAS NA LISTA:
+       No array TEMAS_MAIS_BUSCADOS (no JS),
+       adicione o nome entre aspas e vírgula.
+       Ex: 'Meu Novo Tema',
+       A lista se reorganiza automaticamente!
+    ══════════════════════════════════════ */
+    .mais-buscados-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 0.3rem 1rem;
+    }
+    .tema-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 0.6rem;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      color: rgba(255,255,255,0.7);
+      font-size: 0.82rem;
+    }
+    .tema-item::before {
+      content: '▸';
+      color: var(--rose);
+      font-size: 0.7rem;
+      flex-shrink: 0;
+    }
+    .tema-item:hover {
+      background: rgba(180,79,200,0.15);
+      color: var(--white);
+    }
+    .tema-item:hover::before { color: var(--teal); }
+
+    /* ── Modal de vídeos ── */
+    .catalogo-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10,6,24,0.95);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+      overflow-y: auto;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    .catalogo-modal-overlay.aberto {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .modal-header {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .modal-tema-nome {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 300;
+      color: var(--white);
+    }
+    .modal-tema-nome em { font-style: italic; color: var(--rose); }
+    .modal-fechar {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: var(--white);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.6rem 1.4rem;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .modal-fechar:hover { background: rgba(180,79,200,0.3); }
+
+    .modal-status {
+      width: 100%;
+      max-width: 1100px;
+      text-align: center;
+      color: rgba(255,255,255,0.45);
+      font-size: 0.85rem;
+      margin-bottom: 1.5rem;
+      min-height: 1.5rem;
+    }
+
+    /* ── Grid de vídeos no modal ── */
+    .modal-videos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.2rem;
+      width: 100%;
+      max-width: 1100px;
+    }
+
+    .modal-video-card {
+      position: relative;
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid rgba(180,79,200,0.2);
+      background: rgba(255,255,255,0.04);
+      cursor: pointer;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+    .modal-video-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--rose);
+    }
+
+    .modal-video-thumb-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: rgba(180,79,200,0.1);
+      overflow: hidden;
+    }
+    .modal-video-thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+    .modal-video-card:hover .modal-video-thumb { transform: scale(1.05); }
+
+    /* Botão play marca d'água */
+    .play-btn {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .play-btn svg {
+      width: 52px;
+      height: 52px;
+      filter: drop-shadow(0 2px 12px rgba(0,0,0,0.6));
+      opacity: 0.85;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .modal-video-card:hover .play-btn svg {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+    .modal-video-info {
+      padding: 0.9rem 1rem 1rem;
+    }
+    .modal-video-titulo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      color: var(--white);
+      line-height: 1.4;
+      margin-bottom: 0.3rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .modal-video-canal {
+      font-size: 0.7rem;
+      color: var(--teal);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ── Player inline no modal ── */
+    .video-player-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(5,2,15,0.97);
+      z-index: 1100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1.5rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .video-player-overlay.aberto {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .video-player-wrap {
+      width: 100%;
+      max-width: 900px;
+      aspect-ratio: 16/9;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(180,79,200,0.25);
+    }
+    .video-player-wrap iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+    .player-fechar {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: var(--white);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.6rem 1.8rem;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .player-fechar:hover { background: rgba(180,79,200,0.3); }
+
     /* ── BANNER ── */
     .banner {
       background: var(--dark); color: var(--white);
@@ -463,9 +809,13 @@
       .banner { grid-template-columns: 1fr; }
       .banner-deco { display: none; }
       .banner-text { padding: 3rem 1.5rem; }
+      .temas-destaque-grid { grid-template-columns: repeat(2, 1fr); }
+      .mais-buscados-grid { grid-template-columns: repeat(2, 1fr); }
     }
     @media (max-width: 480px) {
       .produtos { grid-template-columns: 1fr; }
+      .temas-destaque-grid { grid-template-columns: repeat(2, 1fr); }
+      .mais-buscados-grid { grid-template-columns: repeat(1, 1fr); }
     }
   </style>
 </head>
@@ -481,6 +831,7 @@
     </a>
     <ul class="nav-links">
       <li><a href="#produtos">Produtos</a></li>
+      <li><a href="#catalogo">Catálogo</a></li>
       <li><a href="#depoimentos">Avaliações</a></li>
       <li><a href="#buscar">Buscar Vídeo</a></li>
       <li><a href="https://crispoparte.com.br/encomendar/" class="nav-cta">Encomendar</a></li>
@@ -502,12 +853,11 @@
       </p>
       <div class="hero-btns">
         <a href="https://crispoparte.com.br/catalogo/" target="_blank" class="btn-primary">Ver Coleção</a>
-        <a href="https://crispoparte.com.br/encomendar/" class="btn-outline">Fazer Pedido</a>
+        <a href="https://wa.me/5571993233142" class="btn-outline">Falar no WhatsApp</a>
       </div>
     </div>
     <div class="hero-visual">
       <div class="hero-deco">
-        <!-- ✅ ALTERAÇÃO: logo.png no lugar do SVG decorativo -->
         <img src="logo.png" alt="Cris Pop Arte"
              style="width: 72%; max-width: 420px; object-fit: contain; opacity: 0.85; filter: drop-shadow(0 12px 40px rgba(180,79,200,0.25));">
       </div>
@@ -706,6 +1056,109 @@
     </div>
   </section>
 
+  <!-- ══════════════════════════════════════════
+       MINI-CATÁLOGO POR TEMAS (NOVA SEÇÃO)
+  ══════════════════════════════════════════ -->
+  <section id="catalogo" class="catalogo-section">
+    <div class="section-header">
+      <p class="section-tag">✦ Catálogo de Temas</p>
+      <h2 class="section-title">Encontre seu <em>tema</em> favorito</h2>
+    </div>
+    <p class="catalogo-desc">Clique em um tema e veja todos os convites disponíveis — assista sem sair da página!</p>
+
+    <!-- TEMAS EM DESTAQUE -->
+    <div class="temas-destaque-titulo">Temas em destaque</div>
+
+    <!--
+    ╔══════════════════════════════════════════════╗
+    ║  COMO ADICIONAR TEMAS EM DESTAQUE:           ║
+    ║  Copie um bloco .tema-destaque-card abaixo   ║
+    ║  e altere apenas o data-tema="Nome do Tema"  ║
+    ║  A thumbnail vem automática do YouTube!      ║
+    ╚══════════════════════════════════════════════╝
+    -->
+    <div class="temas-destaque-grid" id="temasDestaqueGrid">
+      <div class="tema-destaque-card" data-tema="365 Dias de Sorrisos">
+        <img src="" alt="365 Dias de Sorrisos" class="td-thumb">
+        <div class="td-label">365 Dias de Sorrisos</div>
+      </div>
+      <div class="tema-destaque-card" data-tema="A Bela e a Fera">
+        <img src="" alt="A Bela e a Fera" class="td-thumb">
+        <div class="td-label">A Bela e a Fera</div>
+      </div>
+      <div class="tema-destaque-card" data-tema="Alice no País das Maravilhas">
+        <img src="" alt="Alice no País das Maravilhas" class="td-thumb">
+        <div class="td-label">Alice no País das Maravilhas</div>
+      </div>
+      <div class="tema-destaque-card" data-tema="Arca de Noé">
+        <img src="" alt="Arca de Noé" class="td-thumb">
+        <div class="td-label">Arca de Noé</div>
+      </div>
+      <div class="tema-destaque-card" data-tema="Borboletas">
+        <img src="" alt="Borboletas" class="td-thumb">
+        <div class="td-label">Borboletas</div>
+      </div>
+      <div class="tema-destaque-card" data-tema="Branca de Neve">
+        <img src="" alt="Branca de Neve" class="td-thumb">
+        <div class="td-label">Branca de Neve</div>
+      </div>
+      <div class="tema-destaque-card" data-tema="Fazendinha">
+        <img src="" alt="Fazendinha" class="td-thumb">
+        <div class="td-label">Fazendinha</div>
+      </div>
+      <div class="tema-destaque-card" data-tema="Fundo do Mar">
+        <img src="" alt="Fundo do Mar" class="td-thumb">
+        <div class="td-label">Fundo do Mar</div>
+      </div>
+      <div class="tema-destaque-card" data-tema="Jardim">
+        <img src="" alt="Jardim" class="td-thumb">
+        <div class="td-label">Jardim</div>
+      </div>
+      <div class="tema-destaque-card" data-tema="Princesas Disney">
+        <img src="" alt="Princesas Disney" class="td-thumb">
+        <div class="td-label">Princesas Disney</div>
+      </div>
+      <div class="tema-destaque-card" data-tema="Rei Leão">
+        <img src="" alt="Rei Leão" class="td-thumb">
+        <div class="td-label">Rei Leão</div>
+      </div>
+      <div class="tema-destaque-card" data-tema="Safari">
+        <img src="" alt="Safari" class="td-thumb">
+        <div class="td-label">Safari</div>
+      </div>
+    </div>
+
+    <!-- OS MAIS BUSCADOS -->
+    <div class="mais-buscados-wrap">
+      <div class="mais-buscados-header">Os mais buscados</div>
+      <div class="mais-buscados-body">
+        <div class="mais-buscados-grid" id="maisBuscadosGrid">
+          <!-- preenchido pelo JS -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL DE VÍDEOS DO TEMA -->
+  <div class="catalogo-modal-overlay" id="catalogoModal">
+    <div class="modal-header">
+      <h2 class="modal-tema-nome" id="modalTemaNome">Tema</h2>
+      <button class="modal-fechar" onclick="fecharModal()">✕ Fechar</button>
+    </div>
+    <p class="modal-status" id="modalStatus"></p>
+    <div class="modal-videos-grid" id="modalVideosGrid"></div>
+  </div>
+
+  <!-- PLAYER INLINE -->
+  <div class="video-player-overlay" id="videoPlayerOverlay">
+    <div class="video-player-wrap">
+      <iframe id="videoIframe" src="" allowfullscreen
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+      </iframe>
+    </div>
+    <button class="player-fechar" onclick="fecharPlayer()">✕ Fechar vídeo</button>
+  </div>
+
   <!-- BANNER -->
   <section class="banner fade-in">
     <div class="banner-text">
@@ -788,9 +1241,8 @@
     <p>© 2026 Cris Oliveira — Cris Pop Arte · Feito com 💜 para momentos especiais</p>
   </footer>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
   <script>
-    // Cursor personalizado
+    // ── Cursor personalizado ──
     const cursor = document.getElementById('cursor');
     const ring   = document.getElementById('cursor-ring');
     document.addEventListener('mousemove', e => {
@@ -798,7 +1250,7 @@
       ring.style.transform   = `translate(${e.clientX - 18}px, ${e.clientY - 18}px)`;
     });
 
-    // Filtro de categorias
+    // ── Filtro de categorias ──
     document.querySelectorAll('.cat-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
@@ -806,36 +1258,175 @@
       });
     });
 
-    // Fade in ao rolar
+    // ── Fade in ao rolar ──
     document.body.classList.add('js-loaded');
     const observer = new IntersectionObserver(entries => {
       entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
     }, { threshold: 0.08 });
     document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-    // ── BUSCA DE VÍDEOS NO YOUTUBE ──
+    // ════════════════════════════════════════════════
+    //  CONFIGURAÇÕES — edite apenas aqui se precisar
+    // ════════════════════════════════════════════════
     const API_KEY    = 'AIzaSyCIkbu4d1C5ft0UcasVStpupzb5kmgXp_Q';
     const CHANNEL_ID = 'UC8Fn0m_tXJOxDtWbZZNvIZA';
 
+    // ════════════════════════════════════════════════
+    //  LISTA DE TEMAS "OS MAIS BUSCADOS"
+    //  Para adicionar: coloque o nome entre aspas
+    //  seguido de vírgula. Ex: 'Meu Tema',
+    //  A lista se reorganiza automaticamente!
+    // ════════════════════════════════════════════════
+    const TEMAS_MAIS_BUSCADOS = [
+      'A Casa Mágica da Gabby', 'Arco Íris', 'Aurora', 'Barbie',
+      'Bíblico', 'Bluey', 'Bolofofos', 'Bosque', 'Capivara',
+      'Carrinhos', 'Cerejinha', 'Cinderela', 'Confeitaria', 'Cruzeiro',
+      'Dinossauro', 'Disney', 'Fábrica de Brinquedos', 'Fadas',
+      'Flamengo', 'Harry Potter', 'Hello Kitty', 'Homem Aranha',
+      'Hot Wheels', 'Looney Tunes', 'Masha e o Urso', 'Meios de Transporte',
+      'Metoo Dolls', 'Moranguinho', 'Mundo Bita', 'Os Três Porquinhos',
+      'Parque de Diversões', 'Piquenique', 'Poderoso Chefinho', 'Pokemon',
+      'Pool Party', 'Relâmpago McQueen', 'Sereia', 'Super Heróis',
+      'Super Mário', 'Toy Story', 'Ursinho Pooh', 'Ursinho Aviador'
+    ];
+
+    // ── Preenche lista "Os mais buscados" ──
+    const maisBuscadosGrid = document.getElementById('maisBuscadosGrid');
+    TEMAS_MAIS_BUSCADOS.sort().forEach(tema => {
+      const item = document.createElement('div');
+      item.className = 'tema-item';
+      item.textContent = tema;
+      item.addEventListener('click', () => abrirModalTema(tema));
+      maisBuscadosGrid.appendChild(item);
+    });
+
+    // ── Thumbnails dos temas em destaque ──
+    // Busca o primeiro vídeo de cada tema para pegar a thumbnail automaticamente
+    async function carregarThumbsDestaque() {
+      const cards = document.querySelectorAll('.tema-destaque-card');
+      for (const card of cards) {
+        const tema = card.dataset.tema;
+        const img  = card.querySelector('.td-thumb');
+        try {
+          const url  = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&q=${encodeURIComponent(tema + ' convite')}&type=video&maxResults=1&key=${API_KEY}`;
+          const res  = await fetch(url);
+          const data = await res.json();
+          if (data.items && data.items.length > 0) {
+            img.src = data.items[0].snippet.thumbnails.medium.url;
+          }
+        } catch(e) { /* silencioso */ }
+        card.addEventListener('click', () => abrirModalTema(tema));
+      }
+    }
+    carregarThumbsDestaque();
+
+    // ── Modal de vídeos por tema ──
+    const catalogoModal  = document.getElementById('catalogoModal');
+    const modalTemaNome  = document.getElementById('modalTemaNome');
+    const modalStatus    = document.getElementById('modalStatus');
+    const modalGrid      = document.getElementById('modalVideosGrid');
+
+    async function abrirModalTema(tema) {
+      modalTemaNome.innerHTML = `Convites — <em>${tema}</em>`;
+      modalStatus.textContent = '🔍 Buscando convites...';
+      modalGrid.innerHTML     = '';
+      catalogoModal.classList.add('aberto');
+      document.body.style.overflow = 'hidden';
+
+      try {
+        const url  = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&q=${encodeURIComponent(tema + ' convite')}&type=video&maxResults=12&key=${API_KEY}`;
+        const res  = await fetch(url);
+        const data = await res.json();
+
+        if (data.error) {
+          modalStatus.textContent = '⚠️ Erro ao buscar vídeos. Tente novamente.';
+          return;
+        }
+        if (!data.items || data.items.length === 0) {
+          modalStatus.textContent = `😕 Nenhum vídeo encontrado para "${tema}". Tente outro tema!`;
+          return;
+        }
+
+        modalStatus.textContent = `✨ ${data.items.length} convite(s) encontrado(s)`;
+
+        data.items.forEach(item => {
+          const vid   = item.id.videoId;
+          const title = item.snippet.title;
+          const thumb = item.snippet.thumbnails.medium.url;
+
+          const card = document.createElement('div');
+          card.className = 'modal-video-card';
+          card.innerHTML = `
+            <div class="modal-video-thumb-wrap">
+              <img class="modal-video-thumb" src="${thumb}" alt="${title}">
+              <div class="play-btn">
+                <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="40" cy="40" r="38" fill="rgba(0,0,0,0.45)" stroke="rgba(255,255,255,0.6)" stroke-width="1.5"/>
+                  <polygon points="32,24 58,40 32,56" fill="white"/>
+                </svg>
+              </div>
+            </div>
+            <div class="modal-video-info">
+              <p class="modal-video-titulo">${title}</p>
+              <p class="modal-video-canal">Cris Pop Arte</p>
+            </div>
+          `;
+          card.addEventListener('click', () => abrirPlayer(vid));
+          modalGrid.appendChild(card);
+        });
+
+      } catch(err) {
+        modalStatus.textContent = '⚠️ Erro: ' + err.message;
+      }
+    }
+
+    function fecharModal() {
+      catalogoModal.classList.remove('aberto');
+      document.body.style.overflow = '';
+    }
+    // Fechar clicando fora
+    catalogoModal.addEventListener('click', e => {
+      if (e.target === catalogoModal) fecharModal();
+    });
+
+    // ── Player inline ──
+    const playerOverlay = document.getElementById('videoPlayerOverlay');
+    const videoIframe   = document.getElementById('videoIframe');
+
+    function abrirPlayer(videoId) {
+      videoIframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+      playerOverlay.classList.add('aberto');
+    }
+    function fecharPlayer() {
+      playerOverlay.classList.remove('aberto');
+      videoIframe.src = '';
+    }
+    playerOverlay.addEventListener('click', e => {
+      if (e.target === playerOverlay) fecharPlayer();
+    });
+
+    // Fechar com ESC
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') { fecharPlayer(); fecharModal(); }
+    });
+
+    // ── BUSCA DE VÍDEOS NO YOUTUBE ──
     document.getElementById('buscaInput').addEventListener('keydown', e => {
       if (e.key === 'Enter') buscarVideos();
     });
 
     async function buscarVideos() {
-      const termo = document.getElementById('buscaInput').value.trim();
+      const termo  = document.getElementById('buscaInput').value.trim();
       const status = document.getElementById('buscaStatus');
       const grid   = document.getElementById('videosGrid');
 
-      if (!termo) {
-        status.textContent = 'Digite algo para buscar 😊';
-        return;
-      }
+      if (!termo) { status.textContent = 'Digite algo para buscar 😊'; return; }
 
       status.textContent = '🔍 Buscando nos vídeos da Cris...';
       grid.innerHTML = '';
 
       try {
-        const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&q=${encodeURIComponent(termo)}&type=video&maxResults=8&key=${API_KEY}`;
+        const url  = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&q=${encodeURIComponent(termo)}&type=video&maxResults=8&key=${API_KEY}`;
         const res  = await fetch(url);
         const data = await res.json();
 
@@ -843,9 +1434,8 @@
           status.innerHTML = '⚠️ Erro da API (' + data.error.code + '): ' + data.error.message;
           return;
         }
-
         if (!data.items || data.items.length === 0) {
-          status.textContent = '😕 Nenhum vídeo encontrado para "' + termo + '". Tente outro tema!';
+          status.textContent = `😕 Nenhum vídeo encontrado para "${termo}". Tente outro tema!`;
           return;
         }
 
@@ -855,8 +1445,7 @@
           const vid   = item.id.videoId;
           const title = item.snippet.title;
           const thumb = item.snippet.thumbnails.medium.url;
-
-          const card = document.createElement('a');
+          const card  = document.createElement('a');
           card.className = 'video-card';
           card.href      = `https://www.youtube.com/watch?v=${vid}`;
           card.target    = '_blank';
@@ -874,7 +1463,6 @@
 
       } catch (err) {
         status.innerHTML = '⚠️ Erro: ' + err.message;
-        console.error(err);
       }
     }
   </script>
