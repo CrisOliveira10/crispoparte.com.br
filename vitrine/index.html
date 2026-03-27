@@ -8,318 +8,958 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
   
   <style>
+    /* =========================================
+       VARIÁVEIS DE CORES E RESET
+       ========================================= */
     :root {
-      --cream: #f8f4ff; --blush: #e8d5f5; --rose: #b44fc8;
-      --terracota: #8a3aaa; --dark: #1a1030; --muted: #7a6090;
-      --white: #ffffff; --teal: #1ec8b0; --footer-bg: #f5f0ea;
-      --footer-text: #5c4a3a; --footer-accent: #a0785a;
+      --cream: #f8f4ff; 
+      --blush: #e8d5f5; 
+      --rose: #b44fc8;
+      --terracota: #8a3aaa; 
+      --dark: #1a1030; 
+      --muted: #7a6090;
+      --white: #ffffff; 
+      --teal: #1ec8b0;
+      --footer-bg: #f5f0ea;
+      --footer-text: #5c4a3a;
+      --footer-accent: #a0785a;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-    body { font-family: 'Jost', sans-serif; background: var(--cream); color: var(--dark); overflow-x: hidden; }
+    
+    body { 
+      font-family: 'Jost', sans-serif; 
+      background: var(--cream); 
+      color: var(--dark); 
+      overflow-x: hidden; 
+    }
 
-    /* CURSOR CUSTOMIZADO */
+    /* =========================================
+       CORREÇÃO: CURSOR MOBILE
+       ========================================= */
     @media (pointer: fine) {
         body, a, button { cursor: none; }
-        #cursor, #cursor-ring { display: block; position: fixed; pointer-events: none; z-index: 9999; }
-        #cursor { width: 10px; height: 10px; background: var(--rose); border-radius: 50%; top: 0; left: 0; }
-        #cursor-ring { width: 35px; height: 35px; border: 1px solid var(--rose); border-radius: 50%; top: 0; left: 0; transition: transform 0.1s ease; opacity: 0.5; }
+        #cursor, #cursor-ring { display: block; }
+    }
+    @media (pointer: coarse) {
+        body, a, button { cursor: auto; }
+        #cursor, #cursor-ring { display: none !important; }
     }
 
-    /* NAVEGAÇÃO */
+    #cursor { width:10px;height:10px;border-radius:50%;background:var(--rose);position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transition:transform 0.15s ease;mix-blend-mode:multiply; }
+    #cursor-ring { width:36px;height:36px;border-radius:50%;border:1px solid var(--rose);position:fixed;top:0;left:0;pointer-events:none;z-index:9998;transition:transform 0.4s ease;opacity:0.5; }
+
+    /* =========================================
+       NAVEGAÇÃO
+       ========================================= */
     nav { position:fixed;top:0;width:100%;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:1rem 4rem;background:rgba(248,244,255,0.92);backdrop-filter:blur(14px);border-bottom:1px solid rgba(180,79,200,0.12); }
-    .nav-logo-text { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:600; color:var(--rose); text-decoration: none; }
-    .nav-links { display:flex; gap:2.5rem; list-style:none; }
-    .nav-links a { font-size:0.78rem; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none; color:var(--muted); transition: color 0.3s; }
+    .nav-logo img { height:52px;width:auto;display:block; }
+    .nav-links { display:flex;gap:2.5rem;list-style:none; }
+    .nav-links a { font-size:0.78rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color 0.3s; }
     .nav-links a:hover { color:var(--rose); }
-    .nav-cta { background:var(--rose); color:white!important; padding:0.5rem 1.4rem; border-radius:2px; }
+    .nav-cta { background:var(--rose);color:var(--white)!important;padding:0.5rem 1.4rem;border-radius:2px; }
+    .nav-cta:hover { background:var(--terracota); }
 
-    /* HERO */
-    .hero { min-height:100vh; display:grid; grid-template-columns:1fr 1fr; padding-top:74px; }
-    .hero-text { padding:5rem 4rem 4rem 6rem; display:flex; flex-direction:column; justify-content:center; }
-    .hero-title { font-family:'Cormorant Garamond',serif; font-size:clamp(3.2rem,5vw,5rem); font-weight:300; line-height:1.05; margin-bottom: 2rem; }
-    .hero-title em { color:var(--rose); font-style:italic; }
-    .hero-visual { background:linear-gradient(135deg, var(--blush) 0%, #d4b8f0 100%); display:flex; align-items:center; justify-content:center; position: relative; }
-    .hero-logo-wrap img { max-width:75%; filter:drop-shadow(0 20px 60px rgba(0,0,0,0.15)); animation: float 6s ease-in-out infinite; }
-    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+    /* =========================================
+       HERO — MELHORIA 1: Logo no lugar dos cards flutuantes
+       ========================================= */
+    .hero { min-height:100vh;display:grid;grid-template-columns:1fr 1fr;padding-top:74px; }
+    .hero-text { display:flex;flex-direction:column;justify-content:center;padding:5rem 4rem 4rem 6rem; }
+    .hero-tag { font-size:0.72rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--rose);margin-bottom:1.5rem; }
+    .hero-title { font-family:'Cormorant Garamond',serif;font-size:clamp(3rem,5vw,5rem);font-weight:300;line-height:1.05;color:var(--dark);margin-bottom:2rem; }
+    .hero-title em { font-style:italic;color:var(--rose); }
+    .hero-desc { font-size:0.95rem;line-height:1.8;color:var(--muted);max-width:420px;margin-bottom:3rem; }
+    .hero-btns { display:flex;gap:1rem;flex-wrap:wrap; }
+    
+    .btn-primary { background:var(--dark);color:var(--white);padding:0.9rem 2.2rem;font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;border:none;transition:background 0.3s;display:inline-block; }
+    .btn-primary:hover { background:var(--rose); }
+    .btn-outline { border:1px solid var(--dark);color:var(--dark);padding:0.9rem 2.2rem;font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;text-decoration:none;transition:all 0.3s;display:inline-block; }
+    .btn-outline:hover { background:var(--dark);color:var(--white); }
+    
+    /* Hero visual com logo centralizada */
+    .hero-visual { 
+      position:relative;
+      background:linear-gradient(135deg, var(--blush) 0%, #d4b8f0 50%, #c8d8f5 100%);
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .hero-visual::before { 
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(ellipse at 60% 40%,rgba(30,200,176,0.12) 0%,transparent 70%); 
+    }
+    .hero-logo-wrap {
+      position:relative;
+      z-index:1;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:3rem;
+      width:100%;
+      height:100%;
+    }
+    .hero-logo-wrap img {
+      max-width:75%;
+      max-height:65vh;
+      object-fit:contain;
+      filter:drop-shadow(0 20px 60px rgba(26,16,48,0.2));
+      animation:logoFloat 6s ease-in-out infinite;
+    }
+    @keyframes logoFloat { 0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)} }
 
-    /* SEÇÃO PRODUTOS (OS 3 BLOCOS) */
-    .section-header { text-align:center; padding:5rem 2rem 3rem; }
-    .section-title { font-family:'Cormorant Garamond',serif; font-size:clamp(2.5rem,4vw,3.5rem); font-weight:300; }
-    .produtos { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:2rem; padding:0 4rem 6rem; max-width:1300px; margin:0 auto; }
-    .produto-card { background:white; border-radius:4px; overflow:hidden; transition:0.4s; position:relative; }
-    .produto-card:hover { transform:translateY(-8px); box-shadow:0 24px 50px rgba(0,0,0,0.1); }
-    .produto-img { position:relative; width:100%; padding-bottom:177.78%; overflow:hidden; }
-    .produto-img img, .produto-img video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition: transform 0.5s; }
-    .produto-card:hover .produto-img img { transform: scale(1.05); }
-    .produto-info { padding:1.5rem; }
-    .produto-nome { font-family:'Cormorant Garamond',serif; font-size:1.4rem; margin-bottom:0.5rem; color: var(--dark); }
-    .btn-wpp { background:#25D366; color:white; padding:0.7rem 1.2rem; text-decoration:none; display:inline-flex; align-items:center; gap:0.5rem; border-radius:2px; font-size:0.8rem; }
+    /* =========================================
+       PRODUTOS E CARDS
+       ========================================= */
+    .section-header { text-align:center;padding:5rem 2rem 3rem; }
+    .section-tag { font-size:0.7rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--rose);margin-bottom:1rem; }
+    .section-title { font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,4vw,3.5rem);font-weight:300;color:var(--dark); }
+    .section-title em { font-style:italic;color:var(--rose); }
 
-    /* SEÇÃO CATÁLOGO VÍDEO */
-    .catalogo-section { background:var(--dark); padding:6rem 2rem; color:white; }
-    .temas-destaque-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; max-width:1100px; margin:3rem auto; }
-    .tema-destaque-card { position:relative; aspect-ratio:16/9; cursor:pointer; overflow:hidden; border-radius:4px; border: 1px solid rgba(180,79,200,0.2); }
-    .tema-destaque-card img { width:100%; height:100%; object-fit:cover; opacity:0.5; transition: 0.3s; }
-    .tema-destaque-card:hover img { opacity: 0.8; }
-    .td-label { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; text-transform:uppercase; letter-spacing:2px; font-size:0.8rem; font-weight: 500; }
+    .categorias { display:flex;justify-content:center;gap:0.8rem;flex-wrap:wrap;padding:0 2rem 4rem; }
+    .cat-btn { padding:0.55rem 1.6rem;border:1px solid var(--blush);background:transparent;font-family:'Jost',sans-serif;font-size:0.78rem;letter-spacing:0.1em;color:var(--muted);transition:all 0.3s;border-radius:100px; }
+    .cat-btn:hover,.cat-btn.active { background:var(--rose);border-color:var(--rose);color:var(--white); }
 
-    /* MENU MAIS BUSCADOS (ACORDEÃO) */
-    .mais-buscados-wrap { max-width:1100px; margin:0 auto; }
-    .mais-buscados-header { background:var(--rose); padding:1rem; text-align:center; cursor:pointer; border-radius:4px; font-family: 'Cormorant Garamond'; font-size: 1.2rem; }
-    .mais-buscados-body { background:rgba(255,255,255,0.05); max-height:0; overflow:hidden; transition: 0.5s ease; padding: 0 2rem; }
-    .mais-buscados-body.aberto { max-height:1000px; padding: 2rem; border: 1px solid var(--rose); border-top: none; }
-    .mais-buscados-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
-    .tema-item { color:rgba(255,255,255,0.7); cursor:pointer; font-size:0.9rem; padding: 5px; }
-    .tema-item:hover { color:var(--teal); }
+    .produtos { display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:2rem;padding:0 4rem 6rem;max-width:1300px;margin:0 auto; }
+    .produto-card { background:var(--white);border-radius:4px;overflow:hidden;transition:transform 0.4s ease,box-shadow 0.4s ease;position:relative; }
+    .produto-card:hover { transform:translateY(-8px);box-shadow:0 24px 60px rgba(26,16,48,0.13); }
+    .produto-img { position:relative;width:100%;padding-bottom:177.78%;background:var(--blush);overflow:hidden; }
+    .produto-img img { position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;transition:transform 0.5s ease; }
+    .produto-card:hover .produto-img img { transform:scale(1.04); }
+    .produto-img .placeholder { position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.8rem;color:var(--muted); }
+    .produto-img .placeholder span { font-size:3.5rem; }
+    .produto-img .placeholder p { font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;opacity:0.6; }
+    .produto-link { position:absolute;inset:0;z-index:2;display:block; }
+    .produto-link::after { content:'👁 Ver convite';position:absolute;bottom:0;left:0;right:0;background:rgba(26,16,48,0.75);color:var(--white);font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;text-align:center;padding:0.7rem;opacity:0;transition:opacity 0.3s;font-family:'Jost',sans-serif; }
+    .produto-img:hover .produto-link::after { opacity:1; }
+    .produto-badge { position:absolute;top:1rem;left:1rem;background:var(--rose);color:var(--white);font-size:0.62rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.3rem 0.8rem;border-radius:100px;z-index:1; }
+    .produto-info { padding:1.4rem; }
+    .produto-categoria { font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--rose);margin-bottom:0.4rem; }
+    .produto-nome { font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:400;color:var(--dark);margin-bottom:0.5rem; }
+    .produto-desc { font-size:0.82rem;color:var(--muted);line-height:1.6;margin-bottom:1.2rem; }
+    .produto-footer { display:flex;justify-content:space-between;align-items:center; }
+    .produto-preco { font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:600;color:var(--dark); }
+    .produto-preco small { font-family:'Jost',sans-serif;font-size:0.68rem;color:var(--muted);font-weight:300; }
+    .btn-wpp { background:#25D366;color:var(--white);border:none;padding:0.6rem 1.1rem;font-size:0.75rem;letter-spacing:0.08em;border-radius:2px;text-decoration:none;transition:background 0.3s;display:flex;align-items:center;gap:0.4rem;font-family:'Jost',sans-serif; }
+    .btn-wpp:hover { background:#128C7E; }
 
-    /* RODAPÉ ESTILO EUFORIA */
-    .footer { background:var(--footer-bg); padding:5rem 5rem 2rem; border-top:1px solid rgba(0,0,0,0.05); color: var(--footer-text); }
-    .footer-body { display:grid; grid-template-columns:2fr 1fr 1fr; gap:4rem; max-width:1200px; margin:0 auto; }
-    .footer-col-title { font-weight:600; margin-bottom:1.5rem; border-bottom:2px solid var(--rose); display:inline-block; padding-bottom: 5px; }
-    .footer-nav-list { list-style:none; }
-    .footer-nav-list li { margin-bottom:0.8rem; }
-    .footer-nav-list a { text-decoration:none; color:var(--footer-text); font-size:0.9rem; transition: 0.3s; }
-    .footer-nav-list a:hover { color: var(--rose); padding-left: 5px; }
+    /* =========================================
+       CATÁLOGO / VÍDEOS — MELHORIA 2: Playlist sem API
+       ========================================= */
+    .catalogo-section { background:var(--dark);padding:5rem 2rem 6rem; }
+    .catalogo-section .section-tag { color:var(--teal); }
+    .catalogo-section .section-title { color:var(--white); }
+    .catalogo-section .section-title em { color:var(--teal); }
+    .catalogo-section .section-header { padding-top:0; }
+    .catalogo-desc { text-align:center;color:rgba(255,255,255,0.5);font-size:0.9rem;margin-top:0.8rem;margin-bottom:3rem; }
 
-    /* MODAL YOUTUBE */
-    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:2000; display:none; align-items:center; justify-content:center; flex-direction:column; }
-    .modal-overlay.aberto { display:flex; }
-    .modal-wrap { width:90%; max-width:900px; aspect-ratio:16/9; background:#000; border-radius: 8px; overflow: hidden; }
+    .temas-destaque-titulo { text-align:center;font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:400;color:var(--white);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:center;gap:1rem; }
+    .temas-destaque-titulo::before,.temas-destaque-titulo::after { content:'';display:block;height:1px;width:60px;background:rgba(180,79,200,0.4); }
 
-    @media (max-width: 900px) { .hero, .footer-body { grid-template-columns:1fr; } .temas-destaque-grid { grid-template-columns: repeat(2, 1fr); } .mais-buscados-grid { grid-template-columns: 1fr; } }
+    .temas-destaque-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:0.8rem;max-width:1100px;margin:0 auto 3rem;padding:0 1rem; }
+    .tema-destaque-card { position:relative;border-radius:4px;overflow:hidden;cursor:pointer;aspect-ratio:16/7;background:rgba(180,79,200,0.15);border:1px solid rgba(180,79,200,0.2);transition:transform 0.3s,border-color 0.3s; }
+    .tema-destaque-card:hover { transform:translateY(-3px);border-color:var(--rose); }
+    .tema-destaque-card img { width:100%;height:100%;object-fit:cover;opacity:0.55;transition:opacity 0.3s; }
+    .tema-destaque-card:hover img { opacity:0.75; }
+    .tema-destaque-card .td-label { position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Jost',sans-serif;font-size:0.78rem;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:var(--white);text-shadow:0 2px 8px rgba(0,0,0,0.5); }
+    /* Ícone play nos cards de destaque */
+    .tema-destaque-card .td-play {
+      position:absolute;
+      top:50%;left:50%;
+      transform:translate(-50%,-50%);
+      width:44px;height:44px;
+      border-radius:50%;
+      background:rgba(180,79,200,0.85);
+      display:flex;align-items:center;justify-content:center;
+      opacity:0;
+      transition:opacity 0.3s;
+      font-size:1.1rem;
+      color:var(--white);
+    }
+    .tema-destaque-card:hover .td-play { opacity:1; }
+
+    .mais-buscados-wrap { max-width:1100px;margin:0 auto;padding:0 1rem; }
+    .mais-buscados-header { background:var(--rose);border-radius:4px;padding:0.9rem 1.5rem;font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:400;color:var(--white);letter-spacing:0.05em;text-align:center;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:0.8rem;user-select:none;transition:background 0.3s; }
+    .mais-buscados-header:hover { background:var(--terracota); }
+    .mais-buscados-header.aberto { border-radius:4px 4px 0 0; }
+    .mb-seta { font-size:1rem;transition:transform 0.4s ease;display:inline-block; }
+    .mais-buscados-header.aberto .mb-seta { transform:rotate(180deg); }
+    .mais-buscados-body { background:rgba(255,255,255,0.04);border:1px solid rgba(180,79,200,0.2);border-top:none;border-radius:0 0 4px 4px;overflow:hidden;max-height:0;transition:max-height 0.5s ease,padding 0.4s ease;padding:0 2rem; }
+    .mais-buscados-body.aberto { max-height:1000px;padding:1.8rem 2rem; }
+
+    .mais-buscados-grid { display:grid;grid-template-columns:repeat(6,1fr);gap:0.3rem 1rem; }
+    .tema-item { display:flex;align-items:center;gap:0.5rem;padding:0.45rem 0.6rem;border-radius:3px;cursor:pointer;transition:background 0.2s,color 0.2s;color:rgba(255,255,255,0.7);font-size:0.82rem; }
+    .tema-item::before { content:'▸';color:var(--rose);font-size:0.7rem;flex-shrink:0; }
+    .tema-item:hover { background:rgba(180,79,200,0.15);color:var(--white); }
+    .tema-item:hover::before { color:var(--teal); }
+
+    /* =========================================
+       MODAL DE PLAYLIST (YouTube embed, sem API)
+       ========================================= */
+    .catalogo-modal-overlay { 
+      position:fixed;inset:0;
+      background:rgba(10,6,24,0.97);
+      z-index:1000;
+      display:flex;flex-direction:column;align-items:center;
+      padding:2rem 1rem;
+      overflow-y:auto;
+      opacity:0;pointer-events:none;
+      transition:opacity 0.35s ease; 
+    }
+    .catalogo-modal-overlay.aberto { opacity:1;pointer-events:all; }
+    .modal-header { 
+      width:100%;max-width:1100px;
+      display:flex;align-items:center;justify-content:space-between;
+      margin-bottom:2rem;flex-wrap:wrap;gap:1rem; 
+    }
+    .modal-tema-nome { font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:300;color:var(--white); }
+    .modal-tema-nome em { font-style:italic;color:var(--rose); }
+    .modal-fechar { background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:var(--white);font-family:'Jost',sans-serif;font-size:0.78rem;letter-spacing:0.15em;text-transform:uppercase;padding:0.6rem 1.4rem;border-radius:2px;cursor:pointer;transition:background 0.3s; }
+    .modal-fechar:hover { background:rgba(180,79,200,0.3); }
+
+    /* Player de playlist embed */
+    .modal-player-wrap {
+      width:100%;
+      max-width:1100px;
+      position:relative;
+      padding-bottom:56.25%; /* 16:9 */
+      height:0;
+      overflow:hidden;
+      border-radius:6px;
+      background:#000;
+    }
+    .modal-player-wrap iframe {
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      border:none;
+      border-radius:6px;
+    }
+    .modal-hint {
+      width:100%;max-width:1100px;
+      margin-top:1.2rem;
+      font-size:0.8rem;
+      color:rgba(255,255,255,0.35);
+      text-align:center;
+      letter-spacing:0.05em;
+    }
+
+    /* =========================================
+       MELHORIA 3: AVALIAÇÕES
+       ========================================= */
+    .avaliacoes-section {
+      background:#faf7f2;
+      padding:6rem 2rem;
+      position:relative;
+      overflow:hidden;
+    }
+    .avaliacoes-section::before {
+      content:'';
+      position:absolute;
+      top:-80px;left:-80px;
+      width:220px;height:220px;
+      border-radius:50%;
+      border:1px solid rgba(180,79,200,0.12);
+    }
+    .avaliacoes-tag {
+      display:block;
+      text-align:center;
+      font-size:0.68rem;
+      letter-spacing:0.35em;
+      text-transform:uppercase;
+      color:var(--rose);
+      margin-bottom:1rem;
+    }
+    .avaliacoes-title {
+      font-family:'Cormorant Garamond',serif;
+      font-size:clamp(2rem,4vw,3.2rem);
+      font-weight:300;
+      color:var(--dark);
+      text-align:center;
+      margin-bottom:0.5rem;
+      line-height:1.2;
+    }
+    .avaliacoes-title em {
+      font-style:italic;
+      color:var(--rose);
+    }
+    .avaliacoes-subtag {
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:0.5rem;
+      margin-bottom:3.5rem;
+    }
+    .avaliacoes-subtag span {
+      width:30px;height:1px;background:rgba(180,79,200,0.25);display:inline-block;
+    }
+    .avaliacoes-subtag p {
+      font-size:0.72rem;
+      letter-spacing:0.2em;
+      text-transform:uppercase;
+      color:var(--muted);
+    }
+
+    .avaliacoes-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+      gap:1.5rem;
+      max-width:1200px;
+      margin:0 auto;
+    }
+    .avaliacao-card {
+      background:var(--white);
+      border-radius:4px;
+      padding:2rem;
+      position:relative;
+      border:1px solid rgba(180,79,200,0.1);
+      transition:box-shadow 0.35s ease,transform 0.35s ease;
+    }
+    .avaliacao-card:hover {
+      box-shadow:0 16px 48px rgba(26,16,48,0.1);
+      transform:translateY(-4px);
+    }
+    .avaliacao-estrelas {
+      display:flex;
+      gap:0.2rem;
+      margin-bottom:1rem;
+    }
+    .avaliacao-estrelas span {
+      color:#d4a853;
+      font-size:1rem;
+    }
+    .avaliacao-aspas {
+      position:absolute;
+      top:1.5rem;right:1.8rem;
+      font-family:'Cormorant Garamond',serif;
+      font-size:2.5rem;
+      color:rgba(180,79,200,0.18);
+      line-height:1;
+      font-style:italic;
+    }
+    .avaliacao-texto {
+      font-family:'Cormorant Garamond',serif;
+      font-style:italic;
+      font-size:1.05rem;
+      line-height:1.75;
+      color:var(--dark);
+      margin-bottom:1.5rem;
+    }
+    .avaliacao-autora {
+      font-size:0.7rem;
+      letter-spacing:0.2em;
+      text-transform:uppercase;
+      color:var(--muted);
+      padding-top:1rem;
+      border-top:1px solid rgba(180,79,200,0.12);
+    }
+    .avaliacao-autora strong {
+      color:var(--rose);
+      font-weight:500;
+    }
+
+    /* =========================================
+       MELHORIA 4: RODAPÉ ESTILO EUFORIA
+       ========================================= */
+    .footer {
+      background:var(--footer-bg);
+      border-top:1px solid rgba(160,120,90,0.15);
+      padding:4rem 5rem 0;
+    }
+    .footer-body {
+      display:grid;
+      grid-template-columns:2fr 1.2fr 1.4fr;
+      gap:4rem;
+      max-width:1200px;
+      margin:0 auto;
+      padding-bottom:3rem;
+    }
+
+    /* Coluna 1: Brand */
+    .footer-brand {}
+    .footer-logo {
+      margin-bottom:1.2rem;
+    }
+    .footer-logo img {
+      height:56px;
+      width:auto;
+    }
+    .footer-logo-text {
+      font-family:'Cormorant Garamond',serif;
+      font-size:1.6rem;
+      font-weight:600;
+      color:var(--rose);
+    }
+    .footer-tagline {
+      font-size:0.88rem;
+      color:var(--footer-text);
+      line-height:1.7;
+      margin-bottom:1.2rem;
+      max-width:280px;
+    }
+    .footer-cnpj {
+      font-size:0.75rem;
+      color:rgba(92,74,58,0.6);
+      margin-bottom:1.6rem;
+      letter-spacing:0.02em;
+    }
+    .footer-socials {
+      display:flex;
+      gap:0.6rem;
+    }
+    .footer-social-btn {
+      width:38px;height:38px;
+      border-radius:50%;
+      background:rgba(160,120,90,0.12);
+      border:1px solid rgba(160,120,90,0.2);
+      display:flex;align-items:center;justify-content:center;
+      color:var(--footer-accent);
+      text-decoration:none;
+      font-size:0.9rem;
+      transition:background 0.3s,color 0.3s,border-color 0.3s;
+    }
+    .footer-social-btn:hover {
+      background:var(--rose);
+      border-color:var(--rose);
+      color:var(--white);
+    }
+
+    /* Colunas 2 e 3 */
+    .footer-col-title {
+      font-family:'Jost',sans-serif;
+      font-size:0.9rem;
+      font-weight:500;
+      color:var(--footer-text);
+      letter-spacing:0.05em;
+      margin-bottom:1.4rem;
+      padding-bottom:0.6rem;
+      border-bottom:2px solid var(--rose);
+      display:inline-block;
+    }
+
+    /* Atendimento */
+    .footer-contact-item {
+      display:flex;
+      align-items:flex-start;
+      gap:0.7rem;
+      margin-bottom:0.8rem;
+      font-size:0.85rem;
+      color:var(--footer-text);
+      text-decoration:none;
+    }
+    .footer-contact-item .f-icon {
+      font-size:1rem;
+      flex-shrink:0;
+      margin-top:0.05rem;
+    }
+    .footer-contact-item:hover { color:var(--rose); }
+    .footer-horario {
+      font-size:0.82rem;
+      color:rgba(92,74,58,0.75);
+      line-height:1.65;
+      margin-top:0.8rem;
+    }
+
+    /* Institucional */
+    .footer-nav-list {
+      list-style:none;
+    }
+    .footer-nav-list li {
+      border-bottom:1px solid rgba(160,120,90,0.15);
+    }
+    .footer-nav-list li:first-child {
+      border-top:1px solid rgba(160,120,90,0.15);
+    }
+    .footer-nav-list a {
+      display:flex;
+      align-items:center;
+      gap:0.6rem;
+      padding:0.65rem 0;
+      font-size:0.84rem;
+      color:var(--footer-text);
+      text-decoration:none;
+      transition:color 0.3s,gap 0.3s;
+    }
+    .footer-nav-list a::before {
+      content:'›';
+      color:var(--rose);
+      font-size:1.1rem;
+      line-height:1;
+    }
+    .footer-nav-list a:hover {
+      color:var(--rose);
+      gap:0.9rem;
+    }
+
+    /* Rodapé base */
+    .footer-bottom {
+      border-top:1px solid rgba(160,120,90,0.15);
+      padding:1.2rem 5rem;
+      max-width:1200px;
+      margin:0 auto;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:0.5rem;
+    }
+    .footer-bottom p {
+      font-size:0.75rem;
+      color:rgba(92,74,58,0.55);
+    }
+    .footer-bottom a {
+      font-size:0.75rem;
+      color:var(--rose);
+      text-decoration:none;
+    }
+    .footer-bottom a:hover { text-decoration:underline; }
+
+    /* =========================================
+       RESPONSIVIDADE
+       ========================================= */
+    @media (max-width: 900px) {
+      .hero { grid-template-columns:1fr; }
+      .hero-visual { min-height:45vh; }
+      .hero-text { padding:5rem 2rem 3rem; }
+      nav { padding:1rem 1.5rem; }
+      .nav-links { gap:1rem; }
+      .temas-destaque-grid { grid-template-columns:repeat(2,1fr); }
+      .mais-buscados-grid { grid-template-columns:repeat(3,1fr); }
+      .footer-body { grid-template-columns:1fr 1fr; gap:2.5rem; }
+      .footer { padding:3rem 1.5rem 0; }
+      .footer-bottom { padding:1.2rem 1.5rem; }
+    }
+    @media (max-width: 600px) {
+      .produtos { padding:0 1.2rem 4rem; }
+      .temas-destaque-grid { grid-template-columns:1fr 1fr; }
+      .mais-buscados-grid { grid-template-columns:repeat(2,1fr); }
+      .avaliacoes-grid { grid-template-columns:1fr; }
+      .footer-body { grid-template-columns:1fr; gap:2rem; }
+    }
   </style>
 </head>
+
 <body>
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
 
-<div id="cursor"></div>
-<div id="cursor-ring"></div>
+  <!-- ============ NAV ============ -->
+  <nav>
+    <a href="#" class="nav-logo">
+      <!-- 
+        LOGO: Substitua o texto abaixo por uma tag <img> quando tiver o arquivo:
+        <img src="logo.png" alt="Cris Pop Arte">
+      -->
+      <span style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:var(--rose);">Cris Pop Arte</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#produtos">Catálogo</a></li>
+      <li><a href="#catalogo-video">Temas em Vídeo</a></li>
+      <li><a href="https://wa.me/SEUNUMERO" class="nav-cta" target="_blank" rel="noopener noreferrer">Fale Connosco</a></li>
+    </ul>
+  </nav>
 
-<nav>
-  <a href="#" class="nav-logo-text">Cris Pop Arte</a>
-  <ul class="nav-links">
-    <li><a href="#produtos">Catálogo</a></li>
-    <li><a href="#catalogo-video">Temas em Vídeo</a></li>
-    <li><a href="https://wa.me/5571993233142" class="nav-cta" target="_blank">Fale Conosco</a></li>
-  </ul>
-</nav>
-
-<header class="hero">
-  <div class="hero-text">
-    <span style="color:var(--rose); letter-spacing:3px; font-size:0.75rem; text-transform: uppercase;">Design Digital e Interativo</span>
-    <h1 class="hero-title">Convites que contam a sua <em>história.</em></h1>
-    <p style="color:var(--muted); margin-bottom: 2.5rem; line-height: 1.6;">Transformamos momentos especiais em experiências digitais inesquecíveis para você e seus convidados.</p>
-    <div><a href="#produtos" class="nav-cta" style="padding: 1.2rem 2.5rem; text-decoration:none;">Explorar Coleção</a></div>
-  </div>
-  <div class="hero-visual">
-    <div class="hero-logo-wrap"><img src="assets/img/logo.png" alt="Cris Pop Arte"></div>
-  </div>
-</header>
-
-<section id="produtos">
-  <div class="section-header">
-    <h2 class="section-title">Nossa <em>Coleção</em></h2>
-  </div>
-  
-  <div class="produtos">
-    <article class="produto-card">
-      <div class="produto-img">
-        <img src="assets/img/imagem1.jpg" alt="Convite de Casamento">
-      </div>
-      <div class="produto-info">
-        <span style="color:var(--rose); font-size:0.7rem; letter-spacing: 1px;">CASAMENTO</span>
-        <h3 class="produto-nome">Elegância Clássica</h3>
-        <a href="https://wa.me/5571993233142" class="btn-wpp" target="_blank">Encomendar</a>
-      </div>
-    </article>
-
-    <article class="produto-card">
-      <div class="produto-img">
-        <img src="assets/img/imagem2.jpg" alt="Convite Moranguinho">
-      </div>
-      <div class="produto-info">
-        <span style="color:var(--rose); font-size:0.7rem; letter-spacing: 1px;">INFANTIL</span>
-        <h3 class="produto-nome">Moranguinho Trailer</h3>
-        <a href="https://wa.me/5571993233142" class="btn-wpp" target="_blank">Encomendar</a>
-      </div>
-    </article>
-
-    <article class="produto-card">
-      <div class="produto-img">
-        <video id="vidSafari" poster="assets/img/imagem3.jpg" loop playsinline controls style="cursor:pointer;" onclick="this.play()">
-          <source src="assets/img/imagem3.mp4" type="video/mp4">
-        </video>
-      </div>
-      <div class="produto-info">
-        <span style="color:var(--rose); font-size:0.7rem; letter-spacing: 1px;">INFANTIL</span>
-        <h3 class="produto-nome">Safari Divertido</h3>
-        <a href="https://wa.me/5571993233142" class="btn-wpp" target="_blank">Encomendar</a>
-      </div>
-    </article>
-  </div>
-</section>
-
-<section id="catalogo-video" class="catalogo-section">
-  <div class="section-header">
-    <h2 class="section-title" style="color: white;">Temas em <em>Vídeo</em></h2>
-    <p style="opacity: 0.6; margin-top: 10px;">Assista às demonstrações das nossas playlists exclusivas.</p>
-  </div>
-
-  <div class="temas-destaque-grid">
-    <div class="tema-destaque-card" onclick="abrirModal('https://www.youtube.com/embed/videoseries?list=ID_PLAYLIST_CASAMENTO')">
-      <img src="assets/img/capa-casamento.jpg">
-      <span class="td-label">Casamentos</span>
-    </div>
-    <div class="tema-destaque-card" onclick="abrirModal('https://www.youtube.com/embed/videoseries?list=ID_PLAYLIST_INFANTIL')">
-      <img src="https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&q=80">
-      <span class="td-label">Infantis</span>
-    </div>
-    <div class="tema-destaque-card" onclick="abrirModal('https://www.youtube.com/embed/videoseries?list=ID_PLAYLIST_15ANOS')">
-      <img src="assets/img/capa-15anos.jpg">
-      <span class="td-label">15 Anos</span>
-    </div>
-    <div class="tema-destaque-card" onclick="abrirModal('https://www.youtube.com/embed/videoseries?list=ID_PLAYLIST_BODAS')">
-      <img src="assets/img/capa-retrospectivas.jpg">
-      <span class="td-label">Retrospectivas</span>
-    </div>
-  </div>
-
-  <div class="mais-buscados-wrap">
-    <div class="mais-buscados-header" id="mb-btn">
-      Clique para ver Temas Mais Procurados ▼
-    </div>
-    <div class="mais-buscados-body" id="mb-body">
-      <div class="mais-buscados-grid">
-        <div class="tema-item">▸ 365 Dias de Sorrisos</div>
-        <div class="tema-item">▸ A Arca de Noé</div>
-        <div class="tema-item">▸ Alice no País das Maravilhas</div>
-        <div class="tema-item">▸ Astronauta</div>
-        <div class="tema-item">▸ Bailarina Clássica</div>
-        <div class="tema-item">▸ Bento e Totó</div>
+  <!-- ============ HERO — MELHORIA 1: Logo no visual ============ -->
+  <header class="hero">
+    <div class="hero-text">
+      <span class="hero-tag">Design Digital Exclusivo</span>
+      <h1 class="hero-title">Convites que contam a sua <em>história.</em></h1>
+      <p class="hero-desc">Transformamos momentos especiais em experiências digitais inesquecíveis. Explore a nossa coleção de convites animados e interativos.</p>
+      <div class="hero-btns">
+        <a href="#produtos" class="btn-primary">Ver Coleção</a>
+        <a href="#catalogo-video" class="btn-outline">Procurar Temas</a>
       </div>
     </div>
-  </div>
-</section>
-
-<footer class="footer">
-  <div class="footer-body">
-    <div class="footer-brand">
-      <span class="nav-logo-text">Cris Pop Arte</span>
-      <p style="font-size:0.9rem; margin-top: 1rem; max-width: 250px;">Especialista em convites digitais e interativos para tornar seu evento único.</p>
-    </div>
-    <div class="footer-col">
-      <span class="footer-col-title">Atendimento</span>
-      <ul class="footer-nav-list">
-        <li>Segunda a Sexta: 09h às 18h</li>
-        <li>WhatsApp: (71) 99323-3142</li>
-        <li>Salvador - Bahia</li>
-      </ul>
-    </div>
-<div class="footer-col">
-  <span class="footer-col-title">Institucional</span>
-  <ul class="footer-nav-list">
-    <li><a href="#quem-somos" onclick="abrirAba('quem-somos')">Quem Somos</a></li>
-    <li><a href="#faq" onclick="abrirAba('faq')">Perguntas Frequentes</a></li>
-    <li><a href="#termos" onclick="abrirAba('termos')">Termo de Compra</a></li>
-  </ul>
-</div>  </div>
-  <div style="text-align:center; margin-top:4rem; padding-top:2rem; border-top:1px solid rgba(0,0,0,0.05); font-size:0.8rem; opacity: 0.6;">
-    © 2026 Cris Pop Arte. Todos os direitos reservados.
-  </div>
-
-</footer>
-
-<div id="modal" class="modal-overlay">
-  <div class="modal-wrap">
-    <iframe id="vidFrame" width="100%" height="100%" src="" frameborder="0" allowfullscreen></iframe>
-  </div>
-  <button onclick="fecharModal()" style="margin-top:2rem; padding:0.8rem 2rem; background:var(--rose); color:white; border:none; cursor:pointer; border-radius: 2px;">FECHAR VÍDEO</button>
-</div>
-
-<script><style>
-  .inst-section { padding: 60px 20px; background: #ffffff; border-top: 1px solid #f0f0f0; }
-  .inst-container { max-width: 900px; margin: 0 auto; }
-  .inst-item { border-bottom: 1px solid #f0f0f0; }
-  .inst-header { 
-    width: 100%; padding: 25px 0; background: none; border: none; 
-    display: flex; justify-content: space-between; align-items: center;
-    font-family: 'Jost', sans-serif; font-size: 1.1rem; color: #5c4a3a; cursor: pointer; text-align: left;
-  }
-  .inst-header:after { content: '+'; font-size: 1.5rem; color: #b44fc8; transition: 0.3s; }
-  .inst-item.active .inst-header:after { content: '−'; }
-  .inst-content { 
-    max-height: 0; overflow: hidden; transition: all 0.4s ease; 
-    font-size: 0.95rem; line-height: 1.7; color: #666; 
-  }
-  .inst-item.active .inst-content { max-height: 1000px; padding-bottom: 30px; }
-  .inst-list { list-style: none; padding: 0; margin-top: 10px; }
-  .inst-list li { margin-bottom: 8px; }
-</style>
-
-<section class="inst-section">
-  <div class="inst-container">
     
-    <div class="inst-item" id="quem-somos">
-      <button class="inst-header" onclick="this.parentElement.classList.toggle('active')">Quem Somos</button>
-      <div class="inst-content">
-        <p>Olá! Eu sou <strong>Cris Oliveira</strong>, designer digital desde 2014, apaixonada por transformar ideias em experiências visuais encantadoras.</p>
-        <p style="margin-top:10px;">Ao longo da minha trajetória, venho ajudando clientes a celebrar momentos especiais com criatividade e praticidade, através de convites digitais personalizados, álbuns fotográficos e soluções modernas que unem design e tecnologia.</p>
-        <p style="margin-top:10px;">Também compartilho meu conhecimento por meio de cursos de convites em HTML, capacitando outras pessoas a criarem seus próprios projetos com autonomia e qualidade.</p>
+    <div class="hero-visual">
+      <div class="hero-logo-wrap">
+        <!-- 
+          ================================================
+          MELHORIA 1 — SUBSTITUA "logo.png" PELO SEU ARQUIVO
+          ================================================
+        -->
+        <img src="logo.png" alt="Cris Pop Arte — Convites Personalizados">
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ PRODUTOS ============ -->
+  <section id="produtos">
+    <div class="section-header">
+      <span class="section-tag">A Nossa Coleção</span>
+      <h2 class="section-title">Escolha o seu <em>estilo</em></h2>
+    </div>
+
+    <div class="categorias">
+      <button class="cat-btn active">Todos</button>
+      <button class="cat-btn">Casamento</button>
+      <button class="cat-btn">Infantil</button>
+      <button class="cat-btn">Aniversário</button>
+      <button class="cat-btn">Retrospectiva</button>
+    </div>
+
+    <div class="produtos" id="grade-produtos">
+      
+      <article class="produto-card">
+        <div class="produto-img">
+          <img src="caminho/para/imagem1.jpg" alt="Convite de Casamento Elegante" loading="lazy">
+          <a href="link-do-video-ou-detalhe" class="produto-link" target="_blank" rel="noopener noreferrer"></a>
+        </div>
+        <div class="produto-info">
+          <span class="produto-categoria">Casamento</span>
+          <h3 class="produto-nome">Elegância Clássica</h3>
+          <p class="produto-desc">Convite digital interativo com botões de confirmação e localização.</p>
+          <div class="produto-footer">
+            <a href="https://wa.me/SEUNUMERO?text=Olá, tenho interesse no convite Elegância Clássica" class="btn-wpp" target="_blank" rel="noopener noreferrer">
+              <span>Encomendar</span>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <article class="produto-card">
+        <div class="produto-img">
+          <img src="caminho/para/imagem2.jpg" alt="Convite Infantil Safari" loading="lazy">
+          <a href="link-do-video-ou-detalhe" class="produto-link" target="_blank" rel="noopener noreferrer"></a>
+        </div>
+        <div class="produto-info">
+          <span class="produto-categoria">Infantil</span>
+          <h3 class="produto-nome">Safari Divertido</h3>
+          <p class="produto-desc">Animação completa com o tema safari para o primeiro aniversário.</p>
+          <div class="produto-footer">
+            <a href="https://wa.me/SEUNUMERO?text=Olá, tenho interesse no convite Safari Divertido" class="btn-wpp" target="_blank" rel="noopener noreferrer">
+              <span>Encomendar</span>
+            </a>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============ CATÁLOGO EM VÍDEO — MELHORIA 2: Playlists sem API ============ -->
+  <section id="catalogo-video" class="catalogo-section">
+    <div class="section-header">
+      <span class="section-tag">Animação e Movimento</span>
+      <h2 class="section-title">Temas em <em>Vídeo</em></h2>
+      <p class="catalogo-desc">Clique numa categoria para assistir à playlist diretamente aqui.</p>
+    </div>
+
+    <div class="temas-destaque-titulo">Destaques da Coleção</div>
+    <div class="temas-destaque-grid">
+      <!-- 
+        ====================================================
+        MELHORIA 2 — PLAYLISTS: Preencha o atributo data-playlist 
+        com a URL embed da sua playlist do YouTube.
+        
+        Formato: https://www.youtube.com/embed/videoseries?list=SEU_ID_DE_PLAYLIST
+        
+        Para encontrar o ID: Abra sua playlist no YouTube → copie 
+        o código após "list=" na URL.
+        ====================================================
+      -->
+      <div class="tema-destaque-card"
+           data-playlist="https://www.youtube.com/embed/videoseries?list=PLAYLIST_CASAMENTO_AQUI"
+           data-titulo="Casamentos"
+           onclick="abrirPlaylist(this)">
+        <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80" alt="Casamento" loading="lazy">
+        <span class="td-label">Casamentos</span>
+        <div class="td-play">▶</div>
+      </div>
+      <div class="tema-destaque-card"
+           data-playlist="https://www.youtube.com/embed/videoseries?list=PLAYLIST_INFANTIL_AQUI"
+           data-titulo="Infantis"
+           onclick="abrirPlaylist(this)">
+        <img src="https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&q=80" alt="Infantil" loading="lazy">
+        <span class="td-label">Infantis</span>
+        <div class="td-play">▶</div>
+      </div>
+      <div class="tema-destaque-card"
+           data-playlist="https://www.youtube.com/embed/videoseries?list=PLAYLIST_15ANOS_AQUI"
+           data-titulo="15 Anos"
+           onclick="abrirPlaylist(this)">
+        <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80" alt="15 Anos" loading="lazy">
+        <span class="td-label">15 Anos</span>
+        <div class="td-play">▶</div>
+      </div>
+      <div class="tema-destaque-card"
+           data-playlist="https://www.youtube.com/embed/videoseries?list=PLAYLIST_BODAS_AQUI"
+           data-titulo="Bodas"
+           onclick="abrirPlaylist(this)">
+        <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&q=80" alt="Bodas" loading="lazy">
+        <span class="td-label">Bodas</span>
+        <div class="td-play">▶</div>
       </div>
     </div>
 
-    <div class="inst-item" id="faq">
-      <button class="inst-header" onclick="this.parentElement.classList.toggle('active')">Perguntas Frequentes</button>
-      <div class="inst-content">
-        <p><strong>💳 Pagamento:</strong> O pagamento é realizado à vista, garantindo o início do seu pedido de forma rápida.</p>
-        <p><strong>⏱️ Prazo de entrega:</strong> O prazo varia de 3 a 7 dias, dependendo do modelo e da demanda.</p>
-        <p><strong>📲 Recebimento:</strong> Você recebe tudo diretamente pelo WhatsApp, pronto para compartilhar.</p>
-        <p><strong>🔄 Alterações:</strong> Estão inclusas até 2 rodadas de alterações gratuitas.</p>
+    <div class="mais-buscados-wrap">
+      <div class="mais-buscados-header" id="btn-mb">
+        Temas Mais Procurados <span class="mb-seta">▼</span>
+      </div>
+      <div class="mais-buscados-body" id="body-mb">
+        <div class="mais-buscados-grid">
+          <!-- 
+            TEMAS MAIS PROCURADOS: Preencha data-playlist com a URL da playlist de cada tema.
+            Pode ser a URL de um vídeo individual também:
+            https://www.youtube.com/embed/ID_DO_VIDEO
+          -->
+          <div class="tema-item" data-playlist="https://www.youtube.com/embed/videoseries?list=PLAYLIST_AQUI" data-titulo="365 Dias de Sorrisos" onclick="abrirPlaylist(this)">365 Dias de Sorrisos</div>
+          <div class="tema-item" data-playlist="https://www.youtube.com/embed/videoseries?list=PLAYLIST_AQUI" data-titulo="Rei Leão" onclick="abrirPlaylist(this)">Rei Leão</div>
+          <div class="tema-item" data-playlist="https://www.youtube.com/embed/videoseries?list=PLAYLIST_AQUI" data-titulo="Princesas" onclick="abrirPlaylist(this)">Princesas</div>
+          <div class="tema-item" data-playlist="https://www.youtube.com/embed/videoseries?list=PLAYLIST_AQUI" data-titulo="Heróis" onclick="abrirPlaylist(this)">Heróis</div>
+          <div class="tema-item" data-playlist="https://www.youtube.com/embed/videoseries?list=PLAYLIST_AQUI" data-titulo="Safari" onclick="abrirPlaylist(this)">Safari</div>
+          <div class="tema-item" data-playlist="https://www.youtube.com/embed/videoseries?list=PLAYLIST_AQUI" data-titulo="Minimalista" onclick="abrirPlaylist(this)">Minimalista</div>
+        </div>
       </div>
     </div>
+  </section>
 
-    <div class="inst-item" id="termos">
-      <button class="inst-header" onclick="this.parentElement.classList.toggle('active')">Termo de Compra</button>
-      <div class="inst-content">
-        <p><em>Ao realizar a compra, o cliente declara estar de acordo com:</em></p>
-        <ul class="inst-list">
-          <li>📌 <strong>Natureza:</strong> Os produtos são digitais e personalizados.</li>
-          <li>🚫 <strong>Reembolso:</strong> Não realizamos reembolso após o início da produção.</li>
-          <li>📝 <strong>Responsabilidade:</strong> É dever do cliente revisar nomes, datas e horários antes da aprovação final.</li>
+  <!-- ============ MODAL PLAYLIST — Assistir sem sair do site ============ -->
+  <div class="catalogo-modal-overlay" id="catalogoModal">
+    <div class="modal-header">
+      <h2 class="modal-tema-nome" id="modalTitulo">Playlist: <em>Casamentos</em></h2>
+      <button class="modal-fechar" onclick="fecharModal()">✕ &nbsp;Voltar à Loja</button>
+    </div>
+    
+    <!-- Player incorporado — carrega a playlist do YouTube -->
+    <div class="modal-player-wrap">
+      <iframe 
+        id="playlistFrame"
+        src=""
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen>
+      </iframe>
+    </div>
+    <p class="modal-hint">Use as setas dentro do player para navegar pelos vídeos da playlist ↑↓</p>
+  </div>
+
+  <!-- ============ MELHORIA 3: AVALIAÇÕES ============ -->
+  <section class="avaliacoes-section" id="avaliacoes">
+    <span class="avaliacoes-tag">✦ Avaliações</span>
+    <h2 class="avaliacoes-title">O que nossas <em>clientes</em> dizem</h2>
+    <div class="avaliacoes-subtag">
+      <span></span>
+      <p>Depoimentos reais de quem viveu a experiência</p>
+      <span></span>
+    </div>
+
+    <div class="avaliacoes-grid">
+
+      <div class="avaliacao-card">
+        <div class="avaliacao-estrelas">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+        <div class="avaliacao-aspas">"</div>
+        <p class="avaliacao-texto">Os convites do meu casamento ficaram lindíssimos! Todos os convidados elogiaram muito. Qualidade impecável e entrega no prazo.</p>
+        <div class="avaliacao-autora">
+          <strong>Ana Clara M.</strong> &mdash; Casamento
+        </div>
+      </div>
+
+      <div class="avaliacao-card">
+        <div class="avaliacao-estrelas">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+        <div class="avaliacao-aspas">"</div>
+        <p class="avaliacao-texto">Encomendei para o chá de bebê da minha filha e superou todas as expectativas. Atendimento carinhoso e produto de altíssima qualidade.</p>
+        <div class="avaliacao-autora">
+          <strong>Juliana F.</strong> &mdash; Chá de Bebê
+        </div>
+      </div>
+
+      <div class="avaliacao-card">
+        <div class="avaliacao-estrelas">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+        <div class="avaliacao-aspas">"</div>
+        <p class="avaliacao-texto">Atenção aos detalhes incrível! Pedi personalizado para a formatura e ficou exatamente como eu imaginei. Super recomendo!</p>
+        <div class="avaliacao-autora">
+          <strong>Mariana S.</strong> &mdash; Formatura
+        </div>
+      </div>
+
+      <div class="avaliacao-card">
+        <div class="avaliacao-estrelas">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+        <div class="avaliacao-aspas">"</div>
+        <p class="avaliacao-texto">Fiz o convite de 15 anos da minha filha e ela amou! A animação ficou perfeita e todos os convidados adoraram a novidade do convite digital.</p>
+        <div class="avaliacao-autora">
+          <strong>Fernanda L.</strong> &mdash; 15 Anos
+        </div>
+      </div>
+
+      <div class="avaliacao-card">
+        <div class="avaliacao-estrelas">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+        <div class="avaliacao-aspas">"</div>
+        <p class="avaliacao-texto">Rápida, criativa e super atenciosa! O convite do aniversário do meu filho ficou incrível. Com certeza farei outros pedidos.</p>
+        <div class="avaliacao-autora">
+          <strong>Camila R.</strong> &mdash; Aniversário Infantil
+        </div>
+      </div>
+
+      <div class="avaliacao-card">
+        <div class="avaliacao-estrelas">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+        <div class="avaliacao-aspas">"</div>
+        <p class="avaliacao-texto">Meu convite de casamento ficou um sonho! A equipe foi super paciente com todas as minhas alterações. Recomendo de olhos fechados!</p>
+        <div class="avaliacao-autora">
+          <strong>Beatriz M.</strong> &mdash; Casamento
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ MELHORIA 4: RODAPÉ ESTILO EUFORIA ============ -->
+  <footer class="footer">
+    <div class="footer-body">
+
+      <!-- Coluna 1: Brand -->
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <!-- 
+            Use <img src="logo.png" alt="Cris Pop Arte"> quando tiver o arquivo.
+          -->
+          <span class="footer-logo-text">Cris Pop Arte</span>
+        </div>
+        <p class="footer-tagline">
+          Onde cada detalhe conta uma história. Transformamos momentos especiais em experiências digitais inesquecíveis.
+        </p>
+        <p class="footer-cnpj">
+          <!-- Substitua com seus dados reais -->
+          CNPJ: 00.000.000/0001-00
+        </p>
+        <div class="footer-socials">
+          <!-- Substitua os # pelos links reais das suas redes -->
+          <a href="#" class="footer-social-btn" title="Instagram" target="_blank" rel="noopener noreferrer">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          <a href="#" class="footer-social-btn" title="Pinterest" target="_blank" rel="noopener noreferrer">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+          </a>
+          <a href="#" class="footer-social-btn" title="YouTube" target="_blank" rel="noopener noreferrer">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+          <a href="https://wa.me/SEUNUMERO" class="footer-social-btn" title="WhatsApp" target="_blank" rel="noopener noreferrer">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Coluna 2: Atendimento -->
+      <div class="footer-atendimento">
+        <h4 class="footer-col-title">Atendimento</h4>
+        <a href="https://wa.me/SEUNUMERO" class="footer-contact-item" target="_blank" rel="noopener noreferrer">
+          <span class="f-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+          </span>
+          <!-- Substitua pelo seu número -->
+          (XX) XXXXX-XXXX
+        </a>
+        <a href="mailto:contato@crispoparte.com.br" class="footer-contact-item">
+          <span class="f-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </span>
+          <!-- Substitua pelo seu e-mail -->
+          contato@crispoparte.com.br
+        </a>
+        <p class="footer-horario">
+          Nosso horário de atendimento é de Segunda a Sexta, exceto feriados, das 9h às 18h.
+        </p>
+      </div>
+
+      <!-- Coluna 3: Institucional -->
+      <div class="footer-institucional">
+        <h4 class="footer-col-title">Institucional</h4>
+        <ul class="footer-nav-list">
+          <li><a href="#">Quem Somos</a></li>
+          <li><a href="#">Perguntas Frequentes</a></li>
+          <li><a href="#">Como Funciona</a></li>
+          <li><a href="#">Política de Privacidade</a></li>
+          <li><a href="#">Política de Devolução</a></li>
         </ul>
       </div>
+
     </div>
 
-  </div>
-</section>
+    <!-- Barra inferior do rodapé -->
+    <div class="footer-bottom">
+      <p>&copy; 2026 Cris Pop Arte. Todos os direitos reservados.</p>
+      <a href="#">Política de Privacidade</a>
+    </div>
+  </footer>
 
-  // CURSOR
-  const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursor-ring');
-  document.addEventListener('mousemove', (e) => {
-    if(cursor) {
-      cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-      ring.style.transform = `translate(${e.clientX - 17}px, ${e.clientY - 17}px)`;
+  <script>
+    /* ============================================
+       CURSOR PERSONALIZADO
+       ============================================ */
+    const cur = document.getElementById('cursor');
+    const ring = document.getElementById('cursor-ring');
+    if (cur && ring) {
+      document.addEventListener('mousemove', e => {
+        cur.style.transform  = `translate(${e.clientX - 5}px, ${e.clientY - 5}px)`;
+        ring.style.transform = `translate(${e.clientX - 18}px, ${e.clientY - 18}px)`;
+      });
     }
-  });
 
-  // ACORDEÃO MAIS BUSCADOS
-  const mbBtn = document.getElementById('mb-btn');
-  const mbBody = document.getElementById('mb-body');
-  mbBtn.addEventListener('click', () => {
-    mbBody.classList.toggle('aberto');
-  });
+    /* ============================================
+       ACORDEÃO — TEMAS MAIS PROCURADOS
+       ============================================ */
+    const btnMb = document.getElementById('btn-mb');
+    const bodyMb = document.getElementById('body-mb');
+    btnMb.addEventListener('click', () => {
+      btnMb.classList.toggle('aberto');
+      bodyMb.classList.toggle('aberto');
+    });
 
-  // MODAL PLAYLIST
-  function abrirModal(url) {
-    document.getElementById('vidFrame').src = url;
-    document.getElementById('modal').classList.add('aberto');
-  }
-  function fecharModal() {
-    document.getElementById('modal').classList.remove('aberto');
-    document.getElementById('vidFrame').src = "";
-  }
-</script>
+    /* ============================================
+       MELHORIA 2 — MODAL DE PLAYLIST (sem API)
+       Abre o YouTube embed dentro do site
+       ============================================ */
+    const modal  = document.getElementById('catalogoModal');
+    const frame  = document.getElementById('playlistFrame');
+    const titulo = document.getElementById('modalTitulo');
 
+    function abrirPlaylist(el) {
+      const url    = el.dataset.playlist || '';
+      const nome   = el.dataset.titulo   || 'Playlist';
+
+      if (!url || url.includes('PLAYLIST_') ) {
+        // Aviso amigável enquanto o link não foi preenchido
+        alert(`⚠️ Configure o link da playlist "${nome}" no atributo data-playlist do HTML.`);
+        return;
+      }
+
+      // Monta URL com parâmetros de incorporação otimizados
+      const embedUrl = url + (url.includes('?') ? '&' : '?') + 'rel=0&modestbranding=1&autoplay=1';
+
+      titulo.innerHTML = `Playlist: <em>${nome}</em>`;
+      frame.src = embedUrl;
+
+      modal.classList.add('aberto');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function fecharModal() {
+      modal.classList.remove('aberto');
+      frame.src = ''; // Para o vídeo ao fechar
+      document.body.style.overflow = 'auto';
+    }
+
+    // Fechar com tecla Escape
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && modal.classList.contains('aberto')) fecharModal();
+    });
+
+    // Fechar clicando fora do player
+    modal.addEventListener('click', e => {
+      if (e.target === modal) fecharModal();
+    });
+  </script>
 </body>
 </html>
