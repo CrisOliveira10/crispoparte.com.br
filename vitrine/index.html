@@ -461,7 +461,37 @@
       margin-top:0.8rem;
     }
 
-    
+    /* Institucional */
+    .footer-nav-list {
+      list-style:none;
+    }
+    .footer-nav-list li {
+      border-bottom:1px solid rgba(160,120,90,0.15);
+    }
+    .footer-nav-list li:first-child {
+      border-top:1px solid rgba(160,120,90,0.15);
+    }
+    .footer-nav-list a {
+      display:flex;
+      align-items:center;
+      gap:0.6rem;
+      padding:0.65rem 0;
+      font-size:0.84rem;
+      color:var(--footer-text);
+      text-decoration:none;
+      transition:color 0.3s,gap 0.3s;
+    }
+    .footer-nav-list a::before {
+      content:'›';
+      color:var(--rose);
+      font-size:1.1rem;
+      line-height:1;
+    }
+    .footer-nav-list a:hover {
+      color:var(--rose);
+      gap:0.9rem;
+    }
+
     /* Rodapé base */
     .footer-bottom {
       border-top:1px solid rgba(160,120,90,0.15);
@@ -606,6 +636,7 @@
       </div>
     </article>
 
+
     </div>
   </section>
 
@@ -658,8 +689,8 @@
            data-playlist="https://www.youtube.com/embed/videoseries?list=PLAYLIST_BODAS_AQUI"
            data-titulo="Bodas"
            onclick="abrirPlaylist(this)">
-        <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&q=80" alt="Bodas" loading="lazy">
-        <span class="td-label">Bodas</span>
+        <img src="assets/img/capa-retrospectivas.jpg" alt="Retrospectiva" loading="lazy">
+        <span class="td-label">Retrospectiva</span>
         <div class="td-play">▶</div>
       </div>
     </div>
