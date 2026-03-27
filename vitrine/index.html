@@ -461,37 +461,7 @@
       margin-top:0.8rem;
     }
 
-    /* Institucional */
-    .footer-nav-list {
-      list-style:none;
-    }
-    .footer-nav-list li {
-      border-bottom:1px solid rgba(160,120,90,0.15);
-    }
-    .footer-nav-list li:first-child {
-      border-top:1px solid rgba(160,120,90,0.15);
-    }
-    .footer-nav-list a {
-      display:flex;
-      align-items:center;
-      gap:0.6rem;
-      padding:0.65rem 0;
-      font-size:0.84rem;
-      color:var(--footer-text);
-      text-decoration:none;
-      transition:color 0.3s,gap 0.3s;
-    }
-    .footer-nav-list a::before {
-      content:'›';
-      color:var(--rose);
-      font-size:1.1rem;
-      line-height:1;
-    }
-    .footer-nav-list a:hover {
-      color:var(--rose);
-      gap:0.9rem;
-    }
-
+    
     /* Rodapé base */
     .footer-bottom {
       border-top:1px solid rgba(160,120,90,0.15);
@@ -602,38 +572,39 @@
     <div class="produtos" id="grade-produtos">
       
       <article class="produto-card">
-        <div class="produto-img">
-          <img src="caminho/para/imagem1.jpg" alt="Convite de Casamento Elegante" loading="lazy">
-          <a href="link-do-video-ou-detalhe" class="produto-link" target="_blank" rel="noopener noreferrer"></a>
-        </div>
-        <div class="produto-info">
-          <span class="produto-categoria">Casamento</span>
-          <h3 class="produto-nome">Elegância Clássica</h3>
-          <p class="produto-desc">Convite digital interativo com botões de confirmação e localização.</p>
-          <div class="produto-footer">
-            <a href="https://wa.me/SEUNUMERO?text=Olá, tenho interesse no convite Elegância Clássica" class="btn-wpp" target="_blank" rel="noopener noreferrer">
-              <span>Encomendar</span>
-            </a>
-          </div>
-        </div>
-      </article>
+      <div class="produto-img">
+        <img src="assets/img/imagem1.jpg" alt="Convite de Casamento">
+      </div>
+      <div class="produto-info">
+        <span style="color:var(--rose); font-size:0.7rem; letter-spacing: 1px;">CASAMENTO</span>
+        <h3 class="produto-nome">Elegância Clássica</h3>
+        <a href="https://wa.me/5571993233142" class="btn-wpp" target="_blank">Encomendar</a>
+      </div>
+    </article>
 
-      <article class="produto-card">
-        <div class="produto-img">
-          <img src="caminho/para/imagem2.jpg" alt="Convite Infantil Safari" loading="lazy">
-          <a href="link-do-video-ou-detalhe" class="produto-link" target="_blank" rel="noopener noreferrer"></a>
-        </div>
-        <div class="produto-info">
-          <span class="produto-categoria">Infantil</span>
-          <h3 class="produto-nome">Safari Divertido</h3>
-          <p class="produto-desc">Animação completa com o tema safari para o primeiro aniversário.</p>
-          <div class="produto-footer">
-            <a href="https://wa.me/SEUNUMERO?text=Olá, tenho interesse no convite Safari Divertido" class="btn-wpp" target="_blank" rel="noopener noreferrer">
-              <span>Encomendar</span>
-            </a>
-          </div>
-        </div>
-      </article>
+    <article class="produto-card">
+      <div class="produto-img">
+        <img src="assets/img/imagem2.jpg" alt="Convite Moranguinho">
+      </div>
+      <div class="produto-info">
+        <span style="color:var(--rose); font-size:0.7rem; letter-spacing: 1px;">INFANTIL</span>
+        <h3 class="produto-nome">Moranguinho Trailer</h3>
+        <a href="https://wa.me/5571993233142" class="btn-wpp" target="_blank">Encomendar</a>
+      </div>
+    </article>
+
+    <article class="produto-card">
+      <div class="produto-img">
+        <video id="vidSafari" poster="assets/img/imagem3.jpg" loop playsinline controls style="cursor:pointer;" onclick="this.play()">
+          <source src="assets/img/imagem3.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="produto-info">
+        <span style="color:var(--rose); font-size:0.7rem; letter-spacing: 1px;">INFANTIL</span>
+        <h3 class="produto-nome">Safari Divertido</h3>
+        <a href="https://wa.me/5571993233142" class="btn-wpp" target="_blank">Encomendar</a>
+      </div>
+    </article>
 
     </div>
   </section>
