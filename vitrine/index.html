@@ -637,16 +637,21 @@
 
       <article class="produto-card">
         <div class="produto-img">
-          <video autoplay muted loop playsinline poster="assets/img/imagem3.jpg" style="width:100%; height:100%; object-fit:cover; position:absolute; inset:0;">
+          <video id="videoSafari" 
+                 controls 
+                 loop 
+                 playsinline 
+                 poster="assets/img/imagem3.jpg" 
+                 style="width:100%; height:100%; object-fit:cover; position:absolute; inset:0; cursor:pointer;"
+                 onclick="this.play()">
             <source src="assets/img/imagem3.mp4" type="video/mp4">
             Seu navegador não suporta vídeos.
           </video>
-          <a href="https://youtube.com/shorts/LAoCLrix8xQ" class="produto-link" target="_blank" rel="noopener noreferrer"></a>
         </div>
         <div class="produto-info">
           <span class="produto-categoria">Infantil</span>
           <h3 class="produto-nome">Safari Divertido</h3>
-          <p class="produto-desc">Animação completa com o tema safari para o primeiro aniversário.</p>
+          <p class="produto-desc">Animação completa com trilha sonora original. Clique no play para ouvir!</p>
           <div class="produto-footer">
             <a href="https://wa.me/5571993233142?text=Olá, tenho interesse no convite Safari Divertido" class="btn-wpp" target="_blank" rel="noopener noreferrer">
               <span>Encomendar</span>
