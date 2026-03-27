@@ -565,13 +565,33 @@
     const WPP_NUM = '5571993233142';
 
     // ════════════════════════════════════════════════════════════
+    //  CACHE LOCAL — evita re-chamar a API para a mesma busca
+    //  Resultados ficam salvos por 12 horas no navegador do usuário
+    // ════════════════════════════════════════════════════════════
+    const CACHE_TTL = 12 * 60 * 60 * 1000; // 12 horas em milissegundos
+
+    function cacheGet(chave) {
+      try {
+        const item = JSON.parse(localStorage.getItem('yt_' + chave));
+        if (item && (Date.now() - item.ts) < CACHE_TTL) return item.data;
+      } catch(e) {}
+      return null;
+    }
+
+    function cacheSet(chave, data) {
+      try {
+        localStorage.setItem('yt_' + chave, JSON.stringify({ ts: Date.now(), data }));
+      } catch(e) {} // ignora se localStorage estiver cheio
+    }
+
+    // ════════════════════════════════════════════════════════════
     //  LISTA "OS MAIS BUSCADOS"
     //  Para adicionar um tema: 'Nome do Tema',
     //  A lista se organiza em A→Z automaticamente!
     // ════════════════════════════════════════════════════════════
     const TEMAS_MAIS_BUSCADOS = [
-      'A Casa Mágica da Gabby','Arco Íris','Baby shark','Barbie',
-      'Casamento','Bluey','Bolofofos','Bosque','Circo',
+      'A Casa Mágica da Gabby','Arco Íris','Aurora','Barbie',
+      'Casamento','Bluey','Bolofofos','Bosque','Capivara',
       'Carrinhos','Cerejinha','Cinderela','Confeitaria','Patrulha Canina',
       'Dinossauro','Disney','Fábrica de Brinquedos','Fadas',
       'Flamengo','Harry Potter','Hello Kitty','Homem Aranha',
@@ -599,13 +619,38 @@
     }
 
     // ════════════════════════════════════════════════════════════
-    //  BUSCA NOS DOIS CANAIS SIMULTANEAMENTE
+    //  BUSCA NOS DOIS CANAIS — com cache + tratamento de erros
+    //
+    //  CORREÇÃO: antes, erros de cota (403) eram engolidos pelo
+    //  catch e pareciam "sem resultados". Agora são tratados e
+    //  exibidos corretamente para o usuário.
+    //  CORREÇÃO: cache evita re-chamar a API para a mesma busca
+    //  nas próximas 12 horas, economizando cota.
     // ════════════════════════════════════════════════════════════
     async function buscaNosCanais(termo, maxPorCanal = 6) {
+      const chave = termo.toLowerCase().trim() + '_max' + maxPorCanal;
+      const cached = cacheGet(chave);
+      if (cached) return cached; // retorna do cache sem tocar na API
+
       const promises = CANAIS.map(c => {
         const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${c.id}&q=${encodeURIComponent(termo)}&type=video&maxResults=${maxPorCanal}&key=${c.key}`;
-        return fetch(url).then(r => r.json()).catch(() => ({ items: [] }));
+        return fetch(url).then(async r => {
+          if (!r.ok) {
+            const err = await r.json().catch(() => ({}));
+            // Erro 403 = cota da API esgotada para o dia
+            if (r.status === 403 || r.status === 429) {
+              throw new Error('Cota diária da API do YouTube atingida. A busca voltará a funcionar amanhã. 😊');
+            }
+            throw new Error(err?.error?.message || `Erro ${r.status} na API do YouTube.`);
+          }
+          return r.json();
+        }).catch(err => {
+          // Propaga erros de cota; erros de rede retornam vazio
+          if (err.message.includes('Cota') || err.message.includes('API')) throw err;
+          return { items: [] };
+        });
       });
+
       const resultados = await Promise.all(promises);
       const vistos = new Set();
       const todos  = [];
@@ -615,20 +660,43 @@
           if (vid && !vistos.has(vid)) { vistos.add(vid); todos.push(item); }
         });
       });
+
+      // Só salva no cache se encontrou resultados
+      if (todos.length > 0) cacheSet(chave, todos);
       return todos;
     }
 
     // ── Thumbnails dos destaques ──
-    async function carregarThumbsDestaque() {
-      for (const card of document.querySelectorAll('.tema-destaque-card')) {
-        const tema = card.dataset.tema;
-        const img  = card.querySelector('.td-thumb');
-        try {
-          const itens = await buscaNosCanais(tema + ' convite', 1);
-          if (itens.length > 0) img.src = itens[0].snippet.thumbnails.medium.url;
-        } catch(e) {}
-        card.addEventListener('click', () => abrirModalTema(tema));
-      }
+    // CORREÇÃO: antes carregava TODAS as 12 thumbnails ao mesmo
+    // tempo no carregamento da página (2.400 unidades de API de uma vez!).
+    // Agora carrega cada thumbnail só quando o card fica visível
+    // na tela (lazy load), e usa cache para não repetir.
+    function carregarThumbsDestaque() {
+      const cards = document.querySelectorAll('.tema-destaque-card');
+
+      // Cliques funcionam imediatamente, independente da thumbnail
+      cards.forEach(card => {
+        card.addEventListener('click', () => abrirModalTema(card.dataset.tema));
+      });
+
+      // Thumbnails carregam sob demanda (quando o usuário rolar até o card)
+      const thumbObserver = new IntersectionObserver(async (entries, observer) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          observer.unobserve(entry.target); // para de observar após disparar
+          const card = entry.target;
+          const tema = card.dataset.tema;
+          const img  = card.querySelector('.td-thumb');
+          try {
+            const itens = await buscaNosCanais(tema + ' convite', 1);
+            if (itens.length > 0) img.src = itens[0].snippet.thumbnails.medium.url;
+          } catch(e) {
+            // Sem thumbnail por erro de cota: mantém fundo padrão, sem travar
+          }
+        }
+      }, { rootMargin: '150px' }); // começa a carregar 150px antes de aparecer
+
+      cards.forEach(card => thumbObserver.observe(card));
     }
     carregarThumbsDestaque();
 
@@ -675,7 +743,7 @@
           modalGrid.appendChild(card);
         });
       } catch(err) {
-        modalStatus.textContent = '⚠️ Erro: ' + err.message;
+        modalStatus.textContent = '⚠️ ' + err.message;
       }
     }
 
@@ -741,7 +809,7 @@
           grid.appendChild(card);
         });
       } catch(err) {
-        status.innerHTML = '⚠️ Erro: ' + err.message;
+        status.innerHTML = '⚠️ ' + err.message;
       }
     }
   </script>
