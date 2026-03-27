@@ -516,6 +516,330 @@
     .footer-bottom a:hover { text-decoration:underline; }
 
     /* =========================================
+       MELHORIA 2: PLAYER DE VÍDEO produto1.mp4
+       ========================================= */
+    .video-showcase-section {
+      background: var(--dark);
+      padding: 5rem 2rem 6rem;
+    }
+    .video-showcase-section .section-tag { color: var(--teal); }
+    .video-showcase-section .section-title { color: var(--white); }
+    .video-showcase-section .section-title em { color: var(--teal); }
+    .video-showcase-section .section-header { padding-top: 0; }
+
+    .video-player-wrap {
+      position: relative;
+      max-width: 420px; /* Proporção de convite (9:16 aprox) */
+      margin: 0 auto;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+    }
+    .video-player-wrap video {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    /* Overlay central com botão play grande */
+    .video-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(10,6,24,0.35);
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .video-overlay.hidden { opacity: 0; }
+    .video-play-btn {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: var(--rose);
+      border: none;
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      pointer-events: all;
+      transition: transform 0.2s, background 0.2s;
+      box-shadow: 0 8px 30px rgba(180,79,200,0.5);
+    }
+    .video-play-btn:hover { transform: scale(1.1); background: var(--terracota); }
+    /* Barra de controles inferior */
+    .video-controls {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(transparent, rgba(10,6,24,0.9));
+      padding: 1.5rem 1rem 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .video-player-wrap:hover .video-controls { opacity: 1; }
+    .vc-btn {
+      background: none; border: none;
+      color: #fff; cursor: pointer;
+      display: flex; align-items: center;
+      padding: 0.3rem;
+      opacity: 0.85;
+      transition: opacity 0.2s;
+      flex-shrink: 0;
+    }
+    .vc-btn:hover { opacity: 1; }
+    .vc-progress-wrap {
+      flex: 1;
+      position: relative;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    .vc-progress-bg {
+      position: absolute;
+      left: 0; right: 0;
+      height: 3px;
+      background: rgba(255,255,255,0.25);
+      border-radius: 3px;
+    }
+    .vc-progress-bar {
+      position: absolute;
+      left: 0;
+      height: 3px;
+      background: var(--rose);
+      border-radius: 3px;
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+    .vc-progress-thumb {
+      position: absolute;
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: #fff;
+      left: 0%;
+      transform: translateX(-50%);
+      transition: left 0.1s linear;
+    }
+    .vc-time {
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.75);
+      white-space: nowrap;
+      font-family: 'Jost', sans-serif;
+    }
+
+    /* =========================================
+       MELHORIA 1: ACCORDION NO RODAPÉ
+       ========================================= */
+    .footer-acc-item {
+      border-bottom: 1px solid rgba(160,120,90,0.15);
+    }
+    .footer-acc-item:first-child {
+      border-top: 1px solid rgba(160,120,90,0.15);
+    }
+    .footer-acc-btn {
+      width: 100%;
+      background: none;
+      border: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 0;
+      font-size: 0.84rem;
+      color: var(--footer-text);
+      text-align: left;
+      cursor: pointer;
+      font-family: 'Jost', sans-serif;
+      transition: color 0.3s;
+    }
+    .footer-acc-btn:hover { color: var(--rose); }
+    .footer-acc-arrow {
+      color: var(--rose);
+      font-size: 1.1rem;
+      line-height: 1;
+      display: inline-block;
+      transition: transform 0.35s ease;
+    }
+    .footer-acc-btn.aberto .footer-acc-arrow {
+      transform: rotate(90deg);
+    }
+    .footer-acc-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.45s ease, padding 0.35s ease;
+      padding: 0 0.2rem;
+    }
+    .footer-acc-body.aberto {
+      max-height: 600px;
+      padding: 0.6rem 0.2rem 1rem;
+    }
+    .footer-acc-body p {
+      font-size: 0.8rem;
+      color: rgba(92,74,58,0.85);
+      line-height: 1.65;
+      margin-bottom: 0.7rem;
+    }
+    .footer-acc-body p:last-child { margin-bottom: 0; }
+    .footer-acc-body strong { color: var(--footer-text); font-weight: 500; }
+
+    /* =========================================
+       SEÇÃO "PEÇAS QUE ENCANTAM" (restaurada)
+       ========================================= */
+    .pecas-section {
+      background: var(--cream);
+      padding: 5rem 2rem 6rem;
+    }
+    .pecas-section .section-tag { color: var(--rose); display:block;text-align:center;margin-bottom:1rem; }
+    .pecas-section .section-title { text-align:center; }
+
+    /* Categorias desta seção */
+    .pecas-categorias {
+      display:flex;justify-content:center;gap:0.6rem;flex-wrap:wrap;
+      padding:2rem 1rem 3rem;
+    }
+    .pecas-cat-btn {
+      padding:0.5rem 1.4rem;
+      border:1px solid rgba(180,79,200,0.25);
+      background:transparent;
+      font-family:'Jost',sans-serif;font-size:0.78rem;
+      letter-spacing:0.08em;color:var(--muted);
+      transition:all 0.3s;border-radius:100px;cursor:pointer;
+    }
+    .pecas-cat-btn:hover,.pecas-cat-btn.active {
+      background:var(--rose);border-color:var(--rose);color:var(--white);
+    }
+
+    /* Grid de cards estilo catálogo */
+    .pecas-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+      gap:1.8rem;
+      max-width:1280px;
+      margin:0 auto;
+    }
+    .peca-card {
+      background:var(--white);
+      border-radius:8px;
+      overflow:hidden;
+      box-shadow:0 4px 24px rgba(26,16,48,0.07);
+      transition:transform 0.35s ease,box-shadow 0.35s ease;
+      position:relative;
+      display:flex;flex-direction:column;
+    }
+    .peca-card:hover {
+      transform:translateY(-6px);
+      box-shadow:0 16px 48px rgba(26,16,48,0.13);
+    }
+
+    /* Badge (MAIS PEDIDO / POPULAR) */
+    .peca-badge {
+      position:absolute;top:1rem;left:1rem;
+      padding:0.25rem 0.7rem;
+      border-radius:100px;
+      font-size:0.6rem;letter-spacing:0.15em;text-transform:uppercase;
+      font-weight:500;font-family:'Jost',sans-serif;
+      z-index:3;
+    }
+    .peca-badge.mais-pedido { background:var(--rose);color:#fff; }
+    .peca-badge.popular { background:#1ec8b0;color:#fff; }
+
+    /* Área de info no topo */
+    .peca-info {
+      padding:1.4rem 1.4rem 0.8rem;
+      text-align:center;
+    }
+    .peca-nome {
+      font-family:'Cormorant Garamond',serif;
+      font-size:1.3rem;font-weight:600;
+      color:var(--rose);margin-bottom:0.25rem;line-height:1.2;
+    }
+    .peca-subtitulo {
+      font-size:0.75rem;color:var(--muted);
+      letter-spacing:0.04em;margin-bottom:0.8rem;
+    }
+    /* Badge de investimento */
+    .peca-preco-badge {
+      display:inline-block;
+      background:var(--rose);color:#fff;
+      font-size:0.65rem;letter-spacing:0.12em;text-transform:uppercase;
+      font-weight:500;padding:0.3rem 0.9rem;border-radius:100px;
+      margin-bottom:0.6rem;font-family:'Jost',sans-serif;
+    }
+    .peca-preco-badge.verde { background:#1ec8b0; }
+    .peca-desc-info {
+      font-size:0.78rem;color:var(--muted);line-height:1.5;margin-bottom:0.5rem;
+    }
+
+    /* Área da mídia (imagem ou vídeo) */
+    .peca-midia {
+      position:relative;
+      width:100%;
+      flex:1;
+      min-height:220px;
+      background:var(--blush);
+      overflow:hidden;
+    }
+    .peca-midia img {
+      width:100%;height:100%;
+      object-fit:cover;object-position:center top;
+      display:block;
+      transition:transform 0.45s ease;
+    }
+    .peca-card:hover .peca-midia img { transform:scale(1.03); }
+
+    /* Vídeo inline no card */
+    .peca-midia video {
+      width:100%;height:100%;
+      object-fit:cover;
+      display:block;cursor:pointer;
+    }
+    .peca-video-overlay {
+      position:absolute;inset:0;
+      display:flex;align-items:center;justify-content:center;
+      background:rgba(26,16,48,0.3);
+      transition:opacity 0.3s;
+    }
+    .peca-video-overlay.hidden { opacity:0;pointer-events:none; }
+    .peca-play-btn {
+      width:56px;height:56px;border-radius:50%;
+      background:var(--rose);border:none;color:#fff;
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;
+      box-shadow:0 6px 24px rgba(180,79,200,0.45);
+      transition:transform 0.2s,background 0.2s;
+    }
+    .peca-play-btn:hover { transform:scale(1.1);background:var(--terracota); }
+    /* Controles mini na parte inferior do card-vídeo */
+    .peca-video-controls {
+      position:absolute;bottom:0;left:0;right:0;
+      background:linear-gradient(transparent,rgba(10,6,24,0.85));
+      padding:1.2rem 0.8rem 0.6rem;
+      display:flex;align-items:center;gap:0.5rem;
+      opacity:0;transition:opacity 0.3s;
+    }
+    .peca-midia:hover .peca-video-controls { opacity:1; }
+    .pvc-btn {
+      background:none;border:none;color:#fff;cursor:pointer;
+      display:flex;align-items:center;padding:0.2rem;opacity:0.85;
+      transition:opacity 0.2s;
+    }
+    .pvc-btn:hover { opacity:1; }
+    .pvc-bar-wrap {
+      flex:1;position:relative;height:16px;
+      display:flex;align-items:center;cursor:pointer;
+    }
+    .pvc-bg { position:absolute;left:0;right:0;height:2px;background:rgba(255,255,255,0.3);border-radius:2px; }
+    .pvc-fill { position:absolute;left:0;height:2px;background:var(--rose);border-radius:2px;width:0%; }
+    .pvc-time { font-size:0.65rem;color:rgba(255,255,255,0.75);white-space:nowrap;font-family:'Jost',sans-serif; }
+
+    /* Rodapé do card */
+    .peca-footer {
+      padding:0.8rem 1.4rem 1.2rem;
+      display:flex;justify-content:center;
+    }
+
+    /* =========================================
        RESPONSIVIDADE
        ========================================= */
     @media (max-width: 900px) {
@@ -547,16 +871,12 @@
   <!-- ============ NAV ============ -->
   <nav>
     <a href="#" class="nav-logo">
-      <!-- 
-        LOGO: Substitua o texto abaixo por uma tag <img> quando tiver o arquivo:
-        <img src="logo.png" alt="Cris Pop Arte">
-      -->
-      <span style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:var(--rose);">Cris Pop Arte</span>
+      <img src="logo.png" alt="Cris Pop Arte">
     </a>
     <ul class="nav-links">
       <li><a href="#produtos">Catálogo</a></li>
       <li><a href="#catalogo-video">Temas em Vídeo</a></li>
-      <li><a href="https://wa.me/5571993233142" class="nav-cta" target="_blank" rel="noopener noreferrer">Fale Connosco</a></li>
+      <li><a href="https://wa.me/SEUNUMERO" class="nav-cta" target="_blank" rel="noopener noreferrer">Fale Connosco</a></li>
     </ul>
   </nav>
 
@@ -567,6 +887,7 @@
       <h1 class="hero-title">Convites que contam a sua <em>história.</em></h1>
       <p class="hero-desc">Transformamos momentos especiais em experiências digitais inesquecíveis. Explore a nossa coleção de convites animados e interativos.</p>
       <div class="hero-btns">
+        <!-- MELHORIA 4: Altere o href para o link desejado -->
         <a href="#produtos" class="btn-primary">Ver Coleção</a>
         <a href="#catalogo-video" class="btn-outline">Procurar Temas</a>
       </div>
@@ -584,11 +905,178 @@
     </div>
   </header>
 
-  <!-- ============ PRODUTOS ============ -->
+  <!-- ============================================================
+       SEÇÃO RESTAURADA: PEÇAS QUE ENCANTAM
+       produto1.mp4 = vídeo inline | produto2-8.jpg = imagens
+       ============================================================ -->
+  <section id="pecas" class="pecas-section">
+    <div class="section-header" style="padding-bottom:0;">
+      <span class="section-tag">✦ Nossa Coleção</span>
+      <h2 class="section-title">Peças que <em>encantam</em></h2>
+    </div>
+
+    <div class="pecas-categorias">
+      <button class="pecas-cat-btn active" onclick="filtrarPecas('todos',this)">Todos</button>
+      <button class="pecas-cat-btn" onclick="filtrarPecas('animado',this)">Animado</button>
+      <button class="pecas-cat-btn" onclick="filtrarPecas('tradicional',this)">Tradicional</button>
+      <button class="pecas-cat-btn" onclick="filtrarPecas('interativo',this)">Interativo</button>
+      <button class="pecas-cat-btn" onclick="filtrarPecas('cinema',this)">Cinema</button>
+      <button class="pecas-cat-btn" onclick="filtrarPecas('livrinho',this)">Livrinho</button>
+      <button class="pecas-cat-btn" onclick="filtrarPecas('identidade',this)">Identidade Visual</button>
+      <button class="pecas-cat-btn" onclick="filtrarPecas('retrospectiva',this)">Retrospectiva</button>
+    </div>
+
+    <div class="pecas-grid" id="pecasGrid">
+
+      <!-- CARD 1 — produto1.mp4 como VÍDEO inline -->
+      <div class="peca-card" data-categoria="animado">
+        <span class="peca-badge mais-pedido">Mais Pedido</span>
+        <div class="peca-info">
+          <h3 class="peca-nome">Convite<br>Vídeo páginas</h3>
+          <p class="peca-subtitulo">Modelo somente Páginas animada</p>
+          <span class="peca-preco-badge">Investimento: R$ 50,00</span>
+        </div>
+        <div class="peca-midia" style="min-height:300px;">
+          <video id="pecaVid1" src="produto1.mp4" preload="metadata" playsinline loop></video>
+          <div class="peca-video-overlay" id="pecaOv1">
+            <button class="peca-play-btn" onclick="togglePecaVid('pecaVid1','pecaOv1')" aria-label="Reproduzir">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+            </button>
+          </div>
+          <div class="peca-video-controls">
+            <button class="pvc-btn" onclick="togglePecaVid('pecaVid1','pecaOv1')">
+              <svg id="pvcPI1" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+              <svg id="pvcPA1" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            </button>
+            <div class="pvc-bar-wrap" onclick="seekPecaVid(event,'pecaVid1','pvcF1')">
+              <div class="pvc-bg"></div>
+              <div class="pvc-fill" id="pvcF1"></div>
+            </div>
+            <span class="pvc-time" id="pvcT1">0:00</span>
+          </div>
+        </div>
+        <div class="peca-footer">
+          <a href="https://wa.me/SEUNUMERO?text=Olá, tenho interesse no Convite Vídeo Páginas" class="btn-wpp" target="_blank" rel="noopener noreferrer">Encomendar</a>
+        </div>
+      </div>
+
+      <!-- CARD 2 — produto2.jpg -->
+      <div class="peca-card" data-categoria="tradicional">
+        <div class="peca-info">
+          <h3 class="peca-nome">Convite Retrato</h3>
+          <p class="peca-subtitulo">Modelo Tradicional JPG</p>
+          <span class="peca-preco-badge">Investimento: R$ 30,00</span>
+        </div>
+        <div class="peca-midia" style="min-height:300px;">
+          <img src="produto2.jpg" alt="Convite Retrato" loading="lazy">
+        </div>
+        <div class="peca-footer">
+          <a href="https://wa.me/SEUNUMERO?text=Olá, tenho interesse no Convite Retrato" class="btn-wpp" target="_blank" rel="noopener noreferrer">Encomendar</a>
+        </div>
+      </div>
+
+      <!-- CARD 3 — produto3.jpg -->
+      <div class="peca-card" data-categoria="interativo">
+        <span class="peca-badge popular">Popular</span>
+        <div class="peca-info">
+          <h3 class="peca-nome">Convite Trailer</h3>
+          <p class="peca-subtitulo">Modelo interativo<br>Tela única, opcional com vídeo trailer</p>
+          <span class="peca-preco-badge verde">Investimento: R$ 50,00</span>
+        </div>
+        <div class="peca-midia" style="min-height:300px;">
+          <img src="produto3.jpg" alt="Convite Trailer" loading="lazy">
+        </div>
+        <div class="peca-footer">
+          <a href="https://wa.me/SEUNUMERO?text=Olá, tenho interesse no Convite Trailer" class="btn-wpp" target="_blank" rel="noopener noreferrer">Encomendar</a>
+        </div>
+      </div>
+
+      <!-- CARD 4 — produto4.jpg -->
+      <div class="peca-card" data-categoria="interativo">
+        <div class="peca-info">
+          <h3 class="peca-nome">Convite<br>Tela estendida</h3>
+          <p class="peca-subtitulo">Modelo interativo tela longa</p>
+          <span class="peca-preco-badge">Investimento: R$ 70,00</span>
+          <p class="peca-desc-info">Modelo interativo infantil</p>
+          <span class="peca-preco-badge">Investimento: R$ 120,00</span>
+          <p class="peca-desc-info">Modelo interativo adulto</p>
+        </div>
+        <div class="peca-midia" style="min-height:300px;">
+          <img src="produto4.jpg" alt="Convite Tela Estendida" loading="lazy">
+        </div>
+        <div class="peca-footer">
+          <a href="https://wa.me/SEUNUMERO?text=Olá, tenho interesse no Convite Tela Estendida" class="btn-wpp" target="_blank" rel="noopener noreferrer">Encomendar</a>
+        </div>
+      </div>
+
+      <!-- CARD 5 — produto5.jpg -->
+      <div class="peca-card" data-categoria="cinema">
+        <div class="peca-info">
+          <h3 class="peca-nome">Convite Cinema</h3>
+          <p class="peca-subtitulo">Modelo estilo cinema animado</p>
+          <span class="peca-preco-badge">Investimento: R$ 60,00</span>
+        </div>
+        <div class="peca-midia" style="min-height:300px;">
+          <img src="produto5.jpg" alt="Convite Cinema" loading="lazy">
+        </div>
+        <div class="peca-footer">
+          <a href="https://wa.me/SEUNUMERO?text=Olá, tenho interesse no Convite Cinema" class="btn-wpp" target="_blank" rel="noopener noreferrer">Encomendar</a>
+        </div>
+      </div>
+
+      <!-- CARD 6 — produto6.jpg -->
+      <div class="peca-card" data-categoria="livrinho">
+        <div class="peca-info">
+          <h3 class="peca-nome">Convite Livrinho</h3>
+          <p class="peca-subtitulo">Modelo interativo estilo livro</p>
+          <span class="peca-preco-badge">Investimento: R$ 80,00</span>
+        </div>
+        <div class="peca-midia" style="min-height:300px;">
+          <img src="produto6.jpg" alt="Convite Livrinho" loading="lazy">
+        </div>
+        <div class="peca-footer">
+          <a href="https://wa.me/SEUNUMERO?text=Olá, tenho interesse no Convite Livrinho" class="btn-wpp" target="_blank" rel="noopener noreferrer">Encomendar</a>
+        </div>
+      </div>
+
+      <!-- CARD 7 — produto7.jpg -->
+      <div class="peca-card" data-categoria="identidade">
+        <div class="peca-info">
+          <h3 class="peca-nome">Identidade Visual</h3>
+          <p class="peca-subtitulo">Kit completo com convite + arte</p>
+          <span class="peca-preco-badge">Investimento: R$ 100,00</span>
+        </div>
+        <div class="peca-midia" style="min-height:300px;">
+          <img src="produto7.jpg" alt="Identidade Visual" loading="lazy">
+        </div>
+        <div class="peca-footer">
+          <a href="https://wa.me/SEUNUMERO?text=Olá, tenho interesse na Identidade Visual" class="btn-wpp" target="_blank" rel="noopener noreferrer">Encomendar</a>
+        </div>
+      </div>
+
+      <!-- CARD 8 — produto8.jpg -->
+      <div class="peca-card" data-categoria="retrospectiva">
+        <div class="peca-info">
+          <h3 class="peca-nome">Retrospectiva</h3>
+          <p class="peca-subtitulo">Vídeo retrospectiva animado com fotos</p>
+          <span class="peca-preco-badge">Investimento: R$ 90,00</span>
+        </div>
+        <div class="peca-midia" style="min-height:300px;">
+          <img src="produto8.jpg" alt="Retrospectiva" loading="lazy">
+        </div>
+        <div class="peca-footer">
+          <a href="https://wa.me/SEUNUMERO?text=Olá, tenho interesse na Retrospectiva" class="btn-wpp" target="_blank" rel="noopener noreferrer">Encomendar</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ PRODUTOS — MELHORIA 5: convite1-4.jpg ============ -->
   <section id="produtos">
     <div class="section-header">
       <span class="section-tag">A Nossa Coleção</span>
-      <h2 class="section-title">Escolha o seu <em>estilo</em></h2>
+      <h2 class="section-title">Convites <em>Digitais</em></h2>
     </div>
 
     <div class="categorias">
@@ -601,17 +1089,18 @@
 
     <div class="produtos" id="grade-produtos">
       
+      <!-- MELHORIA 5: imagens nomeadas convite1.jpg, convite2.jpg, etc. -->
       <article class="produto-card">
         <div class="produto-img">
-          <img src="caminho/para/imagem1.jpg" alt="Convite de Casamento Elegante" loading="lazy">
-          <a href="link-do-video-ou-detalhe" class="produto-link" target="_blank" rel="noopener noreferrer"></a>
+          <img src="convite1.jpg" alt="Convite 1" loading="lazy">
+          <a href="#" class="produto-link" target="_blank" rel="noopener noreferrer"></a>
         </div>
         <div class="produto-info">
           <span class="produto-categoria">Casamento</span>
           <h3 class="produto-nome">Elegância Clássica</h3>
           <p class="produto-desc">Convite digital interativo com botões de confirmação e localização.</p>
           <div class="produto-footer">
-            <a href="https://wa.me/5571993233142?text=Olá, tenho interesse no convite Elegância Clássica" class="btn-wpp" target="_blank" rel="noopener noreferrer">
+            <a href="https://wa.me/SEUNUMERO?text=Olá, tenho interesse no convite Elegância Clássica" class="btn-wpp" target="_blank" rel="noopener noreferrer">
               <span>Encomendar</span>
             </a>
           </div>
@@ -620,21 +1109,94 @@
 
       <article class="produto-card">
         <div class="produto-img">
-          <img src="caminho/para/imagem2.jpg" alt="Convite Infantil Safari" loading="lazy">
-          <a href="link-do-video-ou-detalhe" class="produto-link" target="_blank" rel="noopener noreferrer"></a>
+          <img src="convite2.jpg" alt="Convite 2" loading="lazy">
+          <a href="#" class="produto-link" target="_blank" rel="noopener noreferrer"></a>
         </div>
         <div class="produto-info">
           <span class="produto-categoria">Infantil</span>
           <h3 class="produto-nome">Safari Divertido</h3>
           <p class="produto-desc">Animação completa com o tema safari para o primeiro aniversário.</p>
           <div class="produto-footer">
-            <a href="https://wa.me/5571993233142?text=Olá, tenho interesse no convite Safari Divertido" class="btn-wpp" target="_blank" rel="noopener noreferrer">
+            <a href="https://wa.me/SEUNUMERO?text=Olá, tenho interesse no convite Safari Divertido" class="btn-wpp" target="_blank" rel="noopener noreferrer">
               <span>Encomendar</span>
             </a>
           </div>
         </div>
       </article>
 
+      <article class="produto-card">
+        <div class="produto-img">
+          <img src="convite3.jpg" alt="Convite 3" loading="lazy">
+          <a href="#" class="produto-link" target="_blank" rel="noopener noreferrer"></a>
+        </div>
+        <div class="produto-info">
+          <span class="produto-categoria">Aniversário</span>
+          <h3 class="produto-nome">Jardim Encantado</h3>
+          <p class="produto-desc">Convite floral com animações delicadas para aniversários especiais.</p>
+          <div class="produto-footer">
+            <a href="https://wa.me/SEUNUMERO?text=Olá, tenho interesse no convite Jardim Encantado" class="btn-wpp" target="_blank" rel="noopener noreferrer">
+              <span>Encomendar</span>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <article class="produto-card">
+        <div class="produto-img">
+          <img src="convite4.jpg" alt="Convite 4" loading="lazy">
+          <a href="#" class="produto-link" target="_blank" rel="noopener noreferrer"></a>
+        </div>
+        <div class="produto-info">
+          <span class="produto-categoria">Retrospectiva</span>
+          <h3 class="produto-nome">Memórias em Vídeo</h3>
+          <p class="produto-desc">Retrospectiva animada com fotos e música para celebrar conquistas.</p>
+          <div class="produto-footer">
+            <a href="https://wa.me/SEUNUMERO?text=Olá, tenho interesse no convite Memórias em Vídeo" class="btn-wpp" target="_blank" rel="noopener noreferrer">
+              <span>Encomendar</span>
+            </a>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============ MELHORIA 2: Player de Vídeo produto1.mp4 ============ -->
+  <section class="video-showcase-section" id="video-preview">
+    <div class="section-header" style="padding-bottom:2rem;">
+      <span class="section-tag">Veja como fica</span>
+      <h2 class="section-title">Um convite em <em>movimento</em></h2>
+    </div>
+    <div class="video-player-wrap">
+      <video id="videoPlayer" preload="metadata" playsinline>
+        <!-- MELHORIA 2: Coloque o arquivo produto1.mp4 na mesma pasta que o HTML -->
+        <source src="produto1.mp4" type="video/mp4">
+        Seu navegador não suporta vídeo HTML5.
+      </video>
+      <div class="video-overlay" id="videoOverlay">
+        <button class="video-play-btn" id="videoBtnPlay" onclick="toggleVideo()" aria-label="Reproduzir vídeo">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+        </button>
+      </div>
+      <div class="video-controls">
+        <button class="vc-btn" id="vcPlay" onclick="toggleVideo()" title="Play / Pause">
+          <svg id="vcPlayIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+          <svg id="vcPauseIcon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+        </button>
+        <div class="vc-progress-wrap" onclick="seekVideo(event)">
+          <div class="vc-progress-bg"></div>
+          <div class="vc-progress-bar" id="vcBar"></div>
+          <div class="vc-progress-thumb" id="vcThumb"></div>
+        </div>
+        <span class="vc-time" id="vcTime">0:00 / 0:00</span>
+        <button class="vc-btn" id="vcMute" onclick="toggleMute()" title="Mudo / Som">
+          <svg id="vcSoundIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+          <svg id="vcMuteIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+        </button>
+        <button class="vc-btn" onclick="toggleFullscreen()" title="Tela cheia">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+        </button>
+      </div>
     </div>
   </section>
 
@@ -660,7 +1222,7 @@
         ====================================================
       -->
       <div class="tema-destaque-card"
-           data-playlist="https://www.youtube.com/embed/videoseries?list=PLYG0bXi7F7CRM100hyQ-gEC1EYgZXeD1_"
+           data-playlist="https://www.youtube.com/embed/videoseries?list=PLAYLIST_CASAMENTO_AQUI"
            data-titulo="Casamentos"
            onclick="abrirPlaylist(this)">
         <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80" alt="Casamento" loading="lazy">
@@ -684,11 +1246,11 @@
         <div class="td-play">▶</div>
       </div>
       <div class="tema-destaque-card"
-           data-playlist="https://www.youtube.com/embed/videoseries?list=PLYG0bXi7F7CQ2feNoOokKpSKrK_xvHhX2"
-           data-titulo="Retrospectiva"
+           data-playlist="https://www.youtube.com/embed/videoseries?list=PLAYLIST_BODAS_AQUI"
+           data-titulo="Bodas"
            onclick="abrirPlaylist(this)">
-        <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&q=80" alt="Retrospectiva" loading="lazy">
-        <span class="td-label">Retrospectiva</span>
+        <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&q=80" alt="Bodas" loading="lazy">
+        <span class="td-label">Bodas</span>
         <div class="td-play">▶</div>
       </div>
     </div>
@@ -708,7 +1270,7 @@
           <div class="tema-item" data-playlist="https://www.youtube.com/embed/videoseries?list=PLAYLIST_AQUI" data-titulo="Rei Leão" onclick="abrirPlaylist(this)">Rei Leão</div>
           <div class="tema-item" data-playlist="https://www.youtube.com/embed/videoseries?list=PLAYLIST_AQUI" data-titulo="Princesas" onclick="abrirPlaylist(this)">Princesas</div>
           <div class="tema-item" data-playlist="https://www.youtube.com/embed/videoseries?list=PLAYLIST_AQUI" data-titulo="Heróis" onclick="abrirPlaylist(this)">Heróis</div>
-          <div class="tema-item" data-playlist="https://www.youtube.com/embed/videoseries?list=PPLYG0bXi7F7CT-oyk33K306OBtuwxXZ2MT" data-titulo="Safari" onclick="abrirPlaylist(this)">Safari</div>
+          <div class="tema-item" data-playlist="https://www.youtube.com/embed/videoseries?list=PLAYLIST_AQUI" data-titulo="Safari" onclick="abrirPlaylist(this)">Safari</div>
           <div class="tema-item" data-playlist="https://www.youtube.com/embed/videoseries?list=PLAYLIST_AQUI" data-titulo="Minimalista" onclick="abrirPlaylist(this)">Minimalista</div>
         </div>
       </div>
@@ -832,20 +1394,20 @@
         </p>
         <p class="footer-cnpj">
           <!-- Substitua com seus dados reais -->
-          Seja Luz!
+          CNPJ: 00.000.000/0001-00
         </p>
         <div class="footer-socials">
           <!-- Substitua os # pelos links reais das suas redes -->
-          <a href="#" class="footer-social-btn" title="https://www.instagram.com/crisoliveiraconvitestop10/" target="_blank" rel="noopener noreferrer">
+          <a href="#" class="footer-social-btn" title="Instagram" target="_blank" rel="noopener noreferrer">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
           </a>
-          <a href="#" class="footer-social-btn" title="https://pin.it/3G1w9ZH77" target="_blank" rel="noopener noreferrer">
+          <a href="#" class="footer-social-btn" title="Pinterest" target="_blank" rel="noopener noreferrer">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738.098.119.112.224.083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.632-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
           </a>
-          <a href="#" class="footer-social-btn" title="https://www.youtube.com/@crisoliveiradesigner" target="_blank" rel="noopener noreferrer">
+          <a href="#" class="footer-social-btn" title="YouTube" target="_blank" rel="noopener noreferrer">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
           </a>
-          <a href="https://wa.me/5571993233142" class="footer-social-btn" title="WhatsApp" target="_blank" rel="noopener noreferrer">
+          <a href="https://wa.me/SEUNUMERO" class="footer-social-btn" title="WhatsApp" target="_blank" rel="noopener noreferrer">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
           </a>
         </div>
@@ -854,33 +1416,74 @@
       <!-- Coluna 2: Atendimento -->
       <div class="footer-atendimento">
         <h4 class="footer-col-title">Atendimento</h4>
-        <a href="https://wa.me/5571993233142" class="footer-contact-item" target="_blank" rel="noopener noreferrer">
+        <a href="https://wa.me/SEUNUMERO" class="footer-contact-item" target="_blank" rel="noopener noreferrer">
           <span class="f-icon">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
           </span>
           <!-- Substitua pelo seu número -->
           (XX) XXXXX-XXXX
         </a>
-        <a href="mailto:crispoparte@gmail.com.br" class="footer-contact-item">
+        <a href="/cdn-cgi/l/email-protection#395a56574d584d56795a4b504a495649584b4d5c175a5654175b4b" class="footer-contact-item">
           <span class="f-icon">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
           </span>
           <!-- Substitua pelo seu e-mail -->
-          crispoparte@gmail.com.br
+          <span class="__cf_email__" data-cfemail="36555958425742597655445f45465946574442531855595b185444">[email&#160;protected]</span>
         </a>
         <p class="footer-horario">
           Nosso horário de atendimento é de Segunda a Sexta, exceto feriados, das 9h às 18h.
         </p>
       </div>
 
-      <!-- Coluna 3: Institucional -->
+      <!-- Coluna 3: Institucional com accordion -->
       <div class="footer-institucional">
         <h4 class="footer-col-title">Institucional</h4>
         <ul class="footer-nav-list">
-          <li><a href="#">Quem Somos</a></li>
-          <li><a href="#">Perguntas Frequentes</a></li>
-          <li><a href="#">Termo de Compra</a></li>
-          </ul>
+
+          <li class="footer-acc-item">
+            <button class="footer-acc-btn" onclick="toggleFooterAcc(this)">
+              <span class="footer-acc-arrow">›</span> Quem Somos
+            </button>
+            <div class="footer-acc-body">
+              <p>Olá! Eu sou Cris Oliveira, designer digital desde 2014, apaixonada por transformar ideias em experiências visuais encantadoras.</p>
+              <p>Ao longo da minha trajetória, venho ajudando clientes a celebrar momentos especiais com criatividade e praticidade, através de convites digitais personalizados, álbuns fotográficos e soluções modernas que unem design e tecnologia.</p>
+              <p>Também compartilho meu conhecimento por meio de cursos de convites em HTML, capacitando outras pessoas a criarem seus próprios projetos com autonomia e qualidade.</p>
+              <p>Meu compromisso é oferecer peças que não apenas comuniquem, mas emocionem — sempre com atenção aos detalhes, carinho em cada criação e foco na experiência de quem recebe.</p>
+            </div>
+          </li>
+
+          <li class="footer-acc-item">
+            <button class="footer-acc-btn" onclick="toggleFooterAcc(this)">
+              <span class="footer-acc-arrow">›</span> Perguntas Frequentes
+            </button>
+            <div class="footer-acc-body">
+              <p>💳 <strong>Como funciona o pagamento?</strong><br>O pagamento é realizado à vista, garantindo o início do seu pedido de forma rápida.</p>
+              <p>⏱️ <strong>Qual é o prazo de entrega?</strong><br>O prazo varia de 3 a 7 dias, dependendo do modelo e da demanda no momento.</p>
+              <p>📲 <strong>Como recebo meu convite?</strong><br>Você recebe tudo diretamente pelo WhatsApp, de forma prática e rápida, pronto para compartilhar.</p>
+              <p>🔄 <strong>Posso pedir alterações?</strong><br>Sim! Estão inclusas até 2 rodadas de alterações gratuitas para ajustes no seu convite.</p>
+              <p>💰 <strong>Existe reembolso?</strong><br>Por se tratar de um serviço digital e personalizado, não trabalhamos com reembolso após o início da produção.</p>
+            </div>
+          </li>
+
+          <li class="footer-acc-item">
+            <button class="footer-acc-btn" onclick="toggleFooterAcc(this)">
+              <span class="footer-acc-arrow">›</span> Termo de Compra
+            </button>
+            <div class="footer-acc-body">
+              <p>Ao realizar a compra, o cliente declara estar de acordo com as condições abaixo:</p>
+              <p>📌 <strong>Natureza do serviço</strong><br>Os produtos oferecidos são digitais e personalizados, desenvolvidos de acordo com as informações fornecidas pelo cliente.</p>
+              <p>💳 <strong>Pagamento</strong><br>O pagamento é realizado à vista, sendo necessário para o início da produção do pedido.</p>
+              <p>⏱️ <strong>Prazo de entrega</strong><br>O prazo para entrega é de 3 a 7 dias úteis, podendo variar conforme a demanda e a complexidade do projeto.</p>
+              <p>📲 <strong>Entrega do material</strong><br>O material final será enviado diretamente via WhatsApp, pronto para uso e compartilhamento.</p>
+              <p>✏️ <strong>Alterações</strong><br>Estão inclusas até 2 rodadas de alterações gratuitas. Alterações adicionais poderão ser cobradas à parte.</p>
+              <p>🚫 <strong>Reembolso</strong><br>Por se tratar de um produto digital personalizado, não realizamos reembolso após o início da produção.</p>
+              <p>📝 <strong>Responsabilidade do cliente</strong><br>É responsabilidade do cliente revisar todas as informações enviadas (nomes, datas, horários, etc.). Após a aprovação final, não nos responsabilizamos por erros não informados previamente.</p>
+            </div>
+          </li>
+
+          <li><a href="#">Política de Privacidade</a></li>
+          <li><a href="#">Política de Devolução</a></li>
+        </ul>
       </div>
 
     </div>
@@ -892,7 +1495,171 @@
     </div>
   </footer>
 
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    /* ============================================
+       SEÇÃO PEÇAS — VÍDEO INLINE NO CARD (produto1.mp4)
+       ============================================ */
+    function togglePecaVid(vidId, ovId) {
+      const v  = document.getElementById(vidId);
+      const ov = document.getElementById(ovId);
+      if (!v) return;
+      // Ícones play/pause do controle mini
+      const num  = vidId.replace('pecaVid','');
+      const piEl = document.getElementById('pvcPI' + num);
+      const paEl = document.getElementById('pvcPA' + num);
+      if (v.paused) {
+        v.play();
+        ov.classList.add('hidden');
+        if (piEl) piEl.style.display = 'none';
+        if (paEl) paEl.style.display = 'block';
+      } else {
+        v.pause();
+        ov.classList.remove('hidden');
+        if (piEl) piEl.style.display = 'block';
+        if (paEl) paEl.style.display = 'none';
+      }
+    }
+
+    function seekPecaVid(e, vidId, fillId) {
+      const v = document.getElementById(vidId);
+      if (!v || !v.duration) return;
+      const rect = e.currentTarget.getBoundingClientRect();
+      const pct  = Math.max(0, Math.min(1,(e.clientX - rect.left) / rect.width));
+      v.currentTime = pct * v.duration;
+    }
+
+    // Atualiza barra de progresso do vídeo do card
+    (function() {
+      const v = document.getElementById('pecaVid1');
+      if (!v) return;
+      v.addEventListener('timeupdate', () => {
+        if (!v.duration) return;
+        const pct  = (v.currentTime / v.duration) * 100;
+        const fill = document.getElementById('pvcF1');
+        const time = document.getElementById('pvcT1');
+        if (fill) fill.style.width = pct + '%';
+        if (time) {
+          const m  = Math.floor(v.currentTime/60);
+          const s  = Math.floor(v.currentTime%60).toString().padStart(2,'0');
+          time.textContent = `${m}:${s}`;
+        }
+      });
+      v.addEventListener('ended', () => {
+        const ov = document.getElementById('pecaOv1');
+        if (ov) ov.classList.remove('hidden');
+        const pi = document.getElementById('pvcPI1');
+        const pa = document.getElementById('pvcPA1');
+        if (pi) pi.style.display = 'block';
+        if (pa) pa.style.display = 'none';
+      });
+    })();
+
+    /* ============================================
+       SEÇÃO PEÇAS — FILTRO POR CATEGORIA
+       ============================================ */
+    function filtrarPecas(cat, btn) {
+      // Atualiza botão ativo
+      document.querySelectorAll('.pecas-cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      // Mostra/oculta cards
+      document.querySelectorAll('#pecasGrid .peca-card').forEach(card => {
+        const c = card.dataset.categoria || '';
+        card.style.display = (cat === 'todos' || c === cat) ? '' : 'none';
+      });
+    }
+
+    /* ============================================
+       MELHORIA 2 — PLAYER DE VÍDEO produto1.mp4
+       Play/pause com áudio e controles personalizados
+       ============================================ */
+    const vid       = document.getElementById('videoPlayer');
+    const overlay   = document.getElementById('videoOverlay');
+    const bigBtn    = document.getElementById('videoBtnPlay');
+    const vcBar     = document.getElementById('vcBar');
+    const vcThumb   = document.getElementById('vcThumb');
+    const vcTime    = document.getElementById('vcTime');
+    const vcPlayI   = document.getElementById('vcPlayIcon');
+    const vcPauseI  = document.getElementById('vcPauseIcon');
+    const vcSoundI  = document.getElementById('vcSoundIcon');
+    const vcMuteI   = document.getElementById('vcMuteIcon');
+
+    function fmtTime(s) {
+      const m = Math.floor(s/60);
+      const ss = Math.floor(s%60).toString().padStart(2,'0');
+      return `${m}:${ss}`;
+    }
+
+    function toggleVideo() {
+      if (!vid) return;
+      if (vid.paused) {
+        vid.play();
+        overlay.classList.add('hidden');
+        vcPlayI.style.display  = 'none';
+        vcPauseI.style.display = 'block';
+      } else {
+        vid.pause();
+        overlay.classList.remove('hidden');
+        vcPlayI.style.display  = 'block';
+        vcPauseI.style.display = 'none';
+      }
+    }
+
+    function toggleMute() {
+      if (!vid) return;
+      vid.muted = !vid.muted;
+      vcSoundI.style.display = vid.muted ? 'none'  : 'block';
+      vcMuteI.style.display  = vid.muted ? 'block' : 'none';
+    }
+
+    function toggleFullscreen() {
+      const wrap = document.querySelector('.video-player-wrap');
+      if (!document.fullscreenElement) {
+        wrap.requestFullscreen && wrap.requestFullscreen();
+      } else {
+        document.exitFullscreen && document.exitFullscreen();
+      }
+    }
+
+    function seekVideo(e) {
+      if (!vid || !vid.duration) return;
+      const rect = e.currentTarget.getBoundingClientRect();
+      const pct  = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      vid.currentTime = pct * vid.duration;
+    }
+
+    if (vid) {
+      vid.addEventListener('timeupdate', () => {
+        if (!vid.duration) return;
+        const pct = (vid.currentTime / vid.duration) * 100;
+        vcBar.style.width   = pct + '%';
+        vcThumb.style.left  = pct + '%';
+        vcTime.textContent  = `${fmtTime(vid.currentTime)} / ${fmtTime(vid.duration)}`;
+      });
+      vid.addEventListener('ended', () => {
+        overlay.classList.remove('hidden');
+        vcPlayI.style.display  = 'block';
+        vcPauseI.style.display = 'none';
+      });
+    }
+
+    /* ============================================
+       MELHORIA 1 — ACCORDION DO RODAPÉ
+       ============================================ */
+    function toggleFooterAcc(btn) {
+      const body = btn.nextElementSibling;
+      const isOpen = btn.classList.contains('aberto');
+      // Fecha todos os outros
+      document.querySelectorAll('.footer-acc-btn.aberto').forEach(b => {
+        b.classList.remove('aberto');
+        b.nextElementSibling.classList.remove('aberto');
+      });
+      // Abre o clicado (se estava fechado)
+      if (!isOpen) {
+        btn.classList.add('aberto');
+        body.classList.add('aberto');
+      }
+    }
+
     /* ============================================
        CURSOR PERSONALIZADO
        ============================================ */
@@ -950,14 +1717,4 @@
     }
 
     // Fechar com tecla Escape
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape' && modal.classList.contains('aberto')) fecharModal();
-    });
-
-    // Fechar clicando fora do player
-    modal.addEventListener('click', e => {
-      if (e.target === modal) fecharModal();
-    });
-  </script>
-</body>
-</html>
+    document.addEventListener('keydown', e =>
