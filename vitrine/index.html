@@ -18,61 +18,76 @@
     html { scroll-behavior: smooth; }
     body { font-family: 'Jost', sans-serif; background: var(--cream); color: var(--dark); overflow-x: hidden; }
 
-    /* CURSOR */
+    /* CURSOR CUSTOMIZADO */
     @media (pointer: fine) {
         body, a, button { cursor: none; }
         #cursor, #cursor-ring { display: block; position: fixed; pointer-events: none; z-index: 9999; }
-        #cursor { width: 10px; height: 10px; background: var(--rose); border-radius: 50%; }
-        #cursor-ring { width: 30px; height: 30px; border: 1px solid var(--rose); border-radius: 50%; transition: 0.1s; }
+        #cursor { width: 10px; height: 10px; background: var(--rose); border-radius: 50%; top: 0; left: 0; }
+        #cursor-ring { width: 35px; height: 35px; border: 1px solid var(--rose); border-radius: 50%; top: 0; left: 0; transition: transform 0.1s ease; opacity: 0.5; }
     }
 
-    /* NAV */
+    /* NAVEGAÇÃO */
     nav { position:fixed;top:0;width:100%;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:1rem 4rem;background:rgba(248,244,255,0.92);backdrop-filter:blur(14px);border-bottom:1px solid rgba(180,79,200,0.12); }
-    .nav-links { display:flex;gap:2.5rem;list-style:none; }
-    .nav-links a { font-size:0.78rem; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none; color:var(--muted); }
-    .nav-cta { background:var(--rose); color:white!important; padding:0.5rem 1.2rem; border-radius:2px; }
+    .nav-logo-text { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:600; color:var(--rose); text-decoration: none; }
+    .nav-links { display:flex; gap:2.5rem; list-style:none; }
+    .nav-links a { font-size:0.78rem; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none; color:var(--muted); transition: color 0.3s; }
+    .nav-links a:hover { color:var(--rose); }
+    .nav-cta { background:var(--rose); color:white!important; padding:0.5rem 1.4rem; border-radius:2px; }
 
     /* HERO */
     .hero { min-height:100vh; display:grid; grid-template-columns:1fr 1fr; padding-top:74px; }
     .hero-text { padding:5rem 4rem 4rem 6rem; display:flex; flex-direction:column; justify-content:center; }
-    .hero-title { font-family:'Cormorant Garamond',serif; font-size:clamp(3rem,5vw,5rem); font-weight:300; line-height:1.05; }
+    .hero-title { font-family:'Cormorant Garamond',serif; font-size:clamp(3.2rem,5vw,5rem); font-weight:300; line-height:1.05; margin-bottom: 2rem; }
     .hero-title em { color:var(--rose); font-style:italic; }
-    .hero-visual { background:linear-gradient(135deg, var(--blush) 0%, #d4b8f0 100%); display:flex; align-items:center; justify-content:center; }
-    .hero-logo-wrap img { max-width:70%; filter:drop-shadow(0 20px 40px rgba(0,0,0,0.1)); }
+    .hero-visual { background:linear-gradient(135deg, var(--blush) 0%, #d4b8f0 100%); display:flex; align-items:center; justify-content:center; position: relative; }
+    .hero-logo-wrap img { max-width:75%; filter:drop-shadow(0 20px 60px rgba(0,0,0,0.15)); animation: float 6s ease-in-out infinite; }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
 
-    /* PRODUTOS */
+    /* SEÇÃO PRODUTOS (OS 3 BLOCOS) */
     .section-header { text-align:center; padding:5rem 2rem 3rem; }
-    .section-title { font-family:'Cormorant Garamond',serif; font-size:2.8rem; font-weight:300; }
+    .section-title { font-family:'Cormorant Garamond',serif; font-size:clamp(2.5rem,4vw,3.5rem); font-weight:300; }
     .produtos { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:2rem; padding:0 4rem 6rem; max-width:1300px; margin:0 auto; }
     .produto-card { background:white; border-radius:4px; overflow:hidden; transition:0.4s; position:relative; }
-    .produto-card:hover { transform:translateY(-8px); box-shadow:0 20px 40px rgba(0,0,0,0.1); }
-    .produto-img { position:relative; width:100%; padding-bottom:177%; overflow:hidden; background:#eee; }
-    .produto-img img, .produto-img video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+    .produto-card:hover { transform:translateY(-8px); box-shadow:0 24px 50px rgba(0,0,0,0.1); }
+    .produto-img { position:relative; width:100%; padding-bottom:177.78%; overflow:hidden; }
+    .produto-img img, .produto-img video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition: transform 0.5s; }
+    .produto-card:hover .produto-img img { transform: scale(1.05); }
     .produto-info { padding:1.5rem; }
-    .produto-nome { font-family:'Cormorant Garamond',serif; font-size:1.3rem; margin-bottom:0.5rem; }
-    .btn-wpp { background:#25D366; color:white; padding:0.6rem 1rem; text-decoration:none; display:inline-block; border-radius:2px; font-size:0.8rem; }
+    .produto-nome { font-family:'Cormorant Garamond',serif; font-size:1.4rem; margin-bottom:0.5rem; color: var(--dark); }
+    .btn-wpp { background:#25D366; color:white; padding:0.7rem 1.2rem; text-decoration:none; display:inline-flex; align-items:center; gap:0.5rem; border-radius:2px; font-size:0.8rem; }
 
-    /* PLAYLISTS */
-    .catalogo-section { background:var(--dark); padding:5rem 2rem; color:white; }
-    .temas-destaque-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; max-width:1100px; margin:2rem auto; }
-    .tema-destaque-card { position:relative; aspect-ratio:16/8; cursor:pointer; overflow:hidden; border-radius:4px; }
-    .tema-destaque-card img { width:100%; opacity:0.6; }
-    .td-label { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; text-transform:uppercase; letter-spacing:2px; font-size:0.8rem; }
+    /* SEÇÃO CATÁLOGO VÍDEO */
+    .catalogo-section { background:var(--dark); padding:6rem 2rem; color:white; }
+    .temas-destaque-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; max-width:1100px; margin:3rem auto; }
+    .tema-destaque-card { position:relative; aspect-ratio:16/9; cursor:pointer; overflow:hidden; border-radius:4px; border: 1px solid rgba(180,79,200,0.2); }
+    .tema-destaque-card img { width:100%; height:100%; object-fit:cover; opacity:0.5; transition: 0.3s; }
+    .tema-destaque-card:hover img { opacity: 0.8; }
+    .td-label { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; text-transform:uppercase; letter-spacing:2px; font-size:0.8rem; font-weight: 500; }
 
-    /* FOOTER EUFORIA */
-    .footer { background:var(--footer-bg); padding:4rem 4rem 2rem; border-top:1px solid rgba(0,0,0,0.05); }
+    /* MENU MAIS BUSCADOS (ACORDEÃO) */
+    .mais-buscados-wrap { max-width:1100px; margin:0 auto; }
+    .mais-buscados-header { background:var(--rose); padding:1rem; text-align:center; cursor:pointer; border-radius:4px; font-family: 'Cormorant Garamond'; font-size: 1.2rem; }
+    .mais-buscados-body { background:rgba(255,255,255,0.05); max-height:0; overflow:hidden; transition: 0.5s ease; padding: 0 2rem; }
+    .mais-buscados-body.aberto { max-height:1000px; padding: 2rem; border: 1px solid var(--rose); border-top: none; }
+    .mais-buscados-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
+    .tema-item { color:rgba(255,255,255,0.7); cursor:pointer; font-size:0.9rem; padding: 5px; }
+    .tema-item:hover { color:var(--teal); }
+
+    /* RODAPÉ ESTILO EUFORIA */
+    .footer { background:var(--footer-bg); padding:5rem 5rem 2rem; border-top:1px solid rgba(0,0,0,0.05); color: var(--footer-text); }
     .footer-body { display:grid; grid-template-columns:2fr 1fr 1fr; gap:4rem; max-width:1200px; margin:0 auto; }
-    .footer-col-title { font-weight:600; margin-bottom:1.2rem; display:block; border-bottom:2px solid var(--rose); display:inline-block; }
+    .footer-col-title { font-weight:600; margin-bottom:1.5rem; border-bottom:2px solid var(--rose); display:inline-block; padding-bottom: 5px; }
     .footer-nav-list { list-style:none; }
-    .footer-nav-list li { margin-bottom:0.6rem; }
-    .footer-nav-list a { text-decoration:none; color:var(--footer-text); font-size:0.9rem; }
+    .footer-nav-list li { margin-bottom:0.8rem; }
+    .footer-nav-list a { text-decoration:none; color:var(--footer-text); font-size:0.9rem; transition: 0.3s; }
+    .footer-nav-list a:hover { color: var(--rose); padding-left: 5px; }
 
-    /* MODAL */
-    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:1000; display:none; align-items:center; justify-content:center; flex-direction:column; }
+    /* MODAL YOUTUBE */
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:2000; display:none; align-items:center; justify-content:center; flex-direction:column; }
     .modal-overlay.aberto { display:flex; }
-    .modal-wrap { width:90%; max-width:1000px; aspect-ratio:16/9; }
+    .modal-wrap { width:90%; max-width:900px; aspect-ratio:16/9; background:#000; border-radius: 8px; overflow: hidden; }
 
-    @media (max-width: 768px) { .hero, .footer-body { grid-template-columns:1fr; } .produtos { padding: 0 1rem; } }
+    @media (max-width: 900px) { .hero, .footer-body { grid-template-columns:1fr; } .temas-destaque-grid { grid-template-columns: repeat(2, 1fr); } .mais-buscados-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -81,23 +96,23 @@
 <div id="cursor-ring"></div>
 
 <nav>
-  <span style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:var(--rose);">Cris Pop Arte</span>
+  <a href="#" class="nav-logo-text">Cris Pop Arte</a>
   <ul class="nav-links">
     <li><a href="#produtos">Catálogo</a></li>
-    <li><a href="#catalogo-video">Temas</a></li>
-    <li><a href="https://wa.me/5571993233142" class="nav-cta">Fale Conosco</a></li>
+    <li><a href="#catalogo-video">Temas em Vídeo</a></li>
+    <li><a href="https://wa.me/5571993233142" class="nav-cta" target="_blank">Fale Conosco</a></li>
   </ul>
 </nav>
 
 <header class="hero">
   <div class="hero-text">
-    <span style="color:var(--rose); letter-spacing:3px; font-size:0.7rem;">DESIGN EXCLUSIVO</span>
-    <h1 class="hero-title">Convites que contam <em>histórias.</em></h1>
-    <p style="color:var(--muted); margin: 1.5rem 0;">Transformamos sonhos em experiências digitais interativas.</p>
-    <div><a href="#produtos" class="nav-cta" style="padding: 1rem 2rem; text-decoration:none;">Ver Coleção</a></div>
+    <span style="color:var(--rose); letter-spacing:3px; font-size:0.75rem; text-transform: uppercase;">Design Digital e Interativo</span>
+    <h1 class="hero-title">Convites que contam a sua <em>história.</em></h1>
+    <p style="color:var(--muted); margin-bottom: 2.5rem; line-height: 1.6;">Transformamos momentos especiais em experiências digitais inesquecíveis para você e seus convidados.</p>
+    <div><a href="#produtos" class="nav-cta" style="padding: 1.2rem 2.5rem; text-decoration:none;">Explorar Coleção</a></div>
   </div>
   <div class="hero-visual">
-    <div class="hero-logo-wrap"><img src="assets/img/logo.png" alt="Logo"></div>
+    <div class="hero-logo-wrap"><img src="assets/img/logo.png" alt="Cris Pop Arte"></div>
   </div>
 </header>
 
@@ -105,27 +120,27 @@
   <div class="section-header">
     <h2 class="section-title">Nossa <em>Coleção</em></h2>
   </div>
+  
   <div class="produtos">
     <article class="produto-card">
       <div class="produto-img">
-        <img src="assets/img/imagem1.jpg" alt="Casamento">
-        <a href="#" class="produto-link"></a>
+        <img src="assets/img/imagem1.jpg" alt="Convite de Casamento">
       </div>
       <div class="produto-info">
-        <span style="color:var(--rose); font-size:0.7rem;">CASAMENTO</span>
+        <span style="color:var(--rose); font-size:0.7rem; letter-spacing: 1px;">CASAMENTO</span>
         <h3 class="produto-nome">Elegância Clássica</h3>
-        <a href="https://wa.me/5571993233142" class="btn-wpp">Encomendar</a>
+        <a href="https://wa.me/5571993233142" class="btn-wpp" target="_blank">Encomendar</a>
       </div>
     </article>
 
     <article class="produto-card">
       <div class="produto-img">
-        <img src="assets/img/imagem2.jpg" alt="Infantil">
+        <img src="assets/img/imagem2.jpg" alt="Convite Moranguinho">
       </div>
       <div class="produto-info">
-        <span style="color:var(--rose); font-size:0.7rem;">INFANTIL</span>
-        <h3 class="produto-nome">Moranguinho</h3>
-        <a href="https://wa.me/5571993233142" class="btn-wpp">Encomendar</a>
+        <span style="color:var(--rose); font-size:0.7rem; letter-spacing: 1px;">INFANTIL</span>
+        <h3 class="produto-nome">Moranguinho Trailer</h3>
+        <a href="https://wa.me/5571993233142" class="btn-wpp" target="_blank">Encomendar</a>
       </div>
     </article>
 
@@ -136,77 +151,117 @@
         </video>
       </div>
       <div class="produto-info">
-        <span style="color:var(--rose); font-size:0.7rem;">INFANTIL</span>
+        <span style="color:var(--rose); font-size:0.7rem; letter-spacing: 1px;">INFANTIL</span>
         <h3 class="produto-nome">Safari Divertido</h3>
-        <a href="https://wa.me/5571993233142" class="btn-wpp">Encomendar</a>
+        <a href="https://wa.me/5571993233142" class="btn-wpp" target="_blank">Encomendar</a>
       </div>
     </article>
   </div>
 </section>
 
 <section id="catalogo-video" class="catalogo-section">
-  <h2 style="text-align:center; font-family:'Cormorant Garamond'; font-size:2.5rem;">Temas em <em>Vídeo</em></h2>
+  <div class="section-header">
+    <h2 class="section-title" style="color: white;">Temas em <em>Vídeo</em></h2>
+    <p style="opacity: 0.6; margin-top: 10px;">Assista às demonstrações das nossas playlists exclusivas.</p>
+  </div>
+
   <div class="temas-destaque-grid">
-    <div class="tema-destaque-card" data-url="URL_DA_PLAYLIST_CASAMENTO" onclick="abrirModal(this)">
+    <div class="tema-destaque-card" onclick="abrirModal('https://www.youtube.com/embed/videoseries?list=ID_PLAYLIST_CASAMENTO')">
       <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&q=80">
       <span class="td-label">Casamentos</span>
     </div>
-    <div class="tema-destaque-card" data-url="URL_DA_PLAYLIST_INFANTIL" onclick="abrirModal(this)">
+    <div class="tema-destaque-card" onclick="abrirModal('https://www.youtube.com/embed/videoseries?list=ID_PLAYLIST_INFANTIL')">
       <img src="https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&q=80">
       <span class="td-label">Infantis</span>
+    </div>
+    <div class="tema-destaque-card" onclick="abrirModal('https://www.youtube.com/embed/videoseries?list=ID_PLAYLIST_15ANOS')">
+      <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80">
+      <span class="td-label">15 Anos</span>
+    </div>
+    <div class="tema-destaque-card" onclick="abrirModal('https://www.youtube.com/embed/videoseries?list=ID_PLAYLIST_BODAS')">
+      <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&q=80">
+      <span class="td-label">Retrospectivas</span>
+    </div>
+  </div>
+
+  <div class="mais-buscados-wrap">
+    <div class="mais-buscados-header" id="mb-btn">
+      Clique para ver Temas Mais Procurados ▼
+    </div>
+    <div class="mais-buscados-body" id="mb-body">
+      <div class="mais-buscados-grid">
+        <div class="tema-item">▸ 365 Dias de Sorrisos</div>
+        <div class="tema-item">▸ A Arca de Noé</div>
+        <div class="tema-item">▸ Alice no País das Maravilhas</div>
+        <div class="tema-item">▸ Astronauta</div>
+        <div class="tema-item">▸ Bailarina Clássica</div>
+        <div class="tema-item">▸ Bento e Totó</div>
+      </div>
     </div>
   </div>
 </section>
 
 <footer class="footer">
   <div class="footer-body">
-    <div>
-      <span class="footer-col-title">Cris Pop Arte</span>
-      <p style="font-size:0.9rem; margin-top:1rem;">Convites interativos para momentos inesquecíveis.</p>
+    <div class="footer-brand">
+      <span class="nav-logo-text">Cris Pop Arte</span>
+      <p style="font-size:0.9rem; margin-top: 1rem; max-width: 250px;">Especialista em convites digitais e interativos para tornar seu evento único.</p>
     </div>
-    <div>
+    <div class="footer-col">
       <span class="footer-col-title">Atendimento</span>
       <ul class="footer-nav-list">
-        <li>Segunda a Sexta</li>
-        <li>(71) 99323-3142</li>
+        <li>Segunda a Sexta: 09h às 18h</li>
+        <li>WhatsApp: (71) 99323-3142</li>
+        <li>Salvador - Bahia</li>
       </ul>
     </div>
-    <div>
-      <span class="footer-col-title">Links</span>
+    <div class="footer-col">
+      <span class="footer-col-title">Institucional</span>
       <ul class="footer-nav-list">
-        <li><a href="#produtos">Catálogo</a></li>
-        <li><a href="#catalogo-video">Temas</a></li>
+        <li><a href="#produtos">Catálogo de Convites</a></li>
+        <li><a href="#catalogo-video">Demonstrações em Vídeo</a></li>
+        <li><a href="#">Área do Aluno</a></li>
       </ul>
     </div>
+  </div>
+  <div style="text-align:center; margin-top:4rem; padding-top:2rem; border-top:1px solid rgba(0,0,0,0.05); font-size:0.8rem; opacity: 0.6;">
+    © 2026 Cris Pop Arte. Todos os direitos reservados.
   </div>
 </footer>
 
 <div id="modal" class="modal-overlay">
   <div class="modal-wrap">
-    <iframe id="modalFrame" width="100%" height="100%" src="" frameborder="0" allowfullscreen></iframe>
+    <iframe id="vidFrame" width="100%" height="100%" src="" frameborder="0" allowfullscreen></iframe>
   </div>
-  <button onclick="fecharModal()" style="margin-top:1rem; padding:0.5rem 2rem; cursor:pointer;">FECHAR</button>
+  <button onclick="fecharModal()" style="margin-top:2rem; padding:0.8rem 2rem; background:var(--rose); color:white; border:none; cursor:pointer; border-radius: 2px;">FECHAR VÍDEO</button>
 </div>
 
 <script>
-  // Cursor
+  // CURSOR
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursor-ring');
   document.addEventListener('mousemove', (e) => {
-    const c = document.getElementById('cursor');
-    const r = document.getElementById('cursor-ring');
-    if(c) {
-      c.style.left = e.clientX + 'px'; c.style.top = e.clientY + 'px';
-      r.style.left = e.clientX - 10 + 'px'; r.style.top = e.clientY - 10 + 'px';
+    if(cursor) {
+      cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+      ring.style.transform = `translate(${e.clientX - 17}px, ${e.clientY - 17}px)`;
     }
   });
 
-  // Modal Playlists
-  function abrirModal(el) {
-    document.getElementById('modalFrame').src = el.getAttribute('data-url');
+  // ACORDEÃO MAIS BUSCADOS
+  const mbBtn = document.getElementById('mb-btn');
+  const mbBody = document.getElementById('mb-body');
+  mbBtn.addEventListener('click', () => {
+    mbBody.classList.toggle('aberto');
+  });
+
+  // MODAL PLAYLIST
+  function abrirModal(url) {
+    document.getElementById('vidFrame').src = url;
     document.getElementById('modal').classList.add('aberto');
   }
   function fecharModal() {
     document.getElementById('modal').classList.remove('aberto');
-    document.getElementById('modalFrame').src = "";
+    document.getElementById('vidFrame').src = "";
   }
 </script>
 
