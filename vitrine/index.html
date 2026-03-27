@@ -227,6 +227,86 @@
   <div style="text-align:center; margin-top:4rem; padding-top:2rem; border-top:1px solid rgba(0,0,0,0.05); font-size:0.8rem; opacity: 0.6;">
     © 2026 Cris Pop Arte. Todos os direitos reservados.
   </div>
+<style>
+  /* Estilos do Acordeão Institucional */
+  .inst-section { padding: 60px 20px; background: #ffffff; font-family: 'Jost', sans-serif; }
+  .inst-container { max-width: 900px; margin: 0 auto; border-top: 1px solid #eee; }
+  .inst-item { border-bottom: 1px solid #eee; }
+  .inst-header { 
+    width: 100%; padding: 20px 0; background: none; border: none; 
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 1.1rem; color: #5c4a3a; cursor: pointer; text-align: left;
+    font-weight: 500;
+  }
+  .inst-header:after { content: '+'; font-size: 1.5rem; color: #b44fc8; transition: 0.3s; }
+  .inst-item.active .inst-header:after { content: '-'; transform: rotate(180deg); }
+  .inst-content { 
+    max-height: 0; overflow: hidden; transition: all 0.4s ease-out; 
+    font-size: 0.95rem; line-height: 1.6; color: #666; 
+  }
+  .inst-item.active .inst-content { max-height: 1200px; padding-bottom: 30px; }
+  .inst-text-block { margin-bottom: 15px; }
+  .inst-highlight { color: #b44fc8; font-weight: 600; }
+  .inst-list { list-style: none; padding: 0; }
+  .inst-list li { margin-bottom: 12px; padding-left: 5px; }
+</style>
+
+<section class="inst-section">
+  <div class="inst-container">
+    
+    <div class="inst-item">
+      <button class="inst-header" onclick="this.parentElement.classList.toggle('active')">
+        Quem Somos
+      </button>
+      <div class="inst-content">
+        <div class="inst-text-block">
+          Olá! Eu sou <span class="inst-highlight">Cris Oliveira</span>, designer digital desde 2014, apaixonada por transformar ideias em experiências visuais encantadoras.
+        </div>
+        <div class="inst-text-block">
+          Ao longo da minha trajetória, venho ajudando clientes a celebrar momentos especiais com criatividade e praticidade, através de convites digitais personalizados, álbuns fotográficos e soluções modernas que unem design e tecnologia.
+        </div>
+        <div class="inst-text-block">
+          Também compartilho meu conhecimento por meio de cursos de convites em HTML, capacitando outras pessoas a criarem seus próprios projetos com autonomia e qualidade.
+        </div>
+        <div class="inst-text-block">
+          Meu compromisso é oferecer peças que não apenas comuniquem, mas emocionem — sempre com atenção aos detalhes, carinho em cada criação e foco na experiência de quem recebe.
+        </div>
+      </div>
+    </div>
+
+    <div class="inst-item">
+      <button class="inst-header" onclick="this.parentElement.classList.toggle('active')">
+        Perguntas Frequentes
+      </button>
+      <div class="inst-content">
+        <div class="inst-text-block"><strong>💳 Como funciona o pagamento?</strong><br>O pagamento é realizado à vista, garantindo o início do seu pedido de forma rápida.</div>
+        <div class="inst-text-block"><strong>⏱️ Qual é o prazo de entrega?</strong><br>O prazo varia de 3 a 7 dias, dependendo do modelo e da demanda no momento.</div>
+        <div class="inst-text-block"><strong>📲 Como recebo meu convite?</strong><br>Você recebe tudo diretamente pelo WhatsApp, de forma prática e rápida, pronto para compartilhar.</div>
+        <div class="inst-text-block"><strong>🔄 Posso pedir alterações?</strong><br>Sim! Estão inclusas até 2 rodadas de alterações gratuitas para ajustes no seu convite.</div>
+        <div class="inst-text-block"><strong>💰 Existe reembolso?</strong><br>Por se tratar de um serviço digital e personalizado, não trabalhamos com reembolso após o início da produção.</div>
+      </div>
+    </div>
+
+    <div class="inst-item">
+      <button class="inst-header" onclick="this.parentElement.classList.toggle('active')">
+        Termo de Compra
+      </button>
+      <div class="inst-content">
+        <p style="margin-bottom:15px; font-style: italic;">Ao realizar a compra, o cliente declara estar de acordo com as condições abaixo:</p>
+        <ul class="inst-list">
+          <li><strong>📌 Natureza do serviço:</strong> Os produtos são digitais e personalizados, conforme as informações fornecidas.</li>
+          <li><strong>💳 Pagamento:</strong> Realizado à vista para o início da produção.</li>
+          <li><strong>⏱️ Prazo de entrega:</strong> De 3 a 7 dias úteis.</li>
+          <li><strong>📲 Entrega do material:</strong> Enviado diretamente via WhatsApp.</li>
+          <li><strong>✏️ Alterações:</strong> Até 2 rodadas gratuitas inclusas.</li>
+          <li><strong>🚫 Reembolso:</strong> Não realizamos reembolso após o início da produção.</li>
+          <li><strong>📝 Responsabilidade do cliente:</strong> É responsabilidade do cliente revisar todas as informações (nomes, datas, etc.).</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
 </footer>
 
 <div id="modal" class="modal-overlay">
