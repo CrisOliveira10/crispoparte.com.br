@@ -1225,6 +1225,40 @@
   </div>
 </div>
 
+          <!-- CARD 10 — produto9.mp4 como VÍDEO inline -->
+<div class="peca-card" data-categoria="retrospectiva">
+  <span class="peca-badge mais-pedido">Em alta</span>
+  <div class="peca-info">
+    <h3 class="peca-nome">Retrospectiva<br>Slides de fotos</h3>
+    <p class="peca-subtitulo">Modelo vídeo horizontal.</p>
+    <span class="peca-preco-badge">Investimento: *R$ 99,99</span>
+  </div>
+  <div class="peca-midia" style="min-height:300px;">
+    <video id="pecaVid10" src="produto10.mp4" preload="metadata" playsinline loop muted></video>
+    <div class="peca-video-overlay" id="pecaOv10">
+      <button class="peca-play-btn" onclick="togglePecaVid('pecaVid10','pecaOv10')" aria-label="Reproduzir">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+      </button>
+    </div>
+    <div class="peca-video-controls">
+      <button class="pvc-btn" onclick="togglePecaVid('pecaVid10','pecaOv10')">
+        <svg id="pvcPI10" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+        <svg id="pvcPA10" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+      </button>
+      <div class="pvc-bar-wrap" onclick="seekPecaVid(event,'pecaVid10','pvcF10')">
+        <div class="pvc-bg"></div>
+        <div class="pvc-fill" id="pvcF10"></div>
+      </div>
+      <span class="pvc-time" id="pvcT10">0:00</span>
+    </div>
+  </div>
+  <div class="peca-footer">
+    <a href="https://wa.me/5571993233142?text=Olá, tenho interesse no Catálogo" class="btn-wpp" target="_blank" rel="noopener noreferrer">Encomendar</a>
+  </div>
+</div>
+
+      
+
     </div>
   </section>
 
