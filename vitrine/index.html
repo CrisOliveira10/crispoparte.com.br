@@ -866,6 +866,100 @@
       .avaliacoes-grid { grid-template-columns:1fr; }
       .footer-body { grid-template-columns:1fr; gap:2rem; }
     }
+
+    /* =========================================
+       SEÇÃO BANNER CTA — SOLICITAR ORÇAMENTO
+       ========================================= */
+    .banner-cta-section {
+      background: var(--dark);
+      overflow: hidden;
+    }
+    .banner-cta-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 400px;
+      max-width: 100%;
+    }
+    /* Lado esquerdo */
+    .banner-cta-text {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 4rem 4rem 4rem 6rem;
+    }
+    .banner-cta-tag {
+      font-size: 0.68rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 1.2rem;
+      display: block;
+    }
+    .banner-cta-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-weight: 300;
+      color: var(--white);
+      line-height: 1.15;
+      margin-bottom: 1.4rem;
+    }
+    .banner-cta-title em {
+      font-style: italic;
+      color: var(--teal);
+    }
+    .banner-cta-desc {
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.75;
+      max-width: 420px;
+      margin-bottom: 2.2rem;
+    }
+    .banner-cta-btn {
+      display: inline-block;
+      background: var(--teal);
+      color: var(--dark);
+      font-family: 'Jost', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0.85rem 2rem;
+      border-radius: 2px;
+      transition: background 0.3s, transform 0.2s;
+      align-self: flex-start;
+    }
+    .banner-cta-btn:hover {
+      background: #17b09c;
+      transform: translateY(-2px);
+    }
+    /* Lado direito — imagem */
+    .banner-cta-img-wrap {
+      position: relative;
+      overflow: hidden;
+      min-height: 400px;
+    }
+    .banner-cta-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+    .banner-cta-section:hover .banner-cta-img-wrap img {
+      transform: scale(1.03);
+    }
+    /* Responsivo */
+    @media (max-width: 900px) {
+      .banner-cta-inner { grid-template-columns: 1fr; }
+      .banner-cta-text { padding: 3.5rem 2rem; }
+      .banner-cta-img-wrap { min-height: 260px; }
+    }
+    @media (max-width: 600px) {
+      .banner-cta-text { padding: 2.5rem 1.5rem; }
+      .banner-cta-img-wrap { min-height: 220px; }
+    }
   </style>
 </head>
 
@@ -1442,6 +1536,35 @@
         <div class="avaliacao-autora">
           <strong>Beatriz M.</strong> &mdash; Casamento
         </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SEÇÃO: BANNER CTA — "Solicitar Orçamento"
+       📌 Coloque o arquivo banner.jpg (800×400px) na mesma pasta
+       ============================================================ -->
+  <section class="banner-cta-section">
+    <div class="banner-cta-inner">
+
+      <!-- Lado esquerdo: texto + botão -->
+      <div class="banner-cta-text">
+        <span class="banner-cta-tag">✦ Personalização Total</span>
+        <h2 class="banner-cta-title">Seu convite,<br>do jeito que você <em>sonhou</em></h2>
+        <p class="banner-cta-desc">Trabalhamos com arte exclusiva criada especialmente para você. Envie suas referências e cores favoritas — a Cris transforma em arte digital inesquecível.</p>
+        <a href="https://wa.me/SEUNUMERO?text=Olá, gostaria de solicitar um orçamento!" class="banner-cta-btn" target="_blank" rel="noopener noreferrer">
+          Solicitar Orçamento
+        </a>
+      </div>
+
+      <!-- Lado direito: banner.jpg -->
+      <div class="banner-cta-img-wrap">
+        <!--
+          📌 BANNER: Coloque o arquivo banner.jpg (800×400px) na mesma pasta.
+          Se o nome do arquivo for diferente, troque "banner.jpg" abaixo.
+        -->
+        <img src="banner.jpg" alt="Convite Digital — Cris Pop Arte" loading="lazy">
       </div>
 
     </div>
