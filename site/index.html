@@ -1717,6 +1717,7 @@ Lei 9.610/98 – Direitos Autorais.
         </div>
       </div>
 
+
       <!-- Coluna 2: Atendimento -->
       <div class="footer-atendimento">
         <h4 class="footer-col-title">Atendimento</h4>
@@ -1817,7 +1818,7 @@ Lei 9.610/98 – Direitos Autorais.
     </div>
   </footer>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     /* ============================================
        SEÇÃO PEÇAS — VÍDEO INLINE NO CARD (produto1.mp4)
        ============================================ */
@@ -2132,4 +2133,15 @@ Lei 9.610/98 – Direitos Autorais.
         const wrapEl = v.closest('.video-player-wrap');
         if (wrapEl) {
           if (wrapEl.requestFullscreen) wrapEl.requestFullscreen();
-          else if (wrapEl.webkitRequestFullscreen) wrapEl.webk
+          else if (wrapEl.webkitRequestFullscreen) wrapEl.webkitRequestFullscreen();
+        }
+        v.play().catch(() => {});
+        if (ov) ov.classList.add('hidden');
+        if (pi) pi.style.display = 'none';
+        if (pa) pa.style.display = 'block';
+      });
+    })();
+
+  </script>
+</body>
+</html>
