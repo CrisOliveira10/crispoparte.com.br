@@ -166,20 +166,22 @@ body {
   inset: 0;
   pointer-events: none;
   
-  /* Adicionei estas linhas abaixo para permitir o espaço (gap) */
-  flex-direction: column; /* Deixa um embaixo do outro */
-  align-items: center;    /* Centraliza os botões */
-  justify-content: center; /* Move o grupo para o centro vertical */
+  /* Configuração para os botões ficarem em coluna e aceitarem o GAP */
+  flex-direction: column; 
+  align-items: center;    
+  justify-content: center; 
 }
 
 .hotspot-group.active { 
-  display: flex; /* Mudamos de block para flex para o gap funcionar */
-  gap: 60px;     /* ⬅️ Aumente aqui (ex: 40px) para afastar os botões */
+  display: flex; /* Mantenha apenas este! Removi o 'display: block' que estava embaixo */
+  gap: 60px;     /* Agora o 60px vai funcionar de verdade */
 }
-.hotspot-group.active { display: block; }
 
 .hotspot-btn {
-  position: absolute;
+  /* MUITO IMPORTANTE: Mudei de absolute para relative */
+  /* Assim eles respeitam o espaço (gap) um do outro */
+  position: relative; 
+  
   pointer-events: auto;
   display: flex;
   align-items: center;
@@ -187,28 +189,11 @@ body {
   text-decoration: none;
   border: none;
   cursor: pointer;
-  /* ✏️ VISIBILIDADE DO HOTSPOT
-     Invisível (produção)  → background: transparent;
-     Visível  (calibrar)   → background: rgba(255,0,0,0.25); */
-  background:  rgba(255,0,0,0.25); */
+  background: rgba(255,0,0,0.25); 
   border-radius: 120px;
   padding: 30px 50px;
   transition: background 0.2s;
-  /* ✏️ BORDA E SOMBRA
-     Invisível (produção)  → remova as 2 linhas abaixo
-     Visível  (calibrar)   → descomente as 2 linhas abaixo */
-  /* border: 1.5px solid rgba(255,255,255,0.45); */
-  /* box-shadow: 0 4px 18px rgba(0,0,0,0.18); */
 }
-.hotspot-btn:active { transform: scale(0.97); }
-
-/*
-  ✏️ OUTLINE DE DEBUG — descomente para ver a área exata:
-  .hotspot-btn { outline: 2px dashed red; }
-*/
-</style>
-</head>
-<body>
 
 <!-- ══ BOTÃO DE MÚSICA ══ -->
 <button id="btn-music" title="Som">♪</button>
@@ -250,18 +235,12 @@ body {
     <div class="hotspot-group" data-page="5">
 
       <!-- BOTÃO 1 — Confirmar Presença (WhatsApp) -->
-      <a class="hotspot-btn"
-         href="https://wa.me/5571993233142"
-         target="_blank"
-         style="top: 35%; left: 2%; width: 96%;">
-      </a>
+      <div class="hotspot-group" data-page="5" style="top: 10%;"> 
+  <a class="hotspot-btn" href="https://wa.me/5571993233142" target="_blank" style="width: 80%;"></a>
+
 
       <!-- BOTÃO 2 — Ver Local (Google Maps) -->
-      <a class="hotspot-btn"
-         href="https://maps.app.goo.gl/az4F91tWrhgbCHjw6"
-         target="_blank"
-         style="top: 44%; left: 2%; width: 96%;">
-      </a>
+        <a class="hotspot-btn" href="https://maps.app.goo.gl/az4F91tWrhgbCHjw6" target="_blank" style="width: 80%;"></a>
 
     </div>
 
