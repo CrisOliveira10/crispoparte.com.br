@@ -160,19 +160,21 @@ body {
 /* ══════════════════════════════════════
    CAMADA DE HOTSPOTS
 ══════════════════════════════════════ */
-#hotspot-layer {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 5;
-  transform-origin: center center;
-}
-
 .hotspot-group {
   display: none;
   position: absolute;
   inset: 0;
   pointer-events: none;
+  
+  /* Adicionei estas linhas abaixo para permitir o espaço (gap) */
+  flex-direction: column; /* Deixa um embaixo do outro */
+  align-items: center;    /* Centraliza os botões */
+  justify-content: center; /* Move o grupo para o centro vertical */
+}
+
+.hotspot-group.active { 
+  display: flex; /* Mudamos de block para flex para o gap funcionar */
+  gap: 20px;     /* ⬅️ Aumente aqui (ex: 40px) para afastar os botões */
 }
 .hotspot-group.active { display: block; }
 
