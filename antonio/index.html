@@ -31,17 +31,13 @@
       inset: 0;
       z-index: 1;
       overflow: hidden;
-      /* garante que o video não cause scroll horizontal indesejado */
       display: flex;
       align-items: stretch;
     }
 
-    /* media-wrapper: contém o vídeo sem cortar a arte */
     #media-wrapper {
       position: relative;
       height: 100dvh;
-      /* largura proporcional: vídeo 5714×1450 → aspect 3.94:1 por cena (×7 cenas) */
-      /* deixamos width:auto e controlamos via object-fit no resize */
       width: auto;
       flex-shrink: 0;
       overflow: visible;
@@ -51,7 +47,6 @@
       display: block;
       height: 100dvh;
       width: auto;
-      /* object-fit: contain garante que a arte não seja cortada */
       object-fit: contain;
       object-position: left center;
       transform: translateX(0);
@@ -59,12 +54,13 @@
       will-change: transform;
       pointer-events: none;
       user-select: none;
-      /* iOS: evita resize da barra de endereço cortar o vídeo */
       -webkit-transform: translateX(0);
     }
 
     /* ══════════════════════════════════════
-       INTRO OVERLAY — vídeo embaçado atrás
+       INTRO OVERLAY
+       OTIMIZAÇÃO 1: fundo começa com cor sólida
+       e o vídeo blur aparece assim que carrega
     ══════════════════════════════════════ */
     #intro-overlay {
       position: fixed;
@@ -75,16 +71,25 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      /* começa com fundo escuro imediato — sem delay visual */
+      background: #0d1214;
       transition: opacity 0.65s ease;
       overflow: hidden;
     }
 
-    /* primeiro frame do vídeo como fundo embaçado */
     #overlay-bg {
       position: absolute;
-      inset: -20px; /* extra para blur não mostrar bordas */
+      inset: -20px;
       z-index: 0;
       overflow: hidden;
+      /* OTIMIZAÇÃO 2: opacity:0 inicialmente,
+         JS faz fade-in quando frame estiver pronto */
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    #overlay-bg.ready {
+      opacity: 1;
     }
 
     #overlay-bg video {
@@ -94,9 +99,12 @@
       filter: blur(18px) brightness(0.55) saturate(0.85);
       transform: scale(1.05);
       pointer-events: none;
+      /* OTIMIZAÇÃO 3: GPU hint para o filtro blur */
+      will-change: filter;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
     }
 
-    /* camada de cor suave por cima do blur */
     #overlay-tint {
       position: absolute;
       inset: 0;
@@ -106,7 +114,6 @@
         rgba(10,15,18,0.55) 100%);
     }
 
-    /* conteúdo centralizado */
     #overlay-content {
       position: relative;
       z-index: 2;
@@ -117,7 +124,6 @@
       gap: 0;
     }
 
-    /* ── botão play ── */
     .play-ring {
       width: clamp(88px, 24vw, 110px);
       height: clamp(88px, 24vw, 110px);
@@ -167,7 +173,6 @@
       filter: drop-shadow(0 2px 18px rgba(255,255,255,0.35));
     }
 
-    /* ── textos ── */
     #intro-overlay .invite-text {
       font-family: 'Cormorant Garamond', serif;
       font-size: clamp(1.2rem, 6.5vw, 2rem);
@@ -223,7 +228,6 @@
     }
 
     #audio-btn:active { transform: scale(0.88); }
-
     #audio-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
     /* ══════════════════════════════════════
@@ -266,20 +270,13 @@
       justify-content: center;
       opacity: 0;
       transition: opacity 0.9s ease;
-      /* padding safe-area para evitar corte em iPhones com notch */
       padding-top: env(safe-area-inset-top, 0px);
       padding-bottom: env(safe-area-inset-bottom, 0px);
     }
 
-    #final-page.visible {
-      display: flex;
-    }
+    #final-page.visible { display: flex; }
+    #final-page.fade-in { opacity: 1; }
 
-    #final-page.fade-in {
-      opacity: 1;
-    }
-
-    /* container da imagem pagina.jpg com contain → não corta a arte */
     #final-media {
       position: relative;
       width: 100%;
@@ -294,56 +291,20 @@
       inset: 0;
       width: 100%;
       height: 100%;
-      object-fit: contain;   /* ← arte não é cortada */
+      object-fit: contain;
       object-position: center;
       user-select: none;
       pointer-events: none;
     }
 
-    /* hotspots posicionados relativos ao container, não à tela */
     #final-media .hotspots {
-      position: relative;   /* sobre a imagem */
+      position: relative;
       z-index: 2;
       display: flex;
       gap: clamp(1rem, 5vw, 2rem);
       align-items: center;
       justify-content: center;
-      /* empurra para a região inferior da arte (ajuste conforme pagina.jpg) */
       margin-top: 55%;
-    }
-
-    .final-divider {
-      width: 80px;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-      margin: 1.4rem 0;
-    }
-
-    .final-title {
-      font-family: 'Cinzel', serif;
-      font-size: clamp(0.65rem, 4vw, 0.9rem);
-      color: rgba(201,169,110,0.6);
-      letter-spacing: 0.4em;
-      text-transform: uppercase;
-      text-align: center;
-    }
-
-    .final-heading {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(1.5rem, 8vw, 2.6rem);
-      font-weight: 300;
-      color: #fff;
-      letter-spacing: 0.08em;
-      text-align: center;
-    }
-
-    /* Hotspots */
-    .hotspots {
-      display: flex;
-      gap: clamp(1rem, 5vw, 2rem);
-      align-items: center;
-      justify-content: center;
-      margin-top: 1rem;
     }
 
     .hotspot {
@@ -360,34 +321,12 @@
       color: var(--gold-light);
       gap: 0.45rem;
       cursor: pointer;
-      transition: border-color 0.3s, background 0.3s, transform 0.2s, box-shadow 0.3s;
       -webkit-tap-highlight-color: transparent;
       position: relative;
       overflow: hidden;
     }
 
-    .hotspot::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      background: radial-gradient(circle at 50% 0%, rgba(201,169,110,0.18), transparent 70%);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-
-    .hotspot:hover::before, .hotspot:active::before { opacity: 1; }
-
-    .hotspot:hover, .hotspot:active {
-      border-color: rgba(201,169,110,0.9);
-      transform: scale(1.06);
-      box-shadow: none;
-    }
-
-    .hotspot-icon {
-      font-size: 1.5rem;
-      line-height: 1;
-    }
+    .hotspot:hover, .hotspot:active { transform: scale(1.06); }
 
     .hotspot-icon-img {
       width: 75%;
@@ -403,16 +342,14 @@
       text-transform: uppercase;
       text-align: center;
       padding: 0 0.4rem;
-      color: rgba(92,61,30,1.8);
+      color: rgba(92,61,30,1);
     }
 
-    /* Staggered entrance for hotspots */
-    .hotspot { opacity: 0; transform: translateY(18px) scale(0.9); transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.3s, background 0.3s, box-shadow 0.3s; }
+    .hotspot { opacity: 0; transform: translateY(18px) scale(0.9); transition: opacity 0.5s ease, transform 0.5s ease; }
     .hotspot.enter { opacity: 1; transform: translateY(0) scale(1); }
     .hotspot:nth-child(1) { transition-delay: 0.15s; }
     .hotspot:nth-child(2) { transition-delay: 0.3s; }
     .hotspot:nth-child(3) { transition-delay: 0.45s; }
-    /* Fix hover conflict after entrance */
     .hotspot.enter:hover, .hotspot.enter:active { transform: scale(1.06); }
   </style>
 </head>
@@ -421,7 +358,12 @@
   <!-- ── Intro Overlay ── -->
   <div id="intro-overlay" role="button" aria-label="Clique para abrir o convite">
     <div id="overlay-bg">
-      <video src="video.mp4" muted playsinline webkit-playsinline x5-playsinline preload="auto" id="bg-video"></video>
+      <!--
+        OTIMIZAÇÃO: preload="metadata" carrega apenas o primeiro frame
+        sem baixar o vídeo inteiro antes de exibir
+      -->
+      <video src="video.mp4" muted playsinline webkit-playsinline x5-playsinline
+             preload="metadata" id="bg-video"></video>
     </div>
     <div id="overlay-tint"></div>
     <div id="overlay-content">
@@ -441,7 +383,6 @@
   <!-- ── Video Viewport ── -->
   <div id="scene-viewport">
     <div id="media-wrapper">
-      <!-- ✏️ SUBSTITUA "video.mp4" pelo caminho real do seu vídeo -->
       <video id="video"
              src="video.mp4"
              muted
@@ -459,26 +400,16 @@
   <audio id="audio" src="audio.mp3" preload="auto" loop></audio>
 
   <!-- ── Audio Button (bottom-left) ── -->
-  <button id="audio-btn" aria-label="Controle de áudio">
-    <!-- icon injected by JS -->
-  </button>
+  <button id="audio-btn" aria-label="Controle de áudio"></button>
 
   <!-- ── Scene Indicator Dots ── -->
   <div id="scene-dots" role="presentation"></div>
 
   <!-- ── Final Page ── -->
   <div id="final-page" aria-label="Links do convite">
-    <!--
-      media-wrapper: pagina.jpg com object-fit:contain
-      hotspots ficam relativos a este container → não saem do lugar em telas compridas
-    -->
     <div id="final-media">
-      <!-- ✏️ pagina.jpg = imagem de fundo da tela final -->
       <img class="bg-img" src="pagina.jpg" alt="Página do convite">
-
-      <!-- hotspots sobre a imagem -->
       <div class="hotspots">
-        <!-- ✏️ Troque href, icon e label conforme necessário -->
         <a href="https://crispoparte.com.br/dominicconfirmar/" class="hotspot">
           <img src="icon1.png" class="hotspot-icon-img" alt="Confirmar Presença">
           <span class="hotspot-label">Confirmar</span>
@@ -496,43 +427,34 @@
   </div>
 
   <script>
-    /* ═══════════════════════════════════════════
-       CONFIGURAÇÕES — ajuste conforme necessário
-    ═══════════════════════════════════════════ */
     const CONFIG = {
-      totalScenes   : 7,          // número de cenas
-      sceneDurationMs: 6000,      // ms que cada cena fica visível
-      transitionMs  : 1400,       // ms da animação de arraste
-      audioFadeMs   : 2200,       // ms para o volume subir suavemente
-      audioTargetVol: 0.82,       // volume final (0–1)
-      audioStartVol : 0.04,       // volume inicial (bem baixinho)
+      totalScenes    : 7,
+      sceneDurationMs: 6000,
+      transitionMs   : 1400,
+      audioFadeMs    : 2200,
+      audioTargetVol : 0.82,
+      audioStartVol  : 0.04,
     };
 
-    /* ═══════════════════════════════════════════
-       REFERÊNCIAS
-    ═══════════════════════════════════════════ */
     const video     = document.getElementById('video');
     const audio     = document.getElementById('audio');
     const overlay   = document.getElementById('intro-overlay');
     const audioBtn  = document.getElementById('audio-btn');
     const finalPage = document.getElementById('final-page');
     const dotsEl    = document.getElementById('scene-dots');
+    const bgVideo   = document.getElementById('bg-video');
+    const overlayBg = document.getElementById('overlay-bg');
 
-    let currentScene   = 0;
+    let currentScene    = 0;
     let isTransitioning = false;
-    let sceneTimer     = null;
-    let isMuted        = false;
-    let audioFadeTimer = null;
+    let sceneTimer      = null;
+    let isMuted         = false;
+    let audioFadeTimer  = null;
 
-    /* ═══════════════════════════════════════════
-       ÍCONES SVG ÁUDIO
-    ═══════════════════════════════════════════ */
     const iconOn  = `<svg viewBox="0 0 24 24"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><path d="M15.54,8.46a5,5,0,0,1,0,7.07"/><path d="M19.07,4.93a10,10,0,0,1,0,14.14"/></svg>`;
     const iconOff = `<svg viewBox="0 0 24 24"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>`;
 
-    /* ═══════════════════════════════════════════
-       DOTS INDICADORES
-    ═══════════════════════════════════════════ */
+    /* ── Dots ── */
     function buildDots() {
       for (let i = 0; i < CONFIG.totalScenes; i++) {
         const d = document.createElement('div');
@@ -540,154 +462,123 @@
         dotsEl.appendChild(d);
       }
     }
-
     function updateDots(index) {
-      dotsEl.querySelectorAll('.dot').forEach((d, i) => {
-        d.classList.toggle('active', i === index);
-      });
+      dotsEl.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === index));
     }
 
-    /* ═══════════════════════════════════════════
-       NAVEGAÇÃO DE CENAS
-    ═══════════════════════════════════════════ */
+    /* ── Navegação ── */
     function getSceneOffsetPx(index) {
-      // Vídeo exibido com height:100dvh, width:auto → largura proporcional
-      const displayedW = video.offsetWidth;          // px reais na tela
-      const sceneW = displayedW / CONFIG.totalScenes;
-      return index * sceneW;
+      return index * (video.offsetWidth / CONFIG.totalScenes);
     }
-
     function goToScene(index) {
       if (isTransitioning) return;
       isTransitioning = true;
       currentScene = index;
-
       video.style.transform = `translateX(-${getSceneOffsetPx(index)}px)`;
       updateDots(index);
-
       setTimeout(() => {
         isTransitioning = false;
         if (currentScene < CONFIG.totalScenes - 1) {
           scheduleNext();
         } else {
-          // Última cena: aguarda os 6 s dela e abre a tela final
           sceneTimer = setTimeout(showFinalPage, CONFIG.sceneDurationMs);
         }
       }, CONFIG.transitionMs);
     }
-
     function scheduleNext() {
       clearTimeout(sceneTimer);
       sceneTimer = setTimeout(() => {
-        if (currentScene < CONFIG.totalScenes - 1) {
-          goToScene(currentScene + 1);
-        }
+        if (currentScene < CONFIG.totalScenes - 1) goToScene(currentScene + 1);
       }, CONFIG.sceneDurationMs);
     }
 
-    /* ═══════════════════════════════════════════
-       TELA FINAL
-    ═══════════════════════════════════════════ */
+    /* ── Tela Final ── */
     function showFinalPage() {
       finalPage.classList.add('visible');
-      // Pequeno delay para garantir display:flex antes de fade
       requestAnimationFrame(() => requestAnimationFrame(() => {
         finalPage.classList.add('fade-in');
-        // Anima hotspots em cascata
-        finalPage.querySelectorAll('.hotspot').forEach(h => {
-          requestAnimationFrame(() => h.classList.add('enter'));
-        });
+        finalPage.querySelectorAll('.hotspot').forEach(h => requestAnimationFrame(() => h.classList.add('enter')));
       }));
-      // Mantém dots e botão visíveis
     }
 
-    /* ═══════════════════════════════════════════
-       FADE IN AUDIO
-    ═══════════════════════════════════════════ */
+    /* ── Fade de áudio ── */
     function fadeInAudio() {
       audio.volume = CONFIG.audioStartVol;
       audio.play().catch(() => {});
       isMuted = false;
       audioBtn.innerHTML = iconOn;
-
-      const steps     = 50;
-      const target    = CONFIG.audioTargetVol;
-      const start     = CONFIG.audioStartVol;
+      const steps = 50, target = CONFIG.audioTargetVol, start = CONFIG.audioStartVol;
       const increment = (target - start) / steps;
       const interval  = CONFIG.audioFadeMs / steps;
-
       let step = 0;
       clearInterval(audioFadeTimer);
       audioFadeTimer = setInterval(() => {
         step++;
         audio.volume = Math.min(start + increment * step, target);
-        if (step >= steps) {
-          audio.volume = target;
-          clearInterval(audioFadeTimer);
-        }
+        if (step >= steps) { audio.volume = target; clearInterval(audioFadeTimer); }
       }, interval);
     }
 
-    /* ═══════════════════════════════════════════
-       OVERLAY — clique para iniciar
-    ═══════════════════════════════════════════ */
+    /* ── Overlay click ── */
     overlay.addEventListener('click', () => {
-      // Fade out overlay
       overlay.style.opacity = '0';
       overlay.style.pointerEvents = 'none';
       setTimeout(() => overlay.style.display = 'none', 620);
-
-      // Exibe controles
       audioBtn.style.display = 'flex';
       dotsEl.style.display   = 'flex';
-
-      // Play vídeo (sempre mudo) + áudio separado com fade
       video.play().catch(() => {});
       fadeInAudio();
-
-      // Inicia a sequência de cenas
       scheduleNext();
     });
 
-    /* ═══════════════════════════════════════════
-       BOTÃO DE ÁUDIO
-    ═══════════════════════════════════════════ */
+    /* ── Botão áudio ── */
     audioBtn.addEventListener('click', () => {
       isMuted = !isMuted;
-      if (isMuted) {
-        audio.pause();
-      } else {
-        audio.play().catch(() => {});
-      }
+      isMuted ? audio.pause() : audio.play().catch(() => {});
       audioBtn.innerHTML = isMuted ? iconOff : iconOn;
     });
 
-    /* ═══════════════════════════════════════════
-       RECALCULA POSIÇÃO NO RESIZE
-    ═══════════════════════════════════════════ */
+    /* ── Resize ── */
     window.addEventListener('resize', () => {
-      // Reaplica a posição atual sem animação
-      const style = video.style.transition;
+      const t = video.style.transition;
       video.style.transition = 'none';
       video.style.transform  = `translateX(-${getSceneOffsetPx(currentScene)}px)`;
-      requestAnimationFrame(() => video.style.transition = style);
+      requestAnimationFrame(() => video.style.transition = t);
     });
 
-    /* ═══════════════════════════════════════════
-       INIT
-    ═══════════════════════════════════════════ */
+    /* ══════════════════════════════════════
+       INIT — bg-video otimizado
+       
+       ANTES: play().then(pause) — lento porque
+       aguarda o browser decodificar frames
+
+       AGORA: 3 estratégias em cascata:
+       1. seeked event → frame exibido instantaneamente
+       2. loadeddata   → fallback se seeked não disparar
+       3. setTimeout   → fallback final após 800ms
+    ══════════════════════════════════════ */
     buildDots();
     audioBtn.innerHTML = iconOff;
-
-    // Vídeo principal: sempre mudo (áudio vem do audio.mp3)
     video.muted = true;
     video.currentTime = 0;
 
-    // Vídeo de fundo do overlay: exibe 1º frame e pausa
-    const bgVideo = document.getElementById('bg-video');
+    function showBgFrame() {
+      overlayBg.classList.add('ready'); // fade-in suave do blur
+    }
+
+    // Estratégia 1: assim que o seek para t=0 completar, o frame está pronto
+    bgVideo.addEventListener('seeked', showBgFrame, { once: true });
+
+    // Estratégia 2: fallback loadeddata
+    bgVideo.addEventListener('loadeddata', showBgFrame, { once: true });
+
+    // Estratégia 3: fallback por tempo (caso o browser bloqueie os eventos)
+    setTimeout(showBgFrame, 800);
+
+    // Força o carregamento do primeiro frame
     bgVideo.muted = true;
     bgVideo.currentTime = 0;
-    bgVideo.play().then(() => bgVideo.pause()).catch(() => {});
+    bgVideo.load();
   </script>
 </body>
 </html>
