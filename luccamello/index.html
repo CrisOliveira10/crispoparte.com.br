@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<!--
+© 2026 Cristiane Oliveira
+Material exclusivo para alunos.
+Proibida reprodução, distribuição ou revenda.
+Lei 9.610/98 – Direitos Autorais.
+-->
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    
+    <title>Convite Lucca Mello - 8 Anos</title>
+    <meta property="og:title" content="Convite especial: Lucca Mello - 8 Anos!">
+    <meta property="og:description" content="Toque para abrir os detalhes deste dia incrível.">
+    <meta property="og:image" content="https://crispoparte.com.br/luccamello/capalink.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:type" content="website">
+
+    <style>
+        :root {
+            /* EDIÇÃO MANUAL */
+            --cor-botao-x: #9b59b6; 
+            --cor-botao-som: #9b59b6; 
+            --tamanho-clicavel: 15%; /* Botões proporcionais à largura da imagem */
+        }
+
+        body, html { 
+            margin: 0; 
+            padding: 0; 
+            width: 100%; 
+            height: 100dvh; /* Uso de dvh para evitar cortes no Safari */
+            overflow: hidden; 
+            font-family: sans-serif; 
+            background: #000; 
+        }
+
+        /* Estrutura das Telas */
+        .page {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; 
+            height: 100dvh;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .active { display: flex; }
+
+        /* Container que mantém a proporção da arte sem cortar */
+        .media-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .art-bg {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain; /* Garante que a arte apareça inteira */
+        }
+
+        /* Botão de Som (Superior Direito) */
+        .btn-audio {
+            position: fixed;
+            top: env(safe-area-inset-top, 25px); /* Respeita o notch do iPhone */
+            right: 25px;
+            width: 45px;
+            height: 45px;
+            background-color: var(--cor-botao-som);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 9999;
+            border: none;
+            font-size: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Container dos Hotspots Relativo à Imagem */
+        .hotspot-area {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            /* Opcional: aspect-ratio deve bater com o da sua imagem (ex: 9/16) */
+            aspect-ratio: 9 / 16; 
+            max-height: 100dvh;
+            max-width: calc(100dvh * (9/16));
+        }
+
+        .hotspot-container {
+            position: absolute;
+            bottom: 22%; /* Ajuste essa % para subir ou descer os botões na arte */
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 45px;
+            width: 80%;
+            justify-content: center;
+        }
+
+        .hotspot {
+            width: 70px;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.0); 
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Botão X (Página 2) */
+        .btn-x {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            width: 50px;
+            height: 50px;
+            background-color: var(--cor-botao-x);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: none;
+            font-weight: bold;
+            font-size: 22px;
+            animation: pulse 1.5s infinite;
+            z-index: 9998;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(155, 89, 182, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(0, 0, 0, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); }
+        }
+
+        .copyright { display: none !important; visibility: hidden; pointer-events: none; }
+    </style>
+</head>
+<body onclick="iniciarAudioAutomatico()">
+
+    <audio id="musica" loop playsinline>
+        <source src="audio.mp3" type="audio/mpeg">
+    </audio>
+
+    <button class="btn-audio" onclick="toggleAudio(event)" id="audioControl">🔊</button>
+
+    <div id="principal" class="page active">
+        <div class="media-wrapper">
+            <img src="pagina.png" class="art-bg" alt="Convite Principal">
+            <div class="hotspot-area">
+                <div class="hotspot-container">
+                    <div class="hotspot" onclick="window.open('https://wa.me/5571993233142?text=confirmo%20presença%20neste%20dia%20especial')"></div>
+                    <div class="hotspot" onclick="window.open('https://maps.app.goo.gl/AvxVqge85ax4M46U9')"></div>
+                    </div>
+            </div>
+        </div>
+    
+    <div class="copyright" aria-hidden="true">
+        © 2026 Cristiane Oliveira. Todos os direitos reservados. 
+    </div>
+
+    <script>
+        const audio = document.getElementById('musica');
+        const btnAudio = document.getElementById('audioControl');
+        let audioIniciado = false;
+
+        function iniciarAudioAutomatico() {
+            if (!audioIniciado) {
+                audio.play().catch(e => console.log("Interação necessária para áudio"));
+                audioIniciado = true;
+                btnAudio.innerHTML = "🔊";
+            }
+        }
+
+        function toggleAudio(event) {
+            event.stopPropagation(); 
+            if (audio.paused) {
+                audio.play();
+                btnAudio.innerHTML = "🔊";
+            } else {
+                audio.pause();
+                btnAudio.innerHTML = "🔇";
+            }
+        }
+
+        function irParaSugestao() {
+            document.getElementById('principal').classList.remove('active');
+            document.getElementById('sugestao').classList.add('active');
+        }
+
+        function irParaPrincipal() {
+            document.getElementById('sugestao').classList.remove('active');
+            document.getElementById('principal').classList.add('active');
+        }
+    </script>
+</body>
+</html>
