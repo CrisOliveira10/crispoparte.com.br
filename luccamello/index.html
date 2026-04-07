@@ -20,72 +20,77 @@ Lei 9.610/98 – Direitos Autorais.
 
     <style>
         :root {
-            /* EDIÇÃO MANUAL */
-            --cor-botao-x: #9b59b6; 
             --cor-botao-som: #9b59b6; 
-            --tamanho-clicavel: 15%; /* Botões proporcionais à largura da imagem */
         }
 
         body, html { 
             margin: 0; padding: 0; 
-            width: 100%; height: 100dvh; 
+            width: 100%; 
+            height: 100dvh; /* Evita cortes no Safari iOS */
             overflow: hidden; 
-            background: #2e1a47; /* Cor de fundo baseada na arte */
+            background: #2e1a47; /* Fundo sólido para preencher áreas vazias */
         }
 
+        /* Estrutura de centralização */
         .page {
             position: fixed;
             top: 0; left: 0;
-            width: 100%; height: 100dvh;
+            width: 100%; 
+            height: 100dvh;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
+        /* Container que mantém a proporção da arte 9:16 */
         .media-wrapper {
             position: relative;
             height: 100%;
-            aspect-ratio: 9 / 16; /* Mantém a proporção do convite */
+            aspect-ratio: 9 / 16; 
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
+        /* Imagem Responsiva */
         .art-bg {
             height: 100%;
             width: auto;
-            object-fit: contain;
+            object-fit: contain; /* Garante que a arte nunca seja cortada */
+            display: block;
         }
 
-        /* Área onde os botões vivem */
+        /* Área de toque absoluta sobre a imagem */
         .hotspot-area {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
         }
 
+        /* Container dos botões ajustado para a arte do Lucca */
         .hotspot-container {
             position: absolute;
-            bottom: 30%; /* Alinhamento vertical sobre os círculos verdes */
-            left: 60%;
+            bottom: 21%;    /* Altura exata sobre os círculos verdes */
+            left: 50%;     /* Centralizado horizontalmente */
             transform: translateX(-50%);
             display: flex;
-            justify-content: space-between;
-            width: 45%; /* Largura total entre o centro dos dois botões */
+            justify-content: space-between; 
+            width: 68%;    /* Abre o espaço entre os botões para encaixar na arte */
         }
 
         .hotspot {
-            width: 80px; /* Tamanho da área clicável */
-            height: 80px;
-            background: rgba(255, 255, 255, 0.3); /* Mude para 0.3 para testar o alinhamento */
+            width: 75px; 
+            height: 75px;
+            background: rgba(255, 255, 255, 0); /* Mude para 0.4 para testar o alinhamento */
             border-radius: 50%;
             cursor: pointer;
             -webkit-tap-highlight-color: transparent;
         }
 
+        /* Controle de Áudio */
         .btn-audio {
             position: fixed;
-            top: 20px;
+            top: env(safe-area-inset-top, 20px); /* Respeita o notch do iPhone */
             right: 20px;
             width: 45px; height: 45px;
             background-color: var(--cor-botao-som);
@@ -95,6 +100,10 @@ Lei 9.610/98 – Direitos Autorais.
             z-index: 9999;
             cursor: pointer;
             box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
         }
     </style>
 </head>
@@ -112,9 +121,9 @@ Lei 9.610/98 – Direitos Autorais.
             
             <div class="hotspot-area">
                 <div class="hotspot-container">
-                    <div class="hotspot" onclick="window.open('https://maps.app.goo.gl/UwhQ5crGkL6KPoqE7')"></div>
+                    <div class="hotspot" title="Local" onclick="window.open('https://maps.app.goo.gl/xxxxx')"></div>
                     
-                    <div class="hotspot" onclick="window.open('https://wa.me/5571993233142?text=Olá! Confirmo presença no aniversário do Lucca!')"></div>
+                    <div class="hotspot" title="WhatsApp" onclick="window.open('https://wa.me/5571993233142?text=Olá! Confirmo presença no aniversário do Lucca!')"></div>
                 </div>
             </div>
         </div>
@@ -127,7 +136,7 @@ Lei 9.610/98 – Direitos Autorais.
 
         function iniciarAudioAutomatico() {
             if (!audioIniciado) {
-                audio.play().catch(e => console.log("Interação necessária"));
+                audio.play().catch(e => console.log("Interação necessária para áudio"));
                 audioIniciado = true;
             }
         }
