@@ -27,129 +27,75 @@ Lei 9.610/98 – Direitos Autorais.
         }
 
         body, html { 
-            margin: 0; 
-            padding: 0; 
-            width: 100%; 
-            height: 100dvh; /* Uso de dvh para evitar cortes no Safari */
+            margin: 0; padding: 0; 
+            width: 100%; height: 100dvh; 
             overflow: hidden; 
-            font-family: sans-serif; 
-            background: #000; 
+            background: #2e1a47; /* Cor de fundo baseada na arte */
         }
 
-        /* Estrutura das Telas */
         .page {
             position: fixed;
             top: 0; left: 0;
-            width: 100%; 
-            height: 100dvh;
-            display: none;
+            width: 100%; height: 100dvh;
+            display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        .active { display: flex; }
-
-        /* Container que mantém a proporção da arte sem cortar */
         .media-wrapper {
             position: relative;
-            width: 100%;
             height: 100%;
+            aspect-ratio: 9 / 16; /* Mantém a proporção do convite */
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
         .art-bg {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain; /* Garante que a arte apareça inteira */
+            height: 100%;
+            width: auto;
+            object-fit: contain;
         }
 
-        /* Botão de Som (Superior Direito) */
-        .btn-audio {
-            position: fixed;
-            top: env(safe-area-inset-top, 25px); /* Respeita o notch do iPhone */
-            right: 25px;
-            width: 45px;
-            height: 45px;
-            background-color: var(--cor-botao-som);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 9999;
-            border: none;
-            font-size: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        /* Container dos Hotspots Relativo à Imagem */
+        /* Área onde os botões vivem */
         .hotspot-area {
             position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            /* Opcional: aspect-ratio deve bater com o da sua imagem (ex: 9/16) */
-            aspect-ratio: 9 / 16; 
-            max-height: 100dvh;
-            max-width: calc(100dvh * (9/16));
+            top: 0; left: 0;
+            width: 100%; height: 100%;
         }
 
         .hotspot-container {
             position: absolute;
-            bottom: 22%; /* Ajuste essa % para subir ou descer os botões na arte */
+            bottom: 18.5%; /* Alinhamento vertical sobre os círculos verdes */
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 45px;
-            width: 80%;
-            justify-content: center;
+            justify-content: space-between;
+            width: 65%; /* Largura total entre o centro dos dois botões */
         }
 
         .hotspot {
-            width: 70px;
-            height: 70px;
-            background: rgba(255, 255, 255, 0.0); 
+            width: 80px; /* Tamanho da área clicável */
+            height: 80px;
+            background: rgba(255, 255, 255, 0); /* Mude para 0.3 para testar o alinhamento */
             border-radius: 50%;
             cursor: pointer;
-            border: none;
-            outline: none;
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Botão X (Página 2) */
-        .btn-x {
-            position: absolute;
-            top: 25px;
-            left: 25px;
-            width: 50px;
-            height: 50px;
-            background-color: var(--cor-botao-x);
+        .btn-audio {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 45px; height: 45px;
+            background-color: var(--cor-botao-som);
             color: white;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
             border: none;
-            font-weight: bold;
-            font-size: 22px;
-            animation: pulse 1.5s infinite;
-            z-index: 9998;
+            z-index: 9999;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
         }
-
-        @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(155, 89, 182, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(0, 0, 0, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); }
-        }
-
-        .copyright { display: none !important; visibility: hidden; pointer-events: none; }
     </style>
 </head>
 <body onclick="iniciarAudioAutomatico()">
@@ -160,19 +106,18 @@ Lei 9.610/98 – Direitos Autorais.
 
     <button class="btn-audio" onclick="toggleAudio(event)" id="audioControl">🔊</button>
 
-    <div id="principal" class="page active">
+    <div id="principal" class="page">
         <div class="media-wrapper">
             <img src="pagina.png" class="art-bg" alt="Convite Principal">
+            
             <div class="hotspot-area">
                 <div class="hotspot-container">
-                    <div class="hotspot" onclick="window.open('https://wa.me/5571993233142?text=confirmo%20presença%20neste%20dia%20especial')"></div>
-                    <div class="hotspot" onclick="window.open('https://maps.app.goo.gl/AvxVqge85ax4M46U9')"></div>
-                    </div>
+                    <div class="hotspot" onclick="window.open('https://maps.app.goo.gl/sua-localizacao-aqui')"></div>
+                    
+                    <div class="hotspot" onclick="window.open('https://wa.me/5571993233142?text=Olá! Confirmo presença no aniversário do Lucca!')"></div>
+                </div>
             </div>
         </div>
-    
-    <div class="copyright" aria-hidden="true">
-        © 2026 Cristiane Oliveira. Todos os direitos reservados. 
     </div>
 
     <script>
@@ -182,9 +127,8 @@ Lei 9.610/98 – Direitos Autorais.
 
         function iniciarAudioAutomatico() {
             if (!audioIniciado) {
-                audio.play().catch(e => console.log("Interação necessária para áudio"));
+                audio.play().catch(e => console.log("Interação necessária"));
                 audioIniciado = true;
-                btnAudio.innerHTML = "🔊";
             }
         }
 
@@ -197,16 +141,6 @@ Lei 9.610/98 – Direitos Autorais.
                 audio.pause();
                 btnAudio.innerHTML = "🔇";
             }
-        }
-
-        function irParaSugestao() {
-            document.getElementById('principal').classList.remove('active');
-            document.getElementById('sugestao').classList.add('active');
-        }
-
-        function irParaPrincipal() {
-            document.getElementById('sugestao').classList.remove('active');
-            document.getElementById('principal').classList.add('active');
         }
     </script>
 </body>
