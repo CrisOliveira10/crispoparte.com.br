@@ -7,334 +7,150 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { --gold: #c9a96e; --gold-light: #e8d5a3; --dark: #080808; }
 
-    :root {
-      --gold: #c9a96e;
-      --gold-light: #e8d5a3;
-      --dark: #080808;
-    }
+    html, body { width: 100%; height: 100dvh; overflow: hidden; background: var(--dark); touch-action: none; }
 
-    html, body {
-      width: 100%;
-      height: 100dvh;          /* dvh: evita corte no Safari/iOS */
-      overflow: hidden;
-      background: var(--dark);
-      touch-action: none;
-    }
+    #scene-viewport { position: fixed; inset: 0; z-index: 1; overflow: hidden; }
 
-    /* ══════════════════════════════════════
-       VIEWPORT — janela visível na tela
-    ══════════════════════════════════════ */
-    #scene-viewport {
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      overflow: hidden;
-    }
-
-    /* ══════════════════════════════════════
-       ART WRAPPER — a arte quadrada 500×500
-       Movida via transform pelo JS
-    ══════════════════════════════════════ */
+    /*
+      art-wrapper: 500×500 — a arte quadrada.
+      O JS controla tudo via transform (translate + scale).
+      A transição CSS é ativada/desativada pelo JS:
+        - Ken Burns (vai e volta): RAF sem transition CSS
+        - Pan entre cenas: transition CSS cúbica
+    */
     #art-wrapper {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 500px;
-      height: 500px;
-      transform-origin: top left;  /* referência para scale + translate */
+      top: 0; left: 0;
+      width: 500px; height: 500px;
+      transform-origin: top left;
       will-change: transform;
-      /* transition é definida via JS após o primeiro frame */
     }
-
     #video {
       display: block;
-      width: 500px;
-      height: 500px;
-      object-fit: contain;   /* não corta; exibe a arte inteira no wrapper */
+      width: 500px; height: 500px;
+      object-fit: contain;
       pointer-events: none;
       user-select: none;
       -webkit-user-select: none;
     }
 
-    /* ══════════════════════════════════════
-       INTRO OVERLAY
-    ══════════════════════════════════════ */
+    /* INTRO */
     #intro-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 50;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      position: fixed; inset: 0; z-index: 50;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
       cursor: pointer;
       background: url('capa.jpg') center center / cover no-repeat;
-      transition: opacity 0.65s ease;
-      overflow: hidden;
+      transition: opacity 0.65s ease; overflow: hidden;
     }
-
-    #overlay-bg {
-      position: absolute;
-      inset: -20px;
-      z-index: 0;
-      opacity: 0;
-      transition: opacity 0.5s ease;
-    }
+    #overlay-bg { position: absolute; inset: -20px; z-index: 0; opacity: 0; transition: opacity 0.5s ease; }
     #overlay-bg.ready { opacity: 1; }
     #overlay-bg video {
-      width: calc(100% + 40px);
-      height: calc(100% + 40px);
+      width: calc(100% + 40px); height: calc(100% + 40px);
       object-fit: cover;
       filter: blur(18px) brightness(0.55) saturate(0.85);
-      transform: scale(1.05);
-      pointer-events: none;
-      will-change: filter;
-      -webkit-backface-visibility: hidden;
-      backface-visibility: hidden;
+      transform: scale(1.05); pointer-events: none;
+      will-change: filter; -webkit-backface-visibility: hidden; backface-visibility: hidden;
     }
-
-    #overlay-tint {
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-      background: radial-gradient(ellipse at 50% 45%,
-        rgba(112,131,138,0.18) 0%,
-        rgba(10,15,18,0.55) 100%);
-    }
-
-    #overlay-content {
-      position: relative;
-      z-index: 2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
+    #overlay-tint { position: absolute; inset: 0; z-index: 1; background: radial-gradient(ellipse at 50% 45%, rgba(112,131,138,0.18) 0%, rgba(10,15,18,0.55) 100%); }
+    #overlay-content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 
     .play-ring {
-      width: clamp(88px, 24vw, 110px);
-      height: clamp(88px, 24vw, 110px);
-      border-radius: 50%;
-      border: 2.5px solid rgba(255,255,255,0.6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      animation: ringPulse 2.4s ease-in-out infinite;
+      width: clamp(88px,24vw,110px); height: clamp(88px,24vw,110px);
+      border-radius: 50%; border: 2.5px solid rgba(255,255,255,0.6);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; animation: ringPulse 2.4s ease-in-out infinite;
     }
-    .play-ring::before {
-      content: '';
-      position: absolute;
-      inset: -10px;
-      border-radius: 50%;
-      border: 1.5px solid rgba(255,255,255,0.2);
-      animation: ringPulse 2.4s ease-in-out infinite 0.3s;
-    }
-    .play-ring::after {
-      content: '';
-      position: absolute;
-      inset: -22px;
-      border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.1);
-      animation: ringPulse 2.4s ease-in-out infinite 0.6s;
-    }
-    @keyframes ringPulse {
-      0%, 100% { opacity: 1;   transform: scale(1);    }
-      50%       { opacity: 0.6; transform: scale(0.96); }
-    }
-
-    .play-icon { width: 60%; height: 60%; display: flex; align-items: center; justify-content: center; }
-    .play-icon svg { width: 100%; height: 100%; filter: drop-shadow(0 2px 18px rgba(255,255,255,0.35)); }
+    .play-ring::before { content:''; position:absolute; inset:-10px; border-radius:50%; border:1.5px solid rgba(255,255,255,0.2); animation:ringPulse 2.4s ease-in-out infinite 0.3s; }
+    .play-ring::after  { content:''; position:absolute; inset:-22px; border-radius:50%; border:1px solid rgba(255,255,255,0.1); animation:ringPulse 2.4s ease-in-out infinite 0.6s; }
+    @keyframes ringPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.6;transform:scale(.96)} }
+    .play-icon { width:60%;height:60%;display:flex;align-items:center;justify-content:center; }
+    .play-icon svg { width:100%;height:100%;filter:drop-shadow(0 2px 18px rgba(255,255,255,.35)); }
 
     #intro-overlay .invite-text {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(1.2rem, 6.5vw, 2rem);
-      font-weight: 300;
-      font-style: italic;
-      color: #fff;
-      letter-spacing: 0.1em;
-      text-align: center;
-      padding: 0 2.5rem;
-      margin-top: 1.6rem;
-      text-shadow: 0 2px 18px rgba(0,0,0,0.7), 0 0 40px rgba(112,131,138,0.4);
-      animation: shimmer 2.6s ease-in-out infinite;
+      font-family:'Cormorant Garamond',serif; font-size:clamp(1.2rem,6.5vw,2rem);
+      font-weight:300; font-style:italic; color:#fff; letter-spacing:.1em;
+      text-align:center; padding:0 2.5rem; margin-top:1.6rem;
+      text-shadow:0 2px 18px rgba(0,0,0,.7),0 0 40px rgba(112,131,138,.4);
+      animation:shimmer 2.6s ease-in-out infinite;
     }
     #intro-overlay .subtitle {
-      font-family: 'Cinzel', serif;
-      font-size: clamp(0.5rem, 2.8vw, 0.7rem);
-      color: rgba(255,255,255,0.45);
-      letter-spacing: 0.38em;
-      text-transform: uppercase;
-      margin-top: 0.55rem;
-      animation: shimmer 2.6s ease-in-out infinite 0.4s;
+      font-family:'Cinzel',serif; font-size:clamp(.5rem,2.8vw,.7rem);
+      color:rgba(255,255,255,.45); letter-spacing:.38em; text-transform:uppercase;
+      margin-top:.55rem; animation:shimmer 2.6s ease-in-out infinite .4s;
     }
-    @keyframes shimmer {
-      0%, 100% { opacity: 1;   }
-      50%       { opacity: 0.5; }
-    }
+    @keyframes shimmer { 0%,100%{opacity:1} 50%{opacity:.5} }
 
-    /* ══════════════════════════════════════
-       BOTÃO DE ÁUDIO
-    ══════════════════════════════════════ */
+    /* AUDIO BTN */
     #audio-btn {
-      position: fixed;
-      bottom: calc(28px + env(safe-area-inset-bottom, 0px));
-      left:   calc(20px + env(safe-area-inset-left,   0px));
-      z-index: 40;
-      width: 46px;
-      height: 46px;
-      border-radius: 50%;
-      border: 1.5px solid rgba(201,169,110,0.45);
-      background: rgba(8,8,8,0.65);
-      color: var(--gold-light);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      transition: transform 0.1s;
-      -webkit-tap-highlight-color: transparent;
+      position:fixed; bottom:calc(28px + env(safe-area-inset-bottom,0px)); left:calc(20px + env(safe-area-inset-left,0px));
+      z-index:40; width:46px; height:46px; border-radius:50%;
+      border:1.5px solid rgba(201,169,110,.45); background:rgba(8,8,8,.65);
+      color:var(--gold-light); display:none; align-items:center; justify-content:center;
+      cursor:pointer; backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+      transition:transform .1s; -webkit-tap-highlight-color:transparent;
     }
-    #audio-btn:active { transform: scale(0.88); }
-    #audio-btn svg {
-      width: 20px; height: 20px;
-      fill: none; stroke: currentColor;
-      stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
-    }
+    #audio-btn:active { transform:scale(.88); }
+    #audio-btn svg { width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round; }
 
-    /* ══════════════════════════════════════
-       DOTS INDICADORES
-    ══════════════════════════════════════ */
+    /* DOTS */
     #scene-dots {
-      position: fixed;
-      bottom: calc(36px + env(safe-area-inset-bottom, 0px));
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 40;
-      display: none;
-      gap: 8px;
-      align-items: center;
+      position:fixed; bottom:calc(36px + env(safe-area-inset-bottom,0px));
+      left:50%; transform:translateX(-50%); z-index:40;
+      display:none; gap:8px; align-items:center;
     }
-    .dot {
-      width: 5px; height: 5px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.25);
-      transition: background 0.4s, transform 0.4s;
-    }
-    .dot.active { background: var(--gold); transform: scale(1.4); }
+    .dot { width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.25);transition:background .4s,transform .4s; }
+    .dot.active { background:var(--gold);transform:scale(1.4); }
 
-    /* ══════════════════════════════════════
-       PÁGINA FINAL
-    ══════════════════════════════════════ */
+    /* FINAL PAGE */
     #final-page {
-      position: fixed;
-      inset: 0;
-      z-index: 60;
-      background: var(--dark);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transition: opacity 0.9s ease;
-      padding-top:    env(safe-area-inset-top,    0px);
-      padding-bottom: env(safe-area-inset-bottom, 0px);
+      position:fixed; inset:0; z-index:60; background:var(--dark);
+      display:none; align-items:center; justify-content:center;
+      opacity:0; transition:opacity .9s ease;
+      padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
     }
-    #final-page.visible  { display: flex; }
-    #final-page.fade-in  { opacity: 1;   }
+    #final-page.visible { display:flex; }
+    #final-page.fade-in { opacity:1; }
+    #final-media { position:relative; width:100%; height:100dvh; display:flex; align-items:center; justify-content:center; }
+    #final-media img.bg-img { position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:center;user-select:none;pointer-events:none; }
 
-    #final-media {
-      position: relative;
-      width: 100%;
-      height: 100dvh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    /* Imagem de fundo da página final */
-    #final-media img.bg-img {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;   /* mantém proporção sem cortar */
-      object-position: center;
-      user-select: none;
-      pointer-events: none;
-    }
-
-    /* ══════════════════════════════════════
-       HOTSPOTS — posicionados em % do container
-       para não sair do lugar em telas longas
-    ══════════════════════════════════════ */
+    /* HOTSPOTS */
     .hotspots {
-      position: absolute;
-      z-index: 2;
-      /* Ajuste bottom/left para alinhar com os ícones da sua pagina.jpg */
-      bottom: 10%;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 88%;
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
+      position:absolute; z-index:2;
+      bottom:10%; left:50%; transform:translateX(-50%);
+      width:88%; display:flex; align-items:center; justify-content:space-around;
     }
-
     .hotspot {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      color: var(--gold-light);
-      gap: 0.4rem;
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
-      overflow: visible;          /* label nunca fica cortada */
-      opacity: 0;
-      transform: translateY(18px) scale(0.9);
-      transition: opacity 0.5s ease, transform 0.5s ease;
-      width: clamp(72px, 20vw, 96px);
-      height: clamp(72px, 20vw, 96px);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      text-decoration:none;color:var(--gold-light);gap:.4rem;cursor:pointer;
+      -webkit-tap-highlight-color:transparent;
+      overflow:visible; /* label nunca cortada */
+      width:clamp(72px,20vw,96px); height:clamp(72px,20vw,96px);
+      opacity:0; transform:translateY(18px) scale(.9);
+      transition:opacity .5s ease,transform .5s ease;
     }
-    .hotspot.enter             { opacity: 1; transform: translateY(0) scale(1); }
-    .hotspot:nth-child(1)      { transition-delay: 0.15s; }
-    .hotspot:nth-child(2)      { transition-delay: 0.30s; }
-    .hotspot:nth-child(3)      { transition-delay: 0.45s; }
-    .hotspot.enter:active      { transform: scale(1.06); }
-
-    .hotspot-icon-img {
-      width: 75%; height: 75%;
-      object-fit: contain;
-      filter: drop-shadow(0 1px 4px rgba(0,0,0,0.3));
-    }
-    .hotspot-label {
-      font-family: 'Cinzel', serif;
-      font-size: clamp(0.48rem, 2.5vw, 0.62rem);
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      text-align: center;
-      color: rgba(92,61,30,1);
-    }
+    .hotspot.enter            { opacity:1;transform:translateY(0) scale(1); }
+    .hotspot:nth-child(1)     { transition-delay:.15s; }
+    .hotspot:nth-child(2)     { transition-delay:.30s; }
+    .hotspot:nth-child(3)     { transition-delay:.45s; }
+    .hotspot.enter:active     { transform:scale(1.06); }
+    .hotspot-icon-img         { width:75%;height:75%;object-fit:contain;filter:drop-shadow(0 1px 4px rgba(0,0,0,.3)); }
+    .hotspot-label            { font-family:'Cinzel',serif;font-size:clamp(.48rem,2.5vw,.62rem);letter-spacing:.2em;text-transform:uppercase;text-align:center;color:rgba(92,61,30,1); }
   </style>
 </head>
 <body>
 
-  <!-- ── Intro Overlay ── -->
   <div id="intro-overlay" role="button" aria-label="Clique para abrir o convite">
     <div id="overlay-bg">
-      <video src="video.mp4" muted playsinline webkit-playsinline x5-playsinline
-             preload="metadata" id="bg-video"></video>
+      <video src="video.mp4" muted playsinline webkit-playsinline x5-playsinline preload="metadata" id="bg-video"></video>
     </div>
     <div id="overlay-tint"></div>
     <div id="overlay-content">
       <div class="play-ring">
         <div class="play-icon">
           <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="30" cy="30" r="29" fill="rgba(255,255,255,0.15)"
-                    stroke="rgba(255,255,255,0.9)" stroke-width="2"/>
+            <circle cx="30" cy="30" r="29" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.9)" stroke-width="2"/>
             <polygon points="25,18 46,30 25,42" fill="#ffffff"/>
           </svg>
         </div>
@@ -344,44 +160,24 @@
     </div>
   </div>
 
-  <!-- ── Scene Viewport ── -->
   <div id="scene-viewport">
     <div id="art-wrapper">
-      <!--
-        video.mp4 deve ser o arquivo 500×500 da arte.
-        Se preferir usar imagem estática, troque por:
-        <img id="video" src="arte.jpg" alt="convite">
-        e remova a lógica de video.play() no JS.
-      -->
-      <video id="video"
-             src="video.mp4"
-             muted
-             playsinline
-             webkit-playsinline
-             x5-playsinline
-             preload="auto"
-             disablepictureinpicture
-             controlslist="nodownload nofullscreen noremoteplayback">
-      </video>
+      <video id="video" src="video.mp4" muted playsinline webkit-playsinline x5-playsinline
+             preload="auto" disablepictureinpicture
+             controlslist="nodownload nofullscreen noremoteplayback"></video>
     </div>
   </div>
 
-  <!-- ── Áudio separado ── -->
   <audio id="audio" src="audio.mp3" preload="auto" loop></audio>
-
-  <!-- ── Botão de Áudio ── -->
   <button id="audio-btn" aria-label="Controle de áudio"></button>
-
-  <!-- ── Dots ── -->
   <div id="scene-dots" role="presentation"></div>
 
-  <!-- ── Página Final ── -->
   <div id="final-page" aria-label="Links do convite">
     <div id="final-media">
       <img class="bg-img" src="pagina.jpg" alt="Página do convite">
       <div class="hotspots">
         <a href="https://crispoparte.com.br/antonioconfirmar/" class="hotspot">
-          <img src="icon1.png" class="hotspot-icon-img" alt="Confirmar Presença">
+          <img src="icon1.png" class="hotspot-icon-img" alt="Confirmar">
           <span class="hotspot-label">Confirmar</span>
         </a>
         <a href="https://maps.app.goo.gl/Hjz8npnJR5EXf7nX8" class="hotspot">
@@ -397,240 +193,251 @@
   </div>
 
   <script>
-    /* ══════════════════════════════════════════════════════
-       ⚙️  CONFIGURAÇÃO PRINCIPAL — edite apenas aqui
-       ══════════════════════════════════════════════════════
+  /* ═══════════════════════════════════════════════════════════════
+     ⚙️  CONFIGURAÇÃO — edite apenas este bloco
+     ═══════════════════════════════════════════════════════════════
 
-       totalMs      → duração total do vídeo em ms.
-                       O tempo por cena é calculado automaticamente:
-                       tempoPorCena = totalMs ÷ número de cenas
+     totalMs         → duração total do vídeo em ms.
+                        Tempo por cena = totalMs ÷ número de cenas.
 
-       transitionMs → duração da animação de pan entre cenas (ms)
+     transitionMs    → duração do pan entre cenas.
 
-       zoomLevel    → quanto ampliar a arte além do "cover" da tela.
-                       1.0 = sem zoom (a arte ocupa toda a altura, sem pan vertical)
-                       1.5 = zoom 50% extra → permite pan vertical e horizontal
-                       Ajuste até o enquadramento ficar agradável no celular.
+     kenBurnsAmount  → intensidade do zoom vai-e-volta por cena.
+                        0.04 = sutil (4%) | 0.08 = notável (8%).
+                        O zoom cresce até o pico e volta ao normal.
 
-       scenes[]     → lista de cenas na ORDEM que devem aparecer.
-                       panX: 0.0 = borda esquerda  |  1.0 = borda direita
-                       panY: 0.0 = borda superior  |  1.0 = borda inferior
-                       0.5 = centro do eixo correspondente
+     zoomLevel       → quão "dentro" da arte a câmera fica.
+                        1.0 = altura da arte = altura da tela (sem pan vertical)
+                        1.5 = 50% mais dentro → pan vertical disponível.
 
-       Baseado no layout da imagem 1 (numeração 1→7):
-         Linha de cima  → panY baixo (≈0.0–0.15) → cenas 1, 3, 6
-         Linha de baixo → panY alto  (≈0.75–1.0) → cenas 2, 4, 5, 7
-    ══════════════════════════════════════════════════════ */
-    const CONFIG = {
-      artSize       : 500,       // px — tamanho do vídeo/arte quadrado
-      totalMs       : 40000,     // ms — duração total do vídeo (40 s)
-      transitionMs  : 900,       // ms — animação de pan
-      audioFadeMs   : 2200,      // ms — fade-in do áudio
-      audioTargetVol: 0.82,
-      audioStartVol : 0.04,
-      zoomLevel     : 1.55,      // ← aumente para mais zoom/pan vertical
+     scenes[]        → cenas na ORDEM de exibição.
+                        panX 0.0=esquerda … 1.0=direita
+                        panY 0.0=topo     … 1.0=fundo
+                        panY=1.0 alinha o FUNDO da arte com o FUNDO da tela.
+  ═══════════════════════════════════════════════════════════════ */
+  const CONFIG = {
+    artSize        : 500,
+    totalMs        : 40000,
+    transitionMs   : 1000,
+    kenBurnsAmount : 0.05,
+    audioFadeMs    : 2200,
+    audioTargetVol : 0.82,
+    audioStartVol  : 0.04,
+    zoomLevel      : 1.55,
 
-      scenes: [
-        // ordem: 1 → 2 → 3 → 4 → 5 → 6 → 7
-        { panX: 0.00, panY: 0.05 },  // 1 — topo esquerdo   (logo 3 Palavrinhas)
-        { panX: 0.00, panY: 0.90 },  // 2 — baixo esquerdo  (Convite Especial)
-        { panX: 0.50, panY: 0.00 },  // 3 — topo centro     (nome + foto)
-        { panX: 0.40, panY: 0.85 },  // 4 — baixo centro    (data/hora)
-        { panX: 0.72, panY: 0.85 },  // 5 — baixo centro-dir (Espero por Você)
-        { panX: 1.00, panY: 0.05 },  // 6 — topo direito    (local)
-        { panX: 1.00, panY: 0.90 },  // 7 — baixo direito
-      ]
-    };
+    scenes: [
+      { panX: 0.00, panY: 0.00 }, // 1 — topo esquerdo
+      { panX: 0.00, panY: 1.00 }, // 2 — fundo esquerdo   (panY=1 = fundo alinhado)
+      { panX: 0.50, panY: 0.00 }, // 3 — topo centro
+      { panX: 0.40, panY: 1.00 }, // 4 — fundo centro-esq
+      { panX: 0.65, panY: 1.00 }, // 5 — fundo centro-dir
+      { panX: 1.00, panY: 0.00 }, // 6 — topo direito
+      { panX: 1.00, panY: 1.00 }, // 7 — fundo direito
+    ]
+  };
 
-    /* ── Tempo por cena calculado automaticamente ── */
-    const sceneDurationMs = Math.round(CONFIG.totalMs / CONFIG.scenes.length);
+  const sceneDurationMs = Math.round(CONFIG.totalMs / CONFIG.scenes.length);
 
-    /* ── Elementos do DOM ── */
-    const video      = document.getElementById('video');
-    const audio      = document.getElementById('audio');
-    const overlay    = document.getElementById('intro-overlay');
-    const audioBtn   = document.getElementById('audio-btn');
-    const finalPage  = document.getElementById('final-page');
-    const dotsEl     = document.getElementById('scene-dots');
-    const bgVideo    = document.getElementById('bg-video');
-    const overlayBg  = document.getElementById('overlay-bg');
-    const artWrapper = document.getElementById('art-wrapper');
+  const video      = document.getElementById('video');
+  const audio      = document.getElementById('audio');
+  const overlay    = document.getElementById('intro-overlay');
+  const audioBtn   = document.getElementById('audio-btn');
+  const finalPage  = document.getElementById('final-page');
+  const dotsEl     = document.getElementById('scene-dots');
+  const bgVideo    = document.getElementById('bg-video');
+  const overlayBg  = document.getElementById('overlay-bg');
+  const artWrapper = document.getElementById('art-wrapper');
 
-    let currentScene    = 0;
-    let isTransitioning = false;
-    let sceneTimer      = null;
-    let isMuted         = false;
-    let audioFadeTimer  = null;
+  let currentScene   = 0;
+  let isPanning      = false;
+  let sceneTimer     = null;
+  let kbRafId        = null;
+  let kbStartTime    = null;
+  let kbSceneRef     = null;
+  let kbDur          = 0;
+  let isMuted        = false;
+  let audioFadeTimer = null;
 
-    const iconOn  = `<svg viewBox="0 0 24 24"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><path d="M15.54,8.46a5,5,0,0,1,0,7.07"/><path d="M19.07,4.93a10,10,0,0,1,0,14.14"/></svg>`;
-    const iconOff = `<svg viewBox="0 0 24 24"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>`;
+  const iconOn  = `<svg viewBox="0 0 24 24"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><path d="M15.54,8.46a5,5,0,0,1,0,7.07"/><path d="M19.07,4.93a10,10,0,0,1,0,14.14"/></svg>`;
+  const iconOff = `<svg viewBox="0 0 24 24"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>`;
 
-    /* ══════════════════════════════════════
-       CÁLCULO DO TRANSFORM
-       Escala a arte 500×500 para cobrir a tela
-       e aplica o pan (panX, panY) da cena.
-       transform-origin: top left  →  a arte cresce
-       para baixo e para a direita a partir de (0,0).
-    ══════════════════════════════════════ */
-    function calcTransform(scene) {
-      const vW  = window.innerWidth;
-      const vH  = window.innerHeight;
-      const art = CONFIG.artSize;
+  /* ── Calcula transform(translate + scale) ──────────────────────
+     Posiciona a arte 500×500 para a cena, aplicando kbFactor.
+     O zoom (kbFactor > 1) é centrado no ponto visível central
+     da cena, não no centro geométrico da arte — isso garante
+     que o enquadramento não derive durante o Ken Burns.
+  ─────────────────────────────────────────────────────────────── */
+  function calcTransform(scene, kbFactor) {
+    kbFactor = kbFactor || 1;
+    const vW  = window.innerWidth;
+    const vH  = window.innerHeight;
+    const art = CONFIG.artSize;
 
-      // Scale mínimo para cobrir o viewport (equivale a object-fit: cover)
-      const coverScale = Math.max(vW / art, vH / art);
+    // Scale base: cobrir a tela (object-fit: cover equivalente)
+    const coverScale = Math.max(vW / art, vH / art);
+    const baseScale  = coverScale * CONFIG.zoomLevel;
 
-      // Escala final com zoom configurável
-      const scale = coverScale * CONFIG.zoomLevel;
+    // Translate base (panX/panY definem o enquadramento)
+    const baseTx = scene.panX * (vW - art * baseScale); // ≤0
+    const baseTy = scene.panY * (vH - art * baseScale); // ≤0
+    // panY=1 → baseTy = vH - art*baseScale  → fundo da arte = fundo da tela ✓
 
-      // Tamanho renderizado da arte
-      const rW = art * scale;
-      const rH = art * scale;
+    // Ponto central visível em coordenadas da arte (pixels)
+    const centerArtX = (vW / 2 - baseTx) / baseScale;
+    const centerArtY = (vH / 2 - baseTy) / baseScale;
 
-      // Translate:
-      //   panX=0 → art alinhada à esquerda  (tx = 0)
-      //   panX=1 → art alinhada à direita   (tx = vW - rW, negativo)
-      //   panY=0 → art alinhada ao topo     (ty = 0)
-      //   panY=1 → art alinhada embaixo     (ty = vH - rH, negativo)
-      const tx = scene.panX * (vW - rW);
-      const ty = scene.panY * (vH - rH);
+    // Nova escala com Ken Burns
+    const newScale = baseScale * kbFactor;
 
-      return `translate(${tx.toFixed(2)}px, ${ty.toFixed(2)}px) scale(${scale.toFixed(5)})`;
-    }
+    // Translate que mantém o centro visual fixo durante o zoom
+    const tx = vW / 2 - centerArtX * newScale;
+    const ty = vH / 2 - centerArtY * newScale;
 
-    /* ── Habilita/desabilita transição CSS ── */
-    function enableTransition() {
-      artWrapper.style.transition =
-        `transform ${CONFIG.transitionMs}ms cubic-bezier(0.76, 0, 0.24, 1)`;
-    }
-    function disableTransition() {
+    return `translate(${tx.toFixed(2)}px,${ty.toFixed(2)}px) scale(${newScale.toFixed(6)})`;
+  }
+
+  /* ── Ken Burns: zoom vai e volta via requestAnimationFrame ──── */
+  function easeInOut(t) { return t < .5 ? 2*t*t : -1+(4-2*t)*t; }
+
+  function kbFrame(ts) {
+    if (!kbStartTime) kbStartTime = ts;
+    const progress = Math.min((ts - kbStartTime) / kbDur, 1);
+
+    // Onda suave: cresce até o pico (50%) e volta — o "respira"
+    const wave   = progress < .5 ? easeInOut(progress * 2) : easeInOut((1 - progress) * 2);
+    const factor = 1 + CONFIG.kenBurnsAmount * wave;
+
+    artWrapper.style.transform = calcTransform(kbSceneRef, factor);
+
+    if (progress < 1) kbRafId = requestAnimationFrame(kbFrame);
+  }
+
+  function startKenBurns(scene, duration) {
+    cancelAnimationFrame(kbRafId);
+    kbStartTime = null;
+    kbSceneRef  = scene;
+    kbDur       = Math.max(duration, 200);
+    artWrapper.style.transition = 'none'; // RAF, sem CSS transition
+    kbRafId = requestAnimationFrame(kbFrame);
+  }
+
+  /* ── Dots ─────────────────────────────────────────────────── */
+  function buildDots() {
+    CONFIG.scenes.forEach((_, i) => {
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      dotsEl.appendChild(d);
+    });
+  }
+  function updateDots(i) {
+    dotsEl.querySelectorAll('.dot').forEach((d, idx) => d.classList.toggle('active', idx === i));
+  }
+
+  /* ── Navegar para uma cena ────────────────────────────────────
+     instant=true  → snap (sem animação de pan, ex: primeira cena)
+     instant=false → pan suave + Ken Burns após o pan
+  ─────────────────────────────────────────────────────────────── */
+  function startScene(index, instant) {
+    if (isPanning && !instant) return;
+
+    cancelAnimationFrame(kbRafId);
+    clearTimeout(sceneTimer);
+    currentScene = index;
+    updateDots(index);
+
+    if (instant) {
       artWrapper.style.transition = 'none';
-    }
+      artWrapper.style.transform  = calcTransform(CONFIG.scenes[index], 1);
+      startKenBurns(CONFIG.scenes[index], sceneDurationMs);
+    } else {
+      isPanning = true;
+      artWrapper.style.transition = `transform ${CONFIG.transitionMs}ms cubic-bezier(0.76,0,0.24,1)`;
+      artWrapper.style.transform  = calcTransform(CONFIG.scenes[index], 1);
 
-    /* ── Dots ── */
-    function buildDots() {
-      CONFIG.scenes.forEach((_, i) => {
-        const d = document.createElement('div');
-        d.className = 'dot' + (i === 0 ? ' active' : '');
-        dotsEl.appendChild(d);
-      });
-    }
-    function updateDots(i) {
-      dotsEl.querySelectorAll('.dot')
-            .forEach((d, idx) => d.classList.toggle('active', idx === i));
-    }
-
-    /* ── Navegar para uma cena ── */
-    function goToScene(index) {
-      if (isTransitioning) return;
-      isTransitioning = true;
-      currentScene = index;
-      enableTransition();
-      artWrapper.style.transform = calcTransform(CONFIG.scenes[index]);
-      updateDots(index);
-
+      // Após o pan: inicia Ken Burns pelo tempo restante da cena
       setTimeout(() => {
-        isTransitioning = false;
-        const isLast = currentScene >= CONFIG.scenes.length - 1;
-        if (isLast) {
-          sceneTimer = setTimeout(showFinalPage, sceneDurationMs);
-        } else {
-          scheduleNext();
-        }
+        isPanning = false;
+        startKenBurns(CONFIG.scenes[index], sceneDurationMs - CONFIG.transitionMs);
       }, CONFIG.transitionMs);
     }
 
-    function scheduleNext() {
-      clearTimeout(sceneTimer);
-      sceneTimer = setTimeout(() => {
-        if (currentScene < CONFIG.scenes.length - 1) goToScene(currentScene + 1);
-      }, sceneDurationMs);
-    }
+    // Agenda próxima cena (tempo total sempre = sceneDurationMs)
+    sceneTimer = setTimeout(() => {
+      const next = index + 1;
+      if (next < CONFIG.scenes.length) startScene(next, false);
+      else showFinalPage();
+    }, sceneDurationMs);
+  }
 
-    /* ── Página Final ── */
-    function showFinalPage() {
-      finalPage.classList.add('visible');
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        finalPage.classList.add('fade-in');
-        finalPage.querySelectorAll('.hotspot')
-                 .forEach(h => requestAnimationFrame(() => h.classList.add('enter')));
-      }));
-    }
+  /* ── Tela final ───────────────────────────────────────────── */
+  function showFinalPage() {
+    cancelAnimationFrame(kbRafId);
+    clearTimeout(sceneTimer);
+    finalPage.classList.add('visible');
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      finalPage.classList.add('fade-in');
+      finalPage.querySelectorAll('.hotspot')
+               .forEach(h => requestAnimationFrame(() => h.classList.add('enter')));
+    }));
+  }
 
-    /* ── Fade-in de áudio ── */
-    function fadeInAudio() {
-      audio.volume = CONFIG.audioStartVol;
-      audio.play().catch(() => {});
-      isMuted = false;
-      audioBtn.innerHTML = iconOn;
-      const steps     = 50;
-      const target    = CONFIG.audioTargetVol;
-      const start     = CONFIG.audioStartVol;
-      const increment = (target - start) / steps;
-      const interval  = CONFIG.audioFadeMs / steps;
-      let step = 0;
-      clearInterval(audioFadeTimer);
-      audioFadeTimer = setInterval(() => {
-        step++;
-        audio.volume = Math.min(start + increment * step, target);
-        if (step >= steps) { audio.volume = target; clearInterval(audioFadeTimer); }
-      }, interval);
-    }
+  /* ── Fade-in de áudio ─────────────────────────────────────── */
+  function fadeInAudio() {
+    audio.volume = CONFIG.audioStartVol;
+    audio.play().catch(() => {});
+    isMuted = false;
+    audioBtn.innerHTML = iconOn;
+    const steps = 50, target = CONFIG.audioTargetVol, start = CONFIG.audioStartVol;
+    const inc = (target - start) / steps, ivl = CONFIG.audioFadeMs / steps;
+    let step = 0;
+    clearInterval(audioFadeTimer);
+    audioFadeTimer = setInterval(() => {
+      step++;
+      audio.volume = Math.min(start + inc * step, target);
+      if (step >= steps) { audio.volume = target; clearInterval(audioFadeTimer); }
+    }, ivl);
+  }
 
-    /* ── Clique no overlay para iniciar ── */
-    overlay.addEventListener('click', () => {
-      overlay.style.opacity      = '0';
-      overlay.style.pointerEvents = 'none';
-      setTimeout(() => overlay.style.display = 'none', 650);
+  /* ── Eventos ─────────────────────────────────────────────── */
+  overlay.addEventListener('click', () => {
+    overlay.style.opacity = '0';
+    overlay.style.pointerEvents = 'none';
+    setTimeout(() => overlay.style.display = 'none', 650);
+    audioBtn.style.display = 'flex';
+    dotsEl.style.display   = 'flex';
+    video.play().catch(() => {});
+    fadeInAudio();
+    startScene(0, true); // cena 0 sem pan de entrada
+  });
 
-      audioBtn.style.display = 'flex';
-      dotsEl.style.display   = 'flex';
+  audioBtn.addEventListener('click', () => {
+    isMuted = !isMuted;
+    isMuted ? audio.pause() : audio.play().catch(() => {});
+    audioBtn.innerHTML = isMuted ? iconOff : iconOn;
+  });
 
-      // Vai para a cena 0 sem animação (já estava lá no init)
-      disableTransition();
-      artWrapper.style.transform = calcTransform(CONFIG.scenes[0]);
-      // Ativa transição no próximo frame
-      requestAnimationFrame(() => enableTransition());
+  window.addEventListener('resize', () => {
+    cancelAnimationFrame(kbRafId);
+    artWrapper.style.transition = 'none';
+    artWrapper.style.transform  = calcTransform(CONFIG.scenes[currentScene], 1);
+    if (!isPanning) startKenBurns(CONFIG.scenes[currentScene], sceneDurationMs);
+  });
 
-      video.play().catch(() => {});
-      fadeInAudio();
-      scheduleNext();
-    });
+  /* ── Init ─────────────────────────────────────────────────── */
+  buildDots();
+  audioBtn.innerHTML = iconOff;
+  video.muted = true;
+  video.currentTime = 0;
+  artWrapper.style.transition = 'none';
+  artWrapper.style.transform  = calcTransform(CONFIG.scenes[0], 1);
 
-    /* ── Botão de áudio ── */
-    audioBtn.addEventListener('click', () => {
-      isMuted = !isMuted;
-      isMuted ? audio.pause() : audio.play().catch(() => {});
-      audioBtn.innerHTML = isMuted ? iconOff : iconOn;
-    });
-
-    /* ── Resize: recalcula sem animação ── */
-    window.addEventListener('resize', () => {
-      disableTransition();
-      artWrapper.style.transform = calcTransform(CONFIG.scenes[currentScene]);
-      requestAnimationFrame(() => enableTransition());
-    });
-
-    /* ══════════════════════════════════════
-       INIT
-    ══════════════════════════════════════ */
-    buildDots();
-    audioBtn.innerHTML = iconOff;
-    video.muted = true;
-    video.currentTime = 0;
-
-    // Posiciona na cena 0 imediatamente (sem transição)
-    disableTransition();
-    artWrapper.style.transform = calcTransform(CONFIG.scenes[0]);
-
-    // Bg-video do overlay: 3 estratégias de fallback
-    function showBgFrame() { overlayBg.classList.add('ready'); }
-    bgVideo.addEventListener('seeked',     showBgFrame, { once: true });
-    bgVideo.addEventListener('loadeddata', showBgFrame, { once: true });
-    setTimeout(showBgFrame, 800);
-    bgVideo.muted = true;
-    bgVideo.currentTime = 0;
-    bgVideo.load();
+  function showBgFrame() { overlayBg.classList.add('ready'); }
+  bgVideo.addEventListener('seeked',     showBgFrame, { once: true });
+  bgVideo.addEventListener('loadeddata', showBgFrame, { once: true });
+  setTimeout(showBgFrame, 800);
+  bgVideo.muted = true;
+  bgVideo.currentTime = 0;
+  bgVideo.load();
   </script>
 </body>
 </html>
