@@ -13,13 +13,6 @@
 
     #scene-viewport { position: fixed; inset: 0; z-index: 1; overflow: hidden; }
 
-    /*
-      art-wrapper: 500×500 — a arte quadrada.
-      O JS controla tudo via transform (translate + scale).
-      A transição CSS é ativada/desativada pelo JS:
-        - Ken Burns (vai e volta): RAF sem transition CSS
-        - Pan entre cenas: transition CSS cúbica
-    */
     #art-wrapper {
       position: absolute;
       top: 0; left: 0;
@@ -43,15 +36,6 @@
       cursor: pointer;
       background: url('capa.jpg') center center / cover no-repeat;
       transition: opacity 0.65s ease; overflow: hidden;
-    }
-    #overlay-bg { position: absolute; inset: -20px; z-index: 0; opacity: 0; transition: opacity 0.5s ease; }
-    #overlay-bg.ready { opacity: 1; }
-    #overlay-bg video {
-      width: calc(100% + 40px); height: calc(100% + 40px);
-      object-fit: cover;
-      filter: blur(18px) brightness(0.55) saturate(0.85);
-      transform: scale(1.05); pointer-events: none;
-      will-change: filter; -webkit-backface-visibility: hidden; backface-visibility: hidden;
     }
     #overlay-tint { position: absolute; inset: 0; z-index: 1; background: radial-gradient(ellipse at 50% 45%, rgba(112,131,138,0.18) 0%, rgba(10,15,18,0.55) 100%); }
     #overlay-content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; }
@@ -125,7 +109,7 @@
       display:flex;flex-direction:column;align-items:center;justify-content:center;
       text-decoration:none;color:var(--gold-light);gap:.4rem;cursor:pointer;
       -webkit-tap-highlight-color:transparent;
-      overflow:visible; /* label nunca cortada */
+      overflow:visible;
       width:clamp(72px,20vw,96px); height:clamp(72px,20vw,96px);
       opacity:0; transform:translateY(18px) scale(.9);
       transition:opacity .5s ease,transform .5s ease;
@@ -142,9 +126,6 @@
 <body>
 
   <div id="intro-overlay" role="button" aria-label="Clique para abrir o convite">
-    <div id="overlay-bg">
-      <video src="video.mp4" muted playsinline webkit-playsinline x5-playsinline preload="metadata" id="bg-video"></video>
-    </div>
     <div id="overlay-tint"></div>
     <div id="overlay-content">
       <div class="play-ring">
@@ -193,28 +174,6 @@
   </div>
 
   <script>
-  /* ═══════════════════════════════════════════════════════════════
-     ⚙️  CONFIGURAÇÃO — edite apenas este bloco
-     ═══════════════════════════════════════════════════════════════
-
-     totalMs         → duração total do vídeo em ms.
-                        Tempo por cena = totalMs ÷ número de cenas.
-
-     transitionMs    → duração do pan entre cenas.
-
-     kenBurnsAmount  → intensidade do zoom vai-e-volta por cena.
-                        0.04 = sutil (4%) | 0.08 = notável (8%).
-                        O zoom cresce até o pico e volta ao normal.
-
-     zoomLevel       → quão "dentro" da arte a câmera fica.
-                        1.0 = altura da arte = altura da tela (sem pan vertical)
-                        1.5 = 50% mais dentro → pan vertical disponível.
-
-     scenes[]        → cenas na ORDEM de exibição.
-                        panX 0.0=esquerda … 1.0=direita
-                        panY 0.0=topo     … 1.0=fundo
-                        panY=1.0 alinha o FUNDO da arte com o FUNDO da tela.
-  ═══════════════════════════════════════════════════════════════ */
   const CONFIG = {
     artSize        : 500,
     totalMs        : 40000,
@@ -226,13 +185,13 @@
     zoomLevel      : 1.55,
 
     scenes: [
-      { panX: 0.00, panY: 0.00 }, // 1 — topo esquerdo
-      { panX: 0.00, panY: 1.00 }, // 2 — fundo esquerdo   (panY=1 = fundo alinhado)
-      { panX: 0.50, panY: 0.00 }, // 3 — topo centro
-      { panX: 0.40, panY: 1.00 }, // 4 — fundo centro-esq
-      { panX: 0.65, panY: 1.00 }, // 5 — fundo centro-dir
-      { panX: 1.00, panY: 0.00 }, // 6 — topo direito
-      { panX: 1.00, panY: 1.00 }, // 7 — fundo direito
+      { panX: 0.00, panY: 0.00 },
+      { panX: 0.00, panY: 1.00 },
+      { panX: 0.50, panY: 0.00 },
+      { panX: 0.40, panY: 1.00 },
+      { panX: 0.65, panY: 1.00 },
+      { panX: 1.00, panY: 0.00 },
+      { panX: 1.00, panY: 1.00 },
     ]
   };
 
@@ -244,8 +203,6 @@
   const audioBtn   = document.getElementById('audio-btn');
   const finalPage  = document.getElementById('final-page');
   const dotsEl     = document.getElementById('scene-dots');
-  const bgVideo    = document.getElementById('bg-video');
-  const overlayBg  = document.getElementById('overlay-bg');
   const artWrapper = document.getElementById('art-wrapper');
 
   let currentScene   = 0;
@@ -261,54 +218,31 @@
   const iconOn  = `<svg viewBox="0 0 24 24"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><path d="M15.54,8.46a5,5,0,0,1,0,7.07"/><path d="M19.07,4.93a10,10,0,0,1,0,14.14"/></svg>`;
   const iconOff = `<svg viewBox="0 0 24 24"><polygon points="11,5 6,9 2,9 2,15 6,15 11,19"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>`;
 
-  /* ── Calcula transform(translate + scale) ──────────────────────
-     Posiciona a arte 500×500 para a cena, aplicando kbFactor.
-     O zoom (kbFactor > 1) é centrado no ponto visível central
-     da cena, não no centro geométrico da arte — isso garante
-     que o enquadramento não derive durante o Ken Burns.
-  ─────────────────────────────────────────────────────────────── */
   function calcTransform(scene, kbFactor) {
     kbFactor = kbFactor || 1;
     const vW  = window.innerWidth;
     const vH  = window.innerHeight;
     const art = CONFIG.artSize;
-
-    // Scale base: cobrir a tela (object-fit: cover equivalente)
     const coverScale = Math.max(vW / art, vH / art);
     const baseScale  = coverScale * CONFIG.zoomLevel;
-
-    // Translate base (panX/panY definem o enquadramento)
-    const baseTx = scene.panX * (vW - art * baseScale); // ≤0
-    const baseTy = scene.panY * (vH - art * baseScale); // ≤0
-    // panY=1 → baseTy = vH - art*baseScale  → fundo da arte = fundo da tela ✓
-
-    // Ponto central visível em coordenadas da arte (pixels)
+    const baseTx = scene.panX * (vW - art * baseScale);
+    const baseTy = scene.panY * (vH - art * baseScale);
     const centerArtX = (vW / 2 - baseTx) / baseScale;
     const centerArtY = (vH / 2 - baseTy) / baseScale;
-
-    // Nova escala com Ken Burns
     const newScale = baseScale * kbFactor;
-
-    // Translate que mantém o centro visual fixo durante o zoom
     const tx = vW / 2 - centerArtX * newScale;
     const ty = vH / 2 - centerArtY * newScale;
-
     return `translate(${tx.toFixed(2)}px,${ty.toFixed(2)}px) scale(${newScale.toFixed(6)})`;
   }
 
-  /* ── Ken Burns: zoom vai e volta via requestAnimationFrame ──── */
   function easeInOut(t) { return t < .5 ? 2*t*t : -1+(4-2*t)*t; }
 
   function kbFrame(ts) {
     if (!kbStartTime) kbStartTime = ts;
     const progress = Math.min((ts - kbStartTime) / kbDur, 1);
-
-    // Onda suave: cresce até o pico (50%) e volta — o "respira"
     const wave   = progress < .5 ? easeInOut(progress * 2) : easeInOut((1 - progress) * 2);
     const factor = 1 + CONFIG.kenBurnsAmount * wave;
-
     artWrapper.style.transform = calcTransform(kbSceneRef, factor);
-
     if (progress < 1) kbRafId = requestAnimationFrame(kbFrame);
   }
 
@@ -317,11 +251,10 @@
     kbStartTime = null;
     kbSceneRef  = scene;
     kbDur       = Math.max(duration, 200);
-    artWrapper.style.transition = 'none'; // RAF, sem CSS transition
+    artWrapper.style.transition = 'none';
     kbRafId = requestAnimationFrame(kbFrame);
   }
 
-  /* ── Dots ─────────────────────────────────────────────────── */
   function buildDots() {
     CONFIG.scenes.forEach((_, i) => {
       const d = document.createElement('div');
@@ -333,18 +266,12 @@
     dotsEl.querySelectorAll('.dot').forEach((d, idx) => d.classList.toggle('active', idx === i));
   }
 
-  /* ── Navegar para uma cena ────────────────────────────────────
-     instant=true  → snap (sem animação de pan, ex: primeira cena)
-     instant=false → pan suave + Ken Burns após o pan
-  ─────────────────────────────────────────────────────────────── */
   function startScene(index, instant) {
     if (isPanning && !instant) return;
-
     cancelAnimationFrame(kbRafId);
     clearTimeout(sceneTimer);
     currentScene = index;
     updateDots(index);
-
     if (instant) {
       artWrapper.style.transition = 'none';
       artWrapper.style.transform  = calcTransform(CONFIG.scenes[index], 1);
@@ -353,15 +280,11 @@
       isPanning = true;
       artWrapper.style.transition = `transform ${CONFIG.transitionMs}ms cubic-bezier(0.76,0,0.24,1)`;
       artWrapper.style.transform  = calcTransform(CONFIG.scenes[index], 1);
-
-      // Após o pan: inicia Ken Burns pelo tempo restante da cena
       setTimeout(() => {
         isPanning = false;
         startKenBurns(CONFIG.scenes[index], sceneDurationMs - CONFIG.transitionMs);
       }, CONFIG.transitionMs);
     }
-
-    // Agenda próxima cena (tempo total sempre = sceneDurationMs)
     sceneTimer = setTimeout(() => {
       const next = index + 1;
       if (next < CONFIG.scenes.length) startScene(next, false);
@@ -369,7 +292,6 @@
     }, sceneDurationMs);
   }
 
-  /* ── Tela final ───────────────────────────────────────────── */
   function showFinalPage() {
     cancelAnimationFrame(kbRafId);
     clearTimeout(sceneTimer);
@@ -381,7 +303,6 @@
     }));
   }
 
-  /* ── Fade-in de áudio ─────────────────────────────────────── */
   function fadeInAudio() {
     audio.volume = CONFIG.audioStartVol;
     audio.play().catch(() => {});
@@ -398,16 +319,23 @@
     }, ivl);
   }
 
-  /* ── Eventos ─────────────────────────────────────────────── */
+  /* ── Autoplay silencioso do vídeo na capa (preload invisível) ── */
+  video.muted = true;
+  video.currentTime = 0;
+  video.load();
+  video.play().catch(() => {});   // inicia mudo/invisível; pausa no clique → reinicia
+  video.pause();                  // pausa imediatamente — só carrega, não exibe ainda
+
   overlay.addEventListener('click', () => {
     overlay.style.opacity = '0';
     overlay.style.pointerEvents = 'none';
     setTimeout(() => overlay.style.display = 'none', 650);
     audioBtn.style.display = 'flex';
     dotsEl.style.display   = 'flex';
+    video.currentTime = 0;       // reinicia do início ao clicar
     video.play().catch(() => {});
     fadeInAudio();
-    startScene(0, true); // cena 0 sem pan de entrada
+    startScene(0, true);
   });
 
   audioBtn.addEventListener('click', () => {
@@ -423,21 +351,11 @@
     if (!isPanning) startKenBurns(CONFIG.scenes[currentScene], sceneDurationMs);
   });
 
-  /* ── Init ─────────────────────────────────────────────────── */
+  /* ── Init ── */
   buildDots();
   audioBtn.innerHTML = iconOff;
-  video.muted = true;
-  video.currentTime = 0;
   artWrapper.style.transition = 'none';
   artWrapper.style.transform  = calcTransform(CONFIG.scenes[0], 1);
-
-  function showBgFrame() { overlayBg.classList.add('ready'); }
-  bgVideo.addEventListener('seeked',     showBgFrame, { once: true });
-  bgVideo.addEventListener('loadeddata', showBgFrame, { once: true });
-  setTimeout(showBgFrame, 800);
-  bgVideo.muted = true;
-  bgVideo.currentTime = 0;
-  bgVideo.load();
   </script>
 </body>
 </html>
