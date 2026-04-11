@@ -131,7 +131,7 @@
       <div class="play-ring">
         <div class="play-icon">
           <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="30" cy="30" r="29" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.9)" stroke-width="2"/>
+            <circle cx="30" cy="30" r="29" fill="#692f87" stroke="#692f87" stroke-width="2"/>
             <polygon points="25,18 46,30 25,42" fill="#ffffff"/>
           </svg>
         </div>
@@ -185,13 +185,13 @@
     zoomLevel      : 1.55,
 
     scenes: [
-      { panX: 0.00, panY: 0.00 },
-      { panX: 0.00, panY: 1.00 },
-      { panX: 0.50, panY: 0.00 },
-      { panX: 0.40, panY: 1.00 },
-      { panX: 0.65, panY: 1.00 },
-      { panX: 1.00, panY: 0.00 },
-      { panX: 1.00, panY: 1.00 },
+      { panX: 0.00, panY: 0.00 }, // 1 — topo esquerdo
+      { panX: 0.00, panY: 1.00 }, // 2 — fundo esquerdo   (panY=1 = fundo alinhado)
+      { panX: 0.50, panY: 0.00 }, // 3 — topo centro
+      { panX: 0.40, panY: 1.00 }, // 4 — fundo centro-esq
+      { panX: 0.65, panY: 1.00 }, // 5 — fundo centro-dir
+      { panX: 1.00, panY: 0.00 }, // 6 — topo direito
+      { panX: 1.00, panY: 1.00 }, // 7 — fundo direito
     ]
   };
 
