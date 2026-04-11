@@ -363,5 +363,34 @@ Lei 9.610/98 – Direitos Autorais.
   artWrapper.style.transition = 'none';
   artWrapper.style.transform  = calcTransform(CONFIG.scenes[0], 1);
   </script>
+  <style>
+  #skip-btn {
+    position:fixed; bottom:calc(28px + env(safe-area-inset-bottom,0px)); right:calc(20px + env(safe-area-inset-right,0px));
+    z-index:40; height:46px; padding:0 18px; border-radius:23px;
+    border:1.5px solid rgba(201,169,110,.45); background:rgba(8,8,8,.65);
+    color:var(--gold-light); display:none; align-items:center; justify-content:center;
+    cursor:pointer; backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    font-family:'Cinzel',serif; font-size:.6rem; letter-spacing:.2em; text-transform:uppercase;
+    transition:transform .1s; -webkit-tap-highlight-color:transparent;
+  }
+  #skip-btn:active { transform:scale(.88); }
+</style>
+
+<button id="skip-btn">Pular</button>
+
+<script>
+  const skipBtn = document.getElementById('skip-btn');
+
+  // Mostra o botão junto com os outros controles
+  const _origClick = overlay.onclick;
+  overlay.addEventListener('click', () => {
+    skipBtn.style.display = 'flex';
+  });
+
+  skipBtn.addEventListener('click', () => {
+    showFinalPage();
+    skipBtn.style.display = 'none';
+  });
+</script>
 </body>
 </html>
