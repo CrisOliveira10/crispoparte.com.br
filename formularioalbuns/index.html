@@ -174,7 +174,7 @@ Lei 9.610/98 – Direitos Autorais.
         <input type="text" id="grafica" placeholder="Qual gráfica será impresso?">
 
         <label>Serviço:</label>
-        <select id="servico" onchange="calcular()">
+        <select id="servico">
             <option value="">Selecione o serviço...</option>
             <option value="Diagramação">Diagramação (Opção 1)</option>
             <option value="Capa de Álbum">Capa de Álbum (Opção 2)</option>
@@ -182,7 +182,7 @@ Lei 9.610/98 – Direitos Autorais.
 
         <div id="campo_laminas" style="display:none;">
             <label>Quantidade de Lâminas:</label>
-            <input type="number" id="laminas" value="0" min="1">
+            <input type="number" id="laminas" placeholder="Ex: 10" min="1">
         </div>
 
         <label>Tamanho do Álbum:</label>
@@ -231,124 +231,127 @@ Lei 9.610/98 – Direitos Autorais.
 </form>
 
 <script>
-document.getElementById("laminas").addEventListener("input", calcular);
+    // Eventos registrados via JS — mais confiáveis que atributos inline
+    document.getElementById("servico").addEventListener("change", calcular);
+    document.getElementById("laminas").addEventListener("input", calcular);
 
-function calcular() {
-    let servico = document.getElementById("servico").value;
-    let laminasInput = document.getElementById("laminas");
-    let laminas = parseInt(laminasInput.value) || 0;
-    let total = 0;
-    let displayLaminas = document.getElementById("campo_laminas");
+    function calcular() {
+        let servico = document.getElementById("servico").value;
+        let laminasInput = document.getElementById("laminas");
+        let laminas = parseInt(laminasInput.value) || 0;
+        let total = 0;
+        let displayLaminas = document.getElementById("campo_laminas");
 
-    if (servico === "Diagramação") {
-        displayLaminas.style.display = "block";
-        total = (laminas * 4) + 35;
-    } else if (servico === "Capa de Álbum") {
-        displayLaminas.style.display = "block";
-        total = 60; 
-    } else {
-        displayLaminas.style.display = "none";
-    }
-
-    if (total > 0) {
-        document.getElementById("resultado-valor").style.display = "block";
-        document.getElementById("valor_total").innerText = "R$ " + total.toFixed(2).replace('.', ',');
-    } else {
-        document.getElementById("resultado-valor").style.display = "none";
-    }
-    return total;
-}
-
-function copiarPix() {
-    const chave = "71993233142";
-    navigator.clipboard.writeText(chave).then(() => {
-        alert("Chave Pix copiada com sucesso! Agora você pode colar no seu banco.");
-    }).catch(err => {
-        alert("Erro ao copiar. Por favor, anote o número: 71993233142");
-    });
-}
-
-function toggleBotao() {
-    let check = document.getElementById("concordo").checked;
-    document.getElementById("btnEnviar").disabled = !check;
-}
-
-function validarEEnviar() {
-    let campos = ["nome_fotografo", "email_fotografo", "grafica", "servico", "tamanho", "nome_capa", "tipo_evento", "data_evento", "tem_caixa"];
-    let erro = false;
-
-    let servicoValor = document.getElementById("servico").value;
-    if(servicoValor === "Diagramação" || servicoValor === "Capa de Álbum") {
-        let campoLaminas = document.getElementById("laminas");
-        if (!campoLaminas.value || campoLaminas.value === "0") {
-            campoLaminas.classList.add("campo-erro");
-            erro = true;
+        if (servico === "Diagramação") {
+            // Mostra campo lâminas — valor depende da quantidade
+            displayLaminas.style.display = "block";
+            if (laminas > 0) {
+                total = (laminas * 4) + 35;
+            }
+        } else if (servico === "Capa de Álbum") {
+            // Mostra campo lâminas — apenas para registrar a info, valor é fixo
+            displayLaminas.style.display = "block";
+            total = 60;
         } else {
-            campoLaminas.classList.remove("campo-erro");
+            displayLaminas.style.display = "none";
+            total = 0;
         }
-    }
 
-    campos.forEach(id => {
-        let campo = document.getElementById(id);
-        if (!campo.value || campo.value === "") {
-            campo.classList.add("campo-erro");
-            erro = true;
+        let resultadoDiv = document.getElementById("resultado-valor");
+        if (total > 0) {
+            resultadoDiv.style.display = "block";
+            document.getElementById("valor_total").innerText = "R$ " + total.toFixed(2).replace('.', ',');
         } else {
-            campo.classList.remove("campo-erro");
+            resultadoDiv.style.display = "none";
         }
-    });
 
-    if (erro) {
-        alert("Atenção! Por favor, preencha todos os campos destacados em vermelho antes de enviar.");
-        return;
+        return total;
     }
-    
-    enviarWhats();
-}
 
-function enviarWhats() {
-    let valorFinal = calcular();
-    let nome = document.getElementById("nome_fotografo").value;
-    let email = document.getElementById("email_fotografo").value;
-    let link = document.getElementById("link_fotos").value; // NOVO CAMPO
-    let grafica = document.getElementById("grafica").value;
-    let servico = document.getElementById("servico").value;
-    let laminas = document.getElementById("laminas").value;
-    let tamanho = document.getElementById("tamanho").value;
-    let capa = document.getElementById("nome_capa").value;
-    let evento = document.getElementById("tipo_evento").value;
-    let data = document.getElementById("data_evento").value;
-    let caixa = document.getElementById("tem_caixa").value;
-
-    let dataBR = data.split('-').reverse().join('/');
-
-    let msg = `📸 *NOVO PEDIDO DE PROJETO* 📸\n\n`;
-    msg += `👤 *Fotógrafo:* ${nome}\n`;
-    msg += `📧 *E-mail:* ${email}\n`;
-    
-    if(link !== "") {
-        msg += `🔗 *Link das Fotos:* ${link}\n`;
+    function copiarPix() {
+        const chave = "71993233142";
+        navigator.clipboard.writeText(chave).then(() => {
+            alert("Chave Pix copiada com sucesso! Agora você pode colar no seu banco.");
+        }).catch(() => {
+            alert("Erro ao copiar. Por favor, anote o número: 71993233142");
+        });
     }
-    
-    msg += `🏢 *Gráfica:* ${grafica}\n`;
-    msg += `🛠 *Serviço:* ${servico}\n`;
-    
-    if(servico === "Diagramação" || servico === "Capa de Álbum") msg += `📄 *Lâminas:* ${laminas}\n`;
-    
-    msg += `📏 *Tamanho:* ${tamanho}\n`;
-    msg += `📔 *Nome na Capa:* ${capa}\n`;
-    msg += `🎉 *Evento:* ${evento}\n`;
-    msg += `📅 *Data:* ${dataBR}\n`;
-    msg += `📦 *Tem Caixa:* ${caixa}\n\n`;
-    msg += `💰 *VALOR TOTAL: R$ ${valorFinal.toFixed(2).replace('.', ',')}*\n`;
-    msg += `✅ *Li e concordo com os termos.*\n\n`;
-    msg += `_Aguardo confirmação do pagamento_\n`;
-    msg += `🔑 *Chave Pix Celular:* 71993233142`;
 
-    let numero = "5571993233142";
-    let url = "https://wa.me/" + numero + "?text=" + encodeURIComponent(msg);
-    window.open(url, '_blank');
-}
+    function toggleBotao() {
+        let check = document.getElementById("concordo").checked;
+        document.getElementById("btnEnviar").disabled = !check;
+    }
+
+    function validarEEnviar() {
+        let campos = ["nome_fotografo", "email_fotografo", "grafica", "servico", "tamanho", "nome_capa", "tipo_evento", "data_evento", "tem_caixa"];
+        let erro = false;
+
+        let servicoValor = document.getElementById("servico").value;
+        if (servicoValor === "Diagramação" || servicoValor === "Capa de Álbum") {
+            let campoLaminas = document.getElementById("laminas");
+            if (!campoLaminas.value || parseInt(campoLaminas.value) < 1) {
+                campoLaminas.classList.add("campo-erro");
+                erro = true;
+            } else {
+                campoLaminas.classList.remove("campo-erro");
+            }
+        }
+
+        campos.forEach(id => {
+            let campo = document.getElementById(id);
+            if (!campo.value || campo.value === "") {
+                campo.classList.add("campo-erro");
+                erro = true;
+            } else {
+                campo.classList.remove("campo-erro");
+            }
+        });
+
+        if (erro) {
+            alert("Atenção! Por favor, preencha todos os campos destacados em vermelho antes de enviar.");
+            return;
+        }
+
+        enviarWhats();
+    }
+
+    function enviarWhats() {
+        let valorFinal = calcular();
+        let nome = document.getElementById("nome_fotografo").value;
+        let email = document.getElementById("email_fotografo").value;
+        let link = document.getElementById("link_fotos").value;
+        let grafica = document.getElementById("grafica").value;
+        let servico = document.getElementById("servico").value;
+        let laminas = document.getElementById("laminas").value;
+        let tamanho = document.getElementById("tamanho").value;
+        let capa = document.getElementById("nome_capa").value;
+        let evento = document.getElementById("tipo_evento").value;
+        let data = document.getElementById("data_evento").value;
+        let caixa = document.getElementById("tem_caixa").value;
+
+        let dataBR = data.split('-').reverse().join('/');
+
+        let msg = `📸 *NOVO PEDIDO DE PROJETO* 📸\n\n`;
+        msg += `👤 *Fotógrafo:* ${nome}\n`;
+        msg += `📧 *E-mail:* ${email}\n`;
+        if (link !== "") msg += `🔗 *Link das Fotos:* ${link}\n`;
+        msg += `🏢 *Gráfica:* ${grafica}\n`;
+        msg += `🛠 *Serviço:* ${servico}\n`;
+        if (servico === "Diagramação" || servico === "Capa de Álbum") msg += `📄 *Lâminas:* ${laminas}\n`;
+        msg += `📏 *Tamanho:* ${tamanho}\n`;
+        msg += `📔 *Nome na Capa:* ${capa}\n`;
+        msg += `🎉 *Evento:* ${evento}\n`;
+        msg += `📅 *Data:* ${dataBR}\n`;
+        msg += `📦 *Tem Caixa:* ${caixa}\n\n`;
+        msg += `💰 *VALOR TOTAL: R$ ${valorFinal.toFixed(2).replace('.', ',')}*\n`;
+        msg += `✅ *Li e concordo com os termos.*\n\n`;
+        msg += `_Aguardo confirmação do pagamento_\n`;
+        msg += `🔑 *Chave Pix Celular:* 71993233142`;
+
+        let numero = "5571993233142";
+        let url = "https://wa.me/" + numero + "?text=" + encodeURIComponent(msg);
+        window.open(url, '_blank');
+    }
 </script>
 
 </body>
