@@ -2,76 +2,63 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Isabella 15 Anos</title>
-    <meta property="og:title" content="Isabella 15 Anos">
-    <meta property="og:description" content="Você recebeu um convite especial! Clique para abrir.">
-    <meta property="og:type" content="website">
-    <meta name="twitter:title" content="Isabella 15 Anos">
+    <title>Bianca 3 Anos</title>
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+        * { margin:0; padding:0; box-sizing:border-box; }
         body { background:#000; overflow:hidden; height:100dvh; display:flex; justify-content:center; align-items:center; font-family:sans-serif; }
         .page { display:none; width:100%; height:100%; position:absolute; max-width:500px; opacity:0; transition:opacity 0.6s; }
         .active { display:flex; opacity:1; }
         img, video { width:100%; height:100%; object-fit:contain; }
-        .hotspot { position:absolute; transform:translate(-50%, -50%); z-index:100; border-radius:50%; }
-        #btn-s { position:fixed; bottom:30px; left:20px; width:45px; height:45px; background:rgba(255,255,255,0.4); border:1px solid rgba(255,255,255,0.6); border-radius:50%; z-index:999; display:none; justify-content:center; align-items:center; color:white; backdrop-filter:blur(5px); }
-        #skip { position:fixed; bottom:30px; right:20px; z-index:999; padding:10px 20px; border-radius:20px; background:rgba(0,0,0,0.6); color:#c9a96e; display:none; border:1px solid #c9a96e; font-size:10px; text-transform:uppercase; letter-spacing:1px; }
-        
-        /* CRONÔMETRO AMPLIADO */
+        .hotspot { position:absolute; transform:translate(-50%, -50%); z-index:100; border-radius:50%; cursor:pointer; }
         #timer { position:absolute; top:12%; width:100%; color:white; text-align:center; z-index:200; display:none; flex-direction:column; text-shadow:2px 2px 5px #000; pointer-events:none; }
         .t-num { display:inline-block; margin:0 8px; font-size:2.2rem; font-weight:bold; }
-        .t-lab { display:block; font-size:0.7rem; opacity:0.9; letter-spacing:1px; margin-top:-2px; }
+        .t-lab { display:block; font-size:0.7rem; opacity:0.9; }
+        #form-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:2000; justify-content:center; align-items:center; }
+        .form-box { background:#fff; width:90%; max-width:380px; padding:25px; border-radius:20px; text-align:center; position:relative; }
+        .form-box input, .form-box select { width:100%; padding:12px; margin:8px 0; border:1px solid #ddd; border-radius:10px; font-size:1rem; }
+        .form-box button { width:100%; padding:15px; background:#25d366; color:#fff; border:none; border-radius:10px; font-weight:bold; margin-top:15px; cursor:pointer; }
+        #btn-s { position:fixed; bottom:30px; left:20px; width:45px; height:45px; background:rgba(255,255,255,0.4); border-radius:50%; z-index:999; display:none; justify-content:center; align-items:center; color:white; border:none; }
+        #skip { position:fixed; bottom:30px; right:20px; z-index:999; padding:10px 20px; border-radius:20px; background:rgba(0,0,0,0.6); color:#c9a96e; display:none; border:1px solid #c9a96e; font-size:10px; text-transform:uppercase; }
     </style>
 </head>
 <body>
 <audio id="m" src="audio.mp3" loop></audio>
-<button id="btn-s" onclick="t()">II</button>
+<button id="btn-s" onclick="mu.paused?mu.play():mu.pause()">II</button>
 <button id="skip" onclick="g(3)">PULAR</button>
+<div id="timer"><p style="font-size:1.1rem; margin-bottom:10px; font-weight:bold; letter-spacing:1px;">Nossa diversão começa em:</p><div><div class="t-num"><span id="d">00</span><span class="t-lab">DIAS</span></div><div class="t-num"><span id="h">00</span><span class="t-lab">HORAS</span></div><div class="t-num"><span id="mi">00</span><span class="t-lab">MIN</span></div><div class="t-num"><span id="se">00</span><span class="t-lab">SEG</span></div></div></div>
 
-<div id="timer">
-    <p style="font-size:1.1rem; margin-bottom:10px; font-weight:bold; letter-spacing:1px;">Nossa diversão começa em:</p>
-    <div>
-        <div class="t-num"><span id="d">00</span><span class="t-lab">DIAS</span></div>
-        <div class="t-num"><span id="h">00</span><span class="t-lab">HORAS</span></div>
-        <div class="t-num"><span id="mi">00</span><span class="t-lab">MIN</span></div>
-        <div class="t-num"><span id="se">00</span><span class="t-lab">SEG</span></div>
+<div class="page active" id="pg1" onclick="s()"><img src="paginamenu.jpg"><a href="https://maps.app.goo.gl/HFHwpFUTUmKPLjcHA" target="_blank" class="hotspot" style="top:88.06%; left:38.71%; width:15.89%; height:15.89%;"></a>
+<div class="hotspot" onclick="abrirForm('71993233142')" style="top:87.90%; left:60.78%; width:15.58%; height:15.58%;"></div>
+</div>
+<div class="page " id="pg2" ><img src=""></div>
+<div class="page " id="pg3" ><img src=""></div>
+
+
+<div id="form-modal">
+    <div class="form-box">
+        <h3 style="margin-bottom:15px; color:#333;">Confirmar Presença</h3>
+        <input type="text" id="fnome" placeholder="Seu Nome">
+        <select id="fparticipa"><option value="Sim, vou participar!">Sim, vou participar!</option><option value="Não poderei ir.">Não poderei ir.</option></select>
+        <input type="number" id="fadultos" placeholder="Qtd. Adultos">
+        <input type="number" id="fcriancas" placeholder="Qtd. Crianças">
+        <button onclick="enviarPresenca()">ENVIAR PELO WHATSAPP</button>
+        <p onclick="document.getElementById('form-modal').style.display='none'" style="margin-top:15px; font-size:0.8rem; color:red; cursor:pointer;">FECHAR</p>
     </div>
 </div>
 
-<div class="page active" id="pg1" onclick="s()"><img src="capa.jpg"></div>
-<div class="page" id="pg2"><video id="v2" src="video.mp4" playsinline></video></div>
-<div class="page" id="pg3"><img src="menu.jpg"><a href="https://wa.me/5571993233142" target="_blank" class="hotspot" style="top:40.13%; left:52.27%; width:17.77%; height:17.77%;"></a>
-<a href="https://maps.app.goo.gl/HFHwpFUTUmKPLjcHA" target="_blank" class="hotspot" style="top:53.09%; left:51.29%; width:16.30%; height:16.30%;"></a>
-<div class="hotspot" onclick="g(4)" style="top:64.80%; left:50.31%; width:16.05%; height:16.05%;"></div>
-<div class="hotspot" onclick="g(5)" style="top:77.90%; left:51.65%; width:15.44%; height:15.44%;"></div>
-</div>
-<div class="page" id="pg4" onclick="rv()"><img src="4.jpg"></div>
-<div class="page" id="pg5" onclick="rv()"><img src="5.jpg"></div>
-
-
 <script>
     const mu=document.getElementById('m'), btn=document.getElementById('btn-s'), sk=document.getElementById('skip'), tm=document.getElementById('timer');
-    const hasP3 = true;
-    let lastPg = 1;
-    const uSk = "sim", uCr = "sim", pgCr = "4", dtCr = "2026-08-20T21:00";
-    
-    function s(){ mu.play().catch(()=>{}); btn.style.display='flex'; if(uSk==='sim' && hasP3) sk.style.display='block'; g(2); const v2=document.getElementById('v2'); if(v2 && v2.tagName==='VIDEO'){v2.play(); v2.onended=()=> { if(hasP3) g(3); } } else { if(hasP3) setTimeout(()=>g(3),4000); } }
-    
-    function g(n){ 
-        if(n < 4) lastPg = n;
-        document.querySelectorAll('.page').forEach(p=>{p.classList.remove('active'); p.style.display='none';});
-        if(n==3 || (!hasP3 && n==2)) sk.style.display='none';
-        tm.style.display = (uCr==='sim' && n==pgCr) ? 'flex' : 'none';
-        const t=document.getElementById('pg'+n); if(t){t.style.display='flex'; setTimeout(()=>t.classList.add('active'),50); const v=t.querySelector('video'); if(v)v.play();}
-    }
-    
-    function rv(){ g(lastPg); }
+    const hasP3 = false, uSk = "nao", uCr = "nao", pgCr = "3", dtCr = "";
+    let lastPg = 1, currentZap = "";
 
-    function t(){ mu.paused ? mu.play() : mu.pause(); }
-    if(uCr==='sim'){ setInterval(()=>{ const dist=new Date(dtCr)-new Date(); if(dist<0)return;
-        document.getElementById('d').innerText=Math.floor(dist/86400000).toString().padStart(2,'0');
-        document.getElementById('h').innerText=Math.floor((dist%86400000)/3600000).toString().padStart(2,'0');
-        document.getElementById('mi').innerText=Math.floor((dist%3600000)/60000).toString().padStart(2,'0');
-        document.getElementById('se').innerText=Math.floor((dist%60000)/1000).toString().padStart(2,'0');
-    },1000); }
+    function s(){ mu.play().catch(()=>{}); btn.style.display='flex'; if(uSk==='sim' && hasP3) sk.style.display='block'; g(2); const v2=document.getElementById('v2'); if(v2){v2.play(); v2.onended=()=>{if(hasP3)g(3);}} else {if(hasP3)setTimeout(()=>g(3),4000);} }
+    function g(n){ if(n<4) lastPg=n; document.querySelectorAll('.page').forEach(p=>{p.classList.remove('active'); p.style.display='none';}); if(n==3 || (!hasP3 && n==2)) sk.style.display='none'; tm.style.display=(uCr==='sim'&&n==pgCr)?'flex':'none'; const t=document.getElementById('pg'+n); if(t){t.style.display='flex'; setTimeout(()=>t.classList.add('active'),50); const v=t.querySelector('video'); if(v)v.play();} }
+    function rv(){ g(lastPg); }
+    function abrirForm(z){ currentZap = z; document.getElementById('form-modal').style.display='flex'; }
+    function enviarPresenca(){
+        const n=document.getElementById('fnome').value, p=document.getElementById('fparticipa').value, a=document.getElementById('fadultos').value, c=document.getElementById('fcriancas').value;
+        const msg = encodeURIComponent(`✨ *CONFIRMAÇÃO DE PRESENÇA* ✨\n\n👤 *Nome:* ${n}\n🙌 *Participa?* ${p}\n👨‍👩‍👧‍👦 *Adultos:* ${a}\n👶 *Crianças:* ${c}`);
+        window.open(`https://wa.me/${currentZap}?text=${msg}`);
+    }
+    if(uCr==='sim'){ setInterval(()=>{ const dist=new Date(dtCr)-new Date(); if(dist<0)return; document.getElementById('d').innerText=Math.floor(dist/864e5).toString().padStart(2,'0'); document.getElementById('h').innerText=Math.floor((dist%864e5)/36e5).toString().padStart(2,'0'); document.getElementById('mi').innerText=Math.floor((dist%36e5)/6e4).toString().padStart(2,'0'); document.getElementById('se').innerText=Math.floor((dist%6e4)/1e3).toString().padStart(2,'0'); },1000); }
 </script></body></html>
