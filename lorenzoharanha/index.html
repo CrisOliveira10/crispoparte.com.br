@@ -14,7 +14,6 @@
 
 html, body {
   width: 100%;
-  /* Trocado para dvh para evitar cortes no Safari */
   height: 100dvh;
   overflow: hidden;
   background: #000;
@@ -69,14 +68,13 @@ video, img {
   z-index: 5;
 }
 
-
 /* ===== TOPO E CRONÔMETRO ===== */
 .top-bar {
   position: absolute;
   top: 0;
   width: 100%;
-  height: 15%; /* Altura fluida baseada no tamanho da tela */
-  z-index: 25; /* Z-index alto para garantir que nada fique por cima dele */
+  height: 15%; 
+  z-index: 25; 
   pointer-events: none;
 }
 
@@ -87,36 +85,37 @@ video, img {
 .hotspot-audio {
   left: 0;
   top: 0;
-  width: 25%; /* Cobre a área do botão de áudio na esquerda */
+  width: 25%; 
   height: 100%;
 }
 
 .hotspot-menu {
-  right: 0; /* Colado na direita */
+  right: 0; 
   top: 0;
-  width: 25%; /* Cobre a área do botão de menu na direita */
+  width: 25%; 
   height: 100%;
 }
 
 #timer {
   position: absolute;
-  top: 25%; /* Centralizado na área da barra superior */
+  top: 25%; 
   left: 50%;
   transform: translateX(-50%);
   color: #fff;
-  font-size: 5vw; /* Texto fluido */
+  /* CORREÇÃO APLICADA AQUI: O texto cresce no celular, mas trava proporcional ao tamanho do PC */
+  font-size: clamp(16px, 5vw, 2.8dvh); 
   z-index: 15;
   display: none;
 }
   
-  /* ===== MENU LATERAL ===== */
+/* ===== MENU LATERAL ===== */
 .menu-container {
   position: absolute;
-  right: 0; /* Colado na direita */
+  right: 0; 
   top: 50%; 
   transform: translateY(-50%);
-  width: 60%; /* Largura em porcentagem (substitui os 350px) */
-  height: 60%; /* Altura definida para a imagem background-size funcionar */
+  width: 60%; 
+  height: 60%; 
   z-index: 30;
   display: none;        
   flex-direction: column;
@@ -132,7 +131,7 @@ video, img {
 
 .menu-btn {
   width: 100%;        
-  height: 25%; /* Fatias de clique baseadas na altura do menu */
+  height: 25%; 
   cursor: pointer;
   display: block;
 }
@@ -158,11 +157,6 @@ video, img {
   right: 5%;
   width: 20%;
   height: 10%;
-}
-
-@media(max-width:768px){
-  /* O media query para dispositivos menores não precisa mais alterar tamanhos fixos, 
-     pois as porcentagens já cuidam disso. Mantido apenas por precaução de font-size. */
 }
 </style>
 </head>
