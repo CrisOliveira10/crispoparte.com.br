@@ -5,10 +5,11 @@ Material exclusivo para alunos.
 Proibida reprodução, distribuição ou revenda.
 Lei 9.610/98 – Direitos Autorais.
 -->
+
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Convite Miguel 5 anos</title>
+<title>Convite Miguel 5 Anos</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 <style>
@@ -20,7 +21,7 @@ Lei 9.610/98 – Direitos Autorais.
 
 html, body {
   width: 100%;
-  /* 2. DVH APLICADO PARA O SAFARI */
+  /* Uso de dvh para evitar cortes no Safari mobile */
   height: 100dvh;
   overflow: hidden;
   background: #000;
@@ -30,7 +31,7 @@ html, body {
   align-items: center;
 }
 
-/* 3. MEDIA-WRAPPER PARA TRAVAR A ARTE E NÃO CORTAR LATERAIS */
+/* ===== CONTAINER 9:16 (O SEGREDO DA RESPONSIVIDADE) ===== */
 .media-wrapper {
   position: relative;
   height: 100dvh;
@@ -54,7 +55,7 @@ html, body {
   display: block;
 }
 
-/* 4. OBJECT-FIT CONTAIN APLICADO */
+/* Object-fit contain para a arte nunca ser cortada */
 video, img {
   width: 100%;
   height: 100%;
@@ -62,7 +63,7 @@ video, img {
   pointer-events: none;
 }
 
-/* 5. HOTSPOTS EM PORCENTAGEM (GARANTIA DE NÃO SAIR DO LUGAR) */
+/* ===== HOTSPOTS EM % ===== */
 .hotspot {
   position: absolute;
   cursor: pointer;
@@ -102,14 +103,14 @@ video, img {
   height: 100%;
 }
 
-/* ===== CRONÔMETRO LIMPO E CENTRALIZADO (SEM FUNDO VERMELHO) ===== */
+/* ===== CRONÔMETRO LIMPO E CENTRALIZADO ===== */
 #timer-complex {
   position: absolute;
-  top: 6%; /* Altura geral do cronômetro */
+  top: 5%; /* Ajuste aqui para subir ou baixar o bloco no topo */
   left: 50%;
   transform: translateX(-50%);
-  width: 55%; 
-  display: none; /* Escondido durante o vídeo */
+  width: 60%; 
+  display: none; /* Só aparece após o vídeo */
   flex-direction: column;
   align-items: center;
   color: #fff;
@@ -117,18 +118,12 @@ video, img {
   pointer-events: none;
 }
 
-#timer-complex .timer-title {
-  font-size: clamp(10px, 2.2vw, 1.5dvh);
-  margin-bottom: 2px;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-  white-space: nowrap;
-}
-
 #timer-complex .timer-blocks-container {
   display: flex;
   width: 100%;
-  justify-content: center; /* <-- Centraliza os blocos */
-  gap: 8%; /* <-- ADICIONE ISSO: Cria o espaço pequeno entre eles */
+  /* Centraliza e junta os números */
+  justify-content: center; 
+  gap: 6%; /* Aumente ou diminua aqui para separar ou juntar mais os números */
 }
 
 #timer-complex .timer-block {
@@ -138,6 +133,7 @@ video, img {
 }
 
 #timer-complex .timer-num {
+  /* Fonte inteligente: cresce no telemóvel, trava no PC */
   font-size: clamp(18px, 5.5vw, 3dvh); 
   font-weight: bold;
   text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
@@ -145,8 +141,9 @@ video, img {
 
 #timer-complex .timer-label {
   font-size: clamp(8px, 1.5vw, 1.2dvh);
-  margin-top: 2px;
+  margin-top: 1px;
   text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+  opacity: 0.9;
 }
 
 /* ===== MENU LATERAL COLADO NA DIREITA ===== */
@@ -174,7 +171,6 @@ video, img {
   width: 100%;        
   height: 25%; 
   cursor: pointer;
-  display: block;
 }
 
 /* ===== RODAPÉ ===== */
@@ -220,7 +216,6 @@ video, img {
       <div class="hotspot hotspot-audio" onclick="toggleAudio()"></div>
       
       <div id="timer-complex">
-          <div class="timer-title">Nossa diversão começa em:</div>
           <div class="timer-blocks-container">
               <div class="timer-block">
                   <span class="timer-num" id="dias-num">00</span>
@@ -269,8 +264,10 @@ video, img {
 </div>
 
 <script>
-// --- FUNÇÕES DO CONVITE ---
+// --- CONTROLO GERAL ---
 const audio = document.getElementById("bgAudio");
+const video2 = document.getElementById("video2");
+const timerWrap = document.getElementById("timer-complex");
 let audioStarted = false;
 
 function iniciarTudo() {
@@ -283,42 +280,40 @@ function goToCena(n, voltarFinal = false){
   document.querySelectorAll(".cena").forEach(c => c.classList.remove("active"));
   document.getElementById("cena"+n).classList.add("active");
 
-  const v2 = document.getElementById("video2");
   if(n === 2) {
     if(voltarFinal) {
-      v2.currentTime = 6; 
-      document.getElementById("timer-complex").style.display = "flex"; 
+      video2.currentTime = 6; 
+      timerWrap.style.display = "flex"; 
+      audio.volume = 1.0;
     } else {
-      v2.currentTime = 0;
-      // Garante que o cronômetro fica INVISÍVEL enquanto o vídeo roda
-      document.getElementById("timer-complex").style.display = "none";
+      video2.currentTime = 0;
+      timerWrap.style.display = "none"; // Esconde durante a fala
+      audio.volume = 0.2;
     }
-    v2.play().catch(e => console.log(e));
+    video2.play().catch(e => console.log(e));
   } else {
-    v2.pause();
+    video2.pause();
+    audio.volume = 1.0;
   }
 }
 
 function toggleMenu(){
   const menu = document.getElementById("menu");
-  if (menu.style.display === "none" || menu.style.display === "") {
-    menu.style.display = "flex";
-  } else {
-    menu.style.display = "none";
-  }
+  menu.style.display = (menu.style.display === "none" || menu.style.display === "") ? "flex" : "none";
 }
 
 function toggleAudio(){
   audio.paused ? audio.play() : audio.pause();
 }
 
-// Só exibe o cronômetro quando o vídeo termina
-document.getElementById("video2").addEventListener("ended", () => {
-  document.getElementById("timer-complex").style.display = "flex";
+// Exibe cronómetro quando o vídeo acaba
+video2.addEventListener("ended", () => {
+  timerWrap.style.display = "flex";
+  audio.volume = 1.0;
 });
 
-// --- LÓGICA DO CRONÔMETRO ---
-const eventDate = new Date("2026-09-08T16:30:00");
+// --- LÓGICA DO CRONÓMETRO ---
+const eventDate = new Date("2026-12-31T17:00:00"); // Ajuste a data aqui
 const segNum = document.getElementById("seg-num");
 const minNum = document.getElementById("min-num");
 const horasNum = document.getElementById("horas-num");
@@ -328,38 +323,29 @@ setInterval(()=>{
   const now = new Date();
   const diff = eventDate - now;
   
-  
-    segNum.innerText = "00";
-    minNum.innerText = "00";
-    horasNum.innerText = "00";
-    diasNum.innerText = "00";
-    document.querySelector(".timer-title").innerText = "A diversão já começou!";
+  if(diff <= 0){
+    diasNum.innerText = "00"; horasNum.innerText = "00";
+    minNum.innerText = "00"; segNum.innerText = "00";
     return;
   }
   
-  const d = Math.floor(diff/86400000);
-  const h = Math.floor(diff/3600000)%24;
-  const m = Math.floor(diff/60000)%60;
-  const s = Math.floor(diff/1000)%60;
+  const d = Math.floor(diff/86400000).toString().padStart(2, '0');
+  const h = Math.floor((diff/3600000)%24).toString().padStart(2, '0');
+  const m = Math.floor((diff/60000)%60).toString().padStart(2, '0');
+  const s = Math.floor((diff/1000)%60).toString().padStart(2, '0');
   
-  diasNum.innerText = d.toString().padStart(2, '0');
-  horasNum.innerText = h.toString().padStart(2, '0');
-  minNum.innerText = m.toString().padStart(2, '0');
-  segNum.innerText = s.toString().padStart(2, '0');
+  diasNum.innerText = d;
+  horasNum.innerText = h;
+  minNum.innerText = m;
+  segNum.innerText = s;
 }, 1000);
 
-// --- SCRIPT DE SEGURANÇA E DIREITOS AUTORAIS ---
+// --- SEGURANÇA ---
 (function() {
     document.addEventListener('contextmenu', e => e.preventDefault());
-    document.addEventListener('keydown', function(e) {
-        if (e.keyCode == 123 || (e.ctrlKey && e.keyCode == 85) || 
-           (e.ctrlKey && e.shiftKey && e.keyCode == 73) || 
-           (e.ctrlKey && e.keyCode == 67) || (e.ctrlKey && e.keyCode == 83)) {
-            e.preventDefault();
-            return false;
-        }
+    document.addEventListener('keydown', e => {
+        if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && e.keyCode == 73)) e.preventDefault();
     });
-    console.log("%c Protegido pela Lei 9.610/98 - Autoria: Cristiane Oliveira ", "color: white; background: red; font-weight: bold; font-size: 14px;");
 })();
 </script>
 
