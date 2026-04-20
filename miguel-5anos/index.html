@@ -9,7 +9,7 @@ Lei 9.610/98 – Direitos Autorais.
 <head>
 <meta charset="UTF-8">
 <title>Miguel 5 anos</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 <style>
 *{
@@ -18,12 +18,26 @@ Lei 9.610/98 – Direitos Autorais.
   box-sizing:border-box;
 }
 
+/* Uso de dvh para evitar o corte da interface pela barra do Safari */
 html,body{
   width:100%;
-  height:100%;
+  height:100dvh;
   overflow:hidden;
   background:#000;
   font-family:Arial,sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Container que mantém a proporção e impede cortes na arte */
+.app-container {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  max-width: 56.25dvh; /* Mantém proporção 9:16 aprox. */
+  overflow: hidden;
+  background: #000;
 }
 
 /* ===== CENAS ===== */
@@ -38,13 +52,14 @@ html,body{
   display:block;
 }
 
-video,img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
+/* object-fit: contain garante que o vídeo/imagem caiba sem cortes laterais */
+video, img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
-/* ===== HOTSPOTS GERAIS ===== */
+/* ===== HOTSPOTS GERAIS EM PORCENTAGEM ===== */
 .hotspot{
   position:absolute;
   cursor:pointer;
@@ -56,28 +71,28 @@ video,img{
   background: transparent;
 }
 
-/* ===== MENU LATERAL ===== */
+/* ===== MENU LATERAL RE-AJUSTADO ===== */
 .menu-container{
   position:absolute;
   right:0;              
-  top:55%; 
+  top:50%; 
   transform:translateY(-50%);
-  width: 350px;         
+  width: 70%; /* Ajustado para % */
   z-index:20;
   display: none;         
   flex-direction: column;
-  gap: 25px; 
+  gap: 5%; 
   align-items: flex-end;
 
   background-image: url("media/menu-botoes.png");
-  background-size: 140%; 
+  background-size: contain; 
   background-repeat: no-repeat;
   background-position: right center;
 }
 
 .menu-btn{
-  width: 350px;         
-  height: 150px; 
+  width: 100%;         
+  height: 80px; 
   cursor: pointer;
   display: block;
 }
@@ -87,7 +102,7 @@ video,img{
   position:absolute;
   top:0;
   width:100%;
-  height:100px;
+  height:15%; /* Porcentagem */
   z-index:10;
   pointer-events: none;
 }
@@ -99,26 +114,27 @@ video,img{
 .hotspot-audio{
   left:0;
   top:0;
-  width:80px;
-  height:100px;
+  width:20%;
+  height:100%;
 }
 
 .hotspot-menu{
   right:0px;
   top:0px;
-  width:120px;
-  height:120px;
+  width:25%;
+  height:100%;
 }
 
 #timer{
   position:absolute;
-  top:30px;
+  top: 40%;
   left:50%;
   transform:translateX(-50%);
   color:#fff;
-  font-size:24px;
+  font-size: 1.2rem;
   z-index:15;
   display:none;
+  white-space: nowrap;
 }
 
 /* ===== RODAPÉ ===== */
@@ -126,28 +142,28 @@ video,img{
   position:absolute;
   bottom:0;
   width:100%;
-  height:120px;
+  height:15%;
   display:flex;
   justify-content:space-between;
   z-index:10;
 }
 
 .bottom-bar a{
-  width:120px;
-  height:120px;
+  width:30%;
+  height:100%;
 }
 
 .hotspot-back{
   top:0;
-  right:120px;
-  width:120px;
-  height:120px;
+  right:0;
+  width:25%;
+  height:100%;
 }
 
-@media(max-width:768px){
-  .hotspot-menu, .hotspot-back{ right:0px; }
-  .menu-container { width: 300px; }
-  .menu-btn { width: 300px; height: 110px; }
+/* Responsividade de botões para telas menores dentro do container */
+@media(max-width:400px){
+  #timer { font-size: 1rem; }
+  .menu-btn { height: 60px; }
 }
 </style>
 </head>
@@ -156,44 +172,47 @@ video,img{
 
 <audio id="bgAudio" src="media/audio.mp3" loop></audio>
 
-<section id="cena1" class="cena active">
-  <video src="media/video1.mp4" autoplay muted playsinline loop></video>
-  <div class="hotspot hotspot-full" onclick="iniciarTudo()"></div>
-</section>
+<div class="app-container">
+    
+    <section id="cena1" class="cena active">
+      <video src="media/video1.mp4" autoplay muted playsinline loop></video>
+      <div class="hotspot hotspot-full" onclick="iniciarTudo()"></div>
+    </section>
 
-<section id="cena2" class="cena">
-  <video id="video2" src="media/video2.mp4" playsinline></video>
+    <section id="cena2" class="cena">
+      <video id="video2" src="media/video2.mp4" playsinline></video>
 
-  <div class="top-bar">
-    <div class="hotspot hotspot-audio" onclick="toggleAudio()"></div>
-    <div id="timer"></div>
-    <div class="hotspot hotspot-menu" onclick="toggleMenu()"></div>
-  </div>
+      <div class="top-bar">
+        <div class="hotspot hotspot-audio" onclick="toggleAudio()"></div>
+        <div id="timer"></div>
+        <div class="hotspot hotspot-menu" onclick="toggleMenu()"></div>
+      </div>
 
-  <div id="menu" class="menu-container">
-    <a class="menu-btn" href="https://maps.app.goo.gl/AZBjKdxYEqVsC6N38" target="_blank"></a>
-    <div class="menu-btn" onclick="goToCena(3)"></div>
-    <div class="menu-btn" onclick="goToCena(4)"></div>
-  </div>
+      <div id="menu" class="menu-container">
+        <a class="menu-btn" href="https://maps.app.goo.gl/AZBjKdxYEqVsC6N38" target="_blank"></a>
+        <div class="menu-btn" onclick="goToCena(3)"></div>
+        <div class="menu-btn" onclick="goToCena(4)"></div>
+      </div>
 
-  <div class="bottom-bar">
-    <a href="https://forms.gle/j1xWuV1bQKevcKWZ8" target="_blank"></a>
-    <a href="https://forms.gle/gCTygBPyy5mx22aZA" target="_blank"></a>
-  </div>
-</section>
+      <div class="bottom-bar">
+        <a href="https://forms.gle/j1xWuV1bQKevcKWZ8" target="_blank"></a>
+        <a href="https://forms.gle/gCTygBPyy5mx22aZA" target="_blank"></a>
+      </div>
+    </section>
 
-<section id="cena3" class="cena">
-  <img src="media/cena3.png">
-  <div class="hotspot hotspot-back" onclick="goToCena(2, true)"></div>
-</section>
+    <section id="cena3" class="cena">
+      <img src="media/cena3.png">
+      <div class="hotspot hotspot-back" onclick="goToCena(2, true)"></div>
+    </section>
 
-<section id="cena4" class="cena">
-  <img src="media/cena4.png">
-  <div class="hotspot hotspot-back" onclick="goToCena(2, true)"></div>
-</section>
+    <section id="cena4" class="cena">
+      <img src="media/cena4.png">
+      <div class="hotspot hotspot-back" onclick="goToCena(2, true)"></div>
+    </section>
+
+</div>
 
 <script>
-// --- FUNÇÕES DO CONVITE ---
 const audio = document.getElementById("bgAudio");
 const video2 = document.getElementById("video2");
 let audioStarted = false;
@@ -205,7 +224,7 @@ function iniciarTudo() {
     goToCena(2);
   }).catch(e => {
     console.log("Erro ao iniciar áudio:", e);
-    goToCena(2); // Vai para cena 2 mesmo se o áudio falhar
+    goToCena(2); 
   });
 }
 
@@ -215,20 +234,19 @@ function goToCena(n, voltarFinal = false){
   document.getElementById("cena"+n).classList.add("active");
 
   if(n === 2) {
-    // Abaixa o som do fundo para o personagem falar
     audio.volume = 0.2; 
     
     if(voltarFinal) {
       video2.currentTime = 6; 
       document.getElementById("timer").style.display = "block";
-      audio.volume = 1.0; // Se voltou ao final, o áudio de fundo pode ficar alto
+      audio.volume = 1.0;
     } else {
       video2.currentTime = 0;
       video2.play().catch(e => console.log("Erro play vídeo:", e));
     }
   } else {
     video2.pause();
-    audio.volume = 1.0; // Restaura volume nas outras cenas
+    audio.volume = 1.0; 
   }
 }
 
@@ -241,13 +259,11 @@ function toggleAudio(){
   audio.paused ? audio.play() : audio.pause();
 }
 
-// Quando o vídeo do personagem termina, o som de fundo volta ao normal
 video2.addEventListener("ended", () => {
   document.getElementById("timer").style.display = "block";
   audio.volume = 1.0; 
 });
 
-// --- CRONÔMETRO ---
 const eventDate = new Date("2026-01-31T17:00:00");
 const timerDiv = document.getElementById("timer");
 
@@ -265,7 +281,6 @@ setInterval(()=>{
   timerDiv.innerText = `${d}d ${h}h ${m}m ${s}s`;
 }, 1000);
 
-// --- SCRIPT DE SEGURANÇA ---
 (function() {
     document.addEventListener('contextmenu', e => e.preventDefault());
     document.addEventListener('keydown', function(e) {
@@ -276,7 +291,6 @@ setInterval(()=>{
             return false;
         }
     });
-    console.log("%c Protegido pela Lei 9.610/98 - Autoria: Cristiane Oliveira ", "color: white; background: red; font-weight: bold; font-size: 14px;");
 })();
 </script>
 
