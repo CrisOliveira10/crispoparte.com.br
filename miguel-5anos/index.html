@@ -19,7 +19,6 @@ Lei 9.610/98 – Direitos Autorais.
   box-sizing:border-box;
 }
 
-/* Substituído vh por dvh para evitar cortes no Safari */
 html,body{
   width:100%;
   height:100dvh;
@@ -31,13 +30,15 @@ html,body{
   align-items: center;
 }
 
-/* Container para garantir object-fit: contain e centralização da arte */
-.app-container {
+/* Container que protege a arte e serve de base para os hotspots */
+.media-wrapper {
   position: relative;
   width: 100%;
   height: 100dvh;
-  max-width: 56.25dvh; /* Mantém a proporção 9:16 vertical */
-  background: #000;
+  max-width: 56.25dvh; /* Mantém proporção 9:16 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
   overflow: hidden;
 }
 
@@ -53,14 +54,13 @@ html,body{
   display:block;
 }
 
-/* Garantindo que a arte não corte nas laterais */
 video,img{
   width:100%;
   height:100%;
-  object-fit:contain;
+  object-fit:contain; /* Arte nunca corta */
 }
 
-/* ===== HOTSPOTS EM PORCENTAGEM ===== */
+/* ===== HOTSPOTS GERAIS EM % ===== */
 .hotspot{
   position:absolute;
   cursor:pointer;
@@ -72,13 +72,13 @@ video,img{
   background: transparent;
 }
 
-/* ===== MENU LATERAL RE-AJUSTADO ===== */
+/* ===== MENU LATERAL (Mantendo proporção original) ===== */
 .menu-container{
   position:absolute;
   right:0;              
   top:55%; 
   transform:translateY(-50%);
-  width: 75%; /* Ajustado para % */
+  width: 80%; /* Proporcional ao container */        
   z-index:20;
   display: none;         
   flex-direction: column;
@@ -93,7 +93,7 @@ video,img{
 
 .menu-btn{
   width: 100%;         
-  height: 90px; 
+  height: 100px; 
   cursor: pointer;
   display: block;
 }
@@ -103,7 +103,7 @@ video,img{
   position:absolute;
   top:0;
   width:100%;
-  height:12%;
+  height:15%;
   z-index:10;
   pointer-events: none;
 }
@@ -116,26 +116,26 @@ video,img{
   left:0;
   top:0;
   width:25%;
-  height:100%;
+  height:80%;
 }
 
 .hotspot-menu{
   right:0px;
   top:0px;
   width:30%;
-  height:100%;
+  height:80%;
 }
 
 #timer{
   position:absolute;
-  top:35%;
+  top:30px;
   left:50%;
   transform:translateX(-50%);
   color:#fff;
-  font-size:22px;
+  font-size:24px;
   z-index:15;
   display:none;
-  white-space: nowrap;
+  text-shadow: 2px 2px 4px #000;
 }
 
 /* ===== RODAPÉ ===== */
@@ -143,7 +143,7 @@ video,img{
   position:absolute;
   bottom:0;
   width:100%;
-  height:15%;
+  height:18%;
   display:flex;
   justify-content:space-between;
   z-index:10;
@@ -158,13 +158,12 @@ video,img{
   top:0;
   right:0;
   width:30%;
-  height:100%;
+  height:80%;
 }
 
-/* Ajustes para telas pequenas */
-@media(max-height: 650px){
-  #timer { font-size: 18px; }
-  .menu-btn { height: 70px; }
+@media(max-width:768px){
+  .menu-btn { height: 80px; }
+  #timer { font-size: 20px; }
 }
 </style>
 </head>
@@ -173,7 +172,7 @@ video,img{
 
 <audio id="bgAudio" src="media/audio.mp3" loop></audio>
 
-<div class="app-container">
+<div class="media-wrapper">
 
   <section id="cena1" class="cena active">
     <video src="media/video1.mp4" autoplay muted playsinline loop></video>
