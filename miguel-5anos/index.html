@@ -21,25 +21,11 @@ Lei 9.610/98 – Direitos Autorais.
 
 html,body{
   width:100%;
-  height:100dvh;
+  /* Uso do dvh para evitar cortes da barra do Safari/Chrome mobile */
+  height:100dvh; 
   overflow:hidden;
   background:#000;
   font-family:Arial,sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Container que protege a arte e serve de base para os hotspots */
-.media-wrapper {
-  position: relative;
-  width: 100%;
-  height: 100dvh;
-  max-width: 56.25dvh; /* Mantém proporção 9:16 */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
 }
 
 /* ===== CENAS ===== */
@@ -48,19 +34,40 @@ html,body{
   inset:0;
   display:none;
   z-index: 1;
+  background: #000;
+  /* Centraliza o wrapper na tela */
+  justify-content: center;
+  align-items: center;
 }
 
 .cena.active{
-  display:block;
+  display:flex;
 }
 
-video,img{
-  width:100%;
-  height:100%;
-  object-fit:contain; /* Arte nunca corta */
+/* ===== O SEGREDO DA RESPONSIVIDADE ===== */
+.media-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  /* Trava a largura máxima na proporção 9:16 garantindo que os botões em % nunca saiam do lugar */
+  max-width: 56.25dvh; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* ===== HOTSPOTS GERAIS EM % ===== */
+.media-wrapper video, 
+.media-wrapper img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* Object-fit contain conforme solicitado */
+  object-fit: contain; 
+}
+
+/* ===== HOTSPOTS GERAIS ===== */
 .hotspot{
   position:absolute;
   cursor:pointer;
@@ -72,38 +79,13 @@ video,img{
   background: transparent;
 }
 
-/* ===== MENU LATERAL (Mantendo proporção original) ===== */
-.menu-container{
-  position:absolute;
-  right:0;              
-  top:55%; 
-  transform:translateY(-50%);
-  width: 80%; /* Proporcional ao container */        
-  z-index:20;
-  display: none;         
-  flex-direction: column;
-  gap: 20px; 
-  align-items: flex-end;
-
-  background-image: url("media/menu-botoes.png");
-  background-size: contain; 
-  background-repeat: no-repeat;
-  background-position: right center;
-}
-
-.menu-btn{
-  width: 100%;         
-  height: 100px; 
-  cursor: pointer;
-  display: block;
-}
-
 /* ===== TOPO E CRONÔMETRO ===== */
+/* Agora usando porcentagens relativas ao media-wrapper */
 .top-bar{
   position:absolute;
   top:0;
   width:100%;
-  height:15%;
+  height:12%; /* Altura percentual */
   z-index:10;
   pointer-events: none;
 }
@@ -115,56 +97,80 @@ video,img{
 .hotspot-audio{
   left:0;
   top:0;
-  width:25%;
-  height:80%;
+  width:20%;
+  height:100%;
 }
 
 .hotspot-menu{
-  right:0px;
-  top:0px;
-  width:30%;
-  height:80%;
+  right:0;
+  top:0;
+  width:25%;
+  height:100%;
 }
 
 #timer{
   position:absolute;
-  top:30px;
+  top:30%;
   left:50%;
   transform:translateX(-50%);
   color:#fff;
-  font-size:24px;
+  font-size: clamp(16px, 4vw, 24px); /* Tipografia fluida */
   z-index:15;
   display:none;
-  text-shadow: 2px 2px 4px #000;
+}
+
+/* ===== MENU LATERAL ===== */
+.menu-container{
+  position:absolute;
+  right:5%;              
+  top:55%; 
+  transform:translateY(-50%);
+  width: 70%; /* Largura percentual do container */       
+  z-index:20;
+  display: none;         
+  flex-direction: column;
+  gap: 2vh; 
+  align-items: flex-end;
+
+  background-image: url("media/menu-botoes.png");
+  background-size: 140%; 
+  background-repeat: no-repeat;
+  background-position: right center;
+}
+
+.menu-btn{
+  width: 100%;         
+  aspect-ratio: 7 / 3; /* Mantém a proporção do botão sem usar altura fixa */
+  cursor: pointer;
+  display: block;
 }
 
 /* ===== RODAPÉ ===== */
 .bottom-bar{
   position:absolute;
-  bottom:0;
+  bottom:2%;
   width:100%;
-  height:18%;
+  height:12%;
   display:flex;
   justify-content:space-between;
+  padding: 0 5%; /* Adicionado espaçamento lateral preventivo */
   z-index:10;
 }
 
 .bottom-bar a{
-  width:35%;
-  height:100%;
+  width: 25%;
+  height: 100%;
+  display: block;
 }
 
+/* Botão voltar nas cenas 3 e 4 */
 .hotspot-back{
-  top:0;
-  right:0;
-  width:30%;
-  height:80%;
+  top:2%;
+  right:5%;
+  width:20%;
+  height:8%;
 }
 
-@media(max-width:768px){
-  .menu-btn { height: 80px; }
-  #timer { font-size: 20px; }
-}
 </style>
 </head>
 
@@ -172,14 +178,15 @@ video,img{
 
 <audio id="bgAudio" src="media/audio.mp3" loop></audio>
 
-<div class="media-wrapper">
-
-  <section id="cena1" class="cena active">
+<section id="cena1" class="cena active">
+  <div class="media-wrapper">
     <video src="media/video1.mp4" autoplay muted playsinline loop></video>
     <div class="hotspot hotspot-full" onclick="iniciarTudo()"></div>
-  </section>
+  </div>
+</section>
 
-  <section id="cena2" class="cena">
+<section id="cena2" class="cena">
+  <div class="media-wrapper">
     <video id="video2" src="media/video2.mp4" playsinline></video>
 
     <div class="top-bar">
@@ -198,19 +205,22 @@ video,img{
       <a href="https://forms.gle/j1xWuV1bQKevcKWZ8" target="_blank"></a>
       <a href="https://forms.gle/gCTygBPyy5mx22aZA" target="_blank"></a>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section id="cena3" class="cena">
+<section id="cena3" class="cena">
+  <div class="media-wrapper">
     <img src="media/cena3.png">
     <div class="hotspot hotspot-back" onclick="goToCena(2, true)"></div>
-  </section>
+  </div>
+</section>
 
-  <section id="cena4" class="cena">
+<section id="cena4" class="cena">
+  <div class="media-wrapper">
     <img src="media/cena4.png">
     <div class="hotspot hotspot-back" onclick="goToCena(2, true)"></div>
-  </section>
-
-</div>
+  </div>
+</section>
 
 <script>
 // --- FUNÇÕES DO CONVITE ---
@@ -240,7 +250,7 @@ function goToCena(n, voltarFinal = false){
     if(voltarFinal) {
       video2.currentTime = 6; 
       document.getElementById("timer").style.display = "block";
-      audio.volume = 1.0;
+      audio.volume = 1.0; 
     } else {
       video2.currentTime = 0;
       video2.play().catch(e => console.log("Erro play vídeo:", e));
@@ -266,7 +276,7 @@ video2.addEventListener("ended", () => {
 });
 
 // --- CRONÔMETRO ---
-const eventDate = new Date("2026-01-31T17:00:00");
+const eventDate = new Date("2026-12-31T17:00:00");
 const timerDiv = document.getElementById("timer");
 
 setInterval(()=>{
