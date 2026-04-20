@@ -69,48 +69,45 @@ video, img {
   z-index: 5;
 }
 
-/* ===== TOPO E CRONÔMETRO (AGORA EM PORCENTAGEM) ===== */
-.top-bar {
-  position: absolute;
-  top: 0;
-  width: 100%;
-  height: 15%; /* Porcentagem baseada na altura da arte */
-  z-index: 15;
+
+/* ===== TOPO E CRONÔMETRO ===== */
+.top-bar{
+  position:absolute;
+  top:0;
+  width:100%;
+  height:100px;
+  z-index:10;
   pointer-events: none;
 }
 
-.hotspot-audio, .hotspot-menu, .hotspot-back {
+.hotspot-audio, .hotspot-menu, .hotspot-back{
   pointer-events: auto;
 }
 
-.hotspot-audio {
-  left: 0;
-  top: 0;
-  width: 25%;
-  height: 100%;
+.hotspot-audio{
+  left:0;
+  top:0;
+  width:80px;
+  height:100px;
 }
 
-.hotspot-menu {
-  right: 0;
-  top: 0;
-  width: 25%;
-  height: 100%;
+.hotspot-menu{
+  right:120px;
+  top:15px;
+  width:80px;
+  height:120px;
 }
 
-#timer {
-  position: absolute;
-  top: 35%; /* Centralizado dentro da top-bar */
-  left: 50%;
-  transform: translateX(-50%);
-  color: #fff;
-  font-size: 5.5vw; /* Texto fluido que cresce com a tela */
-  font-weight: bold;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-  z-index: 20;
-  display: none;
-  white-space: nowrap;
+#timer{
+  position:absolute;
+  top:30px;
+  left:50%;
+  transform:translateX(-50%);
+  color:#fff;
+  font-size:24px;
+  z-index:15;
+  display:none;
 }
-
 /* ===== MENU LATERAL ===== */
 .menu-container {
   position: absolute;
