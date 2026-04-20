@@ -102,10 +102,12 @@ video, img {
 /* ===== CRONÔMETRO CIRÚRGICO ===== */
 #timer {
   position: absolute;
-  top: 5.5%; /* Centralizado na moldura do topo */
+  /* 1. CONTROLA A ALTURA DE TUDO JUNTO */
+  /* Aumente este valor (ex: 8%, 9%, 10%) para descer TODO o bloco para dentro da faixa vermelha */
+  top: 7%; 
   left: 50%;
   transform: translateX(-50%);
-  width: 50%; /* Ocupa a faixa central sem sobrepor os botões */
+  width: 65%; 
   color: #fff;
   text-align: center;
   z-index: 20;
@@ -113,29 +115,28 @@ video, img {
 }
 
 .t-title {
-  font-size: 2vw; /* Texto menor e delicado */
+  font-size: 1.8vw; /* Texto menor para caber na pílula */
   font-weight: normal;
-  margin-bottom: 0.5vh;
+  margin-bottom: 0; /* Zerei o espaço para ficar colado nos números */
   text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
 }
 
 .t-nums {
-  font-size: 5.5vw; /* Números em destaque */
+  font-size: 5vw; /* Números ligeiramente menores para dar espaço ao título */
   font-weight: bold;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
   text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
 }
 
 .t-labels {
-  font-size: 1.6vw; /* Legendas delicadas logo abaixo */
+  font-size: 1.5vw; /* Legendas delicadas */
   display: flex;
   justify-content: space-around;
-  width: 80%;
-  margin: 0.2vh auto 0 auto;
+  width: 85%;
+  margin: 0 auto; /* Zerei a margem para ficar colado embaixo dos números */
   text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
   opacity: 0.9;
 }
-
 /* ===== MENU LATERAL COLADO NA DIREITA ===== */
 .menu-container {
   position: absolute;
