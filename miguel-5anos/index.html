@@ -99,45 +99,47 @@ video, img {
   pointer-events: auto;
 }
 
-/* ===== CRONÔMETRO CIRÚRGICO ===== */
+/* ===== TOPO E CRONÔMETRO ===== */
+.top-bar {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 15%; 
+  z-index: 25; 
+  pointer-events: none;
+}
+
+.hotspot-audio, .hotspot-menu, .hotspot-back {
+  pointer-events: auto;
+}
+
+.hotspot-audio {
+  left: 0;
+  top: 0;
+  width: 25%; 
+  height: 100%;
+}
+
+.hotspot-menu {
+  right: 0; 
+  top: 0;
+  width: 25%; 
+  height: 100%;
+}
+
 #timer {
   position: absolute;
-  /* 1. CONTROLA A ALTURA DE TUDO JUNTO */
-  /* Aumente este valor (ex: 8%, 9%, 10%) para descer TODO o bloco para dentro da faixa vermelha */
-  top: 10%; 
+  top: 25%; 
   left: 50%;
   transform: translateX(-50%);
-  width: 65%; 
   color: #fff;
-  text-align: center;
-  z-index: 20;
-  display: none; 
+  /* CORREÇÃO APLICADA AQUI: O texto cresce no celular, mas trava proporcional ao tamanho do PC */
+  font-size: clamp(16px, 5vw, 2.8dvh); 
+  z-index: 15;
+  display: none;
 }
 
-.t-title {
-  font-size: 1.8vw; /* Texto menor para caber na pílula */
-  font-weight: normal;
-  margin-bottom: 0; /* Zerei o espaço para ficar colado nos números */
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-}
-
-.t-nums {
-  font-size: 5vw; /* Números ligeiramente menores para dar espaço ao título */
-  font-weight: bold;
-  letter-spacing: 2px;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-}
-
-.t-labels {
-  font-size: 1.5vw; /* Legendas delicadas */
-  display: flex;
-  justify-content: space-around;
-  width: 85%;
-  margin: 0 auto; /* Zerei a margem para ficar colado embaixo dos números */
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-  opacity: 0.9;
-}
-/* ===== MENU LATERAL COLADO NA DIREITA ===== */
+  /* ===== MENU LATERAL COLADO NA DIREITA ===== */
 .menu-container {
   position: absolute;
   right: 0; /* Colado perfeitamente na borda direita */
