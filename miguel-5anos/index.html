@@ -5,12 +5,11 @@ Material exclusivo para alunos.
 Proibida reprodução, distribuição ou revenda.
 Lei 9.610/98 – Direitos Autorais.
 -->
-
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>Convite Miguel 5 Anos</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Convite Miguel 5 anos</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 <style>
 *{
@@ -19,118 +18,116 @@ Lei 9.610/98 – Direitos Autorais.
   box-sizing:border-box;
 }
 
-html,body{
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  background:#000;
-  font-family:Arial,sans-serif;
+html, body {
+  width: 100%;
+  /* 2. DVH APLICADO PARA O SAFARI */
+  height: 100dvh;
+  overflow: hidden;
+  background: #000;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-/* ===== CENAS ===== */
-.cena{
-  position:absolute;
-  inset:0;
-  display:none;
+/* 3. MEDIA-WRAPPER PARA TRAVAR A ARTE E NÃO CORTAR LATERAIS */
+.media-wrapper {
+  position: relative;
+  height: 100dvh;
+  width: 56.25dvh; 
+  max-width: 100vw;
+  max-height: 177.77vw;
+  background: #000;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.cena {
+  position: absolute;
+  inset: 0;
+  display: none;
   z-index: 1;
 }
 
-.cena.active{
-  display:block;
-}
-
-video,img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-
-/* ===== HOTSPOTS GERAIS ===== */
-.hotspot{
-  position:absolute;
-  cursor:pointer;
-  z-index: 5;
-}
-
-.hotspot-full{
-  inset:0;
-  background: transparent;
-}
-
-/* ===== MENU LATERAL ===== */
-.menu-container{
-  position:absolute;
-  right:0;              
-  top:55%; 
-  transform:translateY(-50%);
-  width: 350px;        
-  z-index:20;
-  display: none;        
-  flex-direction: column;
-  gap: 25px; 
-  align-items: flex-end;
-
-  background-image: url("media/menu-botoes.png");
-  background-size: 140%; 
-  background-repeat: no-repeat;
-  background-position: right center;
-}
-
-.menu-btn{
-  width: 350px;        
-  height: 150px; 
-  cursor: pointer;
+.cena.active {
   display: block;
 }
 
-/* ===== TOPO E CRONÔMETRO (ATUALIZADO PARA ALINHAMENTO) ===== */
-.top-bar{
-  position:absolute;
-  top:0;
-  width:100%;
-  height:120px; /* Aumentado ligeiramente para acomodar o cronômetro complexo */
-  z-index:10;
+/* 4. OBJECT-FIT CONTAIN APLICADO */
+video, img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; 
   pointer-events: none;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 20px;
 }
 
-.hotspot-audio, .hotspot-menu, .hotspot-back{
+/* 5. HOTSPOTS EM PORCENTAGEM (GARANTIA DE NÃO SAIR DO LUGAR) */
+.hotspot {
+  position: absolute;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.hotspot-full {
+  inset: 0;
+  z-index: 5;
+}
+
+/* ===== TOPO E BOTÕES ===== */
+.top-bar {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 15%; 
+  z-index: 25; 
+  pointer-events: none;
+}
+
+.hotspot-audio, .hotspot-menu, .hotspot-back {
   pointer-events: auto;
 }
 
-.hotspot-audio, .hotspot-menu{
-  width:80px;
-  height:80px;
+.hotspot-audio {
+  left: 0;
+  top: 0;
+  width: 25%; 
+  height: 100%;
 }
 
-/* Estrutura refinada do cronômetro */
+.hotspot-menu {
+  right: 0; 
+  top: 0;
+  width: 25%; 
+  height: 100%;
+}
+
+/* ===== CRONÔMETRO LIMPO E CENTRALIZADO (SEM FUNDO VERMELHO) ===== */
 #timer-complex {
-  width: 100%;
-  max-width: 400px; /* Limitar largura */
-  display: flex;
+  position: absolute;
+  top: 6%; /* Altura geral do cronômetro */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 55%; 
+  display: none; /* Escondido durante o vídeo */
   flex-direction: column;
   align-items: center;
   color: #fff;
-  z-index: 15;
+  z-index: 20;
   pointer-events: none;
-  background: rgba(139, 0, 0, 0.7); /* Fundo sutil para destacar a área */
-  border-radius: 15px;
-  padding: 10px 0;
 }
 
 #timer-complex .timer-title {
-  font-size: 14px;
-  margin-bottom: 10px;
+  font-size: clamp(10px, 2.2vw, 1.5dvh);
+  margin-bottom: 2px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+  white-space: nowrap;
 }
 
 #timer-complex .timer-blocks-container {
   display: flex;
   width: 100%;
-  justify-content: space-around;
-  align-items: flex-start; /* Alinhar números no topo */
+  justify-content: space-between; 
 }
 
 #timer-complex .timer-block {
@@ -140,51 +137,66 @@ video,img{
 }
 
 #timer-complex .timer-num {
-  font-size: 36px;
+  font-size: clamp(18px, 5.5vw, 3dvh); 
   font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
 }
 
 #timer-complex .timer-label {
-  font-size: 10px;
-  text-transform: uppercase;
-  margin-top: 5px; /* REBAIXAMENTO DAS LEGENDAS */
+  font-size: clamp(8px, 1.5vw, 1.2dvh);
+  margin-top: 2px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
 }
 
-/* Antigo timer de fallback, agora escondido */
-#timer{
-  display: none;
+/* ===== MENU LATERAL COLADO NA DIREITA ===== */
+.menu-container {
+  position: absolute;
+  right: 0; 
+  top: 50%; 
+  transform: translateY(-50%);
+  width: 60%; 
+  height: 60%; 
+  z-index: 30;
+  display: none;        
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 2%;
+
+  background-image: url("media/menu-botoes.png");
+  background-size: contain; 
+  background-repeat: no-repeat;
+  background-position: right center;
+}
+
+.menu-btn {
+  width: 100%;        
+  height: 25%; 
+  cursor: pointer;
+  display: block;
 }
 
 /* ===== RODAPÉ ===== */
-.bottom-bar{
-  position:absolute;
-  bottom:0;
-  width:100%;
-  height:120px;
-  display:flex;
-  justify-content:space-between;
-  z-index:10;
+.bottom-bar {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 12%;
+  display: flex;
+  justify-content: space-between;
+  z-index: 15;
 }
 
-.bottom-bar a{
-  width:120px;
-  height:120px;
+.bottom-bar a {
+  width: 30%;
+  height: 100%;
 }
 
-.hotspot-back{
-  top:0;
-  right:120px;
-  width:120px;
-  height:120px;
-}
-
-@media(max-width:768px){
-  .top-bar { height: 100px; }
-  #timer-complex { max-width: 320px; }
-  #timer-complex .timer-num { font-size: 30px; }
-  .hotspot-menu, .hotspot-back{ right:50px; }
-  .menu-container { width: 300px; }
-  .menu-btn { width: 300px; height: 110px; }
+.hotspot-back {
+  top: 5%;
+  right: 5%;
+  width: 20%;
+  height: 10%;
 }
 </style>
 </head>
@@ -193,65 +205,67 @@ video,img{
 
 <audio id="bgAudio" src="media/audio.mp3" loop></audio>
 
-<section id="cena1" class="cena active">
-  <video src="media/video1.mp4" autoplay muted playsinline loop></video>
-  <div class="hotspot hotspot-full" onclick="iniciarTudo()"></div>
-</section>
+<div class="media-wrapper">
 
-<section id="cena2" class="cena">
-  <video id="video2" src="media/video2.mp4" autoplay muted playsinline></video>
+  <section id="cena1" class="cena active">
+    <video src="media/video1.mp4" autoplay muted playsinline loop></video>
+    <div class="hotspot hotspot-full" onclick="iniciarTudo()"></div>
+  </section>
 
-  <div class="top-bar">
-    <div class="hotspot hotspot-audio" onclick="toggleAudio()"></div>
-    
-    <div id="timer-complex">
-        <div class="timer-title">Nossa diversão começa em:</div>
-        <div class="timer-blocks-container">
-            <div class="timer-block">
-                <span class="timer-num" id="dias-num">00</span>
-                <span class="timer-label">DIAS</span>
-            </div>
-            <div class="timer-block">
-                <span class="timer-num" id="horas-num">00</span>
-                <span class="timer-label">HORAS</span>
-            </div>
-            <div class="timer-block">
-                <span class="timer-num" id="min-num">00</span>
-                <span class="timer-label">MIN</span>
-            </div>
-            <div class="timer-block">
-                <span class="timer-num" id="seg-num">00</span>
-                <span class="timer-label">SEG</span>
-            </div>
-        </div>
+  <section id="cena2" class="cena">
+    <video id="video2" src="media/video2.mp4" playsinline></video>
+
+    <div class="top-bar">
+      <div class="hotspot hotspot-audio" onclick="toggleAudio()"></div>
+      
+      <div id="timer-complex">
+          <div class="timer-title">Nossa diversão começa em:</div>
+          <div class="timer-blocks-container">
+              <div class="timer-block">
+                  <span class="timer-num" id="dias-num">00</span>
+                  <span class="timer-label">DIAS</span>
+              </div>
+              <div class="timer-block">
+                  <span class="timer-num" id="horas-num">00</span>
+                  <span class="timer-label">HORAS</span>
+              </div>
+              <div class="timer-block">
+                  <span class="timer-num" id="min-num">00</span>
+                  <span class="timer-label">MIN</span>
+              </div>
+              <div class="timer-block">
+                  <span class="timer-num" id="seg-num">00</span>
+                  <span class="timer-label">SEG</span>
+              </div>
+          </div>
+      </div>
+
+      <div class="hotspot hotspot-menu" onclick="toggleMenu()"></div>
     </div>
-    
-    <div id="timer"></div> 
-    
-    <div class="hotspot hotspot-menu" onclick="toggleMenu()"></div>
-  </div>
 
-  <div id="menu" class="menu-container">
-    <a class="menu-btn" href="https://maps.app.goo.gl/jmbXcW447N8cxpAK7" target="_blank"></a>
-    <div class="menu-btn" onclick="goToCena(3)"></div>
-    <div class="menu-btn" onclick="goToCena(4)"></div>
-  </div>
+    <div id="menu" class="menu-container">
+      <a class="menu-btn" href="https://maps.app.goo.gl/jmbXcW447N8cxpAK7" target="_blank"></a>
+      <div class="menu-btn" onclick="goToCena(3)"></div>
+      <div class="menu-btn" onclick="goToCena(4)"></div>
+    </div>
 
-  <div class="bottom-bar">
-    <a href="https://forms.gle/ywTGBg1NVGu73hKA6" target="_blank"></a>
-    <a href="https://forms.gle/ZraNk1GqcFL4MaSR9" target="_blank"></a>
-  </div>
-</section>
+    <div class="bottom-bar">
+      <a href="https://forms.gle/ywTGBg1NVGu73hKA6" target="_blank"></a>
+      <a href="https://forms.gle/ZraNk1GqcFL4MaSR9" target="_blank"></a>
+    </div>
+  </section>
 
-<section id="cena3" class="cena">
-  <img src="media/cena3.png">
-  <div class="hotspot hotspot-back" onclick="goToCena(2, true)"></div>
-</section>
+  <section id="cena3" class="cena">
+    <img src="media/cena3.png">
+    <div class="hotspot hotspot-back" onclick="goToCena(2, true)"></div>
+  </section>
 
-<section id="cena4" class="cena">
-  <img src="media/cena4.png">
-  <div class="hotspot hotspot-back" onclick="goToCena(2, true)"></div>
-</section>
+  <section id="cena4" class="cena">
+    <img src="media/cena4.png">
+    <div class="hotspot hotspot-back" onclick="goToCena(2, true)"></div>
+  </section>
+
+</div>
 
 <script>
 // --- FUNÇÕES DO CONVITE ---
@@ -272,12 +286,13 @@ function goToCena(n, voltarFinal = false){
   if(n === 2) {
     if(voltarFinal) {
       v2.currentTime = 6; 
-      // Não precisamos mais do bloco timer simples, mas para fallback...
-      document.getElementById("timer").style.display = "none"; 
+      document.getElementById("timer-complex").style.display = "flex"; 
     } else {
       v2.currentTime = 0;
+      // Garante que o cronômetro fica INVISÍVEL enquanto o vídeo roda
+      document.getElementById("timer-complex").style.display = "none";
     }
-    v2.play();
+    v2.play().catch(e => console.log(e));
   } else {
     v2.pause();
   }
@@ -296,8 +311,13 @@ function toggleAudio(){
   audio.paused ? audio.play() : audio.pause();
 }
 
+// Só exibe o cronômetro quando o vídeo termina
+document.getElementById("video2").addEventListener("ended", () => {
+  document.getElementById("timer-complex").style.display = "flex";
+});
+
+// --- LÓGICA DO CRONÔMETRO ---
 const eventDate = new Date("2026-09-08T16:30:00");
-// Elementos do novo cronômetro complexo
 const segNum = document.getElementById("seg-num");
 const minNum = document.getElementById("min-num");
 const horasNum = document.getElementById("horas-num");
@@ -306,30 +326,30 @@ const diasNum = document.getElementById("dias-num");
 setInterval(()=>{
   const now = new Date();
   const diff = eventDate - now;
+  
   if(diff <= 0){
-    // Tratar o fim da contagem regressiva se necessário
     segNum.innerText = "00";
+    minNum.innerText = "00";
+    horasNum.innerText = "00";
+    diasNum.innerText = "00";
+    document.querySelector(".timer-title").innerText = "A diversão já começou!";
     return;
   }
+  
   const d = Math.floor(diff/86400000);
   const h = Math.floor(diff/3600000)%24;
   const m = Math.floor(diff/60000)%60;
   const s = Math.floor(diff/1000)%60;
   
-  // Atualizar os elementos complexos
   diasNum.innerText = d.toString().padStart(2, '0');
   horasNum.innerText = h.toString().padStart(2, '0');
   minNum.innerText = m.toString().padStart(2, '0');
   segNum.innerText = s.toString().padStart(2, '0');
-  
 }, 1000);
 
-// Segurança
+// --- SCRIPT DE SEGURANÇA E DIREITOS AUTORAIS ---
 (function() {
-    // Bloqueia clique direito
     document.addEventListener('contextmenu', e => e.preventDefault());
-    
-    // Bloqueia F12, Ctrl+U, Ctrl+Shift+I, Ctrl+C e Ctrl+S
     document.addEventListener('keydown', function(e) {
         if (e.keyCode == 123 || (e.ctrlKey && e.keyCode == 85) || 
            (e.ctrlKey && e.shiftKey && e.keyCode == 73) || 
@@ -338,10 +358,7 @@ setInterval(()=>{
             return false;
         }
     });
-
-    // Mensagem de alerta no Console
     console.log("%c Protegido pela Lei 9.610/98 - Autoria: Cristiane Oliveira ", "color: white; background: red; font-weight: bold; font-size: 14px;");
-    console.log("A cópia não autorizada deste código é proibida.");
 })();
 </script>
 
