@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Convite Lorenzo</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+html, body {
+  width: 100%;
+  /* Trocado para dvh para evitar cortes no Safari */
+  height: 100dvh;
+  overflow: hidden;
+  background: #000;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ===== CONTAINER 9:16 (BLINDAGEM DE RESPONSIVIDADE) ===== */
+.media-wrapper {
+  position: relative;
+  height: 100dvh;
+  width: 56.25dvh; /* Trava a proporção exata 9:16 */
+  max-width: 100vw;
+  max-height: 177.77vw;
+  background: #000;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== CENAS ===== */
+.cena {
+  position: absolute;
+  inset: 0;
+  display: none;
+  z-index: 1;
+}
+
+.cena.active {
+  display: block;
+}
+
+/* Object-fit contain garantindo que a arte não corte nas laterais */
+video, img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; 
+  pointer-events: none;
+}
+
+/* ===== HOTSPOTS GERAIS ===== */
+.hotspot {
+  position: absolute;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.hotspot-full {
+  inset: 0;
+  z-index: 5;
+}
+
+/* ===== TOPO E CRONÔMETRO (AGORA EM PORCENTAGEM) ===== */
+.top-bar {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 15%; /* Porcentagem baseada na altura da arte */
+  z-index: 15;
+  pointer-events: none;
+}
+
+.hotspot-audio, .hotspot-menu, .hotspot-back {
+  pointer-events: auto;
+}
+
+.hotspot-audio {
+  left: 0;
+  top: 0;
+  width: 25%;
+  height: 100%;
+}
+
+.hotspot-menu {
+  right: 0;
+  top: 0;
+  width: 25%;
+  height: 100%;
+}
+
+#timer {
+  position: absolute;
+  top: 35%; /* Centralizado dentro da top-bar */
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+  font-size: 5.5vw; /* Texto fluido que cresce com a tela */
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+  z-index: 20;
+  display: none;
+  white-space: nowrap;
+}
+
+/* ===== MENU LATERAL ===== */
+.menu-container {
+  position: absolute;
+  right: 0; /* Colado na direita */
+  top: 50%; 
+  transform: translateY(-50%);
+  width: 60%; /* Largura em porcentagem (substitui os 350px) */
+  height: 60%; /* Altura definida para a imagem background-size funcionar */
+  z-index: 30;
+  display: none;        
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 2%;
+
+  background-image: url("media/menu-botoes.png");
+  background-size: contain; 
+  background-repeat: no-repeat;
+  background-position: right center;
+}
+
+.menu-btn {
+  width: 100%;        
+  height: 25%; /* Fatias de clique baseadas na altura do menu */
+  cursor: pointer;
+  display: block;
+}
+
+/* ===== RODAPÉ ===== */
+.bottom-bar {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 12%;
+  display: flex;
+  justify-content: space-between;
+  z-index: 15;
+}
+
+.bottom-bar a {
+  width: 30%;
+  height: 100%;
+}
+
+.hotspot-back {
+  top: 5%;
+  right: 5%;
+  width: 20%;
+  height: 10%;
+}
+
+@media(max-width:768px){
+  /* O media query para dispositivos menores não precisa mais alterar tamanhos fixos, 
+     pois as porcentagens já cuidam disso. Mantido apenas por precaução de font-size. */
+}
+</style>
+</head>
+
+<body>
+
+<audio id="bgAudio" src="media/audio.mp3" loop></audio>
+
+<div class="media-wrapper">
+
+  <section id="cena1" class="cena active">
+    <video src="media/video1.mp4" autoplay muted playsinline loop></video>
+    <div class="hotspot hotspot-full" onclick="iniciarTudo()"></div>
+  </section>
+
+  <section id="cena2" class="cena">
+    <video id="video2" src="media/video2.mp4" playsinline></video>
+
+    <div class="top-bar">
+      <div class="hotspot hotspot-audio" onclick="toggleAudio()"></div>
+      <div id="timer"></div>
+      <div class="hotspot hotspot-menu" onclick="toggleMenu()"></div>
+    </div>
+
+    <div id="menu" class="menu-container">
+      <a class="menu-btn" href="https://maps.app.goo.gl/jmbXcW447N8cxpAK7" target="_blank"></a>
+      <div class="menu-btn" onclick="goToCena(3)"></div>
+      <div class="menu-btn" onclick="goToCena(4)"></div>
+    </div>
+
+    <div class="bottom-bar">
+      <a href="https://forms.gle/ywTGBg1NVGu73hKA6" target="_blank"></a>
+      <a href="https://forms.gle/ZraNk1GqcFL4MaSR9" target="_blank"></a>
+    </div>
+  </section>
+
+  <section id="cena3" class="cena">
+    <img src="media/cena3.png">
+    <div class="hotspot hotspot-back" onclick="goToCena(2, true)"></div>
+  </section>
+
+  <section id="cena4" class="cena">
+    <img src="media/cena4.png">
+    <div class="hotspot hotspot-back" onclick="goToCena(2, true)"></div>
+  </section>
+
+</div>
+
+<script>
+// --- FUNÇÕES DO CONVITE ---
+const audio = document.getElementById("bgAudio");
+let audioStarted = false;
+
+function iniciarTudo() {
+  audio.play().then(() => { audioStarted = true; }).catch(e => console.log(e));
+  goToCena(2);
+}
+
+function goToCena(n, voltarFinal = false){
+  document.getElementById("menu").style.display = "none";
+  document.querySelectorAll(".cena").forEach(c => c.classList.remove("active"));
+  document.getElementById("cena"+n).classList.add("active");
+
+  const v2 = document.getElementById("video2");
+  if(n === 2) {
+    if(voltarFinal) {
+      v2.currentTime = 6; 
+      document.getElementById("timer").style.display = "block";
+    } else {
+      v2.currentTime = 0;
+      document.getElementById("timer").style.display = "none";
+    }
+    v2.play().catch(e => console.log(e));
+  } else {
+    v2.pause();
+  }
+}
+
+function toggleMenu(){
+  const menu = document.getElementById("menu");
+  if (menu.style.display === "none" || menu.style.display === "") {
+    menu.style.display = "flex";
+  } else {
+    menu.style.display = "none";
+  }
+}
+
+function toggleAudio(){
+  audio.paused ? audio.play() : audio.pause();
+}
+
+const eventDate = new Date("2026-12-31T16:30:00");
+const timerDiv = document.getElementById("timer");
+
+setInterval(()=>{
+  const now = new Date();
+  const diff = eventDate - now;
+  if(diff <= 0){
+    timerDiv.innerText = "É hoje!";
+    return;
+  }
+  const d = Math.floor(diff/86400000);
+  const h = Math.floor(diff/3600000)%24;
+  const m = Math.floor(diff/60000)%60;
+  const s = Math.floor(diff/1000)%60;
+  timerDiv.innerText = `${d}d ${h}h ${m}m ${s}s`;
+}, 1000);
+
+document.getElementById("video2").addEventListener("ended", () => {
+  document.getElementById("timer").style.display = "block";
+});
+
+// --- SCRIPT DE SEGURANÇA E DIREITOS AUTORAIS ---
+(function() {
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    
+    document.addEventListener('keydown', function(e) {
+        if (e.keyCode == 123 || (e.ctrlKey && e.keyCode == 85) || 
+           (e.ctrlKey && e.shiftKey && e.keyCode == 73) || 
+           (e.ctrlKey && e.keyCode == 67) || (e.ctrlKey && e.keyCode == 83)) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    console.log("%c Protegido pela Lei 9.610/98 - Autoria: Cristiane Oliveira ", "color: white; background: red; font-weight: bold; font-size: 14px;");
+    console.log("A cópia não autorizada deste código é proibida.");
+})();
+</script>
+
+</body>
+</html>
