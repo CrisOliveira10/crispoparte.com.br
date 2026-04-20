@@ -18,7 +18,6 @@
         .t-num { display:inline-block; margin:0 8px; font-size:2.2rem; font-weight:bold; }
         .t-lab { display:block; font-size:0.7rem; opacity:0.9; }
         
-        /* ESTILO DO FORMULÁRIO RESTAURADO */
         #form-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:2000; align-items:flex-start; justify-content:center; overflow-y:auto; padding:20px 0; }
         .form-box { background:#fff; width:90%; max-width:400px; border-radius:15px; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.2); margin:auto; text-align:center; padding-bottom:20px; }
         .form-box label { display:block; text-align:left; margin:10px 30px 5px; font-size:0.85rem; color:#333; font-weight:bold; }
@@ -35,11 +34,13 @@
 <button id="skip" onclick="g(3)">PULAR</button>
 <div id="timer"><p style="font-size:1.1rem; margin-bottom:10px; font-weight:bold; letter-spacing:1px;">Nossa diversão começa em:</p><div><div class="t-num"><span id="d">00</span><span class="t-lab">DIAS</span></div><div class="t-num"><span id="h">00</span><span class="t-lab">HORAS</span></div><div class="t-num"><span id="mi">00</span><span class="t-lab">MIN</span></div><div class="t-num"><span id="se">00</span><span class="t-lab">SEG</span></div></div></div>
 
-<div class="page active" id="pg1" onclick="s()"><img src="4.jpg"><div class="hotspot" onclick="abrirForm('5571993233142')" style="top:78.66%; left:27.90%; width:19.77%; height:19.77%;"></div>
-<a href="https://maps.app.goo.gl/HFHwpFUTUmKPLjcHA" target="_blank" class="hotspot" style="top:78.94%; left:50.20%; width:16.83%; height:16.83%;"></a>
+<div class="page active" id="pg1" onclick="s()"><img src="4.jpg"><div class="hotspot" onclick="abrirForm('5571993233142')" style="top:78.79%; left:28.00%; width:16.06%; height:16.06%;"></div>
+<div class="hotspot" onclick="g(2)" style="top:78.71%; left:50.04%; width:12.94%; height:12.94%;"></div>
+<a href="https://maps.app.goo.gl/HFHwpFUTUmKPLjcHA" target="_blank" class="hotspot" style="top:78.51%; left:72.11%; width:19.59%; height:19.59%;"></a>
 </div>
 <div class="page " id="pg2" ><img src=""></div>
-<div class="page " id="pg3" ><img src=""></div>
+<div class="page " id="pg3" ><img src="4.jpg"></div>
+<div class="page " id="pg4" onclick="rv()"><img src="5.jpg"></div>
 
 
 <div id="form-modal">
@@ -80,12 +81,49 @@
 
 <script>
     const mu=document.getElementById('m'), btn=document.getElementById('btn-s'), sk=document.getElementById('skip'), tm=document.getElementById('timer');
-    const hasP3 = false, uSk = "nao", uCr = "nao", pgCr = "3", dtCr = "";
+    const hasP3 = true;
     let lastPg = 1, currentZap = "";
+    const uSk = "nao", uCr = "nao", pgCr = "3", dtCr = "";
 
-    function s(){ mu.play().catch(()=>{}); btn.style.display='flex'; if(uSk==='sim' && hasP3) sk.style.display='block'; g(2); const v2=document.getElementById('v2'); if(v2){v2.play(); v2.onended=()=>{if(hasP3)g(3);}} else {if(hasP3)setTimeout(()=>g(3),4000);} }
-    function g(n){ if(n<4) lastPg=n; document.querySelectorAll('.page').forEach(p=>{p.classList.remove('active'); p.style.display='none';}); if(n==3 || (!hasP3 && n==2)) sk.style.display='none'; tm.style.display=(uCr==='sim'&&n==pgCr)?'flex':'none'; const t=document.getElementById('pg'+n); if(t){t.style.display='flex'; setTimeout(()=>t.classList.add('active'),50); const v=t.querySelector('video'); if(v)v.play();} }
+    function s(){ 
+        mu.play().catch(()=>{}); 
+        btn.style.display='flex'; 
+        if(uSk==='sim' && hasP3) sk.style.display='block'; 
+        g(2); 
+        const v2=document.getElementById('v2'); 
+        if(v2){
+            v2.play().catch(()=>{}); 
+            if(hasP3) { v2.onended=()=>{ g(3); }; }
+        } else {
+            if(hasP3) setTimeout(()=>g(3),4000);
+        } 
+    }
+    
+    function g(n){ 
+        if(n<4) lastPg=n; 
+        
+        // CORREÇÃO CIRÚRGICA: Pausar vídeos em segundo plano para evitar tela preta no retorno
+        document.querySelectorAll('.page').forEach(p => {
+            p.classList.remove('active'); 
+            p.style.display='none';
+            const vid = p.querySelector('video');
+            if(vid) vid.pause(); 
+        }); 
+        
+        if(n==3 || (!hasP3 && n==2)) sk.style.display='none'; 
+        tm.style.display=(uCr==='sim'&&n==pgCr)?'flex':'none'; 
+        const t=document.getElementById('pg'+n); 
+        if(t){
+            t.style.display='flex'; 
+            setTimeout(()=>t.classList.add('active'),50); 
+            const v=t.querySelector('video'); 
+            // Acionar o play no vídeo ao retornar para a página
+            if(v) v.play().catch(()=>{});
+        } 
+    }
+    
     function rv(){ g(lastPg); }
+    
     function abrirForm(z){ currentZap = z; document.getElementById('form-modal').style.display='flex'; }
     
     function enviarPresenca(){
