@@ -2,28 +2,19 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>cris</title>
-    <meta property="og:title" content="cris">
-    <meta property="og:description" content="Você recebeu um convite especial! Clique para abrir.">
-    <meta property="og:type" content="website">
-    <meta name="twitter:title" content="cris">
+    <title>Joaquim</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
         body { background:#000; overflow:hidden; height:100dvh; display:flex; justify-content:center; align-items:center; font-family:sans-serif; }
-        
         .page { position:absolute; width:100%; height:100%; max-width:500px; opacity:0; z-index:1; transition:opacity 0.6s; display:flex; justify-content:center; align-items:center; pointer-events:none; }
         .active { opacity:1; z-index:10; pointer-events:auto; }
-        
         img, video { width:100%; height:100%; object-fit:contain; }
         .hotspot { position:absolute; transform:translate(-50%, -50%); z-index:100; border-radius:50%; cursor:pointer; }
-        
         #btn-s { position:fixed; bottom:30px; left:20px; width:45px; height:45px; background:rgba(255,255,255,0.4); border:1px solid rgba(255,255,255,0.6); border-radius:50%; z-index:999; display:none; justify-content:center; align-items:center; color:white; backdrop-filter:blur(5px); }
         #skip { position:fixed; bottom:30px; right:20px; z-index:999; padding:10px 20px; border-radius:20px; background:rgba(0,0,0,0.6); color:#c9a96e; display:none; border:1px solid #c9a96e; font-size:10px; text-transform:uppercase; letter-spacing:1px; }
-        
         #timer { position:absolute; top:12%; width:100%; color:white; text-align:center; z-index:200; display:none; flex-direction:column; text-shadow:2px 2px 5px #000; pointer-events:none; }
         .t-num { display:inline-block; margin:0 8px; font-size:2.2rem; font-weight:bold; }
         .t-lab { display:block; font-size:0.7rem; opacity:0.9; letter-spacing:1px; margin-top:-2px; }
-
         #form-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; align-items:flex-start; justify-content:center; overflow-y:auto; padding:20px 0; }
         .form-box { background:#fff; width:90%; max-width:400px; border-radius:15px; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.3); margin:auto; text-align:center; padding-bottom:20px; font-family: 'Segoe UI', sans-serif; }
         .form-box label { display:block; text-align:left; margin:10px 30px 5px; font-size:0.85rem; color:#333; font-weight:bold; }
@@ -32,7 +23,7 @@
     </style>
 </head>
 <body>
-<audio id="m" src="" loop preload="auto"></audio>
+<audio id="m" src="audio.mp3" loop preload="auto"></audio>
 <button id="btn-s" onclick="t()">II</button>
 <button id="skip" onclick="g(3)">PULAR</button>
 
@@ -46,45 +37,22 @@
     </div>
 </div>
 
-<div class="page active" id="pg1" onclick="s(this)"><video id="v1" src="video.mp4" playsinline muted loop autoplay></video><div class="hotspot" onclick="s(); event.stopPropagation(); abrirForm('5571993233142')" style="top:67.91%; left:23.68%; width:19.31%; height:19.31%;"></div>
-<div class="hotspot" onclick="s(); event.stopPropagation(); g(4)" style="top:67.38%; left:50.38%; width:18.39%; height:18.39%;"></div>
-<div class="hotspot" onclick="s(); event.stopPropagation(); g(5)" style="top:67.67%; left:79.64%; width:20.12%; height:20.12%;"></div>
+<div class="page active" id="pg1" onclick="s(this)"><video id="v1" src="video2.mp4" playsinline muted loop autoplay></video><div class="hotspot" onclick="s(); event.stopPropagation(); abrirForm('5571993233142')" style="top:79.69%; left:27.97%; width:17.88%; height:17.88%;"></div>
+<div class="hotspot" onclick="s(); event.stopPropagation(); g(4)" style="top:80.25%; left:72.57%; width:19.02%; height:19.02%;"></div>
 </div>
 <div class="page " id="pg4" onclick="rv()"><img src="4.jpg"></div>
-<div class="page " id="pg5" onclick="rv()"><img src="capa.jpg"></div>
 
 
 <div id="form-modal">
     <div class="form-box">
-        <img src="minha-arte.jpg" style="width:100%; height:auto; display:block; margin-bottom:15px;" alt="Cabeçalho">
-        <h2 style="color:#333; margin-bottom:15px; font-size:1.5rem;">Confirmação de Presença</h2>
-        
-        <label>Nome completo:</label>
-        <input type="text" id="fnome" placeholder="Digite seu nome completo">
-        
-        <label>Nomes dos acompanhantes:</label>
-        <input type="text" id="fconvidados" placeholder="Ex: João, Maria...">
-        
+        <h2 style="color:#333; margin-bottom:15px; margin-top:20px; font-size:1.5rem;">Confirmação de Presença</h2>
+        <label>Nome completo:</label><input type="text" id="fnome" placeholder="Digite seu nome completo">
+        <label>Nomes dos acompanhantes:</label><input type="text" id="fconvidados" placeholder="Ex: João, Maria...">
         <label>Você vai participar?</label>
-        <select id="fparticipa">
-            <option value="" disabled selected>Selecione uma opção</option>
-            <option value="Sim, com certeza!">Sim, com certeza!</option>
-            <option value="Não poderei comparecer.">Não poderei comparecer.</option>
-        </select>
-        
-        <label>Quantidade de adultos:</label>
-        <select id="fadultos">
-            <option value="0">Nenhum</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4+">4 ou mais</option>
-        </select>
-        
-        <label>Quantidade de crianças:</label>
-        <select id="fcriancas">
-            <option value="0">Nenhuma</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4+">4 ou mais</option>
-        </select>
-        
-        <label>Idade das crianças:</label>
-        <input type="text" id="fidades" placeholder="Ex: 2 anos e 5 anos (se houver)">
-        
+        <select id="fparticipa"><option value="" disabled selected>Selecione uma opção</option><option value="Sim, com certeza!">Sim, com certeza!</option><option value="Não poderei comparecer.">Não poderei comparecer.</option></select>
+        <label>Quantidade de adultos:</label><select id="fadultos"><option value="0">Nenhum</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4+">4 ou mais</option></select>
+        <label>Quantidade de crianças:</label><select id="fcriancas"><option value="0">Nenhuma</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4+">4 ou mais</option></select>
+        <label>Idade das crianças:</label><input type="text" id="fidades" placeholder="Ex: 2 anos e 5 anos (se houver)">
         <button onclick="enviarWhats()">Enviar para WhatsApp</button>
         <p onclick="document.getElementById('form-modal').style.display='none'" style="margin-top:15px; font-size:0.9rem; color:red; cursor:pointer; font-weight:bold;">FECHAR X</p>
     </div>
@@ -93,14 +61,17 @@
 <script>
     const mu=document.getElementById('m'), btn=document.getElementById('btn-s'), sk=document.getElementById('skip'), tm=document.getElementById('timer');
     const hasP2 = false, hasP3 = false;
-    let lastPg = 1, iniciado = false;
-    let currentZap = "";
+    let lastPg = 1, iniciado = false, currentZap = "";
     
     function s(el){ 
         if(iniciado) return; iniciado = true;
         if(el && el.tagName === 'DIV') el.removeAttribute('onclick');
-        mu.load(); mu.play().catch(()=>{}); 
         
+        // CIRÚRGICO 3: Preload e ativação forçada do áudio MP3
+        mu.load(); 
+        mu.play().catch(()=>{}); 
+        
+        // CIRÚRGICO 4: Tira o "MUDO" do vídeo (MP4) da página ativa, fazendo sair som!
         const vAct = document.querySelector('.page.active video');
         if(vAct) { vAct.muted = false; vAct.play().catch(()=>{}); }
         
@@ -112,7 +83,9 @@
             if(v2 && v2.tagName==='VIDEO'){ v2.play().catch(()=>{}); v2.onended=()=> { if(hasP3) g(3); } }
             else if(hasP3) { setTimeout(()=>g(3),4000); } 
         } else {
-            const v1=document.getElementById('v1'); if(v1) { v1.muted = false; v1.play().catch(()=>{}); }
+            const v1=document.getElementById('v1'); 
+            // Garante que a P1 sozinha fique sem mudo
+            if(v1) { v1.muted = false; v1.play().catch(()=>{}); }
         }
     }
     
@@ -121,11 +94,12 @@
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         if(n==3 || (!hasP3 && n==2) || (!hasP2 && n==1) || n > 3) sk.style.display='none';
         else if ("nao"==='sim' && hasP3 && n < 3) sk.style.display='block';
-        tm.style.display = ("sim"==='sim' && n=="1") ? 'flex' : 'none';
+        tm.style.display = ("nao"==='sim' && n=="3") ? 'flex' : 'none';
         const t=document.getElementById('pg'+n); 
         if(t){
             t.classList.add('active'); 
             const v=t.querySelector('video'); 
+            // Tira o mudo dos vídeos nas outras páginas se a navegação já iniciou
             if(v) { if(iniciado) v.muted = false; v.play().catch(()=>{}); }
         }
     }
@@ -142,19 +116,14 @@
         let criancas = document.getElementById("fcriancas").value;
         let idades = document.getElementById("fidades").value;
 
-        if(nome === "" || participa === "") {
-            alert("Por favor, preencha seu nome e se você vai participar.");
-            return;
-        }
-
+        if(nome === "" || participa === "") { alert("Por favor, preencha seu nome e se você vai participar."); return; }
         let infoIdade = idades ? idades : "Não informado";
-
         let msg = `✨ *CONFIRMAÇÃO DE PRESENÇA* ✨\n\n👤 *Nome:* ${nome}\n🙌 *Vai participar?* ${participa}\n👥 *Acompanhantes:* ${convidados}\n👨‍👩‍👧‍👦 *Total de Adultos:* ${adultos}\n👶 *Total de Crianças:* ${criancas}\n🎂 *Idade das Crianças:* ${infoIdade}\n\n_Enviado via Formulário_`;
         window.open(`https://wa.me/${currentZap}?text=${encodeURIComponent(msg)}`);
     }
 
-    if("sim"==='sim'){ setInterval(()=>{ 
-        const dist=new Date("2026-08-20T21:00")-new Date(); if(dist<0)return;
+    if("nao"==='sim'){ setInterval(()=>{ 
+        const dist=new Date("")-new Date(); if(dist<0)return;
         document.getElementById('d').innerText=Math.floor(dist/86400000).toString().padStart(2,'0');
         document.getElementById('h').innerText=Math.floor((dist%86400000)/3600000).toString().padStart(2,'0');
         document.getElementById('mi').innerText=Math.floor((dist%3600000)/60000).toString().padStart(2,'0');
