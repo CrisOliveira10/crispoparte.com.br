@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Amanda 1 Aninho</title>
+    <title>Amanda 1 Ano</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
         body { background:#000; overflow:hidden; height:100dvh; display:flex; justify-content:center; align-items:center; font-family:sans-serif; }
@@ -15,9 +15,9 @@
         
         #timer { 
             position:absolute; 
-            top:25.87%; 
-            left:32.59%; 
-            width:32.42%; 
+            top:62.98%; 
+            left:20.59%; 
+            width:57.85%; 
             transform:translate(0, -50%); 
             color:white; text-align:center; z-index:200; display:none; flex-direction:column; text-shadow:2px 2px 5px #000; pointer-events:none; 
         }
@@ -47,22 +47,22 @@
 
 <div class="page active" id="pg1" onclick="s(this)"><img src="1.jpg"></div>
 <div class="page " id="pg2" ><video id="v2" src="pagina2.mp4" playsinline muted></video></div>
-<div class="page " id="pg3" ><video id="v3" src="menu.mp4" playsinline muted loop autoplay></video><div class="hotspot" onclick="s(); event.stopPropagation(); abrirForm('5571993233142')" style="top:78.75%; left:28.08%; width:15.16%; height:15.16%;"></div>
-<a href="https://maps.app.goo.gl/HFHwpFUTUmKPLjcHA" target="_blank" class="hotspot" onclick="s(); event.stopPropagation()" style="top:78.41%; left:50.37%; width:16.86%; height:16.86%;"></a>
-<div class="hotspot" onclick="s(); event.stopPropagation(); g(4)" style="top:78.69%; left:72.77%; width:16.80%; height:16.80%;"></div>
-<div class="hotspot" onclick="s(); event.stopPropagation(); g(5)" style="top:89.44%; left:27.86%; width:16.80%; height:16.80%;"></div>
-<div class="hotspot" onclick="s(); event.stopPropagation(); g(6)" style="top:89.44%; left:49.76%; width:15.93%; height:15.93%;"></div>
-<a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Aniversario+da+Cristiane&dates=20260915T160000/20260915T200000&details=Venha+celebrar+esse+momento+especial+conosco&location=Rua+das+Flores+123+centro+Capim+Grosso+Ba" target="_blank" class="hotspot" onclick="s(); event.stopPropagation()" style="top:89.50%; left:71.79%; width:16.04%; height:16.04%;"></a>
+<div class="page " id="pg3" ><video id="v3" src="menu.mp4" playsinline muted loop autoplay></video><div class="hotspot" onclick="s(); event.stopPropagation(); abrirForm('5571993233142')" style="top:78.81%; left:27.99%; width:15.41%; height:15.41%;"></div>
+<a href="https://maps.app.goo.gl/HFHwpFUTUmKPLjcHA" target="_blank" class="hotspot" onclick="s(); event.stopPropagation()" style="top:78.34%; left:48.82%; width:17.66%; height:17.66%;"></a>
+<div class="hotspot" onclick="s(); event.stopPropagation(); g(4)" style="top:78.85%; left:72.49%; width:15.94%; height:15.94%;"></div>
+<div class="hotspot" onclick="s(); event.stopPropagation(); g(5)" style="top:89.97%; left:27.52%; width:16.17%; height:16.17%;"></div>
+<div class="hotspot" onclick="s(); event.stopPropagation(); g(6)" style="top:89.71%; left:49.93%; width:15.59%; height:15.59%;"></div>
+<a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Aniversario+da+Cristiane&dates=20261231T160000/20260915T200000&details=Venha+celebrar+esse+momento+especial+conosco&location=Milmar+Gelateria+cafe+Farol+da+Barra+Salvador+Ba" target="_blank" class="hotspot" onclick="s(); event.stopPropagation()" style="top:89.71%; left:72.34%; width:16.34%; height:16.34%;"></a>
 </div>
 <div class="page " id="pg4" onclick="rv()"><img src="4.jpg"></div>
 <div class="page " id="pg5" onclick="rv()"><img src="5.jpg"></div>
-<div class="page " id="pg6" onclick="rv()"><img src="6.jpg"><a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Aniversario+da+Cristiane&dates=20260915T160000/20260915T200000&details=Venha+celebrar+esse+momento+especial+conosco&location=Rua+das+Flores+123+centro+Capim+Grosso+Ba" target="_blank" class="hotspot" onclick="s(); event.stopPropagation()" style="top:69.12%; left:49.87%; width:16.51%; height:16.51%;"></a>
-</div>
+<div class="page " id="pg6" onclick="rv()"><img src="6.jpg"></div>
 
 
 <div id="form-modal">
     <div class="form-box">
-        <h2 style="color:#333; margin:20px 0; font-size:1.5rem;">Confirmação de Presença</h2>
+        <img src="minha-arte.jpg" style="width:100%; height:auto; display:block; margin-bottom:15px;" alt="Cabeçalho">
+        <h2 style="color:#333; margin-bottom:15px; font-size:1.5rem;">Confirmação de Presença</h2>
         <label>Nome completo:</label><input type="text" id="fnome" placeholder="Digite seu nome completo">
         <label>Nomes dos acompanhantes:</label><input type="text" id="fconvidados" placeholder="Ex: João, Maria...">
         <label>Você vai participar?</label>
@@ -99,7 +99,7 @@
         if(n <= 3) lastPg = n; 
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         if(n==3 || (!hasP3 && n==2) || (!hasP2 && n==1) || n > 3) sk.style.display='none';
-        tm.style.display = ("sim"==='sim' && n=="6") ? 'flex' : 'none';
+        tm.style.display = ("sim"==='sim' && n=="5") ? 'flex' : 'none';
         const t=document.getElementById('pg'+n); 
         if(t){ t.classList.add('active'); const v=t.querySelector('video'); if(v) { if(iniciado) v.muted = false; v.play().catch(()=>{}); } }
     }
@@ -117,7 +117,7 @@
     }
 
     if("sim"==='sim'){ setInterval(()=>{ 
-        const dist=new Date("2026-08-20T16:00")-new Date(); if(dist<0)return;
+        const dist=new Date("2026-12-31T15:00")-new Date(); if(dist<0)return;
         document.getElementById('d').innerText=Math.floor(dist/86400000).toString().padStart(2,'0');
         document.getElementById('h').innerText=Math.floor((dist%86400000)/3600000).toString().padStart(2,'0');
         document.getElementById('mi').innerText=Math.floor((dist%3600000)/60000).toString().padStart(2,'0');
