@@ -2,11 +2,11 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Audio</title>
-    <meta property="og:title" content="Audio">
+    <title>Bianca Audio</title>
+    <meta property="og:title" content="Bianca Audio">
     <meta property="og:description" content="Você recebeu um convite especial! Clique para abrir.">
     <meta property="og:type" content="website">
-    <meta name="twitter:title" content="Audio">
+    <meta name="twitter:title" content="Bianca Audio">
     <style>
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
         body { background:#000; overflow:hidden; height:100dvh; display:flex; justify-content:center; align-items:center; font-family:sans-serif; }
@@ -32,7 +32,7 @@
     </style>
 </head>
 <body>
-<audio id="m" src="C:\fakepath\audio.mp3" loop preload="auto"></audio>
+<audio id="m" src="audio.mp3" loop preload="auto"></audio>
 <button id="btn-s" onclick="t()">II</button>
 <button id="skip" onclick="g(3)">PULAR</button>
 
@@ -46,9 +46,9 @@
     </div>
 </div>
 
-<div class="page active" id="pg1" onclick="s(this)"><img src="menu.jpg"><div class="hotspot" onclick="event.stopPropagation(); abrirForm('71993233142')" style="top:78.58%; left:27.61%; width:19.31%; height:19.31%;"></div>
-<a href="https://maps.app.goo.gl/HFHwpFUTUmKPLjcHA" target="_blank" class="hotspot" onclick="event.stopPropagation()" style="top:78.60%; left:50.19%; width:16.92%; height:16.92%;"></a>
-<div class="hotspot" onclick="event.stopPropagation(); g(4)" style="top:78.81%; left:73.11%; width:18.76%; height:18.76%;"></div>
+<div class="page active" id="pg1" onclick="s(this)"><img src="menu.jpg"><div class="hotspot" onclick="event.stopPropagation(); abrirForm('5571993233142')" style="top:78.61%; left:27.77%; width:17.55%; height:17.55%;"></div>
+<a href="https://maps.app.goo.gl/HFHwpFUTUmKPLjcHA" target="_blank" class="hotspot" onclick="event.stopPropagation()" style="top:78.24%; left:50.41%; width:15.89%; height:15.89%;"></a>
+<div class="hotspot" onclick="event.stopPropagation(); g(4)" style="top:78.94%; left:72.49%; width:17.55%; height:17.55%;"></div>
 </div>
 <div class="page " id="pg4" onclick="rv()"><img src="4.jpg"></div>
 
@@ -103,11 +103,8 @@
     
     function s(el){ 
         if(el) el.removeAttribute('onclick'); 
-        
-        // CORREÇÃO DE ÁUDIO 2: Força o carregamento antes do play
         mu.load();
         mu.play().catch(()=>{}); 
-        
         btn.style.display='flex'; 
         
         if (hasP2) { 
