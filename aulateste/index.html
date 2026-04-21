@@ -2,41 +2,56 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Bianca 3 Anos</title>
-    <meta property="og:title" content="Bianca 3 Anos">
+    <title>Patricia</title>
+    <meta property="og:title" content="Patricia">
     <meta property="og:description" content="Você recebeu um convite especial! Clique para abrir.">
     <meta property="og:type" content="website">
-    <meta name="twitter:title" content="Bianca 3 Anos">
+    <meta name="twitter:title" content="Patricia">
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
         body { background:#000; overflow:hidden; height:100dvh; display:flex; justify-content:center; align-items:center; font-family:sans-serif; }
-        .page { display:none; width:100%; height:100%; position:absolute; max-width:500px; opacity:0; transition:opacity 0.6s; }
-        .active { display:flex; opacity:1; }
+        
+        /* CORREÇÃO CIRÚRGICA: TELA PRETA - Display flex permanente, usando z-index e opacity */
+        .page { position:absolute; width:100%; height:100%; max-width:500px; opacity:0; z-index:1; transition:opacity 0.6s; display:flex; justify-content:center; align-items:center; pointer-events:none; }
+        .active { opacity:1; z-index:10; pointer-events:auto; }
+        
         img, video { width:100%; height:100%; object-fit:contain; }
         .hotspot { position:absolute; transform:translate(-50%, -50%); z-index:100; border-radius:50%; cursor:pointer; }
+        
+        #btn-s { position:fixed; bottom:30px; left:20px; width:45px; height:45px; background:rgba(255,255,255,0.4); border:1px solid rgba(255,255,255,0.6); border-radius:50%; z-index:999; display:none; justify-content:center; align-items:center; color:white; backdrop-filter:blur(5px); }
+        #skip { position:fixed; bottom:30px; right:20px; z-index:999; padding:10px 20px; border-radius:20px; background:rgba(0,0,0,0.6); color:#c9a96e; display:none; border:1px solid #c9a96e; font-size:10px; text-transform:uppercase; letter-spacing:1px; }
+        
+        /* CRONÔMETRO AMPLIADO */
         #timer { position:absolute; top:12%; width:100%; color:white; text-align:center; z-index:200; display:none; flex-direction:column; text-shadow:2px 2px 5px #000; pointer-events:none; }
         .t-num { display:inline-block; margin:0 8px; font-size:2.2rem; font-weight:bold; }
-        .t-lab { display:block; font-size:0.7rem; opacity:0.9; }
-        
-        #form-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:2000; align-items:flex-start; justify-content:center; overflow-y:auto; padding:20px 0; }
-        .form-box { background:#fff; width:90%; max-width:400px; border-radius:15px; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.2); margin:auto; text-align:center; padding-bottom:20px; }
+        .t-lab { display:block; font-size:0.7rem; opacity:0.9; letter-spacing:1px; margin-top:-2px; }
+
+        /* FORMULÁRIO DE CONFIRMAÇÃO */
+        #form-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; align-items:flex-start; justify-content:center; overflow-y:auto; padding:20px 0; }
+        .form-box { background:#fff; width:90%; max-width:400px; border-radius:15px; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.3); margin:auto; text-align:center; padding-bottom:20px; font-family: 'Segoe UI', sans-serif; }
         .form-box label { display:block; text-align:left; margin:10px 30px 5px; font-size:0.85rem; color:#333; font-weight:bold; }
         .form-box input, .form-box select { width:calc(100% - 60px); margin:0 30px; padding:10px; border:1px solid #ccc; border-radius:5px; font-size:1rem; box-sizing:border-box; }
         .form-box button { width:calc(100% - 60px); margin:20px 30px 0; padding:12px; background:#25d366; color:white; border:none; border-radius:5px; font-weight:bold; font-size:1.1rem; cursor:pointer; }
-        
-        #btn-s { position:fixed; bottom:30px; left:20px; width:45px; height:45px; background:rgba(255,255,255,0.4); border-radius:50%; z-index:999; display:none; justify-content:center; align-items:center; color:white; border:none; }
-        #skip { position:fixed; bottom:30px; right:20px; z-index:999; padding:10px 20px; border-radius:20px; background:rgba(0,0,0,0.6); color:#c9a96e; display:none; border:1px solid #c9a96e; font-size:10px; text-transform:uppercase; }
     </style>
 </head>
 <body>
 <audio id="m" src="audio.mp3" loop></audio>
-<button id="btn-s" onclick="mu.paused?mu.play():mu.pause()">II</button>
+<button id="btn-s" onclick="t()">II</button>
 <button id="skip" onclick="g(3)">PULAR</button>
-<div id="timer"><p style="font-size:1.1rem; margin-bottom:10px; font-weight:bold; letter-spacing:1px;">Nossa diversão começa em:</p><div><div class="t-num"><span id="d">00</span><span class="t-lab">DIAS</span></div><div class="t-num"><span id="h">00</span><span class="t-lab">HORAS</span></div><div class="t-num"><span id="mi">00</span><span class="t-lab">MIN</span></div><div class="t-num"><span id="se">00</span><span class="t-lab">SEG</span></div></div></div>
 
-<div class="page active" id="pg1" onclick="s()"><img src="menu.jpg"><a href="https://71993233142" target="_blank" class="hotspot" style="top:78.93%; left:28.12%; width:17.76%; height:17.76%;"></a>
-<a href="https://maps.app.goo.gl/HFHwpFUTUmKPLjcHA" target="_blank" class="hotspot" style="top:78.87%; left:50.20%; width:16.45%; height:16.45%;"></a>
-<div class="hotspot" onclick="g(4)" style="top:79.14%; left:73.71%; width:18.55%; height:18.55%;"></div>
+<div id="timer">
+    <p style="font-size:1.1rem; margin-bottom:10px; font-weight:bold; letter-spacing:1px;">Nossa diversão começa em:</p>
+    <div>
+        <div class="t-num"><span id="d">00</span><span class="t-lab">DIAS</span></div>
+        <div class="t-num"><span id="h">00</span><span class="t-lab">HORAS</span></div>
+        <div class="t-num"><span id="mi">00</span><span class="t-lab">MIN</span></div>
+        <div class="t-num"><span id="se">00</span><span class="t-lab">SEG</span></div>
+    </div>
+</div>
+
+<div class="page active" id="pg1" onclick="s()"><img src="menu.jpg"><div class="hotspot" onclick="event.stopPropagation(); abrirForm('5571993233142')" style="top:78.81%; left:27.52%; width:15.46%; height:15.46%;"></div>
+<a href="https://maps.app.goo.gl/HFHwpFUTUmKPLjcHA" target="_blank" class="hotspot" onclick="event.stopPropagation()" style="top:78.52%; left:50.77%; width:14.90%; height:14.90%;"></a>
+<div class="hotspot" onclick="event.stopPropagation(); g(4)" style="top:77.57%; left:72.98%; width:17.69%; height:17.69%;"></div>
 </div>
 <div class="page " id="pg2" ><img src=""></div>
 <div class="page " id="pg3" ><img src=""></div>
@@ -74,7 +89,7 @@
         <label>Idade das crianças:</label>
         <input type="text" id="fidades" placeholder="Ex: 2 anos e 5 anos (se houver)">
         
-        <button onclick="enviarPresenca()">Enviar para WhatsApp</button>
+        <button onclick="enviarWhats()">Enviar para WhatsApp</button>
         <p onclick="document.getElementById('form-modal').style.display='none'" style="margin-top:15px; font-size:0.9rem; color:red; cursor:pointer; font-weight:bold;">FECHAR X</p>
     </div>
 </div>
@@ -82,51 +97,58 @@
 <script>
     const mu=document.getElementById('m'), btn=document.getElementById('btn-s'), sk=document.getElementById('skip'), tm=document.getElementById('timer');
     const hasP3 = false;
-    let lastPg = 1, currentZap = "";
-    const uSk = "nao", uCr = "nao", pgCr = "3", dtCr = "";
-
+    let lastPg = hasP3 ? 3 : 2;
+    let currentZap = "";
+    
+    const uSk = "nao";
+    const uCr = "nao";
+    const pgCr = "3";
+    const dtCr = "";
+    
     function s(){ 
         mu.play().catch(()=>{}); 
         btn.style.display='flex'; 
         if(uSk==='sim' && hasP3) sk.style.display='block'; 
         g(2); 
         const v2=document.getElementById('v2'); 
-        if(v2){
+        if(v2 && v2.tagName==='VIDEO'){
             v2.play().catch(()=>{}); 
-            if(hasP3) { v2.onended=()=>{ g(3); }; }
-        } else {
-            if(hasP3) setTimeout(()=>g(3),4000);
+            v2.onended=()=> { if(hasP3) g(3); } 
+        } else { 
+            if(hasP3) setTimeout(()=>g(3),4000); 
         } 
     }
     
     function g(n){ 
-        if(n<4) lastPg=n; 
+        if(n > 1 && n < 4) lastPg = n;
         
-        // CORREÇÃO CIRÚRGICA: Pausar vídeos em segundo plano para evitar tela preta no retorno
+        // Remove active class to fade out smoothly, PAUSE is no longer used here to prevent screen breaking
         document.querySelectorAll('.page').forEach(p => {
             p.classList.remove('active'); 
-            p.style.display='none';
-            const vid = p.querySelector('video');
-            if(vid) vid.pause(); 
-        }); 
+        });
         
-        if(n==3 || (!hasP3 && n==2)) sk.style.display='none'; 
-        tm.style.display=(uCr==='sim'&&n==pgCr)?'flex':'none'; 
+        if(n==3 || (!hasP3 && n==2)) sk.style.display='none';
+        tm.style.display = (uCr==='sim' && n==pgCr) ? 'flex' : 'none';
+        
         const t=document.getElementById('pg'+n); 
         if(t){
-            t.style.display='flex'; 
-            setTimeout(()=>t.classList.add('active'),50); 
+            // Brings the page forward smoothly
+            t.classList.add('active'); 
             const v=t.querySelector('video'); 
-            // Acionar o play no vídeo ao retornar para a página
             if(v) v.play().catch(()=>{});
-        } 
+        }
     }
     
     function rv(){ g(lastPg); }
+
+    function t(){ mu.paused ? mu.play() : mu.pause(); }
+
+    function abrirForm(z){ 
+        currentZap = z; 
+        document.getElementById('form-modal').style.display='flex'; 
+    }
     
-    function abrirForm(z){ currentZap = z; document.getElementById('form-modal').style.display='flex'; }
-    
-    function enviarPresenca(){
+    function enviarWhats() {
         let nome = document.getElementById("fnome").value;
         let convidados = document.getElementById("fconvidados").value;
         let participa = document.getElementById("fparticipa").value;
@@ -144,6 +166,11 @@
         let msg = `✨ *CONFIRMAÇÃO DE PRESENÇA* ✨\n\n👤 *Nome:* ${nome}\n🙌 *Vai participar?* ${participa}\n👥 *Acompanhantes:* ${convidados}\n👨‍👩‍👧‍👦 *Total de Adultos:* ${adultos}\n👶 *Total de Crianças:* ${criancas}\n🎂 *Idade das Crianças:* ${infoIdade}\n\n_Enviado via Formulário_`;
         window.open(`https://wa.me/${currentZap}?text=${encodeURIComponent(msg)}`);
     }
-    
-    if(uCr==='sim'){ setInterval(()=>{ const dist=new Date(dtCr)-new Date(); if(dist<0)return; document.getElementById('d').innerText=Math.floor(dist/864e5).toString().padStart(2,'0'); document.getElementById('h').innerText=Math.floor((dist%864e5)/36e5).toString().padStart(2,'0'); document.getElementById('mi').innerText=Math.floor((dist%36e5)/6e4).toString().padStart(2,'0'); document.getElementById('se').innerText=Math.floor((dist%6e4)/1e3).toString().padStart(2,'0'); },1000); }
+
+    if(uCr==='sim'){ setInterval(()=>{ const dist=new Date(dtCr)-new Date(); if(dist<0)return;
+        document.getElementById('d').innerText=Math.floor(dist/86400000).toString().padStart(2,'0');
+        document.getElementById('h').innerText=Math.floor((dist%86400000)/3600000).toString().padStart(2,'0');
+        document.getElementById('mi').innerText=Math.floor((dist%3600000)/60000).toString().padStart(2,'0');
+        document.getElementById('se').innerText=Math.floor((dist%60000)/1000).toString().padStart(2,'0');
+    },1000); }
 </script></body></html>
