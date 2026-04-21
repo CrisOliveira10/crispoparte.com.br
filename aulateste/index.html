@@ -2,11 +2,11 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Amanda</title>
-    <meta property="og:title" content="Amanda">
+    <title>cris</title>
+    <meta property="og:title" content="cris">
     <meta property="og:description" content="Você recebeu um convite especial! Clique para abrir.">
     <meta property="og:type" content="website">
-    <meta name="twitter:title" content="Amanda">
+    <meta name="twitter:title" content="cris">
     <style>
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
         body { background:#000; overflow:hidden; height:100dvh; display:flex; justify-content:center; align-items:center; font-family:sans-serif; }
@@ -32,7 +32,7 @@
     </style>
 </head>
 <body>
-<audio id="m" src="audio.mp3" loop preload="auto"></audio>
+<audio id="m" src="" loop preload="auto"></audio>
 <button id="btn-s" onclick="t()">II</button>
 <button id="skip" onclick="g(3)">PULAR</button>
 
@@ -46,18 +46,12 @@
     </div>
 </div>
 
-<div class="page active" id="pg1" onclick="s(this)"><img src="1.jpg"></div>
-<div class="page " id="pg2" ><video id="v2" src="pagina2.mp4" playsinline></video></div>
-<div class="page " id="pg3" ><img src="menu.jpg"><div class="hotspot" onclick="event.stopPropagation(); abrirForm('5571993233142')" style="top:78.80%; left:28.40%; width:16.23%; height:16.23%;"></div>
-<a href="https://maps.app.goo.gl/HFHwpFUTUmKPLjcHA" target="_blank" class="hotspot" onclick="event.stopPropagation()" style="top:78.45%; left:50.20%; width:16.69%; height:16.69%;"></a>
-<div class="hotspot" onclick="event.stopPropagation(); g(4)" style="top:78.46%; left:72.52%; width:18.44%; height:18.44%;"></div>
-<div class="hotspot" onclick="event.stopPropagation(); g(5)" style="top:64.30%; left:11.81%; width:23.61%; height:23.61%;"></div>
-<div class="hotspot" onclick="event.stopPropagation(); g(6)" style="top:57.55%; left:50.67%; width:22.49%; height:22.49%;"></div>
-<a href="https://crispoparte.com.br/listadepresentesruan/" target="_blank" class="hotspot" onclick="event.stopPropagation()" style="top:68.65%; left:87.93%; width:17.52%; height:17.52%;"></a>
+<div class="page active" id="pg1" onclick="s(this)"><video id="v1" src="video.mp4" playsinline muted loop autoplay></video><div class="hotspot" onclick="s(); event.stopPropagation(); abrirForm('5571993233142')" style="top:67.91%; left:23.68%; width:19.31%; height:19.31%;"></div>
+<div class="hotspot" onclick="s(); event.stopPropagation(); g(4)" style="top:67.38%; left:50.38%; width:18.39%; height:18.39%;"></div>
+<div class="hotspot" onclick="s(); event.stopPropagation(); g(5)" style="top:67.67%; left:79.64%; width:20.12%; height:20.12%;"></div>
 </div>
 <div class="page " id="pg4" onclick="rv()"><img src="4.jpg"></div>
-<div class="page " id="pg5" onclick="rv()"><img src="5.jpg"></div>
-<div class="page " id="pg6" onclick="rv()"><img src="6.jpg"></div>
+<div class="page " id="pg5" onclick="rv()"><img src="capa.jpg"></div>
 
 
 <div id="form-modal">
@@ -98,66 +92,47 @@
 
 <script>
     const mu=document.getElementById('m'), btn=document.getElementById('btn-s'), sk=document.getElementById('skip'), tm=document.getElementById('timer');
-    const hasP2 = true; 
-    const hasP3 = true;
-    let lastPg = 1; 
+    const hasP2 = false, hasP3 = false;
+    let lastPg = 1, iniciado = false;
     let currentZap = "";
     
-    const uSk = "sim";
-    const uCr = "sim";
-    const pgCr = "5";
-    const dtCr = "2026-08-20T21:00";
-    
     function s(el){ 
-        if(el) el.removeAttribute('onclick'); 
-        mu.load();
-        mu.play().catch(()=>{}); 
-        btn.style.display='flex'; 
+        if(iniciado) return; iniciado = true;
+        if(el && el.tagName === 'DIV') el.removeAttribute('onclick');
+        mu.load(); mu.play().catch(()=>{}); 
         
+        const vAct = document.querySelector('.page.active video');
+        if(vAct) { vAct.muted = false; vAct.play().catch(()=>{}); }
+        
+        btn.style.display='flex'; 
         if (hasP2) { 
-            if(uSk==='sim' && hasP3) sk.style.display='block'; 
+            if("nao"==='sim' && hasP3) sk.style.display='block'; 
             g(2); 
             const v2=document.getElementById('v2'); 
-            if(v2 && v2.tagName==='VIDEO'){
-                v2.play().catch(()=>{}); 
-                v2.onended=()=> { if(hasP3) g(3); } 
-            } else { 
-                if(hasP3) setTimeout(()=>g(3),4000); 
-            } 
+            if(v2 && v2.tagName==='VIDEO'){ v2.play().catch(()=>{}); v2.onended=()=> { if(hasP3) g(3); } }
+            else if(hasP3) { setTimeout(()=>g(3),4000); } 
         } else {
-            const v1=document.getElementById('v1'); 
-            if(v1 && v1.tagName==='VIDEO') v1.play().catch(()=>{});
+            const v1=document.getElementById('v1'); if(v1) { v1.muted = false; v1.play().catch(()=>{}); }
         }
     }
     
     function g(n){ 
         if(n <= 3) lastPg = n; 
-        
-        document.querySelectorAll('.page').forEach(p => {
-            p.classList.remove('active'); 
-        });
-        
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         if(n==3 || (!hasP3 && n==2) || (!hasP2 && n==1) || n > 3) sk.style.display='none';
-        else if (uSk==='sim' && hasP3 && n < 3) sk.style.display='block';
-        
-        tm.style.display = (uCr==='sim' && n==pgCr) ? 'flex' : 'none';
-        
+        else if ("nao"==='sim' && hasP3 && n < 3) sk.style.display='block';
+        tm.style.display = ("sim"==='sim' && n=="1") ? 'flex' : 'none';
         const t=document.getElementById('pg'+n); 
         if(t){
             t.classList.add('active'); 
             const v=t.querySelector('video'); 
-            if(v) v.play().catch(()=>{});
+            if(v) { if(iniciado) v.muted = false; v.play().catch(()=>{}); }
         }
     }
     
     function rv(){ g(lastPg); } 
-
     function t(){ mu.paused ? mu.play() : mu.pause(); }
-
-    function abrirForm(z){ 
-        currentZap = z; 
-        document.getElementById('form-modal').style.display='flex'; 
-    }
+    function abrirForm(z){ currentZap = z; document.getElementById('form-modal').style.display='flex'; }
     
     function enviarWhats() {
         let nome = document.getElementById("fnome").value;
@@ -178,7 +153,8 @@
         window.open(`https://wa.me/${currentZap}?text=${encodeURIComponent(msg)}`);
     }
 
-    if(uCr==='sim'){ setInterval(()=>{ const dist=new Date(dtCr)-new Date(); if(dist<0)return;
+    if("sim"==='sim'){ setInterval(()=>{ 
+        const dist=new Date("2026-08-20T21:00")-new Date(); if(dist<0)return;
         document.getElementById('d').innerText=Math.floor(dist/86400000).toString().padStart(2,'0');
         document.getElementById('h').innerText=Math.floor((dist%86400000)/3600000).toString().padStart(2,'0');
         document.getElementById('mi').innerText=Math.floor((dist%3600000)/60000).toString().padStart(2,'0');
