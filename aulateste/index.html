@@ -2,11 +2,11 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Ester</title>
-    <meta property="og:title" content="Ester">
+    <title>Audio</title>
+    <meta property="og:title" content="Audio">
     <meta property="og:description" content="Você recebeu um convite especial! Clique para abrir.">
     <meta property="og:type" content="website">
-    <meta name="twitter:title" content="Ester">
+    <meta name="twitter:title" content="Audio">
     <style>
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
         body { background:#000; overflow:hidden; height:100dvh; display:flex; justify-content:center; align-items:center; font-family:sans-serif; }
@@ -32,7 +32,7 @@
     </style>
 </head>
 <body>
-<audio id="m" src="C:\fakepath\audio.mp3" loop></audio>
+<audio id="m" src="C:\fakepath\audio.mp3" loop preload="auto"></audio>
 <button id="btn-s" onclick="t()">II</button>
 <button id="skip" onclick="g(3)">PULAR</button>
 
@@ -46,9 +46,9 @@
     </div>
 </div>
 
-<div class="page active" id="pg1" onclick="s(this)"><img src="menu.jpg"><div class="hotspot" onclick="event.stopPropagation(); abrirForm('5571993233142')" style="top:79.01%; left:28.36%; width:14.68%; height:14.68%;"></div>
-<a href="https://maps.app.goo.gl/HFHwpFUTUmKPLjcHA" target="_blank" class="hotspot" onclick="event.stopPropagation()" style="top:78.75%; left:50.21%; width:15.13%; height:15.13%;"></a>
-<div class="hotspot" onclick="event.stopPropagation(); g(4)" style="top:78.45%; left:72.09%; width:16.12%; height:16.12%;"></div>
+<div class="page active" id="pg1" onclick="s(this)"><img src="menu.jpg"><div class="hotspot" onclick="event.stopPropagation(); abrirForm('71993233142')" style="top:78.58%; left:27.61%; width:19.31%; height:19.31%;"></div>
+<a href="https://maps.app.goo.gl/HFHwpFUTUmKPLjcHA" target="_blank" class="hotspot" onclick="event.stopPropagation()" style="top:78.60%; left:50.19%; width:16.92%; height:16.92%;"></a>
+<div class="hotspot" onclick="event.stopPropagation(); g(4)" style="top:78.81%; left:73.11%; width:18.76%; height:18.76%;"></div>
 </div>
 <div class="page " id="pg4" onclick="rv()"><img src="4.jpg"></div>
 
@@ -93,7 +93,7 @@
     const mu=document.getElementById('m'), btn=document.getElementById('btn-s'), sk=document.getElementById('skip'), tm=document.getElementById('timer');
     const hasP2 = false; 
     const hasP3 = false;
-    let lastPg = 1; // CORREÇÃO: Guarda a referência real da página anterior
+    let lastPg = 1; 
     let currentZap = "";
     
     const uSk = "nao";
@@ -102,8 +102,12 @@
     const dtCr = "";
     
     function s(el){ 
-        if(el) el.removeAttribute('onclick'); // Previne execução dupla ao clicar na tela
+        if(el) el.removeAttribute('onclick'); 
+        
+        // CORREÇÃO DE ÁUDIO 2: Força o carregamento antes do play
+        mu.load();
         mu.play().catch(()=>{}); 
+        
         btn.style.display='flex'; 
         
         if (hasP2) { 
@@ -117,14 +121,13 @@
                 if(hasP3) setTimeout(()=>g(3),4000); 
             } 
         } else {
-            // CORREÇÃO: Se só existir P1, permanece nela e reproduz vídeo se houver
             const v1=document.getElementById('v1'); 
             if(v1 && v1.tagName==='VIDEO') v1.play().catch(()=>{});
         }
     }
     
     function g(n){ 
-        if(n <= 3) lastPg = n; // Salva a origem ao navegar entre as principais
+        if(n <= 3) lastPg = n; 
         
         document.querySelectorAll('.page').forEach(p => {
             p.classList.remove('active'); 
@@ -143,7 +146,7 @@
         }
     }
     
-    function rv(){ g(lastPg); } // Retorna para a exata página guardada em lastPg
+    function rv(){ g(lastPg); } 
 
     function t(){ mu.paused ? mu.play() : mu.pause(); }
 
