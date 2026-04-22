@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>testando</title>
+    <title>teste</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
         body { background:#000; overflow:hidden; height:100dvh; display:flex; justify-content:center; align-items:center; font-family:sans-serif; }
@@ -36,7 +36,8 @@
         <div><span class="t-num" id="se">00</span><span class="t-lab">SEG</span></div>
     </div>
 </div>
-<div class="page active" id="pg1" onclick="s()"><video id="v1" src="videomenu.mp4" playsinline muted ></video><div class="hotspot" onclick="s(); abrirForm('5571993233142')" style="top:61.43%; left:27.59%; width:27.45%; height:27.45%;"></div>
+<div class="page active" id="pg1" onclick="s()"><img src="1.jpg"></div>
+<div class="page " id="pg2" ><video id="v2" src="videomenu.mp4" playsinline muted ></video><div class="hotspot" onclick="s(); abrirForm('5571993233142')" style="top:60.65%; left:50.64%; width:80.72%; height:80.72%;"></div>
 </div>
 
 <div id="form-modal">
@@ -55,9 +56,9 @@
 </div>
 <script>
     const mu=document.getElementById('m'), sk=document.getElementById('skip'), tm=document.getElementById('timer'), btn=document.getElementById('btn-s');
-    const hasP2 = false, hasP3 = false;
+    const hasP2 = true, hasP3 = false;
     let lastPg=1, iniciado=false, currentZap="";
-    function s(){ if(iniciado)return; iniciado=true; mu.play(); btn.style.display='flex'; const v1=document.getElementById('v1'); if(v1) v1.muted=false; if(hasP2){ if("nao"==='sim' && hasP3) sk.style.display='block'; g(2); const v2=document.getElementById('v2'); if(v2){ v2.muted=false; v2.play(); v2.onended=()=>g(3); } } }
+    function s(){ if(iniciado)return; iniciado=true; mu.play(); btn.style.display='flex'; const v1=document.getElementById('v1'); if(v1) v1.muted=false; if(hasP2){ if("sim"==='sim' && hasP3) sk.style.display='block'; g(2); const v2=document.getElementById('v2'); if(v2){ v2.muted=false; v2.play(); v2.onended=()=>g(3); } } }
     function g(n){ 
         if(n<=3)lastPg=n; 
         document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); 
