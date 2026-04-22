@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Pedro</title>
+    <title>testando</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
         body { background:#000; overflow:hidden; height:100dvh; display:flex; justify-content:center; align-items:center; font-family:sans-serif; }
@@ -24,7 +24,7 @@
     </style>
 </head>
 <body>
-<audio id="m" src="audio.mp3" loop></audio>
+<audio id="m" src="" loop></audio>
 <button id="btn-s" onclick="t()">II</button>
 <button id="skip" onclick="g(3)">PULAR INTRO</button>
 <div id="timer">
@@ -36,7 +36,7 @@
         <div><span class="t-num" id="se">00</span><span class="t-lab">SEG</span></div>
     </div>
 </div>
-<div class="page active" id="pg1" onclick="s()"><video id="v1" src="pagina2.mp4" playsinline muted ></video><div class="hotspot" onclick="s(); abrirForm('5571993233142')" style="top:50.06%; left:49.09%; width:29.53%; height:29.53%;"></div>
+<div class="page active" id="pg1" onclick="s()"><video id="v1" src="pagina2.mp4" playsinline muted ></video><div class="hotspot" onclick="s(); abrirForm('5571993233142')" style="top:49.02%; left:48.32%; width:27.45%; height:27.45%;"></div>
 </div>
 
 <div id="form-modal">
@@ -57,7 +57,7 @@
     const mu=document.getElementById('m'), sk=document.getElementById('skip'), tm=document.getElementById('timer'), btn=document.getElementById('btn-s');
     const hasP2 = false, hasP3 = false;
     let lastPg=1, iniciado=false, currentZap="";
-    function s(){ if(iniciado)return; iniciado=true; mu.play(); btn.style.display='flex'; const v1=document.getElementById('v1'); if(v1) v1.muted=false; if(hasP2){ if("sim"==='sim' && hasP3) sk.style.display='block'; g(2); const v2=document.getElementById('v2'); if(v2){ v2.muted=false; v2.play(); v2.onended=()=>g(3); } } }
+    function s(){ if(iniciado)return; iniciado=true; mu.play(); btn.style.display='flex'; const v1=document.getElementById('v1'); if(v1) v1.muted=false; if(hasP2){ if("nao"==='sim' && hasP3) sk.style.display='block'; g(2); const v2=document.getElementById('v2'); if(v2){ v2.muted=false; v2.play(); v2.onended=()=>g(3); } } }
     function g(n){ 
         if(n<=3)lastPg=n; 
         document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); 
