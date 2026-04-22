@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Amnada</title>
+    <title>Amanda</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
         body { background:#000; overflow:hidden; height:100dvh; display:flex; justify-content:center; align-items:center; font-family:sans-serif; }
@@ -15,7 +15,7 @@
         
         #timer { 
             position:absolute; 
-            top:23.71%; left:25.69%; 
+            top:23.56%; left:26.49%; 
             width:47.82%; height:8.97%;
             color:white; text-align:center; z-index:200; display:none; 
             text-shadow:2px 2px 5px #000;
@@ -49,17 +49,17 @@
 
 <div class="page active" id="pg1" onclick="s()"><img src="1.jpg"></div>
 <div class="page " id="pg2" ><video id="v2" src="pagina2.mp4" playsinline muted ></video></div>
-<div class="page " id="pg3" ><video id="v3" src="menu.mp4" playsinline muted loop autoplay></video><div class="hotspot" onclick="s(); abrirForm('5571993233142')" style="top:78.41%; left:27.82%; width:18.07%; height:18.07%;"></div>
-<a href="https://maps.app.goo.gl/HFHwpFUTUmKPLjcHA" target="_blank" class="hotspot" style="top:77.96%; left:49.60%; width:19.93%; height:19.93%;"></a>
-<div class="hotspot" onclick="s(); g(4)" style="top:78.11%; left:72.45%; width:20.46%; height:20.46%;"></div>
-<div class="hotspot" onclick="s(); g(5)" style="top:90.06%; left:25.96%; width:20.72%; height:20.72%;"></div>
-<div class="hotspot" onclick="s(); g(6)" style="top:89.17%; left:49.07%; width:19.39%; height:19.39%;"></div>
-<div class="hotspot" onclick="s(); g(7)" style="top:89.47%; left:73.25%; width:21.25%; height:21.25%;"></div>
+<div class="page " id="pg3" ><video id="v3" src="menu.mp4" playsinline muted loop autoplay></video><div class="hotspot" onclick="s(); abrirForm('5571993233142')" style="top:78.11%; left:27.55%; width:17.27%; height:17.27%;"></div>
+<a href="https://maps.app.goo.gl/HFHwpFUTUmKPLjcHA" target="_blank" class="hotspot" style="top:78.56%; left:49.34%; width:18.07%; height:18.07%;"></a>
+<div class="hotspot" onclick="s(); g(4)" style="top:78.11%; left:71.65%; width:17.80%; height:17.80%;"></div>
+<a href="https://5" target="_blank" class="hotspot" style="top:89.47%; left:27.29%; width:18.07%; height:18.07%;"></a>
+<a href="https://6" target="_blank" class="hotspot" style="top:89.02%; left:50.40%; width:16.47%; height:16.47%;"></a>
+<a href="https://7" target="_blank" class="hotspot" style="top:89.62%; left:71.92%; width:16.21%; height:16.21%;"></a>
 </div>
 <div class="page " id="pg4" onclick="rv()"><img src="4.jpg"></div>
 <div class="page " id="pg5" onclick="rv()"><img src="5.jpg"></div>
 <div class="page " id="pg6" onclick="rv()"><img src="6.jpg"></div>
-<div class="page " id="pg7" onclick="rv()"><img src="7.jpg"><a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Aniversario+da+Cristiane&dates=20261231T160000/20260915T200000&details=Venha+celebrar+esse+momento+especial+conosco&location=Milmar+Gelateria+cafe+Farol+da+Barra+Salvador+Ba" target="_blank" class="hotspot" style="top:69.44%; left:49.87%; width:17.80%; height:17.80%;"></a>
+<div class="page " id="pg7" onclick="rv()"><img src="7.jpg"><a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Aniversario+da+Cristiane&dates=20261231T160000/20260915T200000&details=Venha+celebrar+esse+momento+especial+conosco&location=Milmar+Gelateria+cafe+Farol+da+Barra+Salvador+Ba" target="_blank" class="hotspot" style="top:68.54%; left:49.34%; width:18.86%; height:18.86%;"></a>
 </div>
 
 
@@ -98,7 +98,7 @@
         if(n<=3)lastPg=n; 
         document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); 
         if(n>=3)sk.style.display='none'; 
-        tm.style.display=("sim"==='sim' && n=="7")?'flex':'none'; 
+        tm.style.display = ("sim" === 'sim' && n == "3") ? 'flex' : 'none'; 
         const t=document.getElementById('pg'+n); 
         if(t){t.classList.add('active'); const v=t.querySelector('video'); if(v){ v.muted=false; v.play();}} 
     }
@@ -115,7 +115,7 @@
     }
 
     if("sim"==='sim'){ setInterval(()=>{
-        let dist=new Date("2026-08-20T21:00")-new Date(); if(dist<0)return;
+        let dist=new Date("2026-08-20T17:00")-new Date(); if(dist<0)return;
         document.getElementById('d').innerText=Math.floor(dist/86400000).toString().padStart(2,'0');
         document.getElementById('h').innerText=Math.floor((dist%86400000)/3600000).toString().padStart(2,'0');
         document.getElementById('mi').innerText=Math.floor((dist%3600000)/60000).toString().padStart(2,'0');
