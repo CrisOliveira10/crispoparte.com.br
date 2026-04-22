@@ -10,72 +10,71 @@
         .active { opacity:1; z-index:10; pointer-events:auto; }
         img, video { width:100%; height:100%; object-fit:contain; }
         .hotspot { position:absolute; transform:translate(-50%, -50%); z-index:100; border-radius:50%; cursor:pointer; }
-        #skip { position:fixed; bottom:30px; right:20px; z-index:999; padding:10px 20px; border-radius:20px; background:rgba(0,0,0,0.6); color:#c9a96e; display:none; border:1px solid #c9a96e; font-size:10px; text-transform:uppercase; letter-spacing:1px; cursor:pointer; }
-        #timer { position:absolute; top:23.30%; left:32.47%; width:31.71%; transform:translate(-50%, -50%); color:white; text-align:center; z-index:200; display:none; text-shadow:2px 2px 5px #000; }
-        .t-num { display:inline-block; margin:0 5px; font-size:1.8rem; font-weight:bold; }
-        .t-lab { display:block; font-size:0.6rem; opacity:0.8; }
+        #btn-s { position:fixed; bottom:30px; left:20px; width:45px; height:45px; background:rgba(255,255,255,0.4); border:1px solid rgba(255,255,255,0.6); border-radius:50%; z-index:999; display:none; justify-content:center; align-items:center; color:white; backdrop-filter:blur(5px); cursor:pointer; }
+        #skip { position:fixed; bottom:30px; right:20px; z-index:999; padding:10px 20px; border-radius:20px; background:rgba(0,0,0,0.6); color:#c9a96e; display:none; border:1px solid #c9a96e; font-size:10px; cursor:pointer; }
+        #timer { position:absolute; top:23.26%; left:25.69%; width:47.82%; height:8.97%; transform:translate(-50%, -50%); color:white; text-align:center; z-index:200; display:none; text-shadow:2px 2px 5px #000; display:flex; flex-direction:column; justify-content:center; align-items:center; pointer-events:none; }
+        .t-num { display:inline-block; margin:0 5px; font-size:1.5rem; font-weight:bold; }
+        .t-lab { display:block; font-size:0.5rem; opacity:0.8; }
         #form-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; align-items:flex-start; justify-content:center; overflow-y:auto; padding:20px 0; }
-        .form-box { background:white; width:90%; max-width:400px; border-radius:15px; padding-bottom:20px; text-align:center; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.3); }
-        .form-box label { display:block; text-align:left; margin:10px 30px 5px; font-weight:bold; font-size:0.8rem; color:#333; }
+        .form-box { background:white; width:90%; max-width:400px; border-radius:15px; padding-bottom:20px; text-align:center; overflow:hidden; }
+        .form-box label { display:block; text-align:left; margin:10px 30px 5px; font-weight:bold; font-size:0.8rem; }
         .form-box input, .form-box select { width:calc(100% - 60px); margin:0 30px; padding:10px; border:1px solid #ccc; border-radius:5px; }
         .form-box button { width:calc(100% - 60px); margin:20px 30px 0; background:#25d366; color:white; border:none; padding:12px; font-weight:bold; border-radius:5px; cursor:pointer; }
     </style>
 </head>
 <body>
 <audio id="m" src="audio.mp3" loop></audio>
+<button id="btn-s" onclick="t()">II</button>
 <button id="skip" onclick="g(3)">PULAR INTRO</button>
 <div id="timer">
-    <p style="font-size:0.9rem; margin-bottom:5px; font-weight:bold;">Nossa diversão começa em:</p>
+    <p style="font-size:0.7rem; margin-bottom:5px; font-weight:bold;">Nossa diversão começa em:</p>
     <div>
         <div class="t-num"><span id="d">00</span><span class="t-lab">DIAS</span></div>
-        <div class="t-num"><span id="h">00</span><span class="t-lab">HORAS</span></div>
+        <div class="t-num"><span id="h">00</span><span class="t-lab">HRS</span></div>
         <div class="t-num"><span id="mi">00</span><span class="t-lab">MIN</span></div>
         <div class="t-num"><span id="se">00</span><span class="t-lab">SEG</span></div>
     </div>
 </div>
 <div class="page active" id="pg1" onclick="s()"><img src="1.jpg"></div>
-<div class="page " id="pg2" ><video id="v2" src="pagina2.mp4" playsinline muted loop></video></div>
-<div class="page " id="pg3" ><video id="v3" src="menu.mp4" playsinline muted loop></video><div class="hotspot" onclick="s(); abrirForm('5571993233142')" style="top:78.58%; left:27.79%; width:16.16%; height:16.16%;"></div>
-<a href="https://maps.app.goo.gl/HFHwpFUTUmKPLjcHA" target="_blank" class="hotspot" style="top:78.01%; left:49.91%; width:17.35%; height:17.35%;"></a>
-<div class="hotspot" onclick="s(); g(4)" style="top:78.14%; left:72.71%; width:16.91%; height:16.91%;"></div>
-<div class="hotspot" onclick="s(); g(5)" style="top:89.54%; left:27.35%; width:16.60%; height:16.60%;"></div>
-<div class="hotspot" onclick="s(); g(6)" style="top:89.49%; left:49.05%; width:16.95%; height:16.95%;"></div>
-<div class="hotspot" onclick="s(); g(7)" style="top:89.34%; left:71.10%; width:15.63%; height:15.63%;"></div>
+<div class="page " id="pg2" ><video id="v2" src="pagina2.mp4" playsinline muted ></video></div>
+<div class="page " id="pg3" ><video id="v3" src="menu.mp4" playsinline muted loop autoplay></video><div class="hotspot" onclick="s(); abrirForm('5571993233142')" style="top:78.59%; left:27.87%; width:15.52%; height:15.52%;"></div>
+<a href="https://maps.app.goo.gl/HFHwpFUTUmKPLjcHA" target="_blank" class="hotspot" style="top:77.68%; left:49.11%; width:16.55%; height:16.55%;"></a>
+<div class="hotspot" onclick="s(); g(4)" style="top:78.26%; left:72.98%; width:16.30%; height:16.30%;"></div>
+<div class="hotspot" onclick="s(); g(5)" style="top:89.76%; left:27.00%; width:13.78%; height:13.78%;"></div>
+<div class="hotspot" onclick="s(); g(6)" style="top:89.31%; left:49.33%; width:16.20%; height:16.20%;"></div>
+<div class="hotspot" onclick="s(); g(7)" style="top:89.65%; left:71.19%; width:17.14%; height:17.14%;"></div>
 </div>
 <div class="page " id="pg4" onclick="rv()"><img src="4.jpg"></div>
 <div class="page " id="pg5" onclick="rv()"><img src="5.jpg"></div>
 <div class="page " id="pg6" onclick="rv()"><img src="6.jpg"></div>
-<div class="page " id="pg7" onclick="rv()"><img src="7.jpg"><a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Aniversario+da+Cristiane&dates=20261231T160000/20260915T200000&details=Venha+celebrar+esse+momento+especial+conosco&location=Milmar+Gelateria+cafe+Farol+da+Barra+Salvador+Ba" target="_blank" class="hotspot" style="top:68.76%; left:49.39%; width:20.83%; height:20.83%;"></a>
+<div class="page " id="pg7" onclick="rv()"><img src="7.jpg"><a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Aniversario+da+Cristiane&dates=20261231T160000/20260915T200000&details=Venha+celebrar+esse+momento+especial+conosco&location=Milmar+Gelateria+cafe+Farol+da+Barra+Salvador+Ba" target="_blank" class="hotspot" style="top:69.92%; left:49.93%; width:19.25%; height:19.25%;"></a>
 </div>
 
 <div id="form-modal">
     <div class="form-box">
         <img src="minha-arte.jpg" style="width:100%;" alt="Cabeçalho">
-        <h3 style="margin:15px 0;">Confirmação de Presença</h3>
-        <label>Nome completo:</label><input type="text" id="fnome">
-        <label>Acompanhantes:</label><input type="text" id="fconv" placeholder="Nomes dos convidados">
-        <label>Vai participar?</label><select id="fpart"><option value="Sim">Sim, com certeza!</option><option value="Não">Não poderei ir</option></select>
-        <label>Total de Adultos:</label><select id="fadultos"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4+">4+</option></select>
-        <label>Total de Crianças:</label><select id="fcriancas"><option value="0">0</option><option value="1">1</option><option value="2">2</option></select>
-        <label>Idade das Crianças:</label><input type="text" id="fidades" placeholder="Ex: 2 e 5 anos">
-        <button onclick="enviarWhats()">ENVIAR PARA WHATSAPP</button>
-        <p onclick="document.getElementById('form-modal').style.display='none'" style="margin-top:15px; color:red; cursor:pointer; font-weight:bold;">FECHAR X</p>
+        <h3>Confirmação de Presença</h3>
+        <label>Nome:</label><input type="text" id="fnome">
+        <label>Acompanhantes:</label><input type="text" id="fconv">
+        <label>Vai participar?</label><select id="fpart"><option value="Sim">Sim</option><option value="Não">Não</option></select>
+        <button onclick="enviarWhats()">ENVIAR WHATSAPP</button>
+        <p onclick="document.getElementById('form-modal').style.display='none'" style="margin-top:15px; color:red; cursor:pointer;">FECHAR</p>
     </div>
 </div>
 <script>
-    const mu=document.getElementById('m'), sk=document.getElementById('skip'), tm=document.getElementById('timer');
+    const mu=document.getElementById('m'), sk=document.getElementById('skip'), tm=document.getElementById('timer'), btn=document.getElementById('btn-s');
     const hasP2 = true, hasP3 = true;
     let lastPg=1, iniciado=false, currentZap="";
-    function s(){ if(iniciado)return; iniciado=true; mu.play(); if(hasP2){ if("sim"==='sim') sk.style.display='block'; g(2); const v2=document.getElementById('v2'); if(v2) v2.onended=()=>g(3); } }
-    function g(n){ if(n<=3)lastPg=n; document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); if(n>=3)sk.style.display='none'; tm.style.display=("sim"==='sim' && n=="7")?'block':'none'; const t=document.getElementById('pg'+n); if(t){t.classList.add('active'); const v=t.querySelector('video'); if(v){ v.muted=false; v.play();}} }
-    function rv(){ g(lastPg); }
-    function abrirForm(z){ currentZap=z; document.getElementById('form-modal').style.display='flex'; }
-    function enviarWhats(){
-        let n=document.getElementById('fnome').value, p=document.getElementById('fpart').value, c=document.getElementById('fconv').value, a=document.getElementById('fadultos').value, cri=document.getElementById('fcriancas').value, i=document.getElementById('fidades').value;
-        if(!n) return alert('Nome obrigatório');
-        let msg = `✨ *CONFIRMAÇÃO* ✨\n\n👤 *Nome:* ${n}\n🙌 *Participa:* ${p}\n👥 *Convidados:* ${c}\n👨‍👩‍👦 *Adultos:* ${a} | 👶 *Crianças:* ${cri}\n🎂 *Idades:* ${i}`;
-        window.open('https://wa.me/'+currentZap+'?text='+encodeURIComponent(msg));
+    function s(){ 
+        if(iniciado)return; iniciado=true; mu.play(); btn.style.display='flex';
+        const v1=document.getElementById('v1'); if(v1) v1.muted=false;
+        if(hasP2){ if("sim"==='sim' && hasP3) sk.style.display='block'; g(2); const v2=document.getElementById('v2'); if(v2){ v2.muted=false; v2.play(); v2.onended=()=>g(3); } }
     }
+    function g(n){ if(n<=3)lastPg=n; document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); if(n>=3)sk.style.display='none'; tm.style.display=("sim"==='sim' && n=="7")?'flex':'none'; const t=document.getElementById('pg'+n); if(t){t.classList.add('active'); const v=t.querySelector('video'); if(v){ v.muted=false; v.play();}} }
+    function rv(){ g(lastPg); }
+    function t(){ mu.paused ? mu.play() : mu.pause(); }
+    function abrirForm(z){ currentZap=z; document.getElementById('form-modal').style.display='flex'; }
+    function enviarWhats(){ window.open('https://wa.me/'+currentZap+'?text=Confirmado: '+document.getElementById('fnome').value); }
     if("sim"==='sim'){ setInterval(()=>{
         let d=new Date("2026-08-20T17:00")-new Date(); if(d<0)return;
         document.getElementById('d').innerText=Math.floor(d/86400000).toString().padStart(2,'0');
