@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Amanda</title>
+    <title>Amnada</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
         body { background:#000; overflow:hidden; height:100dvh; display:flex; justify-content:center; align-items:center; font-family:sans-serif; }
@@ -12,11 +12,21 @@
         .hotspot { position:absolute; transform:translate(-50%, -50%); z-index:100; border-radius:50%; cursor:pointer; }
         #btn-s { position:fixed; bottom:30px; left:20px; width:45px; height:45px; background:rgba(255,255,255,0.4); border:1px solid rgba(255,255,255,0.6); border-radius:50%; z-index:999; display:none; justify-content:center; align-items:center; color:white; backdrop-filter:blur(5px); cursor:pointer; }
         #skip { position:fixed; bottom:30px; right:20px; z-index:999; padding:10px 20px; border-radius:20px; background:rgba(0,0,0,0.6); color:#c9a96e; display:none; border:1px solid #c9a96e; font-size:10px; cursor:pointer; }
-        #timer { position:absolute; top:22.29%; left:23.70%; width:50.32%; height:9.44%; transform:translate(-50%, -50%); color:white; text-align:center; z-index:200; display:none; text-shadow:2px 2px 5px #000; display:flex; flex-direction:column; justify-content:center; align-items:center; pointer-events:none; }
+        
+        #timer { 
+            position:absolute; 
+            top:23.71%; left:25.69%; 
+            width:47.82%; height:8.97%;
+            color:white; text-align:center; z-index:200; display:none; 
+            text-shadow:2px 2px 5px #000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            pointer-events:none;
+        }
         .t-num { display:inline-block; margin:0 5px; font-size:1.5rem; font-weight:bold; }
         .t-lab { display:block; font-size:0.5rem; opacity:0.8; }
+        
         #form-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; align-items:flex-start; justify-content:center; overflow-y:auto; padding:20px 0; }
-        .form-box { background:white; width:90%; max-width:400px; border-radius:15px; padding-bottom:20px; text-align:center; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.3); }
+        .form-box { background:white; width:90%; max-width:400px; border-radius:15px; padding-bottom:20px; text-align:center; overflow:hidden; }
         .form-box label { display:block; text-align:left; margin:10px 30px 5px; font-weight:bold; font-size:0.8rem; color:#333; }
         .form-box input, .form-box select { width:calc(100% - 60px); margin:0 30px; padding:10px; border:1px solid #ccc; border-radius:5px; }
         .form-box button { width:calc(100% - 60px); margin:20px 30px 0; background:#25d366; color:white; border:none; padding:12px; font-weight:bold; border-radius:5px; cursor:pointer; }
@@ -26,29 +36,32 @@
 <audio id="m" src="audio.mp3" loop></audio>
 <button id="btn-s" onclick="t()">II</button>
 <button id="skip" onclick="g(3)">PULAR INTRO</button>
+
 <div id="timer">
     <p style="font-size:0.7rem; margin-bottom:5px; font-weight:bold;">Nossa diversão começa em:</p>
-    <div>
-        <div class="t-num"><span id="d">00</span><span class="t-lab">DIAS</span></div>
-        <div class="t-num"><span id="h">00</span><span class="t-lab">HORAS</span></div>
-        <div class="t-num"><span id="mi">00</span><span class="t-lab">MIN</span></div>
-        <div class="t-num"><span id="se">00</span><span class="t-lab">SEG</span></div>
+    <div style="display:flex; justify-content:center; gap:10px; width:100%;">
+        <div><span class="t-num" id="d">00</span><span class="t-lab">DIAS</span></div>
+        <div><span class="t-num" id="h">00</span><span class="t-lab">HORAS</span></div>
+        <div><span class="t-num" id="mi">00</span><span class="t-lab">MIN</span></div>
+        <div><span class="t-num" id="se">00</span><span class="t-lab">SEG</span></div>
     </div>
 </div>
+
 <div class="page active" id="pg1" onclick="s()"><img src="1.jpg"></div>
 <div class="page " id="pg2" ><video id="v2" src="pagina2.mp4" playsinline muted ></video></div>
-<div class="page " id="pg3" ><video id="v3" src="menu.mp4" playsinline muted loop autoplay></video><div class="hotspot" onclick="s(); abrirForm('5571993233142')" style="top:78.74%; left:27.07%; width:15.78%; height:15.78%;"></div>
-<a href="https://maps.app.goo.gl/HFHwpFUTUmKPLjcHA" target="_blank" class="hotspot" style="top:77.68%; left:49.91%; width:17.35%; height:17.35%;"></a>
-<div class="hotspot" onclick="s(); g(4)" style="top:77.79%; left:70.56%; width:18.80%; height:18.80%;"></div>
-<div class="hotspot" onclick="s(); g(5)" style="top:89.50%; left:26.28%; width:15.80%; height:15.80%;"></div>
-<div class="hotspot" onclick="s(); g(6)" style="top:89.80%; left:49.66%; width:16.06%; height:16.06%;"></div>
-<div class="hotspot" onclick="s(); g(7)" style="top:89.47%; left:71.39%; width:15.85%; height:15.85%;"></div>
+<div class="page " id="pg3" ><video id="v3" src="menu.mp4" playsinline muted loop autoplay></video><div class="hotspot" onclick="s(); abrirForm('5571993233142')" style="top:78.41%; left:27.82%; width:18.07%; height:18.07%;"></div>
+<a href="https://maps.app.goo.gl/HFHwpFUTUmKPLjcHA" target="_blank" class="hotspot" style="top:77.96%; left:49.60%; width:19.93%; height:19.93%;"></a>
+<div class="hotspot" onclick="s(); g(4)" style="top:78.11%; left:72.45%; width:20.46%; height:20.46%;"></div>
+<div class="hotspot" onclick="s(); g(5)" style="top:90.06%; left:25.96%; width:20.72%; height:20.72%;"></div>
+<div class="hotspot" onclick="s(); g(6)" style="top:89.17%; left:49.07%; width:19.39%; height:19.39%;"></div>
+<div class="hotspot" onclick="s(); g(7)" style="top:89.47%; left:73.25%; width:21.25%; height:21.25%;"></div>
 </div>
 <div class="page " id="pg4" onclick="rv()"><img src="4.jpg"></div>
 <div class="page " id="pg5" onclick="rv()"><img src="5.jpg"></div>
 <div class="page " id="pg6" onclick="rv()"><img src="6.jpg"></div>
-<div class="page " id="pg7" onclick="rv()"><img src="7.jpg"><a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Aniversario+da+Cristiane&dates=20261231T160000/20260915T200000&details=Venha+celebrar+esse+momento+especial+conosco&location=Milmar+Gelateria+cafe+Farol+da+Barra+Salvador+Ba" target="_blank" class="hotspot" style="top:69.59%; left:50.13%; width:20.51%; height:20.51%;"></a>
+<div class="page " id="pg7" onclick="rv()"><img src="7.jpg"><a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Aniversario+da+Cristiane&dates=20261231T160000/20260915T200000&details=Venha+celebrar+esse+momento+especial+conosco&location=Milmar+Gelateria+cafe+Farol+da+Barra+Salvador+Ba" target="_blank" class="hotspot" style="top:69.44%; left:49.87%; width:17.80%; height:17.80%;"></a>
 </div>
+
 
 <div id="form-modal">
     <div class="form-box">
@@ -61,33 +74,51 @@
         <label>Crianças:</label><select id="fcriancas"><option value="0">0</option><option value="1">1</option><option value="2">2</option></select>
         <label>Idades:</label><input type="text" id="fidades">
         <button onclick="enviarWhats()">ENVIAR WHATSAPP</button>
-        <p onclick="document.getElementById('form-modal').style.display='none'" style="margin-top:15px; color:red; cursor:pointer;">FECHAR</p>
+        <p onclick="document.getElementById('form-modal').style.display='none'" style="margin-top:15px; color:red; cursor:pointer; font-weight:bold;">FECHAR X</p>
     </div>
 </div>
+
 <script>
     const mu=document.getElementById('m'), sk=document.getElementById('skip'), tm=document.getElementById('timer'), btn=document.getElementById('btn-s');
     const hasP2 = true, hasP3 = true;
     let lastPg=1, iniciado=false, currentZap="";
+
     function s(){ 
         if(iniciado)return; iniciado=true; mu.play(); btn.style.display='flex';
         const v1=document.getElementById('v1'); if(v1) v1.muted=false;
-        if(hasP2){ if("sim"==='sim' && hasP3) sk.style.display='block'; g(2); const v2=document.getElementById('v2'); if(v2){ v2.muted=false; v2.play(); v2.onended=()=>g(3); } }
+        if(hasP2){ 
+            if("sim"==='sim' && hasP3) sk.style.display='block'; 
+            g(2); 
+            const v2=document.getElementById('v2'); 
+            if(v2){ v2.muted=false; v2.play(); v2.onended=()=>g(3); } 
+        }
     }
-    function g(n){ if(n<=3)lastPg=n; document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); if(n>=3)sk.style.display='none'; tm.style.display=("sim"==='sim' && n=="7")?'flex':'none'; const t=document.getElementById('pg'+n); if(t){t.classList.add('active'); const v=t.querySelector('video'); if(v){ v.muted=false; v.play();}} }
+
+    function g(n){ 
+        if(n<=3)lastPg=n; 
+        document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); 
+        if(n>=3)sk.style.display='none'; 
+        tm.style.display=("sim"==='sim' && n=="7")?'flex':'none'; 
+        const t=document.getElementById('pg'+n); 
+        if(t){t.classList.add('active'); const v=t.querySelector('video'); if(v){ v.muted=false; v.play();}} 
+    }
+
     function rv(){ g(lastPg); }
     function t(){ mu.paused ? mu.play() : mu.pause(); }
     function abrirForm(z){ currentZap=z; document.getElementById('form-modal').style.display='flex'; }
+
     function enviarWhats(){
         let n=document.getElementById('fnome').value, p=document.getElementById('fpart').value, c=document.getElementById('fconv').value, a=document.getElementById('fadultos').value, cri=document.getElementById('fcriancas').value, i=document.getElementById('fidades').value;
         if(!n) return alert('Nome obrigatório');
         let msg = `✨ *CONFIRMAÇÃO* ✨\n\n👤 *Nome:* ${n}\n🙌 *Participa:* ${p}\n👥 *Acompanhantes:* ${c}\n👨‍👩‍👦 *Adultos:* ${a} | 👶 *Crianças:* ${cri}\n🎂 *Idades:* ${i}`;
         window.open('https://wa.me/'+currentZap+'?text='+encodeURIComponent(msg));
     }
+
     if("sim"==='sim'){ setInterval(()=>{
-        let d=new Date("2026-08-20T17:00")-new Date(); if(d<0)return;
-        document.getElementById('d').innerText=Math.floor(d/86400000).toString().padStart(2,'0');
-        document.getElementById('h').innerText=Math.floor((d%86400000)/3600000).toString().padStart(2,'0');
-        document.getElementById('mi').innerText=Math.floor((d%3600000)/60000).toString().padStart(2,'0');
-        document.getElementById('se').innerText=Math.floor((d%60000)/1000).toString().padStart(2,'0');
+        let dist=new Date("2026-08-20T21:00")-new Date(); if(dist<0)return;
+        document.getElementById('d').innerText=Math.floor(dist/86400000).toString().padStart(2,'0');
+        document.getElementById('h').innerText=Math.floor((dist%86400000)/3600000).toString().padStart(2,'0');
+        document.getElementById('mi').innerText=Math.floor((dist%3600000)/60000).toString().padStart(2,'0');
+        document.getElementById('se').innerText=Math.floor((dist%60000)/1000).toString().padStart(2,'0');
     },1000); }
 </script></body></html>
