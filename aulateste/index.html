@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Amanda 1 Aninho</title>
+    <title>Pedro</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
         body { background:#000; overflow:hidden; height:100dvh; display:flex; justify-content:center; align-items:center; font-family:sans-serif; }
@@ -12,7 +12,7 @@
         .hotspot { position:absolute; transform:translate(-50%, -50%); z-index:100; border-radius:50%; cursor:pointer; }
         #btn-s { position:fixed; bottom:30px; left:20px; width:45px; height:45px; background:rgba(255,255,255,0.4); border:1px solid rgba(255,255,255,0.6); border-radius:50%; z-index:999; display:none; justify-content:center; align-items:center; color:white; backdrop-filter:blur(5px); cursor:pointer; }
         #skip { position:fixed; bottom:30px; right:20px; z-index:999; padding:10px 20px; border-radius:20px; background:rgba(0,0,0,0.6); color:#c9a96e; display:none; border:1px solid #c9a96e; font-size:10px; cursor:pointer; }
-       #timer { position:absolute; top:23.74%; left:24.63%; width:47.82%; height:8.97%; transform:translate(0, 0); color:white; text-align:center; z-index:200; display:none; text-shadow:2px 2px 5px #000; flex-direction:column; justify-content:center; align-items:center; pointer-events:none; }
+       #timer { position:absolute; top:50%; left:50%; width:180px; height:60px; transform:translate(0, 0); color:white; text-align:center; z-index:200; display:none; text-shadow:2px 2px 5px #000; flex-direction:column; justify-content:center; align-items:center; pointer-events:none; }
         .t-wrap { display: flex; justify-content: center; align-items: center; width: 100%; gap: 5px; }
         .t-num { font-size: 1.5rem; font-weight: bold; line-height: 1; }
         .t-lab { display: block; font-size: 0.5rem; opacity: 0.8; }
@@ -36,19 +36,7 @@
         <div><span class="t-num" id="se">00</span><span class="t-lab">SEG</span></div>
     </div>
 </div>
-<div class="page active" id="pg1" onclick="s()"><img src="1.jpg"></div>
-<div class="page " id="pg2" ><video id="v2" src="pagina2.mp4" playsinline muted ></video></div>
-<div class="page " id="pg3" ><video id="v3" src="menu.mp4" playsinline muted loop autoplay></video><div class="hotspot" onclick="s(); abrirForm('5571993233142')" style="top:78.47%; left:27.34%; width:15.52%; height:15.52%;"></div>
-<a href="https://maps.app.goo.gl/HFHwpFUTUmKPLjcHA" target="_blank" class="hotspot" style="top:78.17%; left:49.66%; width:17.11%; height:17.11%;"></a>
-<div class="hotspot" onclick="s(); g(4)" style="top:77.53%; left:71.37%; width:17.76%; height:17.76%;"></div>
-<div class="hotspot" onclick="s(); g(5)" style="top:89.53%; left:27.07%; width:15.52%; height:15.52%;"></div>
-<div class="hotspot" onclick="s(); g(6)" style="top:89.80%; left:49.60%; width:16.20%; height:16.20%;"></div>
-<div class="hotspot" onclick="s(); g(7)" style="top:88.90%; left:70.85%; width:16.20%; height:16.20%;"></div>
-</div>
-<div class="page " id="pg4" onclick="rv()"><img src="4.jpg"></div>
-<div class="page " id="pg5" onclick="rv()"><img src="5.jpg"></div>
-<div class="page " id="pg6" onclick="rv()"><img src="6.jpg"></div>
-<div class="page " id="pg7" onclick="rv()"><img src="7.jpg"><a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Aniversario+da+Cristiane&dates=20261231T160000/20260915T200000&details=Venha+celebrar+esse+momento+especial+conosco&location=Milmar+Gelateria+cafe+Farol+da+Barra+Salvador+Ba" target="_blank" class="hotspot" style="top:69.18%; left:49.08%; width:21.81%; height:21.81%;"></a>
+<div class="page active" id="pg1" onclick="s()"><video id="v1" src="pagina2.mp4" playsinline muted ></video><div class="hotspot" onclick="s(); abrirForm('5571993233142')" style="top:50.06%; left:49.09%; width:29.53%; height:29.53%;"></div>
 </div>
 
 <div id="form-modal">
@@ -67,14 +55,14 @@
 </div>
 <script>
     const mu=document.getElementById('m'), sk=document.getElementById('skip'), tm=document.getElementById('timer'), btn=document.getElementById('btn-s');
-    const hasP2 = true, hasP3 = true;
+    const hasP2 = false, hasP3 = false;
     let lastPg=1, iniciado=false, currentZap="";
     function s(){ if(iniciado)return; iniciado=true; mu.play(); btn.style.display='flex'; const v1=document.getElementById('v1'); if(v1) v1.muted=false; if(hasP2){ if("sim"==='sim' && hasP3) sk.style.display='block'; g(2); const v2=document.getElementById('v2'); if(v2){ v2.muted=false; v2.play(); v2.onended=()=>g(3); } } }
     function g(n){ 
         if(n<=3)lastPg=n; 
         document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); 
         if(n>=3)sk.style.display='none'; 
-        tm.style.display=("sim"==='sim' && String(n)==="7")?'flex':'none'; 
+        tm.style.display=("nao"==='sim' && String(n)==="3")?'flex':'none'; 
         const t=document.getElementById('pg'+n); 
         if(t){t.classList.add('active'); const v=t.querySelector('video'); if(v){ v.muted=false; v.play();}} 
     }
@@ -87,8 +75,8 @@
         let msg = `✨ *CONFIRMAÇÃO* ✨\n\n👤 *Nome:* ${n}\n🙌 *Participa:* ${p}\n👥 *Acompanhantes:* ${c}\n👨‍👩‍👦 *Adultos:* ${a} | 👶 *Crianças:* ${cri}\n🎂 *Idades:* ${i}`;
         window.open('https://wa.me/'+currentZap+'?text='+encodeURIComponent(msg));
     }
-    if("sim"==='sim'){ setInterval(()=>{
-        let dist=new Date("2026-08-20T17:00")-new Date(); if(dist<0)return;
+    if("nao"==='sim'){ setInterval(()=>{
+        let dist=new Date("")-new Date(); if(dist<0)return;
         document.getElementById('d').innerText=Math.floor(dist/86400000).toString().padStart(2,'0');
         document.getElementById('h').innerText=Math.floor((dist%86400000)/3600000).toString().padStart(2,'0');
         document.getElementById('mi').innerText=Math.floor((dist%3600000)/60000).toString().padStart(2,'0');
