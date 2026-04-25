@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Melissa 5 anos</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+        body { background:#000; overflow:hidden; height:100dvh; display:flex; justify-content:center; align-items:center; font-family:sans-serif; }
+        .page { position:absolute; width:100%; height:100%; max-width:500px; opacity:0; z-index:1; transition:opacity 0.6s; display:flex; justify-content:center; align-items:center; pointer-events:none; }
+        .active { opacity:1; z-index:10; pointer-events:auto; }
+        img, video { width:100%; height:100%; object-fit:contain; }
+        .hotspot { position:absolute; transform:translate(-50%, -50%); z-index:100; border-radius:50%; cursor:pointer; }
+        #btn-s { position:fixed; bottom:30px; left:20px; width:45px; height:45px; background:rgba(255,255,255,0.4); border:1px solid rgba(255,255,255,0.6); border-radius:50%; z-index:999; display:none; justify-content:center; align-items:center; color:white; backdrop-filter:blur(5px); }
+        #skip { position:fixed; bottom:30px; right:20px; z-index:999; padding:10px 20px; border-radius:20px; background:rgba(0,0,0,0.6); color:#c9a96e; display:none; border:1px solid #c9a96e; font-size:10px; text-transform:uppercase; letter-spacing:1px; }
+        #form-modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; align-items:flex-start; justify-content:center; overflow-y:auto; padding:20px 0; }
+        .form-box { background:#fff; width:90%; max-width:400px; border-radius:15px; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.3); margin:auto; text-align:center; padding-bottom:20px; font-family: 'Segoe UI', sans-serif; }
+        .form-box label { display:block; text-align:left; margin:10px 30px 5px; font-size:0.85rem; color:#333; font-weight:bold; }
+        .form-box input, .form-box select { width:calc(100% - 60px); margin:0 30px; padding:10px; border:1px solid #ccc; border-radius:5px; font-size:1rem; box-sizing:border-box; }
+        .form-box button { width:calc(100% - 60px); margin:20px 30px 0; padding:12px; background:#25d366; color:white; border:none; border-radius:5px; font-weight:bold; font-size:1.1rem; cursor:pointer; }
+        
+                #timer-wrapper { position:absolute; width:100%; height:100%; max-width:500px; z-index:200; display:none; pointer-events:none; }
+                #timer { position:absolute; top:63.87%; left:30.31%; width:43.13%; height:5.99%; container-type:inline-size; display:flex; flex-direction:column; align-items:center; justify-content:center; color:white; text-shadow:2px 2px 5px #000; }
+                #timer p { font-size: 6.5cqi; margin-bottom: 2cqi; font-weight:bold; letter-spacing:1px; margin-top:0; white-space:nowrap; text-align:center; }
+                .t-container { display:flex; justify-content:center; align-items:center; width:100%; gap:4cqi; }
+                .t-num { display:flex; flex-direction:column; align-items:center; line-height:1; }
+                .t-val { font-size:18cqi; font-weight:bold; }
+    function g(n){ 
+        if(n <= 3) lastPg = n; 
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        if(n==3 || (!hasP3 && n==2) || (!hasP2 && n==1) || n > 3) sk.style.display='none';
+        else if ("nao"==='sim' && hasP3 && n < 3) sk.style.display='block';
+        tm.style.display = ("sim"==='sim' && n=="4") ? 'block' : 'none';
+        const t=document.getElementById('pg'+n); 
+        if(t){
+            t.classList.add('active'); 
+            const v=t.querySelector('video'); 
+            if(v) { if(iniciado) v.muted = false; v.play().catch(()=>{}); }
+        }
+    }
+    
+    function rv(){ g(lastPg); } 
+    function t(){ mu.paused ? mu.play() : mu.pause(); }
+    function abrirForm(z){ currentZap = z; document.getElementById('form-modal').style.display='flex'; }
+    
+    function enviarWhats() {
+        let nome = document.getElementById("fnome").value;
+        let convidados = document.getElementById("fconvidados").value;
+        let participa = document.getElementById("fparticipa").value;
+        let adultos = document.getElementById("fadultos").value;
+        let criancas = document.getElementById("fcriancas").value;
+        let idades = document.getElementById("fidades").value;
+
+        if(nome === "" || participa === "") { alert("Por favor, preencha seu nome e se você vai participar."); return; }
+        let infoIdade = idades ? idades : "Não informado";
+        let msg = `✨ *CONFIRMAÇÃO DE PRESENÇA* ✨\n\n👤 *Nome:* ${nome}\n🙌 *Vai participar?* ${participa}\n👥 *Acompanhantes:* ${convidados}\n👨‍👩‍👧‍👦 *Total de Adultos:* ${adultos}\n👶 *Total de Crianças:* ${criancas}\n🎂 *Idade das Crianças:* ${infoIdade}\n\n_Enviado via Formulário_`;
+        window.open(`https://wa.me/${currentZap}?text=${encodeURIComponent(msg)}`);
+    }
+
+    if("sim"==='sim'){ setInterval(()=>{ 
+        const dist=new Date("2026-08-20T17:00")-new Date(); if(dist<0)return;
+        document.getElementById('d').innerText=Math.floor(dist/86400000).toString().padStart(2,'0');
+        document.getElementById('h').innerText=Math.floor((dist%86400000)/3600000).toString().padStart(2,'0');
+        document.getElementById('mi').innerText=Math.floor((dist%3600000)/60000).toString().padStart(2,'0');
+        document.getElementById('se').innerText=Math.floor((dist%60000)/1000).toString().padStart(2,'0');
+    },1000); }
+</script></body></html>
