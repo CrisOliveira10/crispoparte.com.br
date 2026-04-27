@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Paloma</title>
+    <style>
+        :root { 
+            --c-btn: #6e605c; 
+            --c-cron: #644a3e; 
+            --c-bg: #faf7f2;
+            --c-sound: #6e605c;
+                    btnNext.innerHTML = '&#10095;'; 
+            btnNext.style.cssText = 'position:absolute; right:10px; top:50%; transform:translateY(-50%); background:rgba(0, 0, 0, 0.4); color:#ffffff; border:none; border-radius:50%; width:30px; height:30px; font-size:12px; cursor:pointer; z-index:10; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(2px);';
+
+            // Adiciona botões apenas se houver mais de uma foto
+            if(fts.length > 1) {
+                box.appendChild(btnPrev);
+                box.appendChild(btnNext);
+            }
+
+            function updateSlide() {
+                sw.style.transform = 'translateX(-' + (currentIndex * 100) + '%)';
+            }
+
+            // Ação dos botões
+            btnPrev.onclick = () => {
+                if(currentIndex > 0) { currentIndex--; updateSlide(); }
+            };
+            btnNext.onclick = () => {
+                if(currentIndex < fts.length - 1) { currentIndex++; updateSlide(); }
+            };
+
+            // Função unificada de cálculo do arrasto
+            function handleSwipe(endX) {
+                let diff = startsX - endX;
+                if (Math.abs(diff) > 50) {
+                    if (diff > 0 && currentIndex < fts.length - 1) currentIndex++;
+                    else if (diff < 0 && currentIndex > 0) currentIndex--;
+                    updateSlide();
+                }
+            }
+
+            // Eventos Mobile (Toque)
+            sw.addEventListener('touchstart', e => { startsX = e.touches[0].clientX; });
+            sw.addEventListener('touchend', e => { handleSwipe(e.changedTouches[0].clientX); });
+
+            // Eventos Computador (Mouse)
+            sw.addEventListener('mousedown', e => { isDown = true; startsX = e.clientX; sw.style.cursor = 'grabbing'; });
+            sw.addEventListener('mouseup', e => { 
+                if(!isDown) return;
+                isDown = false; 
+                sw.style.cursor = 'grab';
+                handleSwipe(e.clientX); 
+            });
+            sw.addEventListener('mouseleave', () => { isDown = false; sw.style.cursor = 'grab'; });
+            sw.style.cursor = 'grab';
+        }
+        
+        /* Cronômetro */
+        const alvo = new Date("2026-12-31T17:00");
+        function up() { const d = alvo - new Date(); if(d<=0) return;
+            const ds = Math.floor(d/86400000).toString().padStart(2,'0');
+            const h = Math.floor((d/3600000)%24).toString().padStart(2,'0');
+            const m = Math.floor((d/60000)%60).toString().padStart(2,'0');
+            const s = Math.floor((d/1000)%60).toString().padStart(2,'0');
+            if(document.getElementById('t-d')) {
+                document.getElementById('t-d').innerText = ds; document.getElementById('t-h').innerText = h;
+                document.getElementById('t-m').innerText = m; document.getElementById('t-s').innerText = s;
+            }
+        } setInterval(up, 1000); up();
+        
+        function cp(){ navigator.clipboard.writeText(cPix).then(() => { alert('Chave PIX Copiada!'); }); }
+    </script>
+</body>
+</html>
