@@ -141,7 +141,7 @@
             
             // Criando botões discretos < e > dinamicamente
             const box = sw.parentElement;
-            box.style.position = 'relative';
+            box.style.position = 'absolute'; /* <-- CORREÇÃO: Mantém o slide flutuando por cima da página */
             
             const btnPrev = document.createElement('button');
             btnPrev.innerHTML = '&#10094;'; 
