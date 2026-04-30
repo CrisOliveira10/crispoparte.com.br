@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Instamomentos - Galeria</title>
+    <style>
+        /* --- PALETA DE CORES E BASE --- */
+        :root {
+            --cor-fundo: #F8F9FA;
+            --cor-texto: #333333;
+            --cor-destaque: #235587; /* Sua cor HEX preferida */
+            --cor-secundaria: #8E8E8E;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+
+        body { background-color: var(--cor-fundo); color: var(--cor-texto); min-height: 100dvh; display: flex; flex-direction: column; }
+
+        /* --- TELA 1: CABEÇALHO DO PERFIL --- */
+        .header-perfil { background-color: #fff; padding-bottom: 20px; border-bottom: 1px solid #dbdbdb; }
+        .banner { width: 100%; height: 150px; background-color: #e0e0e0; background-size: cover; background-position: center; }
+        
+        .info-perfil { display: flex; flex-direction: column; align-items: center; margin-top: -50px; text-align: center; padding: 0 20px; }
+        .avatar { width: 100px; height: 100px; border-radius: 50%; border: 4px solid #fff; background-color: #ccc; object-fit: cover; margin-bottom: 10px; }
+        
+        .titulo-evento { font-size: 1.2rem; font-weight: bold; margin-bottom: 5px; }
+        .data-evento { font-size: 0.9rem; color: var(--cor-secundaria); margin-bottom: 10px; }
+        .descricao { font-size: 0.95rem; margin-bottom: 20px; }
+
+        .estatisticas { display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; }
+        .stat-item { display: flex; flex-direction: column; align-items: center; }
+        .stat-numero { font-weight: bold; font-size: 1.1rem; }
+        .stat-label { font-size: 0.8rem; color: var(--cor-secundaria); }
+
+        /* Botão Sólido no Perfil */
+        .btn-principal-festa {
+            width: 90%; max-width: 300px; margin: 10px auto; display: block; padding: 15px;
+            background-color: var(--cor-destaque); color: #ffffff; border: none; border-radius: 12px;
+            font-size: 1rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* --- GALERIA FEED (Grade 2 colunas) --- */
+        .galeria-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 8px; background-color: #f4f4f4; }
+        .post-container { position: relative; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .media-wrapper { position: relative; width: 100%; aspect-ratio: 9 / 16; background-color: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .media-wrapper img { width: 100%; height: 100%; object-fit: contain; }
+        
+        .post-acoes { position: absolute; bottom: 0; left: 0; right: 0; padding: 8px; display: flex; justify-content: space-between; background: linear-gradient(transparent, rgba(0,0,0,0.8)); z-index: 5; }
+        .btn-post { background: none; border: none; color: #fff; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+
+        /* --- TELA 2: CÂMERA (Oculta por padrão) --- */
+        .camera-container { position: fixed; top: 0; left: 0; width: 100%; height: 100dvh; background-color: #000; z-index: 1000; display: none; flex-direction: column; justify-content: space-between; }
+        .camera-header { padding: 15px 20px; display: flex; background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent); position: absolute; width: 100%; z-index: 10; }
+        .btn-fechar { background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; }
+
+        .video-wrapper { position: relative; width: 100%; max-height: 80dvh; aspect-ratio: 9 / 16; margin: auto 0; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        #videoElement { width: 100%; height: 100%; object-fit: cover; }
+        #molduraOverlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+
+        .camera-controles { padding: 20px; background-color: #000; display: flex; flex-direction: column; gap: 15px; }
+        .filtros { display: flex; gap: 10px; justify-content: center; }
+        .btn-filtro { background-color: #333; color: #fff; border: none; padding: 8px 15px; border-radius: 8px; }
+        .btn-filtro.ativo { background-color: var(--cor-destaque); }
+
+        .acoes-principais { display: flex; justify-content: space-around; align-items: center; }
+        .btn-inverter { background: none; border: none; color: #fff; font-size: 1.5rem; }
+        .btn-capturar-final { width: 70px; height: 70px; border-radius: 50%; background-color: #fff; border: 5px solid #ccc; }
+
+        /* Botão Flutuante */
+        .btn-flutuante { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background-color: var(--cor-destaque); color: white; padding: 15px 25px; border-radius: 50px; border: none; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.4); z-index: 999; display: flex; align-items: center; gap: 8px; }
+    </style>
+</head>
+<body>
+
+<div id="sessaoFeed">
+    
+
+    <header class="header-perfil">
+        <div class="banner"></div>
+        <div class="info-perfil">
+            <img src="" alt="Avatar" class="avatar" id="avatarEvento">
+            <h1 class="titulo-evento" id="nomeEvento">Carregando...</h1>
+            <p class="data-evento" id="dataEvento"></p>
+            <p class="descricao" id="descricaoEvento"></p>
+            
+            <div class="estatisticas">
+                <div class="stat-item"><span class="stat-numero" id="totalFotos">0</span><span class="stat-label">Fotos</span></div>
+                <div class="stat-item"><span class="stat-numero" id="totalCurtidas">0</span><span class="stat-label">Curtidas</span></div>
+            </div>
+
+            <button class="btn-principal-festa" id="btnAbrirCamera">📸 Tirar Foto</button>
+        </div>
+    </header>
+
+    <main class="galeria-grid" id="feedGaleria"></main>
+</div>
+
+<div id="cameraContainer" class="camera-container">
+    <div class="camera-header"><button id="btnFecharCamera" class="btn-fechar">❌ Voltar</button></div>
+    <div class="video-wrapper">
+        <video id="videoElement" autoplay playsinline></video>
+        <img id="molduraOverlay" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" alt="Moldura">
+    </div>
+    <div class="camera-controles">
+        <div class="filtros">
+            <button id="btnFiltroNormal" class="btn-filtro ativo">Normal</button>
+            <button id="btnFiltroPB" class="btn-filtro">P&B</button>
+        </div>
+        <div class="acoes-principais">
+            <button id="btnInverterCamera" class="btn-inverter">🔄</button>
+            <button id="btnCapturarFinal" class="btn-capturar-final"></button>
+            <div style="width: 30px;"></div>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
+    import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc, increment, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAhuu4yUKVgxtRHchUvywRJ5eHw0fUIJgE",
+        authDomain: "insta-momentos.firebaseapp.com",
+        projectId: "insta-momentos",
+        storageBucket: "insta-momentos.firebasestorage.app",
+        messagingSenderId: "331954094992",
+        appId: "1:331954094992:web:e7489c969308a2885f2915"
+    };
+    const IMGBB_API_KEY = "aa0c9dc6122e459a16cf1f6e8d9d3686";
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+   // --- ELEMENTOS (Ajuste Cirúrgico: Removido o botão flutuante) ---
+    const sessaoFeed = document.getElementById('sessaoFeed');
+    const cameraContainer = document.getElementById('cameraContainer');
+    const btnAbrirCamera = document.getElementById('btnAbrirCamera'); // Botão Principal do Cabeçalho
+    const btnFecharCamera = document.getElementById('btnFecharCamera');
+    const videoElement = document.getElementById('videoElement');
+    
+    let stream = null;
+    let usandoCameraFrontal = false;
+
+    // --- NAVEGAÇÃO ---
+    async function abrirCamera() {
+        sessaoFeed.style.display = 'none';
+        cameraContainer.style.display = 'flex';
+        const modo = usandoCameraFrontal ? "user" : "environment";
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: modo } });
+            videoElement.srcObject = stream;
+        } catch (err) { 
+            alert("Acesso negado à câmera."); 
+            fecharInterface(); 
+        }
+    }
+
+    function fecharInterface() {
+        if (stream) stream.getTracks().forEach(t => t.stop());
+        cameraContainer.style.display = 'none';
+        sessaoFeed.style.display = 'block';
+    }
+
+    // Liga o botão principal à função de abrir a câmera
+    btnAbrirCamera.onclick = abrirCamera;
+    btnFecharCamera.onclick = fecharInterface;
+    // --- DADOS DO CLIENTE ---
+    onSnapshot(doc(db, "configuracoes", "dados_festa"), (d) => {
+        if (d.exists()) {
+            const data = d.data();
+            document.getElementById('nomeEvento').textContent = data.nome || "Festa";
+            document.getElementById('dataEvento').textContent = data.data || "";
+            document.getElementById('descricaoEvento').textContent = data.texto || "";
+            if (data.url_avatar) document.getElementById('avatarEvento').src = data.url_avatar;
+        }
+    });
+
+    // --- FEED ---
+    onSnapshot(query(collection(db, "postagens"), orderBy("data_envio", "desc")), (snap) => {
+        const feed = document.getElementById('feedGaleria');
+        feed.innerHTML = "";
+        let totalC = 0;
+        snap.forEach(docSnap => {
+            const p = docSnap.data();
+            totalC += (p.curtidas || 0);
+            const card = document.createElement('div');
+            card.className = 'post-container';
+            card.innerHTML = `<div class="media-wrapper"><img src="${p.url_imagem}"></div>
+                <div class="post-acoes">
+                    <button class="btn-post" onclick="window.curtir('${docSnap.id}')">❤️ ${p.curtidas || 0}</button>
+                    <button class="btn-post" onclick="window.deletar('${docSnap.id}')">🗑️</button>
+                </div>`;
+            feed.appendChild(card);
+        });
+        document.getElementById('totalFotos').textContent = snap.size;
+        document.getElementById('totalCurtidas').textContent = totalC;
+    });
+
+    window.curtir = (id) => updateDoc(doc(db, "postagens", id), { curtidas: increment(1) });
+    window.deletar = (id) => confirm("Apagar foto?") && deleteDoc(doc(db, "postagens", id));
+
+    // --- CAPTURA ---
+    document.getElementById('btnInverterCamera').onclick = () => { usandoCameraFrontal = !usandoCameraFrontal; fecharInterface(); abrirCamera(); };
+    
+    document.getElementById('btnCapturarFinal').onclick = async () => {
+        const btn = document.getElementById('btnCapturarFinal');
+        btn.disabled = true;
+        const canvas = document.createElement('canvas');
+        canvas.width = 1080; canvas.height = 1920;
+        const ctx = canvas.getContext('2d');
+        
+        if (document.getElementById('btnFiltroPB').classList.contains('ativo')) ctx.filter = 'grayscale(100%)';
+        if (usandoCameraFrontal) { ctx.translate(canvas.width, 0); ctx.scale(-1, 1); }
+        
+        ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+        ctx.filter = 'none'; ctx.setTransform(1,0,0,1,0,0);
+        ctx.drawImage(document.getElementById('molduraOverlay'), 0, 0, canvas.width, canvas.height);
+        
+        const base64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+        const form = new FormData(); form.append('image', base64);
+        
+        const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: form });
+        const imgData = await res.json();
+        
+        if (imgData.success) {
+            await addDoc(collection(db, "postagens"), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() });
+            fecharInterface();
+        }
+        btn.disabled = false;
+    };
+
+    document.getElementById('btnFiltroNormal').onclick = () => { videoElement.style.filter = "none"; document.getElementById('btnFiltroNormal').classList.add('ativo'); document.getElementById('btnFiltroPB').classList.remove('ativo'); };
+    document.getElementById('btnFiltroPB').onclick = () => { videoElement.style.filter = "grayscale(100%)"; document.getElementById('btnFiltroPB').classList.add('ativo'); document.getElementById('btnFiltroNormal').classList.remove('ativo'); };
+</script>
+</body>
+</html>
