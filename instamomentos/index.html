@@ -19,7 +19,15 @@
 
         /* --- TELA 1: CABEÇALHO DO PERFIL --- */
         .header-perfil { background-color: #fff; padding-bottom: 20px; border-bottom: 1px solid #dbdbdb; }
-        .banner { width: 100%; height: 150px; background-color: #e0e0e0; background-size: cover; background-position: center; }
+       .banner { 
+            width: 100%; 
+            height: 180px; /* Aumentei um pouco para dar mais destaque à arte */
+            background-color: #e0e0e0; 
+            background-size: cover; /* Faz a arte se adaptar sem distorcer */
+            background-position: center; 
+            background-repeat: no-repeat;
+            display: block;
+        }
         
         .info-perfil { display: flex; flex-direction: column; align-items: center; margin-top: -50px; text-align: center; padding: 0 20px; }
         .avatar { width: 100px; height: 100px; border-radius: 50%; border: 4px solid #fff; background-color: #ccc; object-fit: cover; margin-bottom: 10px; }
@@ -165,14 +173,21 @@
     // Liga o botão principal à função de abrir a câmera
     btnAbrirCamera.onclick = abrirCamera;
     btnFecharCamera.onclick = fecharInterface;
-    // --- DADOS DO CLIENTE ---
+   // --- DADOS DO CLIENTE (Corrigido para incluir o Banner) ---
     onSnapshot(doc(db, "configuracoes", "dados_festa"), (d) => {
         if (d.exists()) {
             const data = d.data();
             document.getElementById('nomeEvento').textContent = data.nome || "Festa";
             document.getElementById('dataEvento').textContent = data.data || "";
             document.getElementById('descricaoEvento').textContent = data.texto || "";
+            
+            // Foto do Avatar (Círculo)
             if (data.url_avatar) document.getElementById('avatarEvento').src = data.url_avatar;
+
+            // NOVA LINHA: Carrega a arte do Banner no topo
+            if (data.url_banner) {
+                document.querySelector('.banner').style.backgroundImage = `url('${data.url_banner}')`;
+            }
         }
     });
 
