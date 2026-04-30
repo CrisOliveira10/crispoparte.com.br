@@ -19,11 +19,11 @@
 
         /* --- TELA 1: CABEÇALHO DO PERFIL --- */
         .header-perfil { background-color: #fff; padding-bottom: 20px; border-bottom: 1px solid #dbdbdb; }
-       .banner { 
+        .banner { 
             width: 100%; 
-            height: 180px; /* Aumentei um pouco para dar mais destaque à arte */
+            height: 180px; 
             background-color: #e0e0e0; 
-            background-size: cover; /* Faz a arte se adaptar sem distorcer */
+            background-size: cover; 
             background-position: center; 
             background-repeat: no-repeat;
             display: block;
@@ -54,9 +54,6 @@
         .media-wrapper { position: relative; width: 100%; aspect-ratio: 9 / 16; background-color: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .media-wrapper img { width: 100%; height: 100%; object-fit: contain; }
         
-        .post-acoes { position: absolute; bottom: 0; left: 0; right: 0; padding: 8px; display: flex; justify-content: space-between; background: linear-gradient(transparent, rgba(0,0,0,0.8)); z-index: 5; }
-        .btn-post { background: none; border: none; color: #fff; font-size: 1rem; cursor: pointer; display: flex; align-items: center; gap: 4px; }
-
         /* --- TELA 2: CÂMERA (Oculta por padrão) --- */
         .camera-container { position: fixed; top: 0; left: 0; width: 100%; height: 100dvh; background-color: #000; z-index: 1000; display: none; flex-direction: column; justify-content: space-between; }
         .camera-header { padding: 15px 20px; display: flex; background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent); position: absolute; width: 100%; z-index: 10; }
@@ -75,15 +72,31 @@
         .btn-inverter { background: none; border: none; color: #fff; font-size: 1.5rem; }
         .btn-capturar-final { width: 70px; height: 70px; border-radius: 50%; background-color: #fff; border: 5px solid #ccc; }
 
-        /* Botão Flutuante */
-        .btn-flutuante { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background-color: var(--cor-destaque); color: white; padding: 15px 25px; border-radius: 50px; border: none; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.4); z-index: 999; display: flex; align-items: center; gap: 8px; }
+        /* --- TELA DA FOTO AMPLIADA --- */
+        .modal-foto { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100dvh; 
+            background-color: rgba(0,0,0,0.95); z-index: 2000; display: none; 
+            flex-direction: column; align-items: center; justify-content: center; 
+        }
+        .btn-fechar-modal { 
+            position: absolute; top: 20px; left: 20px; background: none; border: none; 
+            color: #fff; font-size: 1.2rem; cursor: pointer; z-index: 2010; 
+        }
+        .img-expandida { 
+            max-width: 90%; max-height: 70dvh; object-fit: contain; 
+            border-radius: 8px; margin-bottom: 20px; 
+        }
+        .modal-acoes { display: flex; gap: 15px; }
+        .btn-acao-modal { 
+            background-color: #333; color: #fff; border: none; padding: 12px 20px; 
+            border-radius: 25px; font-size: 1rem; cursor: pointer; text-decoration: none; 
+            display: flex; align-items: center; gap: 5px; font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
 <div id="sessaoFeed">
-    
-
     <header class="header-perfil">
         <div class="banner"></div>
         <div class="info-perfil">
@@ -104,6 +117,7 @@
     <main class="galeria-grid" id="feedGaleria"></main>
 </div>
 
+<!-- TELA DA CÂMERA -->
 <div id="cameraContainer" class="camera-container">
     <div class="camera-header"><button id="btnFecharCamera" class="btn-fechar">❌ Voltar</button></div>
     <div class="video-wrapper">
@@ -120,6 +134,18 @@
             <button id="btnCapturarFinal" class="btn-capturar-final"></button>
             <div style="width: 30px;"></div>
         </div>
+    </div>
+</div>
+
+<!-- TELA DA FOTO AMPLIADA (Passo 1) -->
+<div id="modalFoto" class="modal-foto">
+    <button onclick="window.fecharModal()" class="btn-fechar-modal">❌ Voltar</button>
+    <img id="imgModalExpandida" class="img-expandida" src="" alt="Foto Expandida">
+    
+    <div class="modal-acoes">
+        <button id="btnModalCurtir" class="btn-acao-modal">❤️ <span id="contadorModalCurtidas">0</span></button>
+        <a id="btnModalBaixar" class="btn-acao-modal" href="" download="Instamomentos.jpg">⬇️ Baixar</a>
+        <button id="btnModalDeletar" class="btn-acao-modal">🗑️</button>
     </div>
 </div>
 
@@ -140,10 +166,10 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-   // --- ELEMENTOS (Ajuste Cirúrgico: Removido o botão flutuante) ---
+    // --- ELEMENTOS ---
     const sessaoFeed = document.getElementById('sessaoFeed');
     const cameraContainer = document.getElementById('cameraContainer');
-    const btnAbrirCamera = document.getElementById('btnAbrirCamera'); // Botão Principal do Cabeçalho
+    const btnAbrirCamera = document.getElementById('btnAbrirCamera');
     const btnFecharCamera = document.getElementById('btnFecharCamera');
     const videoElement = document.getElementById('videoElement');
     
@@ -170,21 +196,17 @@
         sessaoFeed.style.display = 'block';
     }
 
-    // Liga o botão principal à função de abrir a câmera
     btnAbrirCamera.onclick = abrirCamera;
     btnFecharCamera.onclick = fecharInterface;
-   // --- DADOS DO CLIENTE (Corrigido para incluir o Banner) ---
+
+    // --- DADOS DO CLIENTE ---
     onSnapshot(doc(db, "configuracoes", "dados_festa"), (d) => {
         if (d.exists()) {
             const data = d.data();
             document.getElementById('nomeEvento').textContent = data.nome || "Festa";
             document.getElementById('dataEvento').textContent = data.data || "";
             document.getElementById('descricaoEvento').textContent = data.texto || "";
-            
-            // Foto do Avatar (Círculo)
             if (data.url_avatar) document.getElementById('avatarEvento').src = data.url_avatar;
-
-            // NOVA LINHA: Carrega a arte do Banner no topo
             if (data.url_banner) {
                 document.querySelector('.banner').style.backgroundImage = `url('${data.url_banner}')`;
             }
@@ -201,18 +223,24 @@
             totalC += (p.curtidas || 0);
             const card = document.createElement('div');
             card.className = 'post-container';
-            card.innerHTML = `<div class="media-wrapper"><img src="${p.url_imagem}"></div>
-                <div class="post-acoes">
-                    <button class="btn-post" onclick="window.curtir('${docSnap.id}')">❤️ ${p.curtidas || 0}</button>
-                    <button class="btn-post" onclick="window.deletar('${docSnap.id}')">🗑️</button>
-                </div>`;
+            
+            // Aqui está a mágica do clique na foto (Passo 1)
+            card.innerHTML = `<div class="media-wrapper" style="cursor: pointer;" onclick="window.abrirModal('${p.url_imagem}', '${docSnap.id}', ${p.curtidas || 0})">
+                <img src="${p.url_imagem}">
+            </div>`;
             feed.appendChild(card);
         });
         document.getElementById('totalFotos').textContent = snap.size;
         document.getElementById('totalCurtidas').textContent = totalC;
     });
 
-    window.curtir = (id) => updateDoc(doc(db, "postagens", id), { curtidas: increment(1) });
+    window.curtir = (id) => {
+        updateDoc(doc(db, "postagens", id), { curtidas: increment(1) });
+        // Atualiza o contador na tela preta na mesma hora
+        const contador = document.getElementById('contadorModalCurtidas');
+        contador.textContent = parseInt(contador.textContent) + 1;
+    };
+    
     window.deletar = (id) => confirm("Apagar foto?") && deleteDoc(doc(db, "postagens", id));
 
     // --- CAPTURA ---
@@ -247,6 +275,25 @@
 
     document.getElementById('btnFiltroNormal').onclick = () => { videoElement.style.filter = "none"; document.getElementById('btnFiltroNormal').classList.add('ativo'); document.getElementById('btnFiltroPB').classList.remove('ativo'); };
     document.getElementById('btnFiltroPB').onclick = () => { videoElement.style.filter = "grayscale(100%)"; document.getElementById('btnFiltroPB').classList.add('ativo'); document.getElementById('btnFiltroNormal').classList.remove('ativo'); };
+
+    // --- LÓGICA DA FOTO AMPLIADA ---
+    window.abrirModal = (url, id, curtidas) => {
+        document.getElementById('imgModalExpandida').src = url;
+        document.getElementById('btnModalBaixar').href = url;
+        document.getElementById('contadorModalCurtidas').textContent = curtidas;
+        
+        document.getElementById('btnModalCurtir').onclick = () => window.curtir(id);
+        document.getElementById('btnModalDeletar').onclick = () => {
+            window.deletar(id);
+            window.fecharModal();
+        };
+        
+        document.getElementById('modalFoto').style.display = 'flex';
+    };
+
+    window.fecharModal = () => {
+        document.getElementById('modalFoto').style.display = 'none';
+    };
 </script>
 </body>
 </html>
