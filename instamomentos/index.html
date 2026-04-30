@@ -199,16 +199,23 @@
     btnAbrirCamera.onclick = abrirCamera;
     btnFecharCamera.onclick = fecharInterface;
 
-    // --- DADOS DO CLIENTE ---
+ // --- DADOS DO CLIENTE ---
     onSnapshot(doc(db, "configuracoes", "dados_festa"), (d) => {
         if (d.exists()) {
             const data = d.data();
             document.getElementById('nomeEvento').textContent = data.nome || "Festa";
             document.getElementById('dataEvento').textContent = data.data || "";
             document.getElementById('descricaoEvento').textContent = data.texto || "";
+            
             if (data.url_avatar) document.getElementById('avatarEvento').src = data.url_avatar;
+            
             if (data.url_banner) {
                 document.querySelector('.banner').style.backgroundImage = `url('${data.url_banner}')`;
+            }
+
+            // NOVA LINHA: Carrega a moldura PNG da câmera
+            if (data.url_moldura) {
+                document.getElementById('molduraOverlay').src = data.url_moldura;
             }
         }
     });
