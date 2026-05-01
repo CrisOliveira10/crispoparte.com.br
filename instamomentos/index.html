@@ -326,22 +326,36 @@
             inputTexto.value = ""; // Limpa apenas o campo de texto
         };
 
-        // --- Função de Baixar ---
+        // --- Função de Baixar com Mensagens Personalizadas ---
         const btnBaixar = document.getElementById('btnModalBaixar');
         btnBaixar.onclick = async (e) => {
             e.preventDefault();
-            btnBaixar.textContent = "⏳...";
+            
+            // 1. Muda para "Baixando..."
+            btnBaixar.textContent = "⏳ Baixando...";
+            
             try {
                 const res = await fetch(url + "?t=" + new Date().getTime());
                 const blob = await res.blob();
                 const link = URL.createObjectURL(blob);
                 const a = document.createElement('a');
-                a.href = link; a.download = "Instamomentos.jpg";
-                document.body.appendChild(a); a.click(); document.body.removeChild(a);
-                btnBaixar.textContent = "✅ Salvo!";
+                a.href = link; 
+                a.download = "Instamomentos.jpg";
+                document.body.appendChild(a); 
+                a.click(); 
+                document.body.removeChild(a);
+                
+                // 2. Alerta de sucesso
                 alert("Foto salva com sucesso! Verifique sua galeria.");
-                setTimeout(() => { btnBaixar.textContent = "⬇️ Baixar"; }, 2000);
-            } catch(err) { window.open(url, '_blank'); }
+                
+                // 3. Muda para "Abrir Foto?"
+                btnBaixar.textContent = "✅ Abrir Foto?";
+                btnBaixar.onclick = () => window.open(url, '_blank');
+                
+            } catch(err) { 
+                // Caso falhe, tenta abrir direto
+                window.open(url, '_blank'); 
+            }
         };
 
         // --- Função de Curtir ---
