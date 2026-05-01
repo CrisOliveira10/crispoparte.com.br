@@ -92,6 +92,24 @@
         .btn-inverter { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
         .btn-capturar-final { width: 70px; height: 70px; border-radius: 50%; background-color: #fff; border: 5px solid #ccc; cursor: pointer; }
 
+/* Estilo para o botão de vídeo se destacar */
+        .btn-video-externo {
+            background: none;
+            border: none;
+            color: #FFD700; /* Dourado para parecer premium */
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+        }
+        .btn-video-externo span {
+            font-size: 0.6rem;
+            color: #fff;
+            margin-top: 2px;
+        }
+
         /* --- TELA DA FOTO AMPLIADA --- */
         .modal-foto { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100dvh; 
@@ -170,12 +188,22 @@
             <button id="btnFiltroNormal" class="btn-filtro ativo">Normal</button>
             <button id="btnFiltroPB" class="btn-filtro">P&B</button>
         </div>
-        <div class="acoes-principais">
+       <div class="acoes-principais">
             <!-- Botão da Galeria -->
             <button id="btnUploadFoto" class="btn-inverter" title="Enviar da Galeria">🖼️</button>
             <input type="file" id="inputUploadArquivo" accept="image/*" style="display: none;">
             
+            <!-- Botão de capturar -->
             <button id="btnCapturarFinal" class="btn-capturar-final"></button>
+                 COLOQUE_SEU_LINK_AQUI
+            
+            <!-- NOVO: Botão de Vídeo Externo (Link) -->
+            <a href="https://crispoparte.com.br/juliana50/" target="_blank" class="btn-video-externo">
+                🎥
+                <span>Vídeo</span>
+            </a>
+
+            <!-- Botão de inverter -->
             <button id="btnInverterCamera" class="btn-inverter">🔄</button>
         </div>
     </div>
