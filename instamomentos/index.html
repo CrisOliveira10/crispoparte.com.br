@@ -8,7 +8,25 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
+
+
     <style>
+    /* --- ABA DE COMENTÁRIOS --- */
+        .aba-comentarios { 
+            position: absolute; bottom: 0; width: 100%; height: 55%; 
+            background: #fff; border-radius: 20px 20px 0 0; 
+            display: none; flex-direction: column; z-index: 2100;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.3); animation: subir 0.3s ease;
+        }
+        @keyframes subir { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        
+        .comentarios-header { padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; color: #333; }
+        .comentarios-lista { flex: 1; overflow-y: auto; padding: 15px; list-style: none; text-align: left; width: 100%; }
+        .comentario-item { margin-bottom: 12px; font-size: 0.9rem; color: #333; padding-bottom: 8px; border-bottom: 1px dashed #eee; }
+        
+        .comentarios-input-area { padding: 15px; border-top: 1px solid #eee; display: flex; flex-direction: column; gap: 8px; background: #f9f9f9; }
+        .input-comentario { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ddd; outline: none; }
+        .btn-enviar-comentario { background: var(--cor-destaque); color: white; border: none; padding: 10px; border-radius: 10px; font-weight: bold; }
         :root {
             --cor-fundo: #F8F9FA;
             --cor-texto: #333333;
@@ -114,11 +132,26 @@
     <img id="imgModalExpandida" class="img-expandida" src="">
     <div class="modal-acoes">
         <button id="btnModalCurtir" class="btn-acao-modal" style="background-color:#333; color:white; padding:12px 20px; border-radius:25px; border:none; font-weight:bold;">❤️ <span id="contadorModalCurtidas">0</span></button>
+        
+        <button id="btnAbrirComentarios" class="btn-acao-modal" style="background-color:#333; color:white; padding:12px 20px; border-radius:25px; border:none; font-weight:bold;">💬 <span id="contadorModalComentarios">0</span></button>
+        
         <a id="btnModalBaixar" class="btn-acao-modal" href="#" style="text-decoration:none; background-color:#333; color:white; padding:12px 20px; border-radius:25px; font-weight:bold;">⬇️ Baixar</a>
         <button id="btnModalDeletar" class="btn-acao-modal" style="background-color:#333; color:white; padding:12px 20px; border-radius:25px; border:none; font-weight:bold;">🗑️</button>
     </div>
-</div>
 
+    <div id="abaComentarios" class="aba-comentarios">
+        <div class="comentarios-header">
+            <strong>Comentários</strong>
+            <button onclick="document.getElementById('abaComentarios').style.display='none'" style="border:none; background:none; font-size:1.2rem;">✖️</button>
+        </div>
+        <ul id="listaComentarios" class="comentarios-lista"></ul>
+        <div class="comentarios-input-area">
+            <input type="text" id="inputNomeComentario" class="input-comentario" placeholder="Seu Nome">
+            <input type="text" id="inputTextoComentario" class="input-comentario" placeholder="Escreva uma mensagem...">
+            <button id="btnEnviarComentario" class="btn-enviar-comentario">Publicar</button>
+        </div>
+    </div>
+</div>
 <!-- ESTÚDIO DE CORTE (AJUSTADO) -->
 <div id="modalEstudio" class="modal-foto" style="z-index: 3000;">
     <h3 style="color: white; margin-bottom: 15px;">Ajuste sua foto</h3>
@@ -217,10 +250,58 @@
         document.getElementById('totalCurtidas').textContent = totalC;
     });
 
-    window.abrirModal = (url, id, curtidas) => {
+   window.abrirModal = (url, id, curtidas) => {
         document.getElementById('imgModalExpandida').src = url;
         document.getElementById('contadorModalCurtidas').textContent = curtidas;
-        
+        const aba = document.getElementById('abaComentarios');
+        aba.style.display = 'none'; // A aba de comentários começa fechada
+
+        const lista = document.getElementById('listaComentarios');
+        const inputNome = document.getElementById('inputNomeComentario');
+        const inputTexto = document.getElementById('inputTextoComentario');
+
+        // Lembrar o nome que o convidado usou antes
+        if (localStorage.getItem('nomeConvidado')) {
+            inputNome.value = localStorage.getItem('nomeConvidado');
+        }
+
+        // --- Escuta de Comentários em Tempo Real ---
+        const unsubComentarios = onSnapshot(query(collection(db, `postagens/${id}/comentarios`), orderBy("data_envio", "asc")), (snap) => {
+            lista.innerHTML = "";
+            document.getElementById('contadorModalComentarios').textContent = snap.size;
+            snap.forEach(docSnap => {
+                const c = docSnap.data();
+                const li = document.createElement('li');
+                li.className = 'comentario-item';
+                li.innerHTML = `<strong style="color:var(--cor-destaque)">${c.nome}:</strong> ${c.texto}`;
+                lista.appendChild(li);
+            });
+            lista.scrollTop = lista.scrollHeight;
+        });
+
+        // Abrir/Fechar a aba de comentários
+        document.getElementById('btnAbrirComentarios').onclick = () => {
+            aba.style.display = aba.style.display === 'none' ? 'flex' : 'none';
+        };
+
+        // Enviar Comentário
+        document.getElementById('btnEnviarComentario').onclick = async () => {
+            if (!inputNome.value.trim() || !inputTexto.value.trim()) {
+                alert("Por favor, preencha seu nome e a mensagem!");
+                return;
+            }
+            // Salva o nome localmente para facilitar o próximo comentário
+            localStorage.setItem('nomeConvidado', inputNome.value);
+
+            await addDoc(collection(db, `postagens/${id}/comentarios`), {
+                nome: inputNome.value,
+                texto: inputTexto.value,
+                data_envio: serverTimestamp()
+            });
+            inputTexto.value = ""; // Limpa apenas o campo de texto
+        };
+
+        // --- Função de Baixar ---
         const btnBaixar = document.getElementById('btnModalBaixar');
         btnBaixar.onclick = async (e) => {
             e.preventDefault();
@@ -233,11 +314,12 @@
                 a.href = link; a.download = "Instamomentos.jpg";
                 document.body.appendChild(a); a.click(); document.body.removeChild(a);
                 btnBaixar.textContent = "✅ Salvo!";
-                alert("Foto salva com sucesso!");
+                alert("Foto salva com sucesso! Verifique sua galeria.");
                 setTimeout(() => { btnBaixar.textContent = "⬇️ Baixar"; }, 2000);
             } catch(err) { window.open(url, '_blank'); }
         };
 
+        // --- Função de Curtir ---
         document.getElementById('btnModalCurtir').onclick = (e) => { 
             e.stopPropagation(); 
             updateDoc(doc(db, "postagens", id), { curtidas: increment(1) }); 
@@ -245,21 +327,26 @@
             contador.textContent = parseInt(contador.textContent) + 1;
         };
 
+        // --- Função de Deletar com Senha ---
         document.getElementById('btnModalDeletar').onclick = (e) => { 
             e.stopPropagation(); 
             const senhaDigitada = prompt("Senha para excluir:");
             if (senhaDigitada === "4321") {
-                if(confirm("Apagar foto?")) {
+                if(confirm("Deseja realmente apagar esta foto?")) {
                     deleteDoc(doc(db, "postagens", id)); 
                     window.fecharModal();
                 }
-            } else if (senhaDigitada !== null) { alert("Senha incorreta!"); }
+            } else if (senhaDigitada !== null) { 
+                alert("Senha incorreta!"); 
+            }
         };
+
         document.getElementById('modalFoto').style.display = 'flex';
     };
 
     window.fecharModal = () => document.getElementById('modalFoto').style.display = 'none';
 
+    // --- Lógica de Captura pela Câmera ---
     document.getElementById('btnCapturarFinal').onclick = async () => {
         const btn = document.getElementById('btnCapturarFinal');
         btn.disabled = true;
@@ -282,10 +369,11 @@
         btn.disabled = false;
     };
 
+    // --- Lógica de Upload da Galeria e Estúdio de Corte ---
     const inputUploadArquivo = document.getElementById('inputUploadArquivo');
     document.getElementById('btnUploadFoto').onclick = () => inputUploadArquivo.click();
 
-   inputUploadArquivo.onchange = (event) => {
+    inputUploadArquivo.onchange = (event) => {
         const file = event.target.files[0];
         if (!file) return;
         const reader = new FileReader();
@@ -297,11 +385,11 @@
             
             cropper = new Cropper(document.getElementById('imagemParaCortar'), {
                 aspectRatio: 9 / 16,
-                viewMode: 1,           // Mantém a imagem dentro da área
-                dragMode: 'move',      // Permite arrastar a FOTO, não o quadrado
-                autoCropArea: 1,       // Faz o corte preencher a tela toda
-                cropBoxMovable: false, // Trava o quadrado no lugar da moldura
-                cropBoxResizable: false, // Impede de mudar o tamanho do corte
+                viewMode: 1,
+                dragMode: 'move',
+                autoCropArea: 1,
+                cropBoxMovable: false,
+                cropBoxResizable: false,
                 background: false,
                 guides: false,
                 center: false,
@@ -332,6 +420,7 @@
         }
     };
 
+    // --- Redirecionamento de Vídeo ---
     window.avisarSaida = () => {
         const modalAviso = document.createElement('div');
         Object.assign(modalAviso.style, { position: "fixed", inset: "0", backgroundColor: "rgba(0,0,0,0.8)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: "9999" });
@@ -342,6 +431,7 @@
     };
     document.getElementById('btnVideoLink').onclick = window.avisarSaida;
 
+    // --- Controle do Flash ---
     let flashAtivado = false;
     document.getElementById('btnFlash').onclick = async () => {
         if (!stream) return;
