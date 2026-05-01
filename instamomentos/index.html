@@ -226,32 +226,48 @@
         document.getElementById('totalCurtidas').textContent = totalC;
     });
 
-    // --- MODAL E DOWNLOAD ---
+    // --- MODAL, CURTIDAS E DOWNLOAD (COM AVISO DE SUCESSO) ---
     window.abrirModal = (url, id, curtidas) => {
         document.getElementById('imgModalExpandida').src = url;
         document.getElementById('contadorModalCurtidas').textContent = curtidas;
+        
         const btnBaixar = document.getElementById('btnModalBaixar');
+        
+        // Função de Baixar com Alerta de Confirmação
         btnBaixar.onclick = async (e) => {
             e.preventDefault();
-            btnBaixar.textContent = "⏳...";
+            btnBaixar.textContent = "⏳ Baixando...";
             try {
                 const res = await fetch(url + "?t=" + new Date().getTime());
                 const blob = await res.blob();
                 const link = URL.createObjectURL(blob);
+                
                 const a = document.createElement('a');
-                a.href = link; a.download = "Lembranca.jpg";
-                document.body.appendChild(a); a.click(); document.body.removeChild(a);
-                btnBaixar.textContent = "✅ Salvo";
-                setTimeout(() => btnBaixar.textContent = "⬇️ Baixar", 2000);
-            } catch(err) { window.open(url, '_blank'); }
+                a.href = link; 
+                a.download = "Instamomentos_" + new Date().getTime() + ".jpg";
+                document.body.appendChild(a); 
+                a.click(); 
+                document.body.removeChild(a);
+                
+                btnBaixar.textContent = "✅ Salvo!";
+                
+                // NOVO: Aviso visual de confirmação
+                alert("Foto salva com sucesso! Verifique a galeria ou a pasta de downloads do seu celular.");
+                
+                setTimeout(() => { btnBaixar.textContent = "⬇️ Baixar"; }, 2000);
+            } catch(err) { 
+                window.open(url, '_blank'); 
+                btnBaixar.textContent = "⬇️ Baixar";
+            }
         };
-        // Função de Curtir (Firebase + Atualização na Tela)
+
+        // Função de Curtir (Atualiza Firebase e a tela na hora)
         document.getElementById('btnModalCurtir').onclick = (e) => { 
             e.stopPropagation(); 
-            // 1. Salva no banco de dados
+            // 1. Atualiza no banco de dados
             updateDoc(doc(db, "postagens", id), { curtidas: increment(1) }); 
             
-            // 2. Atualiza o número visualmente na hora
+            // 2. Atualiza o número na tela imediatamente
             const contador = document.getElementById('contadorModalCurtidas');
             contador.textContent = parseInt(contador.textContent) + 1;
         };
