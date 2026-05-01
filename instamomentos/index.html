@@ -266,25 +266,38 @@
         document.getElementById('contadorModalCurtidas').textContent = curtidas;
         
         const btnBaixar = document.getElementById('btnModalBaixar');
+        
+        // Remove qualquer comando antigo para garantir que pegue a foto certa
+        btnBaixar.onclick = null; 
+        
         btnBaixar.onclick = async (e) => {
             e.preventDefault(); 
-            btnBaixar.textContent = "⏳..."; 
+            btnBaixar.textContent = "⏳ Baixando..."; 
             try {
-                const resposta = await fetch(url);
+                // O "?t=" + data atual engana o cache do celular e força baixar a foto certa
+                const resposta = await fetch(url + "?t=" + new Date().getTime());
                 const arquivoBlob = await resposta.blob();
                 const linkLocal = URL.createObjectURL(arquivoBlob);
                 
                 const a = document.createElement('a');
                 a.href = linkLocal;
-                a.download = "Lembranca_Instamomentos.jpg"; 
+                // Cria um nome único para cada foto baixada
+                a.download = "Instamomentos_" + new Date().getTime() + ".jpg"; 
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(linkLocal); 
+                
+                // Mensagem visual de sucesso
+                btnBaixar.textContent = "✅ Salvo na Galeria!";
+                setTimeout(() => {
+                    btnBaixar.textContent = "⬇️ Baixar"; // Volta ao normal após 3 segundos
+                }, 3000);
+
             } catch (erro) {
                 window.open(url, '_blank'); // Fallback de segurança se o celular bloquear o fetch
+                btnBaixar.textContent = "⬇️ Baixar";
             }
-            btnBaixar.textContent = "⬇️ Baixar";
         };
         
         document.getElementById('btnModalCurtir').onclick = () => window.curtir(id);
