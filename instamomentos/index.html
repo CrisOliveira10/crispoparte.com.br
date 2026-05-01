@@ -105,15 +105,34 @@
         </div>
         
         <div class="acoes-principais">
-            <button id="btnUploadFoto" class="btn-acao-camera">🖼️<span>Galeria</span></button>
-            <input type="file" id="inputUploadArquivo" accept="image/*" style="display: none;">
-            
-            <button id="btnCapturarFinal" class="btn-capturar-final"></button>
-            
-            <button id="btnVideoLink" class="btn-acao-camera" style="color: #FFD700;">🎬<span>Vídeo</span></button>
-            <button id="btnInverterCamera" class="btn-acao-camera">🔄<span>Inverter</span></button>
-        </div>
-    </div>
+    <!-- Galeria -->
+    <button id="btnUploadFoto" class="btn-acao-camera">
+        🖼️
+        <span>Galeria</span>
+    </button>
+    <input type="file" id="inputUploadArquivo" accept="image/*" style="display: none;">
+    
+    <!-- Flash/Lanterna -->
+    <button id="btnFlash" class="btn-acao-camera">
+        🔦
+        <span>Flash OFF</span>
+    </button>
+    
+    <!-- Capturar -->
+    <button id="btnCapturarFinal" class="btn-capturar-final"></button>
+    
+    <!-- Vídeo Externo -->
+    <button id="btnVideoLink" class="btn-acao-camera" style="color: #FFD700;">
+        🎬
+        <span>Vídeo</span>
+    </button>
+
+    <!-- Inverter Câmera -->
+    <button id="btnInverterCamera" class="btn-acao-camera">
+        🔄
+        <span>Inverter</span>
+    </button>
+</div>
 </div>
 
 <!-- MODAL FOTO AMPLIADA -->
@@ -369,6 +388,45 @@
         document.getElementById('cancelarSair').onclick = () => modalAviso.remove();
     };
     document.getElementById('btnVideoLink').onclick = window.avisarSaida;
+// --- LÓGICA DO FLASH (LANTERNA) ---
+let flashAtivado = false;
+
+document.getElementById('btnFlash').onclick = async () => {
+    if (!stream) return;
+
+    const track = stream.getVideoTracks()[0];
+    const btnFlash = document.getElementById('btnFlash');
+
+    try {
+        const capabilities = track.getCapabilities();
+        
+        // Verifica suporte ao "torch" (lanterna)
+        if (!capabilities.torch) {
+            alert("O flash não é suportado neste dispositivo ou nesta câmera.");
+            return;
+        }
+
+        flashAtivado = !flashAtivado;
+
+        // Aplica a restrição para ligar/desligar
+        await track.applyConstraints({
+            advanced: [{ torch: flashAtivado }]
+        });
+
+        // Atualização visual do botão
+        if (flashAtivado) {
+            btnFlash.style.color = "#FFD700"; 
+            btnFlash.querySelector('span').textContent = "Flash ON";
+        } else {
+            btnFlash.style.color = "#fff";
+            btnFlash.querySelector('span').textContent = "Flash OFF";
+        }
+
+    } catch (err) {
+        console.error("Erro ao controlar o flash:", err);
+        alert("Não foi possível ativar o flash.");
+    }
+};
 
 </script>
 </body>
