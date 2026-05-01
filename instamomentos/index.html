@@ -245,8 +245,26 @@
                 setTimeout(() => btnBaixar.textContent = "⬇️ Baixar", 2000);
             } catch(err) { window.open(url, '_blank'); }
         };
-        document.getElementById('btnModalCurtir').onclick = (e) => { e.stopPropagation(); updateDoc(doc(db, "postagens", id), { curtidas: increment(1) }); };
-        document.getElementById('btnModalDeletar').onclick = (e) => { e.stopPropagation(); confirm("Apagar?") && deleteDoc(doc(db, "postagens", id)); window.fecharModal(); };
+        // Função de Curtir (Firebase + Atualização na Tela)
+        document.getElementById('btnModalCurtir').onclick = (e) => { 
+            e.stopPropagation(); 
+            // 1. Salva no banco de dados
+            updateDoc(doc(db, "postagens", id), { curtidas: increment(1) }); 
+            
+            // 2. Atualiza o número visualmente na hora
+            const contador = document.getElementById('contadorModalCurtidas');
+            contador.textContent = parseInt(contador.textContent) + 1;
+        };
+
+        // Função de Deletar
+        document.getElementById('btnModalDeletar').onclick = (e) => { 
+            e.stopPropagation(); 
+            if(confirm("Deseja apagar esta foto definitivamente?")) {
+                deleteDoc(doc(db, "postagens", id)); 
+                window.fecharModal();
+            }
+        };
+
         document.getElementById('modalFoto').style.display = 'flex';
     };
 
