@@ -58,6 +58,21 @@
         .post-container { position: relative; background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .media-wrapper { position: relative; width: 100%; aspect-ratio: 9 / 16; background-color: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .media-wrapper img { width: 100%; height: 100%; object-fit: contain; }
+        /* Etiqueta de curtidas no feed */
+        .curtidas-feed {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            pointer-events: none; /* Garante que o clique passe para a foto */
+        }
 
         /* --- TELA 2: CÂMERA (Oculta por padrão) --- */
         .camera-container { position: fixed; top: 0; left: 0; width: 100%; height: 100dvh; background-color: #000; z-index: 1000; display: none; flex-direction: column; justify-content: space-between; }
@@ -101,6 +116,27 @@
 </head>
 <body>
 
+<style>
+    /* ... mantenha seus estilos anteriores aqui ... */
+
+    /* NOVO: Estilo para a etiqueta de curtidas aparecer sobre a foto no feed */
+    .curtidas-feed {
+        position: absolute;
+        bottom: 8px;
+        right: 8px;
+        background-color: rgba(0, 0, 0, 0.6);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        pointer-events: none;
+        z-index: 5;
+    }
+</style>
+
 <!-- CAMADA 1: FEED -->
 <div id="sessaoFeed">
     <header class="header-perfil">
@@ -122,7 +158,6 @@
 
     <main class="galeria-grid" id="feedGaleria"></main>
 </div>
-
 <!-- CAMADA 2: TELA DA CÂMERA -->
 <div id="cameraContainer" class="camera-container">
     <div class="camera-header"><button id="btnFecharCamera" class="btn-fechar">❌ Voltar</button></div>
@@ -161,15 +196,20 @@
 <!-- TELA DO ESTÚDIO DE EDIÇÃO (Corte da Galeria) -->
 <div id="modalEstudio" class="modal-foto" style="z-index: 3000;">
     <h3 style="color: white; margin-bottom: 10px;">Ajuste sua foto</h3>
-    <div style="width: 90%; height: 60dvh; background-color: #000; overflow: hidden; border-radius: 12px;">
+    
+    <!-- Adicionamos position: relative no container e a moldura por cima -->
+    <div style="width: 90%; height: 60dvh; background-color: #000; overflow: hidden; border-radius: 12px; position: relative;">
         <img id="imagemParaCortar" src="" style="max-width: 100%; display: block;">
+        <img id="molduraEstudio" src="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; z-index: 3010;">
     </div>
+    
     <div class="modal-acoes" style="margin-top: 20px;">
         <button id="btnCancelarCorte" class="btn-acao-modal" style="background-color: #ff4444;">❌ Cancelar</button>
         <button id="btnConfirmarCorte" class="btn-acao-modal" style="background-color: var(--cor-destaque);">✅ Enviar</button>
     </div>
 </div>
 
+<!-- AQUI ESTÁ A TAG SCRIPT QUE HAVIA SUMIDO: -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
     import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc, increment, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
@@ -187,6 +227,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    // --- ELEMENTOS PRINCIPAIS ---
     const sessaoFeed = document.getElementById('sessaoFeed');
     const cameraContainer = document.getElementById('cameraContainer');
     const btnAbrirCamera = document.getElementById('btnAbrirCamera');
@@ -235,6 +276,7 @@
     });
 
     // --- FEED ---
+    // --- FEED (Atualizado com corações) ---
     onSnapshot(query(collection(db, "postagens"), orderBy("data_envio", "desc")), (snap) => {
         const feed = document.getElementById('feedGaleria');
         feed.innerHTML = "";
@@ -244,9 +286,15 @@
             totalC += (p.curtidas || 0);
             const card = document.createElement('div');
             card.className = 'post-container';
-            card.innerHTML = `<div class="media-wrapper" style="cursor: pointer;" onclick="window.abrirModal('${p.url_imagem}', '${docSnap.id}', ${p.curtidas || 0})">
-                <img src="${p.url_imagem}">
-            </div>`;
+            
+            // Inserimos a div 'curtidas-feed' que criamos no CSS
+            card.innerHTML = `
+                <div class="media-wrapper" style="cursor: pointer;" onclick="window.abrirModal('${p.url_imagem}', '${docSnap.id}', ${p.curtidas || 0})">
+                    <img src="${p.url_imagem}">
+                    <div class="curtidas-feed">
+                        ❤️ <span>${p.curtidas || 0}</span>
+                    </div>
+                </div>`;
             feed.appendChild(card);
         });
         document.getElementById('totalFotos').textContent = snap.size;
@@ -260,42 +308,33 @@
     };
     window.deletar = (id) => confirm("Apagar foto?") && deleteDoc(doc(db, "postagens", id));
 
-    // --- LÓGICA DA FOTO AMPLIADA E DOWNLOAD FORÇADO ---
+    // --- LÓGICA DA FOTO AMPLIADA E DOWNLOAD CORRIGIDO ---
     window.abrirModal = (url, id, curtidas) => {
         document.getElementById('imgModalExpandida').src = url;
         document.getElementById('contadorModalCurtidas').textContent = curtidas;
         
         const btnBaixar = document.getElementById('btnModalBaixar');
-        
-        // Remove qualquer comando antigo para garantir que pegue a foto certa
-        btnBaixar.onclick = null; 
-        
         btnBaixar.onclick = async (e) => {
             e.preventDefault(); 
             btnBaixar.textContent = "⏳ Baixando..."; 
             try {
-                // O "?t=" + data atual engana o cache do celular e força baixar a foto certa
+                // Adicionamos um timestamp único (?t=) para forçar o download da imagem atual, limpando o cache
                 const resposta = await fetch(url + "?t=" + new Date().getTime());
                 const arquivoBlob = await resposta.blob();
                 const linkLocal = URL.createObjectURL(arquivoBlob);
                 
                 const a = document.createElement('a');
                 a.href = linkLocal;
-                // Cria um nome único para cada foto baixada
                 a.download = "Instamomentos_" + new Date().getTime() + ".jpg"; 
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(linkLocal); 
                 
-                // Mensagem visual de sucesso
-                btnBaixar.textContent = "✅ Salvo na Galeria!";
-                setTimeout(() => {
-                    btnBaixar.textContent = "⬇️ Baixar"; // Volta ao normal após 3 segundos
-                }, 3000);
-
+                btnBaixar.textContent = "✅ Salvo!";
+                setTimeout(() => { btnBaixar.textContent = "⬇️ Baixar"; }, 2000);
             } catch (erro) {
-                window.open(url, '_blank'); // Fallback de segurança se o celular bloquear o fetch
+                window.open(url, '_blank');
                 btnBaixar.textContent = "⬇️ Baixar";
             }
         };
@@ -357,6 +396,7 @@
         const reader = new FileReader();
         reader.onload = (e) => {
             imagemParaCortar.src = e.target.result;
+            document.getElementById('molduraEstudio').src = document.getElementById('molduraOverlay').src;
             modalEstudio.style.display = 'flex';
 
             if (cropper) cropper.destroy();
@@ -391,8 +431,11 @@
         btn.disabled = true;
 
         const canvas = cropper.getCroppedCanvas({ width: 1080, height: 1920 });
+        const ctx = canvas.getContext('2d');
+        const moldura = document.getElementById('molduraOverlay');
+        ctx.drawImage(moldura, 0, 0, canvas.width, canvas.height);
+
         const base64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
-        
         const form = new FormData();
         form.append('image', base64);
 
@@ -403,9 +446,9 @@
             if (imgData.success) {
                 await addDoc(collection(db, "postagens"), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() });
                 modalEstudio.style.display = 'none';
-                fecharInterface(); // Volta para o feed!
+                fecharInterface();
             } else {
-                alert("Erro ao enviar a imagem. Tente novamente.");
+                alert("Erro ao enviar a imagem.");
             }
         } catch (e) {
             alert("Erro de conexão.");
