@@ -152,19 +152,20 @@
         </div>
     </div>
 </div>
-<!-- ESTÚDIO DE CORTE (AJUSTADO) -->
+<!-- ESTÚDIO DE CORTE (ALINHAMENTO 9:16) -->
 <div id="modalEstudio" class="modal-foto" style="z-index: 3000;">
     <h3 style="color: white; margin-bottom: 15px;">Ajuste sua foto</h3>
     <div style="width: 90%; max-width: 380px; aspect-ratio: 9 / 16; background-color: #000; overflow: hidden; border-radius: 12px; position: relative;">
+        <!-- Foto de fundo (ajustável) -->
         <img id="imagemParaCortar" src="" style="display: block; max-width: 100%;">
+        <!-- Moldura fixa (sobreposta) -->
         <img id="molduraEstudio" src="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; z-index: 3010;">
     </div>
     <div class="modal-acoes" style="margin-top: 20px;">
-        <button id="btnCancelarCorte" style="background-color:#ff4444; color:white; padding:12px 20px; border-radius:25px; border:none; font-weight:bold;">❌ Cancelar</button>
-        <button id="btnConfirmarCorte" style="background-color:var(--cor-destaque); color:white; padding:12px 20px; border-radius:25px; border:none; font-weight:bold;">✅ Enviar</button>
+        <button id="btnCancelarCorte" style="background-color:#ff4444; color:white; padding:12px 25px; border-radius:25px; border:none; font-weight:bold;">❌</button>
+        <button id="btnConfirmarCorte" style="background-color:var(--cor-destaque); color:white; padding:12px 25px; border-radius:25px; border:none; font-weight:bold;">✅ Enviar</button>
     </div>
-</div>
-<script type="module">
+</div><script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
     import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc, increment, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
@@ -378,22 +379,27 @@
         if (!file) return;
         const reader = new FileReader();
         reader.onload = (e) => {
-            document.getElementById('imagemParaCortar').src = e.target.result;
+            const imagem = document.getElementById('imagemParaCortar');
+            imagem.src = e.target.result;
             document.getElementById('molduraEstudio').src = molduraOverlay.src;
+            
+            // ESSENCIAL: Exibe o modal ANTES de iniciar o Cropper para o alinhamento funcionar
             document.getElementById('modalEstudio').style.display = 'flex';
+            
             if (cropper) cropper.destroy();
             
-            cropper = new Cropper(document.getElementById('imagemParaCortar'), {
+            cropper = new Cropper(imagem, {
                 aspectRatio: 9 / 16,
-                viewMode: 1,
-                dragMode: 'move',
-                autoCropArea: 1,
-                cropBoxMovable: false,
-                cropBoxResizable: false,
-                background: false,
+                viewMode: 1,            // Garante que a foto preencha toda a moldura
+                dragMode: 'move',       // Liberdade total para arrastar e dar zoom
+                autoCropArea: 1,        // Inicia cobrindo 100% da área
+                restore: false,
                 guides: false,
                 center: false,
-                highlight: false
+                highlight: false,
+                cropBoxMovable: false,  // Trava o quadro no lugar da moldura
+                cropBoxResizable: false, // Mantém a proporção 9:16 fixa
+                toggleDragModeOnDblclick: false
             });
         };
         reader.readAsDataURL(file);
