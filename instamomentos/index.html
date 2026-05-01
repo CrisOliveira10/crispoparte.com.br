@@ -19,7 +19,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
         body { background-color: var(--cor-fundo); color: var(--cor-texto); min-height: 100dvh; display: flex; flex-direction: column; }
 
-        /* --- FEED --- */
         .header-perfil { background-color: #fff; padding-bottom: 20px; border-bottom: 1px solid #dbdbdb; }
         .banner { width: 100%; height: 180px; background-color: #e0e0e0; background-size: cover; background-position: center; display: block; }
         .info-perfil { display: flex; flex-direction: column; align-items: center; margin-top: -50px; text-align: center; padding: 0 20px; }
@@ -38,15 +37,11 @@
         .media-wrapper img { width: 100%; height: 100%; object-fit: contain; }
         .curtidas-feed { position: absolute; bottom: 8px; right: 8px; background-color: rgba(0, 0, 0, 0.6); color: white; padding: 4px 10px; border-radius: 15px; font-size: 0.8rem; display: flex; align-items: center; gap: 5px; pointer-events: none; }
 
-        /* --- CAMADA 2: CÂMERA IMERSIVA --- */
-        .camera-container { position: fixed; inset: 0; background-color: #000; z-index: 1000; display: none; overflow: hidden; }
-        
-        /* Vídeo ocupa a tela inteira */
+        .camera-container { position: fixed; inset: 0; height: 100dvh; background-color: #000; z-index: 1000; display: none; overflow: hidden; }
         .video-wrapper { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
         #videoElement { width: 100%; height: 100%; object-fit: cover; }
         #molduraOverlay { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; z-index: 2; }
 
-        /* Botões flutuantes sobre o vídeo */
         .camera-header { position: absolute; top: 0; width: 100%; padding: 20px; z-index: 10; background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent); }
         .camera-controles { position: absolute; bottom: 0; width: 100%; padding: 40px 20px; z-index: 10; background: linear-gradient(to top, rgba(0,0,0,0.6), transparent); display: flex; flex-direction: column; gap: 25px; }
 
@@ -57,9 +52,8 @@
         .acoes-principais { display: flex; justify-content: space-around; align-items: center; }
         .btn-acao-camera { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; width: 60px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .btn-acao-camera span { font-size: 0.65rem; color: #fff; margin-top: 4px; font-weight: bold; }
-        .btn-capturar-final { width: 75px; height: 75px; border-radius: 50%; background-color: #fff; border: 5px solid rgba(255,255,255,0.3); cursor: pointer; box-shadow: 0 0 15px rgba(0,0,0,0.3); }
+        .btn-capturar-final { width: 75px; height: 75px; border-radius: 50%; background-color: #fff; border: 5px solid rgba(255,255,255,0.3); cursor: pointer; }
 
-        /* --- MODAIS E AVISOS --- */
         .modal-foto { position: fixed; inset: 0; background-color: rgba(0,0,0,0.95); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; }
         .btn-fechar-modal { position: absolute; top: 25px; left: 20px; background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; z-index: 2010; }
         .img-expandida { max-width: 90%; max-height: 70dvh; object-fit: contain; border-radius: 8px; margin-bottom: 20px; }
@@ -105,37 +99,16 @@
         </div>
         
         <div class="acoes-principais">
-    <!-- Galeria -->
-    <button id="btnUploadFoto" class="btn-acao-camera">
-        🖼️
-        <span>Galeria</span>
-    </button>
-    <input type="file" id="inputUploadArquivo" accept="image/*" style="display: none;">
-    
-    <!-- Flash/Lanterna -->
-    <button id="btnFlash" class="btn-acao-camera">
-        ⚡
-        <span>Flash OFF</span>
-    </button>
-    
-    <!-- Capturar -->
-    <button id="btnCapturarFinal" class="btn-capturar-final"></button>
-    
-    <!-- Vídeo Externo -->
-    <button id="btnVideoLink" class="btn-acao-camera" style="color: #FFD700;">
-        🎬
-        <span>Vídeo</span>
-    </button>
-
-    <!-- Inverter Câmera -->
-    <button id="btnInverterCamera" class="btn-acao-camera">
-        🔄
-        <span>Inverter</span>
-    </button>
-</div>
+            <button id="btnUploadFoto" class="btn-acao-camera">🖼️<span>Galeria</span></button>
+            <input type="file" id="inputUploadArquivo" accept="image/*" style="display: none;">
+            <button id="btnFlash" class="btn-acao-camera">⚡<span>Flash OFF</span></button>
+            <button id="btnCapturarFinal" class="btn-capturar-final"></button>
+            <button id="btnVideoLink" class="btn-acao-camera" style="color: #FFD700;">🎬<span>Vídeo</span></button>
+            <button id="btnInverterCamera" class="btn-acao-camera">🔄<span>Inverter</span></button>
+        </div>
+    </div>
 </div>
 
-<!-- MODAL FOTO AMPLIADA -->
 <div id="modalFoto" class="modal-foto">
     <button onclick="window.fecharModal()" class="btn-fechar-modal">❌ Voltar</button>
     <img id="imgModalExpandida" class="img-expandida" src="">
@@ -146,19 +119,18 @@
     </div>
 </div>
 
-<!-- ESTÚDIO DE CORTE -->
+<!-- ESTÚDIO DE CORTE (AJUSTADO) -->
 <div id="modalEstudio" class="modal-foto" style="z-index: 3000;">
     <h3 style="color: white; margin-bottom: 15px;">Ajuste sua foto</h3>
-    <div style="width: 90%; height: 60dvh; background-color: #000; overflow: hidden; border-radius: 12px; position: relative;">
-        <img id="imagemParaCortar" src="" style="max-width: 100%; display: block;">
-        <img id="molduraEstudio" src="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; z-index: 3010;">
+    <div style="width: 90%; max-width: 380px; aspect-ratio: 9 / 16; background-color: #000; overflow: hidden; border-radius: 12px; position: relative;">
+        <img id="imagemParaCortar" src="" style="display: block; max-width: 100%;">
+        <img id="molduraEstudio" src="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; z-index: 3010;">
     </div>
     <div class="modal-acoes" style="margin-top: 20px;">
         <button id="btnCancelarCorte" style="background-color:#ff4444; color:white; padding:12px 20px; border-radius:25px; border:none; font-weight:bold;">❌ Cancelar</button>
         <button id="btnConfirmarCorte" style="background-color:var(--cor-destaque); color:white; padding:12px 20px; border-radius:25px; border:none; font-weight:bold;">✅ Enviar</button>
     </div>
 </div>
-
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
     import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc, increment, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
@@ -182,7 +154,6 @@
     let usandoCameraFrontal = false;
     let cropper = null;
 
-    // --- CÂMERA ---
     async function abrirCamera() {
         document.getElementById('sessaoFeed').style.display = 'none';
         cameraContainer.style.display = 'block';
@@ -203,7 +174,6 @@
     document.getElementById('btnFecharCamera').onclick = fecharInterface;
     document.getElementById('btnInverterCamera').onclick = () => { usandoCameraFrontal = !usandoCameraFrontal; fecharInterface(); abrirCamera(); };
 
-    // --- FILTROS ---
     document.getElementById('btnFiltroNormal').onclick = () => {
         videoElement.style.filter = "none";
         document.getElementById('btnFiltroNormal').classList.add('ativo');
@@ -215,7 +185,6 @@
         document.getElementById('btnFiltroNormal').classList.remove('ativo');
     };
 
-    // --- FIREBASE (DADOS E FEED) ---
     onSnapshot(doc(db, "configuracoes", "dados_festa"), (d) => {
         if (d.exists()) {
             const data = d.data();
@@ -237,87 +206,60 @@
             totalC += (p.curtidas || 0);
             const card = document.createElement('div');
             card.className = 'post-container';
-            card.onclick = () => window.abrirModal(p.url_imagem, docSnap.id, p.curtidas || 0);
-            card.innerHTML = `<div class="media-wrapper"><img src="${p.url_imagem}"><div class="curtidas-feed">❤️ ${p.curtidas || 0}</div></div>`;
+            card.innerHTML = `
+                <div class="media-wrapper" style="cursor: pointer;" onclick="window.abrirModal('${p.url_imagem}', '${docSnap.id}', ${p.curtidas || 0})">
+                    <img src="${p.url_imagem}">
+                    <div class="curtidas-feed">❤️ ${p.curtidas || 0}</div>
+                </div>`;
             feed.appendChild(card);
         });
         document.getElementById('totalFotos').textContent = snap.size;
         document.getElementById('totalCurtidas').textContent = totalC;
     });
 
-    // --- MODAL, CURTIDAS E DOWNLOAD (COM AVISO DE SUCESSO) ---
     window.abrirModal = (url, id, curtidas) => {
         document.getElementById('imgModalExpandida').src = url;
         document.getElementById('contadorModalCurtidas').textContent = curtidas;
         
         const btnBaixar = document.getElementById('btnModalBaixar');
-        
-        // Função de Baixar com Alerta de Confirmação
         btnBaixar.onclick = async (e) => {
             e.preventDefault();
-            btnBaixar.textContent = "⏳ Baixando...";
+            btnBaixar.textContent = "⏳...";
             try {
                 const res = await fetch(url + "?t=" + new Date().getTime());
                 const blob = await res.blob();
                 const link = URL.createObjectURL(blob);
-                
                 const a = document.createElement('a');
-                a.href = link; 
-                a.download = "Instamomentos_" + new Date().getTime() + ".jpg";
-                document.body.appendChild(a); 
-                a.click(); 
-                document.body.removeChild(a);
-                
+                a.href = link; a.download = "Instamomentos.jpg";
+                document.body.appendChild(a); a.click(); document.body.removeChild(a);
                 btnBaixar.textContent = "✅ Salvo!";
-                
-                // NOVO: Aviso visual de confirmação
-                alert("Foto salva com sucesso! Verifique a galeria ou a pasta de downloads do seu celular.");
-                
+                alert("Foto salva com sucesso!");
                 setTimeout(() => { btnBaixar.textContent = "⬇️ Baixar"; }, 2000);
-            } catch(err) { 
-                window.open(url, '_blank'); 
-                btnBaixar.textContent = "⬇️ Baixar";
-            }
+            } catch(err) { window.open(url, '_blank'); }
         };
 
-        // Função de Curtir (Atualiza Firebase e a tela na hora)
         document.getElementById('btnModalCurtir').onclick = (e) => { 
             e.stopPropagation(); 
-            // 1. Atualiza no banco de dados
             updateDoc(doc(db, "postagens", id), { curtidas: increment(1) }); 
-            
-            // 2. Atualiza o número na tela imediatamente
             const contador = document.getElementById('contadorModalCurtidas');
             contador.textContent = parseInt(contador.textContent) + 1;
         };
 
-        // --- Função de Deletar com Proteção por Senha ---
         document.getElementById('btnModalDeletar').onclick = (e) => { 
             e.stopPropagation(); 
-            
-            // Defina sua senha entre as aspas abaixo (ex: "2026")
-            const senhaMestra = "4321"; 
-            
-            const senhaDigitada = prompt("🔒 Acesso Restrito: Digite a senha para excluir:");
-
-            if (senhaDigitada === senhaMestra) {
-                // Se a senha estiver correta, pede a confirmação final
-                if(confirm("Tem certeza que deseja apagar esta foto definitivamente?")) {
+            const senhaDigitada = prompt("Senha para excluir:");
+            if (senhaDigitada === "4321") {
+                if(confirm("Apagar foto?")) {
                     deleteDoc(doc(db, "postagens", id)); 
                     window.fecharModal();
                 }
-            } else if (senhaDigitada !== null) {
-                // Se errar a senha (e não apenas cancelar a caixa)
-                alert("⚠️ Senha incorreta! Apenas a organização pode excluir fotos.");
-            }
+            } else if (senhaDigitada !== null) { alert("Senha incorreta!"); }
         };
-
         document.getElementById('modalFoto').style.display = 'flex';
     };
 
     window.fecharModal = () => document.getElementById('modalFoto').style.display = 'none';
 
-    // --- CAPTURA ---
     document.getElementById('btnCapturarFinal').onclick = async () => {
         const btn = document.getElementById('btnCapturarFinal');
         btn.disabled = true;
@@ -340,10 +282,10 @@
         btn.disabled = false;
     };
 
-    // --- UPLOAD E ESTÚDIO ---
     const inputUploadArquivo = document.getElementById('inputUploadArquivo');
     document.getElementById('btnUploadFoto').onclick = () => inputUploadArquivo.click();
-    inputUploadArquivo.onchange = (event) => {
+
+   inputUploadArquivo.onchange = (event) => {
         const file = event.target.files[0];
         if (!file) return;
         const reader = new FileReader();
@@ -352,7 +294,19 @@
             document.getElementById('molduraEstudio').src = molduraOverlay.src;
             document.getElementById('modalEstudio').style.display = 'flex';
             if (cropper) cropper.destroy();
-            cropper = new Cropper(document.getElementById('imagemParaCortar'), { aspectRatio: 9 / 16, viewMode: 1 });
+            
+            cropper = new Cropper(document.getElementById('imagemParaCortar'), {
+                aspectRatio: 9 / 16,
+                viewMode: 1,           // Mantém a imagem dentro da área
+                dragMode: 'move',      // Permite arrastar a FOTO, não o quadrado
+                autoCropArea: 1,       // Faz o corte preencher a tela toda
+                cropBoxMovable: false, // Trava o quadrado no lugar da moldura
+                cropBoxResizable: false, // Impede de mudar o tamanho do corte
+                background: false,
+                guides: false,
+                center: false,
+                highlight: false
+            });
         };
         reader.readAsDataURL(file);
     };
@@ -378,56 +332,30 @@
         }
     };
 
-    // --- VÍDEO LINK ---
     window.avisarSaida = () => {
         const modalAviso = document.createElement('div');
         Object.assign(modalAviso.style, { position: "fixed", inset: "0", backgroundColor: "rgba(0,0,0,0.8)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: "9999" });
-        modalAviso.innerHTML = `<div class="aviso-redirecionar"><p style="font-weight:bold; font-size:1.2rem; margin-bottom:15px; color:#333;">🎬 Gravar Vídeo</p><p style="color:#555; line-height:1.4;">Direcionando para fora do Instamomentos para gerar o vídeo com filtro de moldura.</p><button class="btn-confirmar-sair" id="confirmarSair">Ir para o Filtro</button><button id="cancelarSair" style="background:none; border:none; color:#888; margin-top:15px; cursor:pointer; text-decoration:underline;">Cancelar</button></div>`;
+        modalAviso.innerHTML = `<div class="aviso-redirecionar"><p style="font-weight:bold; font-size:1.2rem; margin-bottom:15px; color:#333;">🎬 Vídeo</p><p>Saindo para gerar o vídeo com moldura.</p><button class="btn-confirmar-sair" id="confirmarSair">Ir para o Filtro</button><button id="cancelarSair" style="background:none; border:none; color:#888; margin-top:15px; cursor:pointer;">Cancelar</button></div>`;
         document.body.appendChild(modalAviso);
         document.getElementById('confirmarSair').onclick = () => { window.open("https://crispoparte.com.br/juliana50/", "_blank"); modalAviso.remove(); };
         document.getElementById('cancelarSair').onclick = () => modalAviso.remove();
     };
     document.getElementById('btnVideoLink').onclick = window.avisarSaida;
-// --- LÓGICA DO FLASH (LANTERNA) ---
-let flashAtivado = false;
 
-document.getElementById('btnFlash').onclick = async () => {
-    if (!stream) return;
-
-    const track = stream.getVideoTracks()[0];
-    const btnFlash = document.getElementById('btnFlash');
-
-    try {
-        const capabilities = track.getCapabilities();
-        
-        // Verifica suporte ao "torch" (lanterna)
-        if (!capabilities.torch) {
-            alert("O flash não é suportado neste dispositivo ou nesta câmera.");
-            return;
-        }
-
-        flashAtivado = !flashAtivado;
-
-        // Aplica a restrição para ligar/desligar
-        await track.applyConstraints({
-            advanced: [{ torch: flashAtivado }]
-        });
-
-        // Atualização visual do botão
-        if (flashAtivado) {
-            btnFlash.style.color = "#FFD700"; 
-            btnFlash.querySelector('span').textContent = "Flash ON";
-        } else {
-            btnFlash.style.color = "#fff";
-            btnFlash.querySelector('span').textContent = "Flash OFF";
-        }
-
-    } catch (err) {
-        console.error("Erro ao controlar o flash:", err);
-        alert("Não foi possível ativar o flash.");
-    }
-};
-
+    let flashAtivado = false;
+    document.getElementById('btnFlash').onclick = async () => {
+        if (!stream) return;
+        const track = stream.getVideoTracks()[0];
+        const btnFlash = document.getElementById('btnFlash');
+        try {
+            const capabilities = track.getCapabilities();
+            if (!capabilities.torch) { alert("Flash não suportado."); return; }
+            flashAtivado = !flashAtivado;
+            await track.applyConstraints({ advanced: [{ torch: flashAtivado }] });
+            btnFlash.style.color = flashAtivado ? "#FFD700" : "#fff";
+            btnFlash.querySelector('span').textContent = flashAtivado ? "Flash ON" : "Flash OFF";
+        } catch (err) { alert("Erro ao ativar flash."); }
+    };
 </script>
 </body>
 </html>
