@@ -272,12 +272,24 @@
             contador.textContent = parseInt(contador.textContent) + 1;
         };
 
-        // Função de Deletar
+        // --- Função de Deletar com Proteção por Senha ---
         document.getElementById('btnModalDeletar').onclick = (e) => { 
             e.stopPropagation(); 
-            if(confirm("Deseja apagar esta foto definitivamente?")) {
-                deleteDoc(doc(db, "postagens", id)); 
-                window.fecharModal();
+            
+            // Defina sua senha entre as aspas abaixo (ex: "2026")
+            const senhaMestra = "4321"; 
+            
+            const senhaDigitada = prompt("🔒 Acesso Restrito: Digite a senha para excluir:");
+
+            if (senhaDigitada === senhaMestra) {
+                // Se a senha estiver correta, pede a confirmação final
+                if(confirm("Tem certeza que deseja apagar esta foto definitivamente?")) {
+                    deleteDoc(doc(db, "postagens", id)); 
+                    window.fecharModal();
+                }
+            } else if (senhaDigitada !== null) {
+                // Se errar a senha (e não apenas cancelar a caixa)
+                alert("⚠️ Senha incorreta! Apenas a organização pode excluir fotos.");
             }
         };
 
