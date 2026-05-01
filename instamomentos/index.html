@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Instamomentos - Galeria</title>
     
-    <!-- Ferramentas do Estúdio de Corte (Cropper.js) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
@@ -20,14 +19,12 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
         body { background-color: var(--cor-fundo); color: var(--cor-texto); min-height: 100dvh; display: flex; flex-direction: column; }
 
+        /* --- FEED --- */
         .header-perfil { background-color: #fff; padding-bottom: 20px; border-bottom: 1px solid #dbdbdb; }
         .banner { width: 100%; height: 180px; background-color: #e0e0e0; background-size: cover; background-position: center; display: block; }
         .info-perfil { display: flex; flex-direction: column; align-items: center; margin-top: -50px; text-align: center; padding: 0 20px; }
         .avatar { width: 100px; height: 100px; border-radius: 50%; border: 4px solid #fff; background-color: #ccc; object-fit: cover; margin-bottom: 10px; }
-        .titulo-evento { font-size: 1.2rem; font-weight: bold; margin-bottom: 5px; }
-        .data-evento { font-size: 0.9rem; color: var(--cor-secundaria); margin-bottom: 10px; }
-        .descricao { font-size: 0.95rem; margin-bottom: 20px; }
-
+        
         .estatisticas { display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; }
         .stat-item { display: flex; flex-direction: column; align-items: center; }
         .stat-numero { font-weight: bold; font-size: 1.1rem; }
@@ -39,37 +36,36 @@
         .post-container { position: relative; background: #fff; border-radius: 12px; overflow: hidden; }
         .media-wrapper { position: relative; width: 100%; aspect-ratio: 9 / 16; background-color: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .media-wrapper img { width: 100%; height: 100%; object-fit: contain; }
+        .curtidas-feed { position: absolute; bottom: 8px; right: 8px; background-color: rgba(0, 0, 0, 0.6); color: white; padding: 4px 10px; border-radius: 15px; font-size: 0.8rem; display: flex; align-items: center; gap: 5px; pointer-events: none; }
 
-        .curtidas-feed { position: absolute; bottom: 8px; right: 8px; background-color: rgba(0, 0, 0, 0.6); color: white; padding: 4px 10px; border-radius: 15px; font-size: 0.8rem; display: flex; align-items: center; gap: 5px; pointer-events: none; z-index: 5; }
-
-        .camera-container { position: fixed; top: 0; left: 0; width: 100%; height: 100dvh; background-color: #000; z-index: 1000; display: none; flex-direction: column; justify-content: space-between; }
-        .camera-header { padding: 15px 20px; display: flex; position: absolute; width: 100%; z-index: 10; }
-        .btn-fechar { background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; }
-
-        .video-wrapper { position: relative; width: 100%; max-height: 80dvh; aspect-ratio: 9 / 16; margin: auto 0; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        /* --- CAMADA 2: CÂMERA IMERSIVA --- */
+        .camera-container { position: fixed; inset: 0; background-color: #000; z-index: 1000; display: none; overflow: hidden; }
+        
+        /* Vídeo ocupa a tela inteira */
+        .video-wrapper { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
         #videoElement { width: 100%; height: 100%; object-fit: cover; }
-        #molduraOverlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+        #molduraOverlay { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; z-index: 2; }
 
-        .camera-controles { padding: 20px; background-color: #000; display: flex; flex-direction: column; gap: 15px; }
+        /* Botões flutuantes sobre o vídeo */
+        .camera-header { position: absolute; top: 0; width: 100%; padding: 20px; z-index: 10; background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent); }
+        .camera-controles { position: absolute; bottom: 0; width: 100%; padding: 40px 20px; z-index: 10; background: linear-gradient(to top, rgba(0,0,0,0.6), transparent); display: flex; flex-direction: column; gap: 25px; }
+
         .filtros { display: flex; gap: 10px; justify-content: center; }
-        .btn-filtro { background-color: #333; color: #fff; border: none; padding: 8px 15px; border-radius: 8px; }
-        .btn-filtro.ativo { background-color: var(--cor-destaque); }
+        .btn-filtro { background-color: rgba(255,255,255,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.4); padding: 8px 15px; border-radius: 20px; backdrop-filter: blur(5px); }
+        .btn-filtro.ativo { background-color: var(--cor-destaque); border-color: var(--cor-destaque); }
 
         .acoes-principais { display: flex; justify-content: space-around; align-items: center; }
-        .btn-inverter { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
-        .btn-capturar-final { width: 70px; height: 70px; border-radius: 50%; background-color: #fff; border: 5px solid #ccc; cursor: pointer; }
+        .btn-acao-camera { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; width: 60px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .btn-acao-camera span { font-size: 0.65rem; color: #fff; margin-top: 4px; font-weight: bold; }
+        .btn-capturar-final { width: 75px; height: 75px; border-radius: 50%; background-color: #fff; border: 5px solid rgba(255,255,255,0.3); cursor: pointer; box-shadow: 0 0 15px rgba(0,0,0,0.3); }
 
-        .btn-video-externo { background: none; border: none; color: #FFD700; font-size: 1.5rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; }
-        .btn-video-externo span { font-size: 0.6rem; color: #fff; margin-top: 2px; }
-
-        .aviso-redirecionar { background: white; padding: 25px; border-radius: 20px; width: 85%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        .btn-confirmar-sair { background-color: #25d366; color: white; border: none; padding: 12px 25px; border-radius: 10px; font-weight: bold; margin-top: 20px; width: 100%; cursor: pointer; }
-
-        .modal-foto { position: fixed; top: 0; left: 0; width: 100%; height: 100dvh; background-color: rgba(0,0,0,0.95); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; }
-        .btn-fechar-modal { position: absolute; top: 20px; left: 20px; background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; z-index: 2010; }
+        /* --- MODAIS E AVISOS --- */
+        .modal-foto { position: fixed; inset: 0; background-color: rgba(0,0,0,0.95); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        .btn-fechar-modal { position: absolute; top: 25px; left: 20px; background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; z-index: 2010; }
         .img-expandida { max-width: 90%; max-height: 70dvh; object-fit: contain; border-radius: 8px; margin-bottom: 20px; }
-        .modal-acoes { display: flex; gap: 15px; }
-        .btn-acao-modal { background-color: #333; color: #fff; border: none; padding: 12px 20px; border-radius: 25px; font-size: 1rem; cursor: pointer; font-weight: bold; }
+        
+        .aviso-redirecionar { background: white; padding: 25px; border-radius: 20px; width: 85%; max-width: 400px; text-align: center; }
+        .btn-confirmar-sair { background-color: #25d366; color: white; border: none; padding: 12px 25px; border-radius: 10px; font-weight: bold; margin-top: 20px; width: 100%; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -78,7 +74,7 @@
     <header class="header-perfil">
         <div class="banner"></div>
         <div class="info-perfil">
-            <img src="" alt="Avatar" class="avatar" id="avatarEvento">
+            <img src="" class="avatar" id="avatarEvento">
             <h1 class="titulo-evento" id="nomeEvento">Carregando...</h1>
             <p class="data-evento" id="dataEvento"></p>
             <p class="descricao" id="descricaoEvento"></p>
@@ -93,45 +89,54 @@
 </div>
 
 <div id="cameraContainer" class="camera-container">
-    <div class="camera-header"><button id="btnFecharCamera" class="btn-fechar">❌ Voltar</button></div>
+    <div class="camera-header">
+        <button id="btnFecharCamera" class="btn-fechar">❌ Voltar</button>
+    </div>
+    
     <div class="video-wrapper">
         <video id="videoElement" autoplay playsinline></video>
         <img id="molduraOverlay" src="" alt="Moldura">
     </div>
+
     <div class="camera-controles">
         <div class="filtros">
             <button id="btnFiltroNormal" class="btn-filtro ativo">Normal</button>
             <button id="btnFiltroPB" class="btn-filtro">P&B</button>
         </div>
-       <div class="acoes-principais">
-            <button id="btnUploadFoto" class="btn-inverter">🖼️</button>
+        
+        <div class="acoes-principais">
+            <button id="btnUploadFoto" class="btn-acao-camera">🖼️<span>Galeria</span></button>
             <input type="file" id="inputUploadArquivo" accept="image/*" style="display: none;">
+            
             <button id="btnCapturarFinal" class="btn-capturar-final"></button>
-            <button onclick="window.avisarSaida()" class="btn-video-externo">🎬<span>Vídeo</span></button>
-            <button id="btnInverterCamera" class="btn-inverter">🔄</button>
+            
+            <button id="btnVideoLink" class="btn-acao-camera" style="color: #FFD700;">🎬<span>Vídeo</span></button>
+            <button id="btnInverterCamera" class="btn-acao-camera">🔄<span>Inverter</span></button>
         </div>
     </div>
 </div>
 
+<!-- MODAL FOTO AMPLIADA -->
 <div id="modalFoto" class="modal-foto">
     <button onclick="window.fecharModal()" class="btn-fechar-modal">❌ Voltar</button>
-    <img id="imgModalExpandida" class="img-expandida" src="" alt="Foto Expandida">
+    <img id="imgModalExpandida" class="img-expandida" src="">
     <div class="modal-acoes">
-        <button id="btnModalCurtir" class="btn-acao-modal">❤️ <span id="contadorModalCurtidas">0</span></button>
-        <a id="btnModalBaixar" class="btn-acao-modal" href="#" style="text-decoration:none; color:white;">⬇️ Baixar</a>
-        <button id="btnModalDeletar" class="btn-acao-modal">🗑️</button>
+        <button id="btnModalCurtir" class="btn-acao-modal" style="background-color:#333; color:white; padding:12px 20px; border-radius:25px; border:none; font-weight:bold;">❤️ <span id="contadorModalCurtidas">0</span></button>
+        <a id="btnModalBaixar" class="btn-acao-modal" href="#" style="text-decoration:none; background-color:#333; color:white; padding:12px 20px; border-radius:25px; font-weight:bold;">⬇️ Baixar</a>
+        <button id="btnModalDeletar" class="btn-acao-modal" style="background-color:#333; color:white; padding:12px 20px; border-radius:25px; border:none; font-weight:bold;">🗑️</button>
     </div>
 </div>
 
+<!-- ESTÚDIO DE CORTE -->
 <div id="modalEstudio" class="modal-foto" style="z-index: 3000;">
-    <h3 style="color: white; margin-bottom: 10px;">Ajuste sua foto</h3>
+    <h3 style="color: white; margin-bottom: 15px;">Ajuste sua foto</h3>
     <div style="width: 90%; height: 60dvh; background-color: #000; overflow: hidden; border-radius: 12px; position: relative;">
         <img id="imagemParaCortar" src="" style="max-width: 100%; display: block;">
-        <img id="molduraEstudio" src="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; z-index: 3010;">
+        <img id="molduraEstudio" src="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; z-index: 3010;">
     </div>
     <div class="modal-acoes" style="margin-top: 20px;">
-        <button id="btnCancelarCorte" class="btn-acao-modal" style="background-color: #ff4444;">❌ Cancelar</button>
-        <button id="btnConfirmarCorte" class="btn-acao-modal" style="background-color: var(--cor-destaque);">✅ Enviar</button>
+        <button id="btnCancelarCorte" style="background-color:#ff4444; color:white; padding:12px 20px; border-radius:25px; border:none; font-weight:bold;">❌ Cancelar</button>
+        <button id="btnConfirmarCorte" style="background-color:var(--cor-destaque); color:white; padding:12px 20px; border-radius:25px; border:none; font-weight:bold;">✅ Enviar</button>
     </div>
 </div>
 
@@ -151,18 +156,17 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const sessaoFeed = document.getElementById('sessaoFeed');
-    const cameraContainer = document.getElementById('cameraContainer');
-    const btnAbrirCamera = document.getElementById('btnAbrirCamera');
-    const btnFecharCamera = document.getElementById('btnFecharCamera');
     const videoElement = document.getElementById('videoElement');
+    const cameraContainer = document.getElementById('cameraContainer');
+    const molduraOverlay = document.getElementById('molduraOverlay');
     let stream = null;
     let usandoCameraFrontal = false;
     let cropper = null;
 
+    // --- CÂMERA ---
     async function abrirCamera() {
-        sessaoFeed.style.display = 'none';
-        cameraContainer.style.display = 'flex';
+        document.getElementById('sessaoFeed').style.display = 'none';
+        cameraContainer.style.display = 'block';
         const modo = usandoCameraFrontal ? "user" : "environment";
         try {
             stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: modo } });
@@ -173,13 +177,26 @@
     function fecharInterface() {
         if (stream) stream.getTracks().forEach(t => t.stop());
         cameraContainer.style.display = 'none';
-        sessaoFeed.style.display = 'block';
+        document.getElementById('sessaoFeed').style.display = 'block';
     }
 
-    btnAbrirCamera.onclick = abrirCamera;
-    btnFecharCamera.onclick = fecharInterface;
+    document.getElementById('btnAbrirCamera').onclick = abrirCamera;
+    document.getElementById('btnFecharCamera').onclick = fecharInterface;
     document.getElementById('btnInverterCamera').onclick = () => { usandoCameraFrontal = !usandoCameraFrontal; fecharInterface(); abrirCamera(); };
 
+    // --- FILTROS ---
+    document.getElementById('btnFiltroNormal').onclick = () => {
+        videoElement.style.filter = "none";
+        document.getElementById('btnFiltroNormal').classList.add('ativo');
+        document.getElementById('btnFiltroPB').classList.remove('ativo');
+    };
+    document.getElementById('btnFiltroPB').onclick = () => {
+        videoElement.style.filter = "grayscale(100%)";
+        document.getElementById('btnFiltroPB').classList.add('ativo');
+        document.getElementById('btnFiltroNormal').classList.remove('ativo');
+    };
+
+    // --- FIREBASE (DADOS E FEED) ---
     onSnapshot(doc(db, "configuracoes", "dados_festa"), (d) => {
         if (d.exists()) {
             const data = d.data();
@@ -188,7 +205,7 @@
             document.getElementById('descricaoEvento').textContent = data.texto || "";
             if (data.url_avatar) document.getElementById('avatarEvento').src = data.url_avatar;
             if (data.url_banner) document.querySelector('.banner').style.backgroundImage = `url('${data.url_banner}')`;
-            if (data.url_moldura) document.getElementById('molduraOverlay').src = data.url_moldura;
+            if (data.url_moldura) molduraOverlay.src = data.url_moldura;
         }
     });
 
@@ -201,14 +218,15 @@
             totalC += (p.curtidas || 0);
             const card = document.createElement('div');
             card.className = 'post-container';
-            card.innerHTML = `<div class="media-wrapper" onclick="window.abrirModal('${p.url_imagem}', '${docSnap.id}', ${p.curtidas || 0})">
-                <img src="${p.url_imagem}"><div class="curtidas-feed">❤️ ${p.curtidas || 0}</div></div>`;
+            card.onclick = () => window.abrirModal(p.url_imagem, docSnap.id, p.curtidas || 0);
+            card.innerHTML = `<div class="media-wrapper"><img src="${p.url_imagem}"><div class="curtidas-feed">❤️ ${p.curtidas || 0}</div></div>`;
             feed.appendChild(card);
         });
         document.getElementById('totalFotos').textContent = snap.size;
         document.getElementById('totalCurtidas').textContent = totalC;
     });
 
+    // --- MODAL E DOWNLOAD ---
     window.abrirModal = (url, id, curtidas) => {
         document.getElementById('imgModalExpandida').src = url;
         document.getElementById('contadorModalCurtidas').textContent = curtidas;
@@ -221,29 +239,31 @@
                 const blob = await res.blob();
                 const link = URL.createObjectURL(blob);
                 const a = document.createElement('a');
-                a.href = link; a.download = "Instamomentos.jpg";
+                a.href = link; a.download = "Lembranca.jpg";
                 document.body.appendChild(a); a.click(); document.body.removeChild(a);
                 btnBaixar.textContent = "✅ Salvo";
                 setTimeout(() => btnBaixar.textContent = "⬇️ Baixar", 2000);
             } catch(err) { window.open(url, '_blank'); }
         };
-        document.getElementById('btnModalCurtir').onclick = () => updateDoc(doc(db, "postagens", id), { curtidas: increment(1) });
-        document.getElementById('btnModalDeletar').onclick = () => confirm("Apagar?") && deleteDoc(doc(db, "postagens", id));
+        document.getElementById('btnModalCurtir').onclick = (e) => { e.stopPropagation(); updateDoc(doc(db, "postagens", id), { curtidas: increment(1) }); };
+        document.getElementById('btnModalDeletar').onclick = (e) => { e.stopPropagation(); confirm("Apagar?") && deleteDoc(doc(db, "postagens", id)); window.fecharModal(); };
         document.getElementById('modalFoto').style.display = 'flex';
     };
 
     window.fecharModal = () => document.getElementById('modalFoto').style.display = 'none';
 
+    // --- CAPTURA ---
     document.getElementById('btnCapturarFinal').onclick = async () => {
         const btn = document.getElementById('btnCapturarFinal');
         btn.disabled = true;
         const canvas = document.createElement('canvas');
         canvas.width = 1080; canvas.height = 1920;
         const ctx = canvas.getContext('2d');
+        if (document.getElementById('btnFiltroPB').classList.contains('ativo')) ctx.filter = 'grayscale(100%)';
         if (usandoCameraFrontal) { ctx.translate(canvas.width, 0); ctx.scale(-1, 1); }
         ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-        ctx.setTransform(1,0,0,1,0,0);
-        ctx.drawImage(document.getElementById('molduraOverlay'), 0, 0, canvas.width, canvas.height);
+        ctx.filter = 'none'; ctx.setTransform(1,0,0,1,0,0);
+        ctx.drawImage(molduraOverlay, 0, 0, canvas.width, canvas.height);
         const base64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
         const form = new FormData(); form.append('image', base64);
         const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: form });
@@ -255,28 +275,25 @@
         btn.disabled = false;
     };
 
+    // --- UPLOAD E ESTÚDIO ---
     const inputUploadArquivo = document.getElementById('inputUploadArquivo');
-    const modalEstudio = document.getElementById('modalEstudio');
-    const imagemParaCortar = document.getElementById('imagemParaCortar');
-
     document.getElementById('btnUploadFoto').onclick = () => inputUploadArquivo.click();
-
     inputUploadArquivo.onchange = (event) => {
         const file = event.target.files[0];
         if (!file) return;
         const reader = new FileReader();
         reader.onload = (e) => {
-            imagemParaCortar.src = e.target.result;
-            document.getElementById('molduraEstudio').src = document.getElementById('molduraOverlay').src;
-            modalEstudio.style.display = 'flex';
+            document.getElementById('imagemParaCortar').src = e.target.result;
+            document.getElementById('molduraEstudio').src = molduraOverlay.src;
+            document.getElementById('modalEstudio').style.display = 'flex';
             if (cropper) cropper.destroy();
-            cropper = new Cropper(imagemParaCortar, { aspectRatio: 9 / 16, viewMode: 1 });
+            cropper = new Cropper(document.getElementById('imagemParaCortar'), { aspectRatio: 9 / 16, viewMode: 1 });
         };
         reader.readAsDataURL(file);
     };
 
     document.getElementById('btnCancelarCorte').onclick = () => {
-        modalEstudio.style.display = 'none';
+        document.getElementById('modalEstudio').style.display = 'none';
         if (cropper) cropper.destroy();
         inputUploadArquivo.value = "";
     };
@@ -284,42 +301,29 @@
     document.getElementById('btnConfirmarCorte').onclick = async () => {
         const canvas = cropper.getCroppedCanvas({ width: 1080, height: 1920 });
         const ctx = canvas.getContext('2d');
-        ctx.drawImage(document.getElementById('molduraOverlay'), 0, 0, canvas.width, canvas.height);
+        ctx.drawImage(molduraOverlay, 0, 0, canvas.width, canvas.height);
         const base64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
         const form = new FormData(); form.append('image', base64);
         const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: form });
         const imgData = await res.json();
         if (imgData.success) {
             await addDoc(collection(db, "postagens"), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() });
-            modalEstudio.style.display = 'none';
+            document.getElementById('modalEstudio').style.display = 'none';
             fecharInterface();
         }
     };
 
-    // --- LÓGICA DE REDIRECIONAMENTO DE VÍDEO (CORRIGIDA) ---
+    // --- VÍDEO LINK ---
     window.avisarSaida = () => {
         const modalAviso = document.createElement('div');
-        modalAviso.id = "modalAvisoSaida";
-        Object.assign(modalAviso.style, {
-            position: "fixed", top: "0", left: "0", width: "100%", height: "100%",
-            backgroundColor: "rgba(0,0,0,0.8)", display: "flex", justifyContent: "center",
-            alignItems: "center", zIndex: "9999"
-        });
-        modalAviso.innerHTML = `
-            <div class="aviso-redirecionar">
-                <p style="font-weight: bold; font-size: 1.2rem; margin-bottom: 15px; color: #333;">🎬 Gravar Vídeo</p>
-                <p style="color: #555; line-height: 1.4;">Você está sendo direcionado para fora do Instamomentos para a geração do vídeo com filtro de moldura.</p>
-                <button class="btn-confirmar-sair" id="confirmarSair">Ir para o Filtro</button>
-                <button id="cancelarSair" style="background: none; border: none; color: #888; margin-top: 15px; cursor: pointer; text-decoration: underline;">Cancelar</button>
-            </div>
-        `;
+        Object.assign(modalAviso.style, { position: "fixed", inset: "0", backgroundColor: "rgba(0,0,0,0.8)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: "9999" });
+        modalAviso.innerHTML = `<div class="aviso-redirecionar"><p style="font-weight:bold; font-size:1.2rem; margin-bottom:15px; color:#333;">🎬 Gravar Vídeo</p><p style="color:#555; line-height:1.4;">Direcionando para fora do Instamomentos para gerar o vídeo com filtro de moldura.</p><button class="btn-confirmar-sair" id="confirmarSair">Ir para o Filtro</button><button id="cancelarSair" style="background:none; border:none; color:#888; margin-top:15px; cursor:pointer; text-decoration:underline;">Cancelar</button></div>`;
         document.body.appendChild(modalAviso);
-        document.getElementById('confirmarSair').onclick = () => {
-            window.open("https://crispoparte.com.br/juliana50/", "_blank"); 
-            modalAviso.remove();
-        };
+        document.getElementById('confirmarSair').onclick = () => { window.open("https://crispoparte.com.br/juliana50/", "_blank"); modalAviso.remove(); };
         document.getElementById('cancelarSair').onclick = () => modalAviso.remove();
     };
+    document.getElementById('btnVideoLink').onclick = window.avisarSaida;
+
 </script>
 </body>
 </html>
