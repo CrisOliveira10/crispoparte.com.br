@@ -53,7 +53,12 @@
         .post-container { position: relative; background: #fff; border-radius: 12px; overflow: hidden; }
         .media-wrapper { position: relative; width: 100%; aspect-ratio: 9 / 16; background-color: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .media-wrapper img { width: 100%; height: 100%; object-fit: contain; }
-        .curtidas-feed { position: absolute; bottom: 8px; right: 8px; background-color: rgba(0, 0, 0, 0.6); color: white; padding: 4px 10px; border-radius: 15px; font-size: 0.8rem; display: flex; align-items: center; gap: 5px; pointer-events: none; }
+        .interacoes-feed { 
+            position: absolute; bottom: 8px; right: 8px; 
+            background-color: rgba(0, 0, 0, 0.6); color: white; 
+            padding: 4px 10px; border-radius: 15px; font-size: 0.75rem; 
+            display: flex; align-items: center; gap: 8px; pointer-events: none; 
+        }
 
         .camera-container { position: fixed; inset: 0; height: 100dvh; background-color: #000; z-index: 1000; display: none; overflow: hidden; }
         .video-wrapper { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
@@ -93,6 +98,7 @@
             <div class="estatisticas">
                 <div class="stat-item"><span class="stat-numero" id="totalFotos">0</span><span class="stat-label">Fotos</span></div>
                 <div class="stat-item"><span class="stat-numero" id="totalCurtidas">0</span><span class="stat-label">Curtidas</span></div>
+                <div class="stat-item"><span class="stat-numero" id="totalComentariosGeral">0</span><span class="stat-label">Comentários</span></div>
             </div>
             <button class="btn-principal-festa" id="btnAbrirCamera">📸 Adicionar Foto</button>
         </div>
@@ -235,20 +241,30 @@
         const feed = document.getElementById('feedGaleria');
         feed.innerHTML = "";
         let totalC = 0;
+        let totalComent = 0; // Variável para somar todos os comentários
+
         snap.forEach(docSnap => {
             const p = docSnap.data();
             totalC += (p.curtidas || 0);
+            totalComent += (p.total_comentarios || 0);
+
             const card = document.createElement('div');
             card.className = 'post-container';
             card.innerHTML = `
                 <div class="media-wrapper" style="cursor: pointer;" onclick="window.abrirModal('${p.url_imagem}', '${docSnap.id}', ${p.curtidas || 0})">
                     <img src="${p.url_imagem}">
-                    <div class="curtidas-feed">❤️ ${p.curtidas || 0}</div>
+                    <div class="interacoes-feed">
+                        <span>❤️ ${p.curtidas || 0}</span>
+                        <span>💬 ${p.total_comentarios || 0}</span>
+                    </div>
                 </div>`;
             feed.appendChild(card);
         });
+
+        // Atualiza os três contadores no topo
         document.getElementById('totalFotos').textContent = snap.size;
         document.getElementById('totalCurtidas').textContent = totalC;
+        document.getElementById('totalComentariosGeral').textContent = totalComent;
     });
 
    window.abrirModal = (url, id, curtidas) => {
@@ -285,20 +301,28 @@
             aba.style.display = aba.style.display === 'none' ? 'flex' : 'none';
         };
 
-        // Enviar Comentário
+       // Enviar Comentário (Corrigido para atualizar o Feed)
         document.getElementById('btnEnviarComentario').onclick = async () => {
-            if (!inputNome.value.trim() || !inputTexto.value.trim()) {
-                alert("Por favor, preencha seu nome e a mensagem!");
-                return;
-            }
-            // Salva o nome localmente para facilitar o próximo comentário
-            localStorage.setItem('nomeConvidado', inputNome.value);
+            if (!inputNome.value.trim() || !inputTexto.value.trim()) return alert("Preencha nome e mensagem!");
+            
+            const nomeConvidado = inputNome.value.trim();
+            const textoComentario = inputTexto.value.trim();
 
+            // Salva o nome localmente para o próximo comentário
+            localStorage.setItem('nomeConvidado', nomeConvidado);
+            
+            // 1. Salva o comentário na subcoleção
             await addDoc(collection(db, `postagens/${id}/comentarios`), {
-                nome: inputNome.value,
-                texto: inputTexto.value,
+                nome: nomeConvidado,
+                texto: textoComentario,
                 data_envio: serverTimestamp()
             });
+
+            // 2. Atualiza o contador de comentários na postagem principal (Camada 1)
+            await updateDoc(doc(db, "postagens", id), {
+                total_comentarios: increment(1)
+            });
+
             inputTexto.value = ""; // Limpa apenas o campo de texto
         };
 
