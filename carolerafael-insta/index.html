@@ -135,8 +135,8 @@
 </div>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
-    import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc, increment, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc, increment, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyAhuu4yUKVgxtRHchUvywRJ5eHw0fUIJgE",
@@ -151,7 +151,7 @@
     const db = getFirestore(app);
     
     const EVENTO_ID = "carol_rafael"; 
-    const LINK_VIDEO_EXTERNO = "https://crispoparte.com.br/carolerafael-insta/";
+    const LINK_VIDEO_EXTERNO = "https://crispoparte.com.br/carolerafael-molduravideo/";
 
     const videoElement = document.getElementById('videoElement');
     const cameraContainer = document.getElementById('cameraContainer');
