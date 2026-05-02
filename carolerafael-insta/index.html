@@ -8,10 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
-
-
     <style>
-    /* --- ABA DE COMENTÁRIOS --- */
         .aba-comentarios { 
             position: absolute; bottom: 0; width: 100%; height: 55%; 
             background: #fff; border-radius: 20px 20px 0 0; 
@@ -158,6 +155,7 @@
         </div>
     </div>
 </div>
+
 <!-- ESTÚDIO DE CORTE (ALINHAMENTO 9:16) -->
 <div id="modalEstudio" class="modal-foto" style="z-index: 3000;">
     <h3 style="color: white; margin-bottom: 15px;">Ajuste sua foto</h3>
@@ -171,7 +169,9 @@
         <button id="btnCancelarCorte" style="background-color:#ff4444; color:white; padding:12px 25px; border-radius:25px; border:none; font-weight:bold;">❌</button>
         <button id="btnConfirmarCorte" style="background-color:var(--cor-destaque); color:white; padding:12px 25px; border-radius:25px; border:none; font-weight:bold;">✅ Enviar</button>
     </div>
-</div><script type="module">
+</div>
+
+<script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
     import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc, increment, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
@@ -226,8 +226,8 @@
         document.getElementById('btnFiltroNormal').classList.remove('ativo');
     };
 
-    // 2. ATUALIZE A BUSCA DE CONFIGURAÇÕES: Puxar os dados específicos deste evento
-    onSnapshot(doc(db, "eventos", EVENTO_ID), (d) => {
+    // CORREÇÃO: APONTADO EXCLUSIVAMENTE PARA A PASTA "configuracoes" ONDE ESTÃO AS IMAGENS DO EVENTO
+    onSnapshot(doc(db, "configuracoes", EVENTO_ID), (d) => {
         if (d.exists()) {
             const data = d.data();
             document.getElementById('nomeEvento').textContent = data.nome || "";
@@ -243,7 +243,7 @@
         const feed = document.getElementById('feedGaleria');
         feed.innerHTML = "";
         let totalC = 0;
-        let totalComent = 0; // Variável para somar todos os comentários
+        let totalComent = 0;
 
         snap.forEach(docSnap => {
             const p = docSnap.data();
@@ -263,7 +263,6 @@
             feed.appendChild(card);
         });
 
-        // Atualiza os três contadores no topo
         document.getElementById('totalFotos').textContent = snap.size;
         document.getElementById('totalCurtidas').textContent = totalC;
         document.getElementById('totalComentariosGeral').textContent = totalComent;
@@ -273,18 +272,16 @@
         document.getElementById('imgModalExpandida').src = url;
         document.getElementById('contadorModalCurtidas').textContent = curtidas;
         const aba = document.getElementById('abaComentarios');
-        aba.style.display = 'none'; // A aba de comentários começa fechada
+        aba.style.display = 'none';
 
         const lista = document.getElementById('listaComentarios');
         const inputNome = document.getElementById('inputNomeComentario');
         const inputTexto = document.getElementById('inputTextoComentario');
 
-        // Lembrar o nome que o convidado usou antes
         if (localStorage.getItem('nomeConvidado')) {
             inputNome.value = localStorage.getItem('nomeConvidado');
         }
 
-        // --- Escuta de Comentários em Tempo Real ---
         const unsubComentarios = onSnapshot(query(collection(db, `eventos/${EVENTO_ID}/postagens/${id}/comentarios`), orderBy("data_envio", "asc")), (snap) => {
             lista.innerHTML = "";
             document.getElementById('contadorModalComentarios').textContent = snap.size;
@@ -298,43 +295,34 @@
             lista.scrollTop = lista.scrollHeight;
         });
 
-        // Abrir/Fechar a aba de comentários
         document.getElementById('btnAbrirComentarios').onclick = () => {
             aba.style.display = aba.style.display === 'none' ? 'flex' : 'none';
         };
 
-       // Enviar Comentário (Corrigido para atualizar o Feed)
         document.getElementById('btnEnviarComentario').onclick = async () => {
             if (!inputNome.value.trim() || !inputTexto.value.trim()) return alert("Preencha nome e mensagem!");
             
             const nomeConvidado = inputNome.value.trim();
             const textoComentario = inputTexto.value.trim();
 
-            // Salva o nome localmente para o próximo comentário
             localStorage.setItem('nomeConvidado', nomeConvidado);
             
-            // 1. Salva o comentário na subcoleção
             await addDoc(collection(db, `eventos/${EVENTO_ID}/postagens/${id}/comentarios`), {
-    nome: nomeConvidado,
-    texto: textoComentario,
-    data_envio: serverTimestamp()
-});
+                nome: nomeConvidado,
+                texto: textoComentario,
+                data_envio: serverTimestamp()
+            });
 
-            // 2. Atualiza o contador de comentários na postagem principal (Camada 1)
            await updateDoc(doc(db, `eventos/${EVENTO_ID}/postagens`, id), {
-    total_comentarios: increment(1)
-});
-            inputTexto.value = ""; // Limpa apenas o campo de texto
+                total_comentarios: increment(1)
+            });
+            inputTexto.value = ""; 
         };
 
-        // --- Função de Baixar com Mensagens Personalizadas ---
         const btnBaixar = document.getElementById('btnModalBaixar');
         btnBaixar.onclick = async (e) => {
             e.preventDefault();
-            
-            // 1. Muda para "Baixando..."
             btnBaixar.textContent = "⏳ Baixando...";
-            
             try {
                 const res = await fetch(url + "?t=" + new Date().getTime());
                 const blob = await res.blob();
@@ -345,21 +333,14 @@
                 document.body.appendChild(a); 
                 a.click(); 
                 document.body.removeChild(a);
-                
-                // 2. Alerta de sucesso
                 alert("Foto salva com sucesso! Verifique sua galeria.");
-                
-                // 3. Muda para "Abrir Foto?"
                 btnBaixar.textContent = "✅ Abrir Foto?";
                 btnBaixar.onclick = () => window.open(url, '_blank');
-                
             } catch(err) { 
-                // Caso falhe, tenta abrir direto
                 window.open(url, '_blank'); 
             }
         };
 
-        // --- Função de Curtir ---
         document.getElementById('btnModalCurtir').onclick = (e) => { 
             e.stopPropagation(); 
            updateDoc(doc(db, `eventos/${EVENTO_ID}/postagens`, id), { curtidas: increment(1) });
@@ -367,7 +348,6 @@
             contador.textContent = parseInt(contador.textContent) + 1;
         };
 
-        // --- Função de Deletar com Senha ---
         document.getElementById('btnModalDeletar').onclick = (e) => { 
             e.stopPropagation(); 
             const senhaDigitada = prompt("Senha para excluir:");
@@ -386,7 +366,7 @@
 
     window.fecharModal = () => document.getElementById('modalFoto').style.display = 'none';
 
-    // --- Lógica de Captura pela Câmera ---
+    // FUNÇÕES DE CAPTURA ORIGINAIS PRESERVADAS
     document.getElementById('btnCapturarFinal').onclick = async () => {
         const btn = document.getElementById('btnCapturarFinal');
         btn.disabled = true;
@@ -409,11 +389,10 @@
         btn.disabled = false;
     };
 
-    // --- Lógica de Upload da Galeria e Estúdio de Corte ---
     const inputUploadArquivo = document.getElementById('inputUploadArquivo');
     document.getElementById('btnUploadFoto').onclick = () => inputUploadArquivo.click();
 
-inputUploadArquivo.onchange = (event) => {
+    inputUploadArquivo.onchange = (event) => {
         const file = event.target.files[0];
         if (!file) return;
 
@@ -425,14 +404,10 @@ inputUploadArquivo.onchange = (event) => {
         const reader = new FileReader();
         reader.onload = (e) => {
             const imagem = document.getElementById('imagemParaCortar');
-            
-            // 1. Primeiro, mostramos o modal para o navegador calcular o tamanho real
             document.getElementById('modalEstudio').style.display = 'flex';
             document.getElementById('molduraEstudio').src = molduraOverlay.src;
-            
             imagem.src = e.target.result;
 
-            // 2. O segredo: Esperamos a imagem e o layout estarem 100% prontos
             imagem.onload = () => {
                 setTimeout(() => {
                     cropper = new Cropper(imagem, {
@@ -448,7 +423,6 @@ inputUploadArquivo.onchange = (event) => {
                         cropBoxResizable: false,
                         toggleDragModeOnDblclick: false,
                         ready() {
-                            // 3. Forçamos o encaixe "luva" medindo o container agora que ele é visível
                             this.cropper.setCropBoxData({ 
                                 left: 0, 
                                 top: 0, 
@@ -457,12 +431,11 @@ inputUploadArquivo.onchange = (event) => {
                             });
                         }
                     });
-                }, 300); // 300ms é o tempo de "respiro" do navegador
+                }, 300); 
             };
         };
         reader.readAsDataURL(file);
     };
-
 
     document.getElementById('btnCancelarCorte').onclick = () => {
         document.getElementById('modalEstudio').style.display = 'none';
@@ -479,13 +452,12 @@ inputUploadArquivo.onchange = (event) => {
         const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: form });
         const imgData = await res.json();
         if (imgData.success) {
-           await addDoc(collection(db, `eventos/${EVENTO_ID}/postagens`), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() }); // <--- CORREÇÃO AQUI
+           await addDoc(collection(db, `eventos/${EVENTO_ID}/postagens`), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() }); 
             document.getElementById('modalEstudio').style.display = 'none';
             fecharInterface();
         }
     };
 
-    // --- Redirecionamento de Vídeo ---
     window.avisarSaida = () => {
         const modalAviso = document.createElement('div');
         Object.assign(modalAviso.style, { position: "fixed", inset: "0", backgroundColor: "rgba(0,0,0,0.8)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: "9999" });
@@ -496,7 +468,6 @@ inputUploadArquivo.onchange = (event) => {
     };
     document.getElementById('btnVideoLink').onclick = window.avisarSaida;
 
-    // --- Controle do Flash ---
     let flashAtivado = false;
     document.getElementById('btnFlash').onclick = async () => {
         if (!stream) return;
