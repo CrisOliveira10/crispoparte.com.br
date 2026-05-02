@@ -221,7 +221,7 @@
         document.getElementById('btnFiltroNormal').classList.remove('ativo');
     };
 
-    // 1. PUXA O BANNER E AVATAR DINAMICAMENTE DA PASTA CONFIGURAÇÕES
+    // 1. PUXA BANNER, AVATAR E TEXTOS DA PASTA CONFIGURACOES
     onSnapshot(doc(db, "configuracoes", EVENTO_ID), (d) => {
         if (d.exists()) {
             const data = d.data();
@@ -234,8 +234,8 @@
         }
     });
 
-    // 2. FUNÇÕES MANTIDAS NO CAMINHO ORIGINAL (POSTAGENS) PARA GARANTIR FUNCIONAMENTO
-    onSnapshot(query(collection(db, "postagens"), orderBy("data_envio", "desc")), (snap) => {
+    // 2. ISOLA AS FOTOS DENTRO DA PASTA EVENTOS -> POSTAGENS
+    onSnapshot(query(collection(db, `eventos/${EVENTO_ID}/postagens`), orderBy("data_envio", "desc")), (snap) => {
         const feed = document.getElementById('feedGaleria');
         feed.innerHTML = "";
         let totalC = 0;
@@ -278,7 +278,8 @@
             inputNome.value = localStorage.getItem('nomeConvidado');
         }
 
-        const unsubComentarios = onSnapshot(query(collection(db, `postagens/${id}/comentarios`), orderBy("data_envio", "asc")), (snap) => {
+        // 3. ISOLA OS COMENTÁRIOS DA FOTO DENTRO DA PASTA DO EVENTO
+        const unsubComentarios = onSnapshot(query(collection(db, `eventos/${EVENTO_ID}/postagens/${id}/comentarios`), orderBy("data_envio", "asc")), (snap) => {
             lista.innerHTML = "";
             document.getElementById('contadorModalComentarios').textContent = snap.size;
             snap.forEach(docSnap => {
@@ -303,13 +304,15 @@
 
             localStorage.setItem('nomeConvidado', nomeConvidado);
             
-            await addDoc(collection(db, `postagens/${id}/comentarios`), {
+            // 4. SALVA O COMENTÁRIO NA PASTA DO EVENTO
+            await addDoc(collection(db, `eventos/${EVENTO_ID}/postagens/${id}/comentarios`), {
                 nome: nomeConvidado,
                 texto: textoComentario,
                 data_envio: serverTimestamp()
             });
 
-            await updateDoc(doc(db, "postagens", id), {
+            // 5. ATUALIZA O CONTADOR DE COMENTÁRIOS NA FOTO DO EVENTO
+            await updateDoc(doc(db, `eventos/${EVENTO_ID}/postagens`, id), {
                 total_comentarios: increment(1)
             });
             inputTexto.value = ""; 
@@ -337,19 +340,21 @@
             }
         };
 
+        // 6. CURTIR A FOTO NA PASTA DO EVENTO
         document.getElementById('btnModalCurtir').onclick = (e) => { 
             e.stopPropagation(); 
-            updateDoc(doc(db, "postagens", id), { curtidas: increment(1) }); 
+            updateDoc(doc(db, `eventos/${EVENTO_ID}/postagens`, id), { curtidas: increment(1) }); 
             const contador = document.getElementById('contadorModalCurtidas');
             contador.textContent = parseInt(contador.textContent) + 1;
         };
 
+        // 7. APAGAR A FOTO NA PASTA DO EVENTO
         document.getElementById('btnModalDeletar').onclick = (e) => { 
             e.stopPropagation(); 
             const senhaDigitada = prompt("Senha para excluir:");
             if (senhaDigitada === "4321") {
                 if(confirm("Deseja realmente apagar esta foto?")) {
-                    deleteDoc(doc(db, "postagens", id)); 
+                    deleteDoc(doc(db, `eventos/${EVENTO_ID}/postagens`, id)); 
                     window.fecharModal();
                 }
             } else if (senhaDigitada !== null) { 
@@ -362,6 +367,7 @@
 
     window.fecharModal = () => document.getElementById('modalFoto').style.display = 'none';
 
+    // 8. SALVA A FOTO DA CÂMERA DIRETO NA PASTA DO EVENTO (Postagens Camada 1)
     document.getElementById('btnCapturarFinal').onclick = async () => {
         const btn = document.getElementById('btnCapturarFinal');
         btn.disabled = true;
@@ -378,7 +384,7 @@
         const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: form });
         const imgData = await res.json();
         if (imgData.success) {
-            await addDoc(collection(db, "postagens"), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() });
+            await addDoc(collection(db, `eventos/${EVENTO_ID}/postagens`), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() });
             fecharInterface();
         }
         btn.disabled = false;
@@ -427,6 +433,7 @@
         inputUploadArquivo.value = "";
     };
 
+    // 9. SALVA A FOTO CORTADA DO ESTÚDIO DIRETO NA PASTA DO EVENTO
     document.getElementById('btnConfirmarCorte').onclick = async () => {
         const canvas = cropper.getCroppedCanvas({ width: 1080, height: 1920 });
         const ctx = canvas.getContext('2d');
@@ -436,7 +443,7 @@
         const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: form });
         const imgData = await res.json();
         if (imgData.success) {
-            await addDoc(collection(db, "postagens"), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() });
+            await addDoc(collection(db, `eventos/${EVENTO_ID}/postagens`), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() });
             document.getElementById('modalEstudio').style.display = 'none';
             fecharInterface();
         }
