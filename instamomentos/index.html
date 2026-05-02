@@ -421,24 +421,31 @@
             imagem.src = e.target.result;
             document.getElementById('molduraEstudio').src = molduraOverlay.src;
             
-            // ESSENCIAL: Exibe o modal ANTES de iniciar o Cropper para o alinhamento funcionar
+            // 1. Abre o modal PRIMEIRO
             document.getElementById('modalEstudio').style.display = 'flex';
             
             if (cropper) cropper.destroy();
             
-            cropper = new Cropper(imagem, {
-                aspectRatio: 9 / 16,
-                viewMode: 1,            // Garante que a foto preencha toda a moldura
-                dragMode: 'move',       // Liberdade total para arrastar e dar zoom
-                autoCropArea: 1,        // Inicia cobrindo 100% da área
-                restore: false,
-                guides: false,
-                center: false,
-                highlight: false,
-                cropBoxMovable: false,  // Trava o quadro no lugar da moldura
-                cropBoxResizable: false, // Mantém a proporção 9:16 fixa
-                toggleDragModeOnDblclick: false
-            });
+            // 2. Aguarda 100ms para o navegador calcular o tamanho real do modal flex
+            setTimeout(() => {
+                cropper = new Cropper(imagem, {
+                    aspectRatio: 9 / 16,
+                    viewMode: 1,            // Impede espaços vazios
+                    dragMode: 'move',       // LIBERA O ARRASTE DA FOTO
+                    autoCropArea: 1,        // Tenta encaixe máximo
+                    restore: false,
+                    guides: false,
+                    center: false,
+                    highlight: false,
+                    cropBoxMovable: false,  // Trava o quadrado
+                    cropBoxResizable: false, // Trava a proporção
+                    toggleDragModeOnDblclick: false,
+                    ready() {
+                        // 3. FORÇA O ENCAIXE "LUVA" DE PRIMEIRA
+                        this.cropper.setCropBoxData({ left: 0, top: 0, width: '100%', height: '100%' });
+                    }
+                });
+            }, 100); 
         };
         reader.readAsDataURL(file);
     };
