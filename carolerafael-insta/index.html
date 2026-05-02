@@ -8,8 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
-
-
     <style>
     /* --- ABA DE COMENTÁRIOS --- */
         .aba-comentarios { 
@@ -30,7 +28,7 @@
         :root {
             --cor-fundo: #F8F9FA;
             --cor-texto: #333333;
-            --cor-destaque:#212d51; 
+            --cor-destaque: #235587; 
             --cor-secundaria: #8E8E8E;
         }
 
@@ -171,7 +169,7 @@
         <button id="btnCancelarCorte" style="background-color:#ff4444; color:white; padding:12px 25px; border-radius:25px; border:none; font-weight:bold;">❌</button>
         <button id="btnConfirmarCorte" style="background-color:var(--cor-destaque); color:white; padding:12px 25px; border-radius:25px; border:none; font-weight:bold;">✅ Enviar</button>
     </div>
-<script type="module">
+</div><script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
     import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc, increment, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
@@ -232,8 +230,7 @@
             document.getElementById('dataEvento').textContent = data.data || "";
             document.getElementById('descricaoEvento').textContent = data.texto || "";
             if (data.url_avatar) document.getElementById('avatarEvento').src = data.url_avatar;
-            // CORREÇÃO DA CRASE AQUI:
-          if (data.url_banner) document.querySelector('.banner').style.backgroundImage = `url("${data.url_banner}")`;
+            if (data.url_banner) document.querySelector('.banner').style.backgroundImage = `url('${data.url_banner}')`;
             if (data.url_moldura) molduraOverlay.src = data.url_moldura;
         }
     });
@@ -242,7 +239,7 @@
         const feed = document.getElementById('feedGaleria');
         feed.innerHTML = "";
         let totalC = 0;
-        let totalComent = 0;
+        let totalComent = 0; // Variável para somar todos os comentários
 
         snap.forEach(docSnap => {
             const p = docSnap.data();
@@ -262,6 +259,7 @@
             feed.appendChild(card);
         });
 
+        // Atualiza os três contadores no topo
         document.getElementById('totalFotos').textContent = snap.size;
         document.getElementById('totalCurtidas').textContent = totalC;
         document.getElementById('totalComentariosGeral').textContent = totalComent;
@@ -271,17 +269,18 @@
         document.getElementById('imgModalExpandida').src = url;
         document.getElementById('contadorModalCurtidas').textContent = curtidas;
         const aba = document.getElementById('abaComentarios');
-        aba.style.display = 'none';
+        aba.style.display = 'none'; // A aba de comentários começa fechada
 
         const lista = document.getElementById('listaComentarios');
         const inputNome = document.getElementById('inputNomeComentario');
         const inputTexto = document.getElementById('inputTextoComentario');
 
+        // Lembrar o nome que o convidado usou antes
         if (localStorage.getItem('nomeConvidado')) {
             inputNome.value = localStorage.getItem('nomeConvidado');
         }
 
-        // CORREÇÃO: Apontando para a subcoleção correta do casal
+        // --- Escuta de Comentários em Tempo Real ---
         const unsubComentarios = onSnapshot(query(collection(db, `postagens_carol_rafael/${id}/comentarios`), orderBy("data_envio", "asc")), (snap) => {
             lista.innerHTML = "";
             document.getElementById('contadorModalComentarios').textContent = snap.size;
@@ -295,33 +294,44 @@
             lista.scrollTop = lista.scrollHeight;
         });
 
+        // Abrir/Fechar a aba de comentários
         document.getElementById('btnAbrirComentarios').onclick = () => {
             aba.style.display = aba.style.display === 'none' ? 'flex' : 'none';
         };
 
+       // Enviar Comentário (Corrigido para atualizar o Feed)
         document.getElementById('btnEnviarComentario').onclick = async () => {
             if (!inputNome.value.trim() || !inputTexto.value.trim()) return alert("Preencha nome e mensagem!");
+            
             const nomeConvidado = inputNome.value.trim();
             const textoComentario = inputTexto.value.trim();
+
+            // Salva o nome localmente para o próximo comentário
             localStorage.setItem('nomeConvidado', nomeConvidado);
             
-            // CORREÇÃO: Salvando no banco de dados do casal
+            // 1. Salva o comentário na subcoleção
             await addDoc(collection(db, `postagens_carol_rafael/${id}/comentarios`), {
                 nome: nomeConvidado,
                 texto: textoComentario,
                 data_envio: serverTimestamp()
             });
 
+            // 2. Atualiza o contador de comentários na postagem principal (Camada 1)
             await updateDoc(doc(db, "postagens_carol_rafael", id), {
                 total_comentarios: increment(1)
             });
-            inputTexto.value = "";
+
+            inputTexto.value = ""; // Limpa apenas o campo de texto
         };
 
+        // --- Função de Baixar com Mensagens Personalizadas ---
         const btnBaixar = document.getElementById('btnModalBaixar');
         btnBaixar.onclick = async (e) => {
             e.preventDefault();
+            
+            // 1. Muda para "Baixando..."
             btnBaixar.textContent = "⏳ Baixando...";
+            
             try {
                 const res = await fetch(url + "?t=" + new Date().getTime());
                 const blob = await res.blob();
@@ -332,36 +342,48 @@
                 document.body.appendChild(a); 
                 a.click(); 
                 document.body.removeChild(a);
-                alert("Foto salva com sucesso!");
+                
+                // 2. Alerta de sucesso
+                alert("Foto salva com sucesso! Verifique sua galeria.");
+                
+                // 3. Muda para "Abrir Foto?"
                 btnBaixar.textContent = "✅ Abrir Foto?";
                 btnBaixar.onclick = () => window.open(url, '_blank');
-            } catch(err) { window.open(url, '_blank'); }
+                
+            } catch(err) { 
+                // Caso falhe, tenta abrir direto
+                window.open(url, '_blank'); 
+            }
         };
 
+        // --- Função de Curtir ---
         document.getElementById('btnModalCurtir').onclick = (e) => { 
             e.stopPropagation(); 
-            // CORREÇÃO: Curtindo na coleção certa
             updateDoc(doc(db, "postagens_carol_rafael", id), { curtidas: increment(1) }); 
             const contador = document.getElementById('contadorModalCurtidas');
             contador.textContent = parseInt(contador.textContent) + 1;
         };
 
+        // --- Função de Deletar com Senha ---
         document.getElementById('btnModalDeletar').onclick = (e) => { 
             e.stopPropagation(); 
             const senhaDigitada = prompt("Senha para excluir:");
             if (senhaDigitada === "4321") {
                 if(confirm("Deseja realmente apagar esta foto?")) {
-                    // CORREÇÃO: Deletando da coleção certa
                     deleteDoc(doc(db, "postagens_carol_rafael", id)); 
                     window.fecharModal();
                 }
-            } else if (senhaDigitada !== null) { alert("Senha incorreta!"); }
+            } else if (senhaDigitada !== null) { 
+                alert("Senha incorreta!"); 
+            }
         };
+
         document.getElementById('modalFoto').style.display = 'flex';
     };
 
     window.fecharModal = () => document.getElementById('modalFoto').style.display = 'none';
 
+    // --- Lógica de Captura pela Câmera ---
     document.getElementById('btnCapturarFinal').onclick = async () => {
         const btn = document.getElementById('btnCapturarFinal');
         btn.disabled = true;
@@ -384,34 +406,60 @@
         btn.disabled = false;
     };
 
+    // --- Lógica de Upload da Galeria e Estúdio de Corte ---
     const inputUploadArquivo = document.getElementById('inputUploadArquivo');
     document.getElementById('btnUploadFoto').onclick = () => inputUploadArquivo.click();
 
-    inputUploadArquivo.onchange = (event) => {
+inputUploadArquivo.onchange = (event) => {
         const file = event.target.files[0];
         if (!file) return;
-        if (cropper) { cropper.destroy(); cropper = null; }
+
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
+
         const reader = new FileReader();
         reader.onload = (e) => {
             const imagem = document.getElementById('imagemParaCortar');
+            
+            // 1. Primeiro, mostramos o modal para o navegador calcular o tamanho real
             document.getElementById('modalEstudio').style.display = 'flex';
             document.getElementById('molduraEstudio').src = molduraOverlay.src;
+            
             imagem.src = e.target.result;
+
+            // 2. O segredo: Esperamos a imagem e o layout estarem 100% prontos
             imagem.onload = () => {
                 setTimeout(() => {
                     cropper = new Cropper(imagem, {
-                        aspectRatio: 9 / 16, viewMode: 1, dragMode: 'move', autoCropArea: 1,
-                        background: false, guides: false, center: false, highlight: false,
-                        cropBoxMovable: false, cropBoxResizable: false, toggleDragModeOnDblclick: false,
+                        aspectRatio: 9 / 16,
+                        viewMode: 1,
+                        dragMode: 'move',
+                        autoCropArea: 1,
+                        background: false,
+                        guides: false,
+                        center: false,
+                        highlight: false,
+                        cropBoxMovable: false,
+                        cropBoxResizable: false,
+                        toggleDragModeOnDblclick: false,
                         ready() {
-                            this.cropper.setCropBoxData({ left: 0, top: 0, width: this.cropper.getContainerData().width, height: this.cropper.getContainerData().height });
+                            // 3. Forçamos o encaixe "luva" medindo o container agora que ele é visível
+                            this.cropper.setCropBoxData({ 
+                                left: 0, 
+                                top: 0, 
+                                width: this.cropper.getContainerData().width, 
+                                height: this.cropper.getContainerData().height 
+                            });
                         }
                     });
-                }, 300);
+                }, 300); // 300ms é o tempo de "respiro" do navegador
             };
         };
         reader.readAsDataURL(file);
     };
+
 
     document.getElementById('btnCancelarCorte').onclick = () => {
         document.getElementById('modalEstudio').style.display = 'none';
@@ -434,6 +482,7 @@
         }
     };
 
+    // --- Redirecionamento de Vídeo ---
     window.avisarSaida = () => {
         const modalAviso = document.createElement('div');
         Object.assign(modalAviso.style, { position: "fixed", inset: "0", backgroundColor: "rgba(0,0,0,0.8)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: "9999" });
@@ -444,6 +493,7 @@
     };
     document.getElementById('btnVideoLink').onclick = window.avisarSaida;
 
+    // --- Controle do Flash ---
     let flashAtivado = false;
     document.getElementById('btnFlash').onclick = async () => {
         if (!stream) return;
