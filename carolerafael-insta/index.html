@@ -226,7 +226,7 @@
         document.getElementById('btnFiltroNormal').classList.remove('ativo');
     };
 
-    // CORREÇÃO: APONTADO EXCLUSIVAMENTE PARA A PASTA "configuracoes" ONDE ESTÃO AS IMAGENS DO EVENTO
+    // APONTADO EXCLUSIVAMENTE PARA A PASTA "configuracoes"
     onSnapshot(doc(db, "configuracoes", EVENTO_ID), (d) => {
         if (d.exists()) {
             const data = d.data();
@@ -366,29 +366,44 @@
 
     window.fecharModal = () => document.getElementById('modalFoto').style.display = 'none';
 
-    // FUNÇÕES DE CAPTURA ORIGINAIS PRESERVADAS
+    // ==============================================================
+    // CORREÇÃO CIRÚRGICA 1: BOTÃO DE CAPTURA DE FOTO
+    // ==============================================================
     document.getElementById('btnCapturarFinal').onclick = async () => {
         const btn = document.getElementById('btnCapturarFinal');
         btn.disabled = true;
-        const canvas = document.createElement('canvas');
-        canvas.width = 1080; canvas.height = 1920;
-        const ctx = canvas.getContext('2d');
-        if (document.getElementById('btnFiltroPB').classList.contains('ativo')) ctx.filter = 'grayscale(100%)';
-        if (usandoCameraFrontal) { ctx.translate(canvas.width, 0); ctx.scale(-1, 1); }
-        ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-        ctx.filter = 'none'; ctx.setTransform(1,0,0,1,0,0);
-        ctx.drawImage(molduraOverlay, 0, 0, canvas.width, canvas.height);
-        const base64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
-        const form = new FormData(); form.append('image', base64);
-        const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: form });
-        const imgData = await res.json();
-        if (imgData.success) {
-           await addDoc(collection(db, `eventos/${EVENTO_ID}/postagens`), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() });
-            fecharInterface();
+        try {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1080; canvas.height = 1920;
+            const ctx = canvas.getContext('2d');
+            
+            if (document.getElementById('btnFiltroPB').classList.contains('ativo')) ctx.filter = 'grayscale(100%)';
+            if (usandoCameraFrontal) { ctx.translate(canvas.width, 0); ctx.scale(-1, 1); }
+            
+            ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+            ctx.filter = 'none'; ctx.setTransform(1,0,0,1,0,0);
+            
+            // Tratamento contra erro "broken state": Apenas tenta desenhar se a moldura for válida e estiver pronta
+            if (molduraOverlay.src && molduraOverlay.complete && molduraOverlay.naturalWidth > 0) {
+                ctx.drawImage(molduraOverlay, 0, 0, canvas.width, canvas.height);
+            }
+
+            const base64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+            const form = new FormData(); form.append('image', base64);
+            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: form });
+            const imgData = await res.json();
+            
+            if (imgData.success) {
+               await addDoc(collection(db, `eventos/${EVENTO_ID}/postagens`), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() });
+                fecharInterface();
+            }
+        } catch (erro) {
+            console.error("Falha no envio da captura:", erro);
         }
         btn.disabled = false;
     };
 
+    // LOGICA DO INPUT DE GALERIA INTACTA
     const inputUploadArquivo = document.getElementById('inputUploadArquivo');
     document.getElementById('btnUploadFoto').onclick = () => inputUploadArquivo.click();
 
@@ -443,19 +458,35 @@
         inputUploadArquivo.value = "";
     };
 
+    // ==============================================================
+    // CORREÇÃO CIRÚRGICA 2: BOTÃO ENVIAR (GALERIA)
+    // ==============================================================
     document.getElementById('btnConfirmarCorte').onclick = async () => {
-        const canvas = cropper.getCroppedCanvas({ width: 1080, height: 1920 });
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(molduraOverlay, 0, 0, canvas.width, canvas.height);
-        const base64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
-        const form = new FormData(); form.append('image', base64);
-        const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: form });
-        const imgData = await res.json();
-        if (imgData.success) {
-           await addDoc(collection(db, `eventos/${EVENTO_ID}/postagens`), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() }); 
-            document.getElementById('modalEstudio').style.display = 'none';
-            fecharInterface();
+        const btn = document.getElementById('btnConfirmarCorte');
+        btn.disabled = true;
+        try {
+            const canvas = cropper.getCroppedCanvas({ width: 1080, height: 1920 });
+            const ctx = canvas.getContext('2d');
+            
+            // Tratamento contra erro "broken state"
+            if (molduraOverlay.src && molduraOverlay.complete && molduraOverlay.naturalWidth > 0) {
+                ctx.drawImage(molduraOverlay, 0, 0, canvas.width, canvas.height);
+            }
+            
+            const base64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+            const form = new FormData(); form.append('image', base64);
+            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: form });
+            const imgData = await res.json();
+            
+            if (imgData.success) {
+               await addDoc(collection(db, `eventos/${EVENTO_ID}/postagens`), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() }); 
+                document.getElementById('modalEstudio').style.display = 'none';
+                fecharInterface();
+            }
+        } catch (erro) {
+            console.error("Erro no envio da galeria:", erro);
         }
+        btn.disabled = false;
     };
 
     window.avisarSaida = () => {
@@ -463,7 +494,7 @@
         Object.assign(modalAviso.style, { position: "fixed", inset: "0", backgroundColor: "rgba(0,0,0,0.8)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: "9999" });
         modalAviso.innerHTML = `<div class="aviso-redirecionar"><p style="font-weight:bold; font-size:1.2rem; margin-bottom:15px; color:#333;">🎬 Vídeo</p><p>Saindo para gerar o vídeo com moldura.</p><button class="btn-confirmar-sair" id="confirmarSair">Ir para o Filtro</button><button id="cancelarSair" style="background:none; border:none; color:#888; margin-top:15px; cursor:pointer;">Cancelar</button></div>`;
         document.body.appendChild(modalAviso);
-        document.getElementById('confirmarSair').onclick = () => { window.open("https://crispoparte.com.br/carolerafael-molduravideo/", "_blank"); modalAviso.remove(); };
+        document.getElementById('confirmarSair').onclick = () => { window.open("https://crispoparte.com.br/carolerafael-insta/", "_blank"); modalAviso.remove(); };
         document.getElementById('cancelarSair').onclick = () => modalAviso.remove();
     };
     document.getElementById('btnVideoLink').onclick = window.avisarSaida;
