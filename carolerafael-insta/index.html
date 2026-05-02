@@ -60,7 +60,6 @@
         .camera-container { position: fixed; inset: 0; height: 100dvh; background-color: #000; z-index: 1000; display: none; overflow: hidden; }
         .video-wrapper { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
         #videoElement { width: 100%; height: 100%; object-fit: cover; }
-        /* ADICIONADO CROSSORIGIN ABAIXO */
         #molduraOverlay { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; z-index: 2; }
 
         .camera-header { position: absolute; top: 0; width: 100%; padding: 20px; z-index: 10; background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent); }
@@ -89,8 +88,7 @@
     <header class="header-perfil">
         <div class="banner"></div>
         <div class="info-perfil">
-            <!-- ADICIONADO CROSSORIGIN AQUI -->
-            <img src="" class="avatar" id="avatarEvento" crossorigin="anonymous">
+            <img src="" class="avatar" id="avatarEvento">
             <h1 class="titulo-evento" id="nomeEvento">Carregando...</h1>
             <p class="data-evento" id="dataEvento"></p>
             <p class="descricao" id="descricaoEvento"></p>
@@ -112,8 +110,7 @@
     
     <div class="video-wrapper">
         <video id="videoElement" autoplay playsinline></video>
-        <!-- ADICIONADO CROSSORIGIN AQUI -->
-        <img id="molduraOverlay" src="" alt="Moldura" crossorigin="anonymous">
+        <img id="molduraOverlay" src="" alt="Moldura">
     </div>
 
     <div class="camera-controles">
@@ -160,10 +157,8 @@
 <div id="modalEstudio" class="modal-foto" style="z-index: 3000;">
     <h3 style="color: white; margin-bottom: 15px;">Ajuste sua foto</h3>
     <div style="width: 90%; max-width: 380px; aspect-ratio: 9 / 16; background-color: #000; overflow: hidden; border-radius: 12px; position: relative;">
-        <!-- ADICIONADO CROSSORIGIN AQUI -->
-        <img id="imagemParaCortar" src="" style="display: block; max-width: 100%;" crossorigin="anonymous">
-        <!-- ADICIONADO CROSSORIGIN AQUI -->
-        <img id="molduraEstudio" src="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; z-index: 3010;" crossorigin="anonymous">
+        <img id="imagemParaCortar" src="" style="display: block; max-width: 100%;">
+        <img id="molduraEstudio" src="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; z-index: 3010;">
     </div>
     <div class="modal-acoes" style="margin-top: 20px;">
         <button id="btnCancelarCorte" style="background-color:#ff4444; color:white; padding:12px 25px; border-radius:25px; border:none; font-weight:bold;">❌</button>
@@ -402,7 +397,7 @@
                 alert("Falha na conversão da imagem.");
             }
         } catch (erro) {
-            alert("Aviso: " + erro.message + " - Se for permissão ausente, ajuste as regras no Firebase para a pasta eventos.");
+            alert("Aviso: Falha ao enviar foto - Se for permissão ausente, ajuste as regras no Firebase para a pasta eventos.");
         }
         
         btn.disabled = false;
@@ -478,7 +473,7 @@
                 alert("Falha na conversão da imagem.");
             }
         } catch (erro) {
-            alert("Aviso: " + erro.message + " - Se for permissão ausente, ajuste as regras no Firebase para a pasta eventos.");
+            alert("Aviso: Falha ao enviar foto - Se for permissão ausente, ajuste as regras no Firebase para a pasta eventos.");
         }
 
         btn.innerHTML = textoOriginal;
