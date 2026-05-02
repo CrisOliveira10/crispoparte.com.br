@@ -182,7 +182,7 @@
     const IMGBB_API_KEY = "aa0c9dc6122e459a16cf1f6e8d9d3686";
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const EVENTO_ID = "carol_rafael";
+    const EVENTO_ID = "caro_rafael";
 
     const videoElement = document.getElementById('videoElement');
     const cameraContainer = document.getElementById('cameraContainer');
@@ -222,6 +222,7 @@
         document.getElementById('btnFiltroNormal').classList.remove('ativo');
     };
 
+    // PUXA O BANNER E AVATAR DA PASTA CONFIGURAÇÕES
     onSnapshot(doc(db, "configuracoes", EVENTO_ID), (d) => {
         if (d.exists()) {
             const data = d.data();
@@ -234,7 +235,8 @@
         }
     });
 
-   onSnapshot(query(collection(db, `configuracoes/${EVENTO_ID}/postagens`), orderBy("data_envio", "desc")), (snap) => {
+    // SALVA E LÊ FOTOS DA PASTA EVENTOS
+    onSnapshot(query(collection(db, `eventos/${EVENTO_ID}/postagens`), orderBy("data_envio", "desc")), (snap) => {
         const feed = document.getElementById('feedGaleria');
         feed.innerHTML = "";
         let totalC = 0;
@@ -277,7 +279,7 @@
             inputNome.value = localStorage.getItem('nomeConvidado');
         }
 
-        const unsubComentarios = onSnapshot(query(collection(db, `configuracoes/${EVENTO_ID}/postagens/${id}/comentarios`), orderBy("data_envio", "asc")), (snap) => {
+        const unsubComentarios = onSnapshot(query(collection(db, `eventos/${EVENTO_ID}/postagens/${id}/comentarios`), orderBy("data_envio", "asc")), (snap) => {
             lista.innerHTML = "";
             document.getElementById('contadorModalComentarios').textContent = snap.size;
             snap.forEach(docSnap => {
@@ -302,13 +304,13 @@
 
             localStorage.setItem('nomeConvidado', nomeConvidado);
             
-            await addDoc(collection(db, `configuracoes/${EVENTO_ID}/postagens/${id}/comentarios`), {
+            await addDoc(collection(db, `eventos/${EVENTO_ID}/postagens/${id}/comentarios`), {
                 nome: nomeConvidado,
                 texto: textoComentario,
                 data_envio: serverTimestamp()
             });
 
-           await updateDoc(doc(db, `configuracoes/${EVENTO_ID}/postagens`, id), {
+            await updateDoc(doc(db, `eventos/${EVENTO_ID}/postagens`, id), {
                 total_comentarios: increment(1)
             });
             inputTexto.value = ""; 
@@ -338,7 +340,7 @@
 
         document.getElementById('btnModalCurtir').onclick = (e) => { 
             e.stopPropagation(); 
-           updateDoc(doc(db, `configuracoes/${EVENTO_ID}/postagens`, id), { curtidas: increment(1) });
+            updateDoc(doc(db, `eventos/${EVENTO_ID}/postagens`, id), { curtidas: increment(1) }); 
             const contador = document.getElementById('contadorModalCurtidas');
             contador.textContent = parseInt(contador.textContent) + 1;
         };
@@ -346,9 +348,9 @@
         document.getElementById('btnModalDeletar').onclick = (e) => { 
             e.stopPropagation(); 
             const senhaDigitada = prompt("Senha para excluir:");
-            if (senhaDigitada === "4321") {
+            if (senhaDigitada === "1234") {
                 if(confirm("Deseja realmente apagar esta foto?")) {
-                    deleteDoc(doc(db, `configuracoes/${EVENTO_ID}/postagens`, id));
+                    deleteDoc(doc(db, `eventos/${EVENTO_ID}/postagens`, id)); 
                     window.fecharModal();
                 }
             } else if (senhaDigitada !== null) { 
@@ -377,7 +379,7 @@
         const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: form });
         const imgData = await res.json();
         if (imgData.success) {
-           await addDoc(collection(db, `configuracoes/${EVENTO_ID}/postagens`), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() });
+            await addDoc(collection(db, `eventos/${EVENTO_ID}/postagens`), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() });
             fecharInterface();
         }
         btn.disabled = false;
@@ -435,7 +437,7 @@
         const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: form });
         const imgData = await res.json();
         if (imgData.success) {
-           await addDoc(collection(db, `configuracoes/${EVENTO_ID}/postagens`), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() });
+            await addDoc(collection(db, `eventos/${EVENTO_ID}/postagens`), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() });
             document.getElementById('modalEstudio').style.display = 'none';
             fecharInterface();
         }
