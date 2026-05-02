@@ -182,7 +182,7 @@
     const IMGBB_API_KEY = "aa0c9dc6122e459a16cf1f6e8d9d3686";
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const EVENTO_ID = "caro_rafael";
+    const EVENTO_ID = "carol_rafael";
 
     const videoElement = document.getElementById('videoElement');
     const cameraContainer = document.getElementById('cameraContainer');
@@ -222,7 +222,7 @@
         document.getElementById('btnFiltroNormal').classList.remove('ativo');
     };
 
-    // PUXA O BANNER E AVATAR DA PASTA CONFIGURAÇÕES
+    // 1. PUXA O BANNER E AVATAR DA PASTA CONFIGURAÇÕES
     onSnapshot(doc(db, "configuracoes", EVENTO_ID), (d) => {
         if (d.exists()) {
             const data = d.data();
@@ -235,7 +235,7 @@
         }
     });
 
-    // SALVA E LÊ FOTOS DA PASTA EVENTOS
+    // 2. SALVA E LÊ FOTOS DA PASTA EVENTOS
     onSnapshot(query(collection(db, `eventos/${EVENTO_ID}/postagens`), orderBy("data_envio", "desc")), (snap) => {
         const feed = document.getElementById('feedGaleria');
         feed.innerHTML = "";
