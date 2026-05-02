@@ -2,83 +2,120 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador Instamomentos PRO</title>
+    <style>
+        * { box-sizing: border-box; font-family: sans-serif; }
+        body { background: #f4f4f4; display: flex; justify-content: center; padding: 40px 20px; }
+        .container { background: #fff; padding: 30px; border-radius: 12px; width: 100%; max-width: 600px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { color: #333; margin-top: 0; text-align: center; }
+        
+        .form-group { margin-bottom: 20px; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; color: #555; }
+        input[type="text"] { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 1rem; outline: none; }
+        input[type="text"]:focus { border-color: #235587; }
+        
+        .color-row { display: flex; align-items: center; gap: 10px; }
+        input[type="color"] { width: 50px; height: 50px; border: none; cursor: pointer; border-radius: 8px; padding: 0; }
+        input[type="text"].hex-input { width: 120px; font-family: monospace; font-weight: bold; }
+
+        .btn-group { display: flex; gap: 15px; margin-top: 30px; }
+        button { flex: 1; padding: 15px; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; color: #fff; transition: opacity 0.2s; }
+        button:hover { opacity: 0.9; }
+        
+        .btn-gerar { background: #235587; }
+        .btn-copiar { background: #555; display: none; }
+        .btn-baixar { background: #25d366; display: none; }
+
+        #mensagem { text-align: center; margin-top: 15px; font-weight: bold; color: #25d366; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Gerador Instamomentos</h2>
+    
+    <div class="form-group">
+        <label>ID da Pasta no Firebase (ex: carol_rafael)</label>
+        <input type="text" id="inputEventoId" placeholder="nome_da_pasta_do_cliente">
+    </div>
+
+    <div class="form-group">
+        <label>Link Externo do Vídeo (Redirecionamento)</label>
+        <input type="text" id="inputVideoLink" placeholder="https://crispoparte.com.br/...">
+    </div>
+
+    <div class="form-group">
+        <label>Cor de Destaque (Hexadecimal)</label>
+        <div class="color-row">
+            <input type="color" id="inputCorPicker" value="#235587">
+            <input type="text" id="inputCorHex" class="hex-input" value="#235587" maxlength="7">
+        </div>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn-gerar" onclick="processarCodigo()">Gerar Arquivo</button>
+        <button id="btnCopiar" class="btn-copiar" onclick="copiarCodigo()">Copiar</button>
+        <button id="btnBaixar" class="btn-baixar" onclick="baixarCodigo()">Baixar HTML</button>
+    </div>
+
+    <div id="mensagem">Código gerado com sucesso!</div>
+</div>
+
+<!-- TEMPLATE BASE CODIFICADO PARA NÃO QUEBRAR O GERADOR -->
+<textarea id="templateBase" style="display:none;">
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Instamomentos - Galeria</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    &lt;script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"&gt;&lt;/script&gt;
 
     <style>
-    /* --- ABA DE COMENTÁRIOS --- */
-        .aba-comentarios { 
-            position: absolute; bottom: 0; width: 100%; height: 55%; 
-            background: #fff; border-radius: 20px 20px 0 0; 
-            display: none; flex-direction: column; z-index: 2100;
-            box-shadow: 0 -5px 15px rgba(0,0,0,0.3); animation: subir 0.3s ease;
-        }
+        .aba-comentarios { position: absolute; bottom: 0; width: 100%; height: 55%; background: #fff; border-radius: 20px 20px 0 0; display: none; flex-direction: column; z-index: 2100; box-shadow: 0 -5px 15px rgba(0,0,0,0.3); animation: subir 0.3s ease; }
         @keyframes subir { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        
         .comentarios-header { padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; color: #333; }
         .comentarios-lista { flex: 1; overflow-y: auto; padding: 15px; list-style: none; text-align: left; width: 100%; }
         .comentario-item { margin-bottom: 12px; font-size: 0.9rem; color: #333; padding-bottom: 8px; border-bottom: 1px dashed #eee; }
-        
         .comentarios-input-area { padding: 15px; border-top: 1px solid #eee; display: flex; flex-direction: column; gap: 8px; background: #f9f9f9; }
         .input-comentario { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ddd; outline: none; }
         .btn-enviar-comentario { background: var(--cor-destaque); color: white; border: none; padding: 10px; border-radius: 10px; font-weight: bold; }
-        :root {
-            --cor-fundo: #F8F9FA;
-            --cor-texto: #333333;
-            --cor-destaque: #235587; 
-            --cor-secundaria: #8E8E8E;
-        }
-
+        :root { --cor-fundo: #F8F9FA; --cor-texto: #333333; --cor-destaque: {{COR_DESTAQUE}}; --cor-secundaria: #8E8E8E; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
         body { background-color: var(--cor-fundo); color: var(--cor-texto); min-height: 100dvh; display: flex; flex-direction: column; }
-
         .header-perfil { background-color: #fff; padding-bottom: 20px; border-bottom: 1px solid #dbdbdb; }
         .banner { width: 100%; height: 180px; background-color: #e0e0e0; background-size: cover; background-position: center; display: block; }
         .info-perfil { display: flex; flex-direction: column; align-items: center; margin-top: -50px; text-align: center; padding: 0 20px; }
         .avatar { width: 100px; height: 100px; border-radius: 50%; border: 4px solid #fff; background-color: #ccc; object-fit: cover; margin-bottom: 10px; }
-        
         .estatisticas { display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; }
         .stat-item { display: flex; flex-direction: column; align-items: center; }
         .stat-numero { font-weight: bold; font-size: 1.1rem; }
         .stat-label { font-size: 0.8rem; color: var(--cor-secundaria); }
-
         .btn-principal-festa { width: 90%; max-width: 300px; margin: 10px auto; display: block; padding: 15px; background-color: var(--cor-destaque); color: #ffffff; border: none; border-radius: 12px; font-size: 1rem; font-weight: bold; cursor: pointer; }
-
         .galeria-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 8px; background-color: #f4f4f4; }
         .post-container { position: relative; background: #fff; border-radius: 12px; overflow: hidden; }
         .media-wrapper { position: relative; width: 100%; aspect-ratio: 9 / 16; background-color: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .media-wrapper img { width: 100%; height: 100%; object-fit: contain; }
-        .interacoes-feed { 
-            position: absolute; bottom: 8px; right: 8px; 
-            background-color: rgba(0, 0, 0, 0.6); color: white; 
-            padding: 4px 10px; border-radius: 15px; font-size: 0.75rem; 
-            display: flex; align-items: center; gap: 8px; pointer-events: none; 
-        }
-
+        .interacoes-feed { position: absolute; bottom: 8px; right: 8px; background-color: rgba(0, 0, 0, 0.6); color: white; padding: 4px 10px; border-radius: 15px; font-size: 0.75rem; display: flex; align-items: center; gap: 8px; pointer-events: none; }
         .camera-container { position: fixed; inset: 0; height: 100dvh; background-color: #000; z-index: 1000; display: none; overflow: hidden; }
         .video-wrapper { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
         #videoElement { width: 100%; height: 100%; object-fit: cover; }
         #molduraOverlay { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; z-index: 2; }
-
         .camera-header { position: absolute; top: 0; width: 100%; padding: 20px; z-index: 10; background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent); }
         .camera-controles { position: absolute; bottom: 0; width: 100%; padding: 40px 20px; z-index: 10; background: linear-gradient(to top, rgba(0,0,0,0.6), transparent); display: flex; flex-direction: column; gap: 25px; }
-
         .filtros { display: flex; gap: 10px; justify-content: center; }
         .btn-filtro { background-color: rgba(255,255,255,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.4); padding: 8px 15px; border-radius: 20px; backdrop-filter: blur(5px); }
         .btn-filtro.ativo { background-color: var(--cor-destaque); border-color: var(--cor-destaque); }
-
         .acoes-principais { display: flex; justify-content: space-around; align-items: center; }
         .btn-acao-camera { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; width: 60px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         .btn-acao-camera span { font-size: 0.65rem; color: #fff; margin-top: 4px; font-weight: bold; }
         .btn-capturar-final { width: 75px; height: 75px; border-radius: 50%; background-color: #fff; border: 5px solid rgba(255,255,255,0.3); cursor: pointer; }
-
         .modal-foto { position: fixed; inset: 0; background-color: rgba(0,0,0,0.95); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; }
         .btn-fechar-modal { position: absolute; top: 25px; left: 20px; background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; z-index: 2010; }
         .img-expandida { max-width: 90%; max-height: 70dvh; object-fit: contain; border-radius: 8px; margin-bottom: 20px; }
-        
         .aviso-redirecionar { background: white; padding: 25px; border-radius: 20px; width: 85%; max-width: 400px; text-align: center; }
         .btn-confirmar-sair { background-color: #25d366; color: white; border: none; padding: 12px 25px; border-radius: 10px; font-weight: bold; margin-top: 20px; width: 100%; cursor: pointer; }
     </style>
@@ -108,18 +145,15 @@
     <div class="camera-header">
         <button id="btnFecharCamera" class="btn-fechar">❌ Voltar</button>
     </div>
-    
     <div class="video-wrapper">
         <video id="videoElement" autoplay playsinline></video>
         <img id="molduraOverlay" src="" alt="Moldura">
     </div>
-
     <div class="camera-controles">
         <div class="filtros">
             <button id="btnFiltroNormal" class="btn-filtro ativo">Normal</button>
             <button id="btnFiltroPB" class="btn-filtro">P&B</button>
         </div>
-        
         <div class="acoes-principais">
             <button id="btnUploadFoto" class="btn-acao-camera">🖼️<span>Galeria</span></button>
             <input type="file" id="inputUploadArquivo" accept="image/*" style="display: none;">
@@ -136,13 +170,10 @@
     <img id="imgModalExpandida" class="img-expandida" src="">
     <div class="modal-acoes">
         <button id="btnModalCurtir" class="btn-acao-modal" style="background-color:#333; color:white; padding:12px 20px; border-radius:25px; border:none; font-weight:bold;">❤️ <span id="contadorModalCurtidas">0</span></button>
-        
         <button id="btnAbrirComentarios" class="btn-acao-modal" style="background-color:#333; color:white; padding:12px 20px; border-radius:25px; border:none; font-weight:bold;">💬 <span id="contadorModalComentarios">0</span></button>
-        
         <a id="btnModalBaixar" class="btn-acao-modal" href="#" style="text-decoration:none; background-color:#333; color:white; padding:12px 20px; border-radius:25px; font-weight:bold;">⬇️ Baixar</a>
         <button id="btnModalDeletar" class="btn-acao-modal" style="background-color:#333; color:white; padding:12px 20px; border-radius:25px; border:none; font-weight:bold;">🗑️</button>
     </div>
-
     <div id="abaComentarios" class="aba-comentarios">
         <div class="comentarios-header">
             <strong>Comentários</strong>
@@ -156,13 +187,11 @@
         </div>
     </div>
 </div>
-<!-- ESTÚDIO DE CORTE (ALINHAMENTO 9:16) -->
+
 <div id="modalEstudio" class="modal-foto" style="z-index: 3000;">
     <h3 style="color: white; margin-bottom: 15px;">Ajuste sua foto</h3>
     <div style="width: 90%; max-width: 380px; aspect-ratio: 9 / 16; background-color: #000; overflow: hidden; border-radius: 12px; position: relative;">
-        <!-- Foto de fundo (ajustável) -->
         <img id="imagemParaCortar" src="" style="display: block; max-width: 100%;">
-        <!-- Moldura fixa (sobreposta) -->
         <img id="molduraEstudio" src="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; z-index: 3010;">
     </div>
     <div class="modal-acoes" style="margin-top: 20px;">
@@ -171,7 +200,7 @@
     </div>
 </div>
 
-<script type="module">
+&lt;script type="module"&gt;
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
     import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc, increment, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
@@ -187,9 +216,8 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     
-    // VARIÁVEIS INJETADAS PELO GERADOR
-    const EVENTO_ID = "carol_rafael"; 
-    const LINK_VIDEO_EXTERNO = "https://crispoparte.com.br/carolerafael-molduravideo/";
+    const EVENTO_ID = "{{EVENTO_ID}}"; 
+    const LINK_VIDEO_EXTERNO = "{{LINK_VIDEO}}";
 
     const videoElement = document.getElementById('videoElement');
     const cameraContainer = document.getElementById('cameraContainer');
@@ -303,21 +331,15 @@
 
         document.getElementById('btnEnviarComentario').onclick = async () => {
             if (!inputNome.value.trim() || !inputTexto.value.trim()) return alert("Preencha nome e mensagem!");
-            
             const nomeConvidado = inputNome.value.trim();
             const textoComentario = inputTexto.value.trim();
-
             localStorage.setItem('nomeConvidado', nomeConvidado);
             
             await addDoc(collection(db, `eventos/${EVENTO_ID}/postagens/${id}/comentarios`), {
-                nome: nomeConvidado,
-                texto: textoComentario,
-                data_envio: serverTimestamp()
+                nome: nomeConvidado, texto: textoComentario, data_envio: serverTimestamp()
             });
 
-           await updateDoc(doc(db, `eventos/${EVENTO_ID}/postagens`, id), {
-                total_comentarios: increment(1)
-            });
+           await updateDoc(doc(db, `eventos/${EVENTO_ID}/postagens`, id), { total_comentarios: increment(1) });
             inputTexto.value = ""; 
         };
 
@@ -330,17 +352,11 @@
                 const blob = await res.blob();
                 const link = URL.createObjectURL(blob);
                 const a = document.createElement('a');
-                a.href = link; 
-                a.download = "Instamomentos.jpg";
-                document.body.appendChild(a); 
-                a.click(); 
-                document.body.removeChild(a);
+                a.href = link; a.download = "Instamomentos.jpg"; document.body.appendChild(a); a.click(); document.body.removeChild(a);
                 alert("Foto salva com sucesso! Verifique sua galeria.");
                 btnBaixar.textContent = "✅ Abrir Foto?";
                 btnBaixar.onclick = () => window.open(url, '_blank');
-            } catch(err) { 
-                window.open(url, '_blank'); 
-            }
+            } catch(err) { window.open(url, '_blank'); }
         };
 
         document.getElementById('btnModalCurtir').onclick = (e) => { 
@@ -355,12 +371,9 @@
             const senhaDigitada = prompt("Senha para excluir:");
             if (senhaDigitada === "4321") {
                 if(confirm("Deseja realmente apagar esta foto?")) {
-                    deleteDoc(doc(db, `eventos/${EVENTO_ID}/postagens`, id));
-                    window.fecharModal();
+                    deleteDoc(doc(db, `eventos/${EVENTO_ID}/postagens`, id)); window.fecharModal();
                 }
-            } else if (senhaDigitada !== null) { 
-                alert("Senha incorreta!"); 
-            }
+            } else if (senhaDigitada !== null) { alert("Senha incorreta!"); }
         };
 
         document.getElementById('modalFoto').style.display = 'flex';
@@ -396,41 +409,18 @@
     inputUploadArquivo.onchange = (event) => {
         const file = event.target.files[0];
         if (!file) return;
-
-        if (cropper) {
-            cropper.destroy();
-            cropper = null;
-        }
-
+        if (cropper) { cropper.destroy(); cropper = null; }
         const reader = new FileReader();
         reader.onload = (e) => {
             const imagem = document.getElementById('imagemParaCortar');
             document.getElementById('modalEstudio').style.display = 'flex';
             document.getElementById('molduraEstudio').src = molduraOverlay.src;
             imagem.src = e.target.result;
-
             imagem.onload = () => {
                 setTimeout(() => {
                     cropper = new Cropper(imagem, {
-                        aspectRatio: 9 / 16,
-                        viewMode: 1,
-                        dragMode: 'move',
-                        autoCropArea: 1,
-                        background: false,
-                        guides: false,
-                        center: false,
-                        highlight: false,
-                        cropBoxMovable: false,
-                        cropBoxResizable: false,
-                        toggleDragModeOnDblclick: false,
-                        ready() {
-                            this.cropper.setCropBoxData({ 
-                                left: 0, 
-                                top: 0, 
-                                width: this.cropper.getContainerData().width, 
-                                height: this.cropper.getContainerData().height 
-                            });
-                        }
+                        aspectRatio: 9 / 16, viewMode: 1, dragMode: 'move', autoCropArea: 1, background: false, guides: false, center: false, highlight: false, cropBoxMovable: false, cropBoxResizable: false, toggleDragModeOnDblclick: false,
+                        ready() { this.cropper.setCropBoxData({ left: 0, top: 0, width: this.cropper.getContainerData().width, height: this.cropper.getContainerData().height }); }
                     });
                 }, 300); 
             };
@@ -454,8 +444,7 @@
         const imgData = await res.json();
         if (imgData.success) {
            await addDoc(collection(db, `eventos/${EVENTO_ID}/postagens`), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() }); 
-            document.getElementById('modalEstudio').style.display = 'none';
-            fecharInterface();
+            document.getElementById('modalEstudio').style.display = 'none'; fecharInterface();
         }
     };
 
@@ -483,6 +472,59 @@
             btnFlash.querySelector('span').textContent = flashAtivado ? "Flash ON" : "Flash OFF";
         } catch (err) { alert("Erro ao ativar flash."); }
     };
+&lt;/script&gt;
+</body>
+</html>
+</textarea>
+
+<script>
+    let codigoFinal = "";
+
+    const colorPicker = document.getElementById('inputCorPicker');
+    const colorHex = document.getElementById('inputCorHex');
+    
+    colorPicker.addEventListener('input', (e) => colorHex.value = e.target.value.toUpperCase());
+    colorHex.addEventListener('input', (e) => {
+        if(/^#[0-9A-F]{6}$/i.test(e.target.value)) colorPicker.value = e.target.value;
+    });
+
+    function processarCodigo() {
+        const eventoId = document.getElementById('inputEventoId').value.trim();
+        const videoLink = document.getElementById('inputVideoLink').value.trim();
+        const cor = colorHex.value;
+
+        if(!eventoId) return alert('Por favor, informe o ID da pasta do Firebase.');
+
+        // Pega o código da área oculta
+        let template = document.getElementById('templateBase').value;
+        
+        // Faz as substituições
+        codigoFinal = template
+            .replace(/\{\{EVENTO_ID\}\}/g, eventoId)
+            .replace(/\{\{LINK_VIDEO\}\}/g, videoLink)
+            .replace(/\{\{COR_DESTAQUE\}\}/g, cor);
+
+        document.getElementById('btnCopiar').style.display = 'block';
+        document.getElementById('btnBaixar').style.display = 'block';
+        document.getElementById('mensagem').style.display = 'block';
+        
+        setTimeout(() => { document.getElementById('mensagem').style.display = 'none'; }, 3000);
+    }
+
+    function copiarCodigo() {
+        navigator.clipboard.writeText(codigoFinal).then(() => {
+            alert('Código copiado para a área de transferência!');
+        });
+    }
+
+    function baixarCodigo() {
+        const eventoId = document.getElementById('inputEventoId').value.trim() || 'cliente';
+        const blob = new Blob([codigoFinal], { type: "text/html" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `index_${eventoId}.html`;
+        link.click();
+    }
 </script>
 </body>
 </html>
