@@ -221,7 +221,7 @@
         document.getElementById('btnFiltroNormal').classList.remove('ativo');
     };
 
-    // 1. PUXA BANNER, AVATAR E TEXTOS DA PASTA CONFIGURACOES
+    // 1. CARREGA DESIGN (AVATAR, BANNER E MOLDURA) NA PASTA CONFIGURACOES
     onSnapshot(doc(db, "configuracoes", EVENTO_ID), (d) => {
         if (d.exists()) {
             const data = d.data();
@@ -367,7 +367,7 @@
 
     window.fecharModal = () => document.getElementById('modalFoto').style.display = 'none';
 
-    // 8. SALVA A FOTO DA CÂMERA DIRETO NA PASTA DO EVENTO (Postagens Camada 1)
+    // 8. SALVA A FOTO DA CÂMERA (CAPTURA) DIRETO NA PASTA DO EVENTO
     document.getElementById('btnCapturarFinal').onclick = async () => {
         const btn = document.getElementById('btnCapturarFinal');
         btn.disabled = true;
@@ -393,6 +393,7 @@
     const inputUploadArquivo = document.getElementById('inputUploadArquivo');
     document.getElementById('btnUploadFoto').onclick = () => inputUploadArquivo.click();
 
+    // 9. FUNÇÃO ORIGINAL DO ESTÚDIO DE CORTE
     inputUploadArquivo.onchange = (event) => {
         const file = event.target.files[0];
         if (!file) return;
@@ -433,7 +434,7 @@
         inputUploadArquivo.value = "";
     };
 
-    // 9. SALVA A FOTO CORTADA DO ESTÚDIO DIRETO NA PASTA DO EVENTO
+    // 10. SALVA A FOTO CORTADA DO ESTÚDIO DIRETO NA PASTA DO EVENTO
     document.getElementById('btnConfirmarCorte').onclick = async () => {
         const canvas = cropper.getCroppedCanvas({ width: 1080, height: 1920 });
         const ctx = canvas.getContext('2d');
