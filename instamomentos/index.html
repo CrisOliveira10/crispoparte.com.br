@@ -412,43 +412,56 @@
     const inputUploadArquivo = document.getElementById('inputUploadArquivo');
     document.getElementById('btnUploadFoto').onclick = () => inputUploadArquivo.click();
 
-    inputUploadArquivo.onchange = (event) => {
+inputUploadArquivo.onchange = (event) => {
         const file = event.target.files[0];
         if (!file) return;
+
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
+
         const reader = new FileReader();
         reader.onload = (e) => {
             const imagem = document.getElementById('imagemParaCortar');
-            imagem.src = e.target.result;
+            
+            // 1. Primeiro, mostramos o modal para o navegador calcular o tamanho real
+            document.getElementById('modalEstudio').style.display = 'flex';
             document.getElementById('molduraEstudio').src = molduraOverlay.src;
             
-            // 1. Abre o modal PRIMEIRO
-            document.getElementById('modalEstudio').style.display = 'flex';
-            
-            if (cropper) cropper.destroy();
-            
-            // 2. Aguarda 100ms para o navegador calcular o tamanho real do modal flex
-            setTimeout(() => {
-                cropper = new Cropper(imagem, {
-                    aspectRatio: 9 / 16,
-                    viewMode: 1,            // Impede espaços vazios
-                    dragMode: 'move',       // LIBERA O ARRASTE DA FOTO
-                    autoCropArea: 1,        // Tenta encaixe máximo
-                    restore: false,
-                    guides: false,
-                    center: false,
-                    highlight: false,
-                    cropBoxMovable: false,  // Trava o quadrado
-                    cropBoxResizable: false, // Trava a proporção
-                    toggleDragModeOnDblclick: false,
-                    ready() {
-                        // 3. FORÇA O ENCAIXE "LUVA" DE PRIMEIRA
-                        this.cropper.setCropBoxData({ left: 0, top: 0, width: '100%', height: '100%' });
-                    }
-                });
-            }, 100); 
+            imagem.src = e.target.result;
+
+            // 2. O segredo: Esperamos a imagem e o layout estarem 100% prontos
+            imagem.onload = () => {
+                setTimeout(() => {
+                    cropper = new Cropper(imagem, {
+                        aspectRatio: 9 / 16,
+                        viewMode: 1,
+                        dragMode: 'move',
+                        autoCropArea: 1,
+                        background: false,
+                        guides: false,
+                        center: false,
+                        highlight: false,
+                        cropBoxMovable: false,
+                        cropBoxResizable: false,
+                        toggleDragModeOnDblclick: false,
+                        ready() {
+                            // 3. Forçamos o encaixe "luva" medindo o container agora que ele é visível
+                            this.cropper.setCropBoxData({ 
+                                left: 0, 
+                                top: 0, 
+                                width: this.cropper.getContainerData().width, 
+                                height: this.cropper.getContainerData().height 
+                            });
+                        }
+                    });
+                }, 300); // 300ms é o tempo de "respiro" do navegador
+            };
         };
         reader.readAsDataURL(file);
     };
+
 
     document.getElementById('btnCancelarCorte').onclick = () => {
         document.getElementById('modalEstudio').style.display = 'none';
