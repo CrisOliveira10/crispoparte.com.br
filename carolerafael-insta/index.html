@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Instamomentos - Carol e Rafael</title>
+    <title>Instamomentos - Galeria</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
@@ -136,9 +136,7 @@
     <img id="imgModalExpandida" class="img-expandida" src="">
     <div class="modal-acoes">
         <button id="btnModalCurtir" class="btn-acao-modal" style="background-color:#333; color:white; padding:12px 20px; border-radius:25px; border:none; font-weight:bold;">❤️ <span id="contadorModalCurtidas">0</span></button>
-        
         <button id="btnAbrirComentarios" class="btn-acao-modal" style="background-color:#333; color:white; padding:12px 20px; border-radius:25px; border:none; font-weight:bold;">💬 <span id="contadorModalComentarios">0</span></button>
-        
         <a id="btnModalBaixar" class="btn-acao-modal" href="#" style="text-decoration:none; background-color:#333; color:white; padding:12px 20px; border-radius:25px; font-weight:bold;">⬇️ Baixar</a>
         <button id="btnModalDeletar" class="btn-acao-modal" style="background-color:#333; color:white; padding:12px 20px; border-radius:25px; border:none; font-weight:bold;">🗑️</button>
     </div>
@@ -156,20 +154,20 @@
         </div>
     </div>
 </div>
-<!-- ESTÚDIO DE CORTE (ALINHAMENTO 9:16) -->
+
 <div id="modalEstudio" class="modal-foto" style="z-index: 3000;">
     <h3 style="color: white; margin-bottom: 15px;">Ajuste sua foto</h3>
     <div style="width: 90%; max-width: 380px; aspect-ratio: 9 / 16; background-color: #000; overflow: hidden; border-radius: 12px; position: relative;">
-        <!-- Foto de fundo (ajustável) -->
         <img id="imagemParaCortar" src="" style="display: block; max-width: 100%;">
-        <!-- Moldura fixa (sobreposta) -->
         <img id="molduraEstudio" src="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; z-index: 3010;">
     </div>
     <div class="modal-acoes" style="margin-top: 20px;">
         <button id="btnCancelarCorte" style="background-color:#ff4444; color:white; padding:12px 25px; border-radius:25px; border:none; font-weight:bold;">❌</button>
         <button id="btnConfirmarCorte" style="background-color:var(--cor-destaque); color:white; padding:12px 25px; border-radius:25px; border:none; font-weight:bold;">✅ Enviar</button>
     </div>
-</div><script type="module">
+</div>
+
+<script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-app.js";
     import { getFirestore, collection, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc, increment, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.1/firebase-firestore.js";
 
@@ -184,6 +182,7 @@
     const IMGBB_API_KEY = "aa0c9dc6122e459a16cf1f6e8d9d3686";
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const EVENTO_ID = "carol_rafael";
 
     const videoElement = document.getElementById('videoElement');
     const cameraContainer = document.getElementById('cameraContainer');
@@ -223,7 +222,7 @@
         document.getElementById('btnFiltroNormal').classList.remove('ativo');
     };
 
-    onSnapshot(doc(db, "configuracoes", "carol_rafael"), (d) => {
+    onSnapshot(doc(db, "eventos", EVENTO_ID), (d) => {
         if (d.exists()) {
             const data = d.data();
             document.getElementById('nomeEvento').textContent = data.nome || "";
@@ -235,11 +234,11 @@
         }
     });
 
-    onSnapshot(query(collection(db, "postagens_carol_rafael"), orderBy("data_envio", "desc")), (snap) => {
+   onSnapshot(query(collection(db, `eventos/${EVENTO_ID}/postagens`), orderBy("data_envio", "desc")), (snap) => {
         const feed = document.getElementById('feedGaleria');
         feed.innerHTML = "";
         let totalC = 0;
-        let totalComent = 0; // Variável para somar todos os comentários
+        let totalComent = 0;
 
         snap.forEach(docSnap => {
             const p = docSnap.data();
@@ -259,7 +258,6 @@
             feed.appendChild(card);
         });
 
-        // Atualiza os três contadores no topo
         document.getElementById('totalFotos').textContent = snap.size;
         document.getElementById('totalCurtidas').textContent = totalC;
         document.getElementById('totalComentariosGeral').textContent = totalComent;
@@ -269,19 +267,17 @@
         document.getElementById('imgModalExpandida').src = url;
         document.getElementById('contadorModalCurtidas').textContent = curtidas;
         const aba = document.getElementById('abaComentarios');
-        aba.style.display = 'none'; // A aba de comentários começa fechada
+        aba.style.display = 'none'; 
 
         const lista = document.getElementById('listaComentarios');
         const inputNome = document.getElementById('inputNomeComentario');
         const inputTexto = document.getElementById('inputTextoComentario');
 
-        // Lembrar o nome que o convidado usou antes
         if (localStorage.getItem('nomeConvidado')) {
             inputNome.value = localStorage.getItem('nomeConvidado');
         }
 
-        // --- Escuta de Comentários em Tempo Real ---
-        const unsubComentarios = onSnapshot(query(collection(db, `postagens_carol_rafael/${id}/comentarios`), orderBy("data_envio", "asc")), (snap) => {
+        const unsubComentarios = onSnapshot(query(collection(db, `eventos/${EVENTO_ID}/postagens/${id}/comentarios`), orderBy("data_envio", "asc")), (snap) => {
             lista.innerHTML = "";
             document.getElementById('contadorModalComentarios').textContent = snap.size;
             snap.forEach(docSnap => {
@@ -294,44 +290,34 @@
             lista.scrollTop = lista.scrollHeight;
         });
 
-        // Abrir/Fechar a aba de comentários
         document.getElementById('btnAbrirComentarios').onclick = () => {
             aba.style.display = aba.style.display === 'none' ? 'flex' : 'none';
         };
 
-       // Enviar Comentário (Corrigido para atualizar o Feed)
         document.getElementById('btnEnviarComentario').onclick = async () => {
             if (!inputNome.value.trim() || !inputTexto.value.trim()) return alert("Preencha nome e mensagem!");
             
             const nomeConvidado = inputNome.value.trim();
             const textoComentario = inputTexto.value.trim();
 
-            // Salva o nome localmente para o próximo comentário
             localStorage.setItem('nomeConvidado', nomeConvidado);
             
-            // 1. Salva o comentário na subcoleção
-            await addDoc(collection(db, `postagens_carol_rafael/${id}/comentarios`), {
+            await addDoc(collection(db, `eventos/${EVENTO_ID}/postagens/${id}/comentarios`), {
                 nome: nomeConvidado,
                 texto: textoComentario,
                 data_envio: serverTimestamp()
             });
 
-            // 2. Atualiza o contador de comentários na postagem principal (Camada 1)
-            await updateDoc(doc(db, "postagens_carol_rafael", id), {
+           await updateDoc(doc(db, `eventos/${EVENTO_ID}/postagens`, id), {
                 total_comentarios: increment(1)
             });
-
-            inputTexto.value = ""; // Limpa apenas o campo de texto
+            inputTexto.value = ""; 
         };
 
-        // --- Função de Baixar com Mensagens Personalizadas ---
         const btnBaixar = document.getElementById('btnModalBaixar');
         btnBaixar.onclick = async (e) => {
             e.preventDefault();
-            
-            // 1. Muda para "Baixando..."
             btnBaixar.textContent = "⏳ Baixando...";
-            
             try {
                 const res = await fetch(url + "?t=" + new Date().getTime());
                 const blob = await res.blob();
@@ -342,35 +328,27 @@
                 document.body.appendChild(a); 
                 a.click(); 
                 document.body.removeChild(a);
-                
-                // 2. Alerta de sucesso
                 alert("Foto salva com sucesso! Verifique sua galeria.");
-                
-                // 3. Muda para "Abrir Foto?"
                 btnBaixar.textContent = "✅ Abrir Foto?";
                 btnBaixar.onclick = () => window.open(url, '_blank');
-                
             } catch(err) { 
-                // Caso falhe, tenta abrir direto
                 window.open(url, '_blank'); 
             }
         };
 
-        // --- Função de Curtir ---
         document.getElementById('btnModalCurtir').onclick = (e) => { 
             e.stopPropagation(); 
-            updateDoc(doc(db, "postagens_carol_rafael", id), { curtidas: increment(1) }); 
+           updateDoc(doc(db, `eventos/${EVENTO_ID}/postagens`, id), { curtidas: increment(1) });
             const contador = document.getElementById('contadorModalCurtidas');
             contador.textContent = parseInt(contador.textContent) + 1;
         };
 
-        // --- Função de Deletar com Senha ---
         document.getElementById('btnModalDeletar').onclick = (e) => { 
             e.stopPropagation(); 
             const senhaDigitada = prompt("Senha para excluir:");
             if (senhaDigitada === "4321") {
                 if(confirm("Deseja realmente apagar esta foto?")) {
-                    deleteDoc(doc(db, "postagens_carol_rafael", id)); 
+                    deleteDoc(doc(db, `eventos/${EVENTO_ID}/postagens`, id));
                     window.fecharModal();
                 }
             } else if (senhaDigitada !== null) { 
@@ -383,7 +361,6 @@
 
     window.fecharModal = () => document.getElementById('modalFoto').style.display = 'none';
 
-    // --- Lógica de Captura pela Câmera ---
     document.getElementById('btnCapturarFinal').onclick = async () => {
         const btn = document.getElementById('btnCapturarFinal');
         btn.disabled = true;
@@ -400,66 +377,48 @@
         const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: form });
         const imgData = await res.json();
         if (imgData.success) {
-            await addDoc(collection(db, "postagens_carol_rafael"), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() });
+           await addDoc(collection(db, `eventos/${EVENTO_ID}/postagens`), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() });
             fecharInterface();
         }
         btn.disabled = false;
     };
 
-    // --- Lógica de Upload da Galeria e Estúdio de Corte ---
     const inputUploadArquivo = document.getElementById('inputUploadArquivo');
     document.getElementById('btnUploadFoto').onclick = () => inputUploadArquivo.click();
 
-inputUploadArquivo.onchange = (event) => {
+    inputUploadArquivo.onchange = (event) => {
         const file = event.target.files[0];
         if (!file) return;
 
-        if (cropper) {
-            cropper.destroy();
-            cropper = null;
-        }
+        if (cropper) { cropper.destroy(); cropper = null; }
 
         const reader = new FileReader();
         reader.onload = (e) => {
             const imagem = document.getElementById('imagemParaCortar');
-            
-            // 1. Primeiro, mostramos o modal para o navegador calcular o tamanho real
             document.getElementById('modalEstudio').style.display = 'flex';
             document.getElementById('molduraEstudio').src = molduraOverlay.src;
-            
             imagem.src = e.target.result;
 
-            // 2. O segredo: Esperamos a imagem e o layout estarem 100% prontos
             imagem.onload = () => {
                 setTimeout(() => {
                     cropper = new Cropper(imagem, {
                         aspectRatio: 9 / 16,
-                        viewMode: 1,
-                        dragMode: 'move',
-                        autoCropArea: 1,
-                        background: false,
-                        guides: false,
-                        center: false,
-                        highlight: false,
-                        cropBoxMovable: false,
-                        cropBoxResizable: false,
-                        toggleDragModeOnDblclick: false,
+                        viewMode: 1, dragMode: 'move', autoCropArea: 1,
+                        background: false, guides: false, center: false, highlight: false,
+                        cropBoxMovable: false, cropBoxResizable: false, toggleDragModeOnDblclick: false,
                         ready() {
-                            // 3. Forçamos o encaixe "luva" medindo o container agora que ele é visível
                             this.cropper.setCropBoxData({ 
-                                left: 0, 
-                                top: 0, 
+                                left: 0, top: 0, 
                                 width: this.cropper.getContainerData().width, 
                                 height: this.cropper.getContainerData().height 
                             });
                         }
                     });
-                }, 300); // 300ms é o tempo de "respiro" do navegador
+                }, 300); 
             };
         };
         reader.readAsDataURL(file);
     };
-
 
     document.getElementById('btnCancelarCorte').onclick = () => {
         document.getElementById('modalEstudio').style.display = 'none';
@@ -476,24 +435,22 @@ inputUploadArquivo.onchange = (event) => {
         const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: form });
         const imgData = await res.json();
         if (imgData.success) {
-            await addDoc(collection(db, "postagens_carol_rafael"), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() });
+           await addDoc(collection(db, `eventos/${EVENTO_ID}/postagens`), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() });
             document.getElementById('modalEstudio').style.display = 'none';
             fecharInterface();
         }
     };
 
-    // --- Redirecionamento de Vídeo ---
     window.avisarSaida = () => {
         const modalAviso = document.createElement('div');
         Object.assign(modalAviso.style, { position: "fixed", inset: "0", backgroundColor: "rgba(0,0,0,0.8)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: "9999" });
         modalAviso.innerHTML = `<div class="aviso-redirecionar"><p style="font-weight:bold; font-size:1.2rem; margin-bottom:15px; color:#333;">🎬 Vídeo</p><p>Saindo para gerar o vídeo com moldura.</p><button class="btn-confirmar-sair" id="confirmarSair">Ir para o Filtro</button><button id="cancelarSair" style="background:none; border:none; color:#888; margin-top:15px; cursor:pointer;">Cancelar</button></div>`;
         document.body.appendChild(modalAviso);
-        document.getElementById('confirmarSair').onclick = () => { window.open("https://crispoparte.com.br/carolerafael-insta/", "_blank"); modalAviso.remove(); };
+        document.getElementById('confirmarSair').onclick = () => { window.open("https://crispoparte.com.br/carolerafael-molduravideo/", "_blank"); modalAviso.remove(); };
         document.getElementById('cancelarSair').onclick = () => modalAviso.remove();
     };
     document.getElementById('btnVideoLink').onclick = window.avisarSaida;
 
-    // --- Controle do Flash ---
     let flashAtivado = false;
     document.getElementById('btnFlash').onclick = async () => {
         if (!stream) return;
