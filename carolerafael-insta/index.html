@@ -60,6 +60,7 @@
         .camera-container { position: fixed; inset: 0; height: 100dvh; background-color: #000; z-index: 1000; display: none; overflow: hidden; }
         .video-wrapper { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
         #videoElement { width: 100%; height: 100%; object-fit: cover; }
+        /* ADICIONADO CROSSORIGIN ABAIXO */
         #molduraOverlay { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; z-index: 2; }
 
         .camera-header { position: absolute; top: 0; width: 100%; padding: 20px; z-index: 10; background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent); }
@@ -88,7 +89,8 @@
     <header class="header-perfil">
         <div class="banner"></div>
         <div class="info-perfil">
-            <img src="" class="avatar" id="avatarEvento">
+            <!-- ADICIONADO CROSSORIGIN AQUI -->
+            <img src="" class="avatar" id="avatarEvento" crossorigin="anonymous">
             <h1 class="titulo-evento" id="nomeEvento">Carregando...</h1>
             <p class="data-evento" id="dataEvento"></p>
             <p class="descricao" id="descricaoEvento"></p>
@@ -110,7 +112,8 @@
     
     <div class="video-wrapper">
         <video id="videoElement" autoplay playsinline></video>
-        <img id="molduraOverlay" src="" alt="Moldura">
+        <!-- ADICIONADO CROSSORIGIN AQUI -->
+        <img id="molduraOverlay" src="" alt="Moldura" crossorigin="anonymous">
     </div>
 
     <div class="camera-controles">
@@ -157,8 +160,10 @@
 <div id="modalEstudio" class="modal-foto" style="z-index: 3000;">
     <h3 style="color: white; margin-bottom: 15px;">Ajuste sua foto</h3>
     <div style="width: 90%; max-width: 380px; aspect-ratio: 9 / 16; background-color: #000; overflow: hidden; border-radius: 12px; position: relative;">
-        <img id="imagemParaCortar" src="" style="display: block; max-width: 100%;">
-        <img id="molduraEstudio" src="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; z-index: 3010;">
+        <!-- ADICIONADO CROSSORIGIN AQUI -->
+        <img id="imagemParaCortar" src="" style="display: block; max-width: 100%;" crossorigin="anonymous">
+        <!-- ADICIONADO CROSSORIGIN AQUI -->
+        <img id="molduraEstudio" src="" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; z-index: 3010;" crossorigin="anonymous">
     </div>
     <div class="modal-acoes" style="margin-top: 20px;">
         <button id="btnCancelarCorte" style="background-color:#ff4444; color:white; padding:12px 25px; border-radius:25px; border:none; font-weight:bold;">❌</button>
@@ -367,26 +372,39 @@
 
     window.fecharModal = () => document.getElementById('modalFoto').style.display = 'none';
 
-    // 8. SALVA A FOTO DA CÂMERA (CAPTURA) DIRETO NA PASTA DO EVENTO
+    // 8. SALVA A FOTO DA CÂMERA (CAPTURA) - COM PREVENÇÃO DE ERROS
     document.getElementById('btnCapturarFinal').onclick = async () => {
         const btn = document.getElementById('btnCapturarFinal');
         btn.disabled = true;
-        const canvas = document.createElement('canvas');
-        canvas.width = 1080; canvas.height = 1920;
-        const ctx = canvas.getContext('2d');
-        if (document.getElementById('btnFiltroPB').classList.contains('ativo')) ctx.filter = 'grayscale(100%)';
-        if (usandoCameraFrontal) { ctx.translate(canvas.width, 0); ctx.scale(-1, 1); }
-        ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-        ctx.filter = 'none'; ctx.setTransform(1,0,0,1,0,0);
-        ctx.drawImage(molduraOverlay, 0, 0, canvas.width, canvas.height);
-        const base64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
-        const form = new FormData(); form.append('image', base64);
-        const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: form });
-        const imgData = await res.json();
-        if (imgData.success) {
-            await addDoc(collection(db, `eventos/${EVENTO_ID}/postagens`), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() });
-            fecharInterface();
+        
+        try {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1080; canvas.height = 1920;
+            const ctx = canvas.getContext('2d');
+            
+            if (document.getElementById('btnFiltroPB').classList.contains('ativo')) ctx.filter = 'grayscale(100%)';
+            if (usandoCameraFrontal) { ctx.translate(canvas.width, 0); ctx.scale(-1, 1); }
+            
+            ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+            ctx.filter = 'none'; ctx.setTransform(1,0,0,1,0,0);
+            ctx.drawImage(molduraOverlay, 0, 0, canvas.width, canvas.height);
+            
+            const base64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+            const form = new FormData(); form.append('image', base64);
+            
+            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: form });
+            const imgData = await res.json();
+            
+            if (imgData.success) {
+                await addDoc(collection(db, `eventos/${EVENTO_ID}/postagens`), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() });
+                fecharInterface();
+            } else {
+                alert("Falha na conversão da imagem.");
+            }
+        } catch (erro) {
+            alert("Aviso: " + erro.message + " - Se for permissão ausente, ajuste as regras no Firebase para a pasta eventos.");
         }
+        
         btn.disabled = false;
     };
 
@@ -434,20 +452,37 @@
         inputUploadArquivo.value = "";
     };
 
-    // 10. SALVA A FOTO CORTADA DO ESTÚDIO DIRETO NA PASTA DO EVENTO
+    // 10. SALVA A FOTO CORTADA DO ESTÚDIO - COM PREVENÇÃO DE ERROS
     document.getElementById('btnConfirmarCorte').onclick = async () => {
-        const canvas = cropper.getCroppedCanvas({ width: 1080, height: 1920 });
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(molduraOverlay, 0, 0, canvas.width, canvas.height);
-        const base64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
-        const form = new FormData(); form.append('image', base64);
-        const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: form });
-        const imgData = await res.json();
-        if (imgData.success) {
-            await addDoc(collection(db, `eventos/${EVENTO_ID}/postagens`), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() });
-            document.getElementById('modalEstudio').style.display = 'none';
-            fecharInterface();
+        const btn = document.getElementById('btnConfirmarCorte');
+        const textoOriginal = btn.innerHTML;
+        btn.innerHTML = "⏳ Enviando...";
+        btn.disabled = true;
+
+        try {
+            const canvas = cropper.getCroppedCanvas({ width: 1080, height: 1920 });
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(molduraOverlay, 0, 0, canvas.width, canvas.height);
+            
+            const base64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+            const form = new FormData(); form.append('image', base64);
+            
+            const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: form });
+            const imgData = await res.json();
+            
+            if (imgData.success) {
+                await addDoc(collection(db, `eventos/${EVENTO_ID}/postagens`), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() });
+                document.getElementById('modalEstudio').style.display = 'none';
+                fecharInterface();
+            } else {
+                alert("Falha na conversão da imagem.");
+            }
+        } catch (erro) {
+            alert("Aviso: " + erro.message + " - Se for permissão ausente, ajuste as regras no Firebase para a pasta eventos.");
         }
+
+        btn.innerHTML = textoOriginal;
+        btn.disabled = false;
     };
 
     window.avisarSaida = () => {
