@@ -206,7 +206,24 @@
                 document.getElementById('descricaoEvento').textContent = data.texto || "";
                 if (data.url_avatar) document.getElementById('avatarEvento').src = data.url_avatar;
                 if (data.url_banner) document.querySelector('.banner').style.backgroundImage = "url('" + data.url_banner + "')";
-                if (data.url_moldura) molduraOverlay.src = data.url_moldura;
+                
+                // =========================================================
+                // CORREÇÃO CIRÚRGICA: DESTRAVAR CORS DO GITHUB
+                // =========================================================
+                if (data.url_moldura) {
+                    let urlSegura = data.url_moldura;
+                    if (urlSegura.includes("github.com") && urlSegura.includes("/blob/")) {
+                        urlSegura = urlSegura.replace("github.com", "raw.githubusercontent.com").replace("/blob/", "/").split("?")[0];
+                    }
+                    molduraOverlay.crossOrigin = "anonymous";
+                    molduraOverlay.src = urlSegura;
+                    
+                    const molduraEstudio = document.getElementById('molduraEstudio');
+                    if (molduraEstudio) {
+                        molduraEstudio.crossOrigin = "anonymous";
+                        molduraEstudio.src = urlSegura;
+                    }
+                }
             } else {
                 alert("🚨 ALERTA: O Sistema não encontrou a pasta '" + EVENTO_ID + "' em 'configuracoes'. Verifique o Firebase!");
                 console.error("Documento configuracoes/" + EVENTO_ID + " não existe!");
@@ -275,53 +292,35 @@
                 inputTexto.value = ""; 
             };
 
-            // =========================================================
-            // CORREÇÃO CIRÚRGICA: BOTÃO BAIXAR / COMPARTILHAR
-            // =========================================================
             const btnBaixar = document.getElementById('btnModalBaixar');
             btnBaixar.onclick = async (e) => {
                 e.preventDefault();
                 btnBaixar.textContent = "⏳ Processando...";
                 
-                // 1. Resolve o Cache adicionando um carimbo de tempo
-                const urlLimpa = url + "?nocache=" + new Date().getTime();
-                const nomeUnico = "Instamomentos_" + new Date().getTime() + ".jpg";
-
                 try {
+                    const urlLimpa = url + "?nocache=" + new Date().getTime();
                     const res = await fetch(urlLimpa);
                     const blob = await res.blob();
-                    const file = new File([blob], nomeUnico, { type: blob.type });
-
-                    // 2. Tenta abrir a função NATIVA de compartilhamento (Para Salvar direto na Galeria, WhatsApp, etc)
-                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                        await navigator.share({
-                            files: [file],
-                            title: 'Foto Instamomentos'
-                        });
-                        btnBaixar.innerHTML = "✅ Concluído";
-                    } else {
-                        // 3. Fallback: Download Forçado para PC ou navegadores que não suportam Share
-                        const link = URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = link; 
-                        a.download = nomeUnico; 
-                        document.body.appendChild(a); 
-                        a.click(); 
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(link);
-                        
-                        alert("Download iniciado! Verifique a pasta 'Downloads' do seu aparelho.");
-                        btnBaixar.innerHTML = "🔗 Abrir / Compartilhar";
-                        btnBaixar.onclick = () => window.open(urlLimpa, '_blank');
-                    }
+                    
+                    const link = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = link; 
+                    a.download = "Instamomentos_" + new Date().getTime() + ".jpg"; 
+                    document.body.appendChild(a); 
+                    a.click(); 
+                    
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(link);
+                    
+                    alert("sua foto foi baixada com sucesso, verifique sua galeria.");
+                    btnBaixar.innerHTML = "⬇️ Baixar";
+                    
                 } catch(err) { 
-                    // 4. Segurança Absoluta (Caso o navegador bloqueie o download da imagem)
-                    alert("Para salvar, segure o dedo na foto na próxima tela e escolha 'Salvar na Galeria' ou 'Fazer o download'.");
-                    window.open(urlLimpa, '_blank'); 
+                    alert("Para salvar, segure o dedo na foto e escolha 'Salvar na Galeria'.");
+                    window.open(url, '_blank'); 
                     btnBaixar.innerHTML = "⬇️ Baixar";
                 }
             };
-            // =========================================================
 
             document.getElementById('btnModalCurtir').onclick = (e) => { 
                 e.stopPropagation(); 
@@ -343,26 +342,38 @@
 
         window.fecharModal = () => document.getElementById('modalFoto').style.display = 'none';
 
+        // =========================================================
+        // CORREÇÃO CIRÚRGICA: BLINDAGEM BOTÃO CAPTURA
+        // =========================================================
         document.getElementById('btnCapturarFinal').onclick = async () => {
             const btn = document.getElementById('btnCapturarFinal');
             btn.disabled = true;
-            const canvas = document.createElement('canvas');
-            canvas.width = 1080; canvas.height = 1920;
-            const ctx = canvas.getContext('2d');
-            if (document.getElementById('btnFiltroPB').classList.contains('ativo')) ctx.filter = 'grayscale(100%)';
-            if (usandoCameraFrontal) { ctx.translate(canvas.width, 0); ctx.scale(-1, 1); }
-            ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-            ctx.filter = 'none'; ctx.setTransform(1,0,0,1,0,0);
-            ctx.drawImage(molduraOverlay, 0, 0, canvas.width, canvas.height);
-            const base64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
-            const form = new FormData(); form.append('image', base64);
-            const res = await fetch("https://api.imgbb.com/1/upload?key=" + IMGBB_API_KEY, { method: 'POST', body: form });
-            const imgData = await res.json();
-            if (imgData.success) {
-               await addDoc(collection(db, "eventos/" + EVENTO_ID + "/postagens"), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() });
-                fecharInterface();
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = 1080; canvas.height = 1920;
+                const ctx = canvas.getContext('2d');
+                if (document.getElementById('btnFiltroPB').classList.contains('ativo')) ctx.filter = 'grayscale(100%)';
+                if (usandoCameraFrontal) { ctx.translate(canvas.width, 0); ctx.scale(-1, 1); }
+                ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+                ctx.filter = 'none'; ctx.setTransform(1,0,0,1,0,0);
+                
+                if (molduraOverlay.complete && molduraOverlay.naturalWidth > 0) {
+                    ctx.drawImage(molduraOverlay, 0, 0, canvas.width, canvas.height);
+                }
+
+                const base64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+                const form = new FormData(); form.append('image', base64);
+                const res = await fetch("https://api.imgbb.com/1/upload?key=" + IMGBB_API_KEY, { method: 'POST', body: form });
+                const imgData = await res.json();
+                if (imgData.success) {
+                   await addDoc(collection(db, "eventos/" + EVENTO_ID + "/postagens"), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() });
+                    fecharInterface();
+                }
+            } catch(e) {
+                alert("Aviso do Sistema: Erro ao enviar foto. " + e.message);
+            } finally {
+                btn.disabled = false;
             }
-            btn.disabled = false;
         };
 
         const inputUploadArquivo = document.getElementById('inputUploadArquivo');
@@ -396,17 +407,36 @@
             inputUploadArquivo.value = "";
         };
 
+        // =========================================================
+        // CORREÇÃO CIRÚRGICA: BLINDAGEM BOTÃO GALERIA (ENVIAR)
+        // =========================================================
         document.getElementById('btnConfirmarCorte').onclick = async () => {
-            const canvas = cropper.getCroppedCanvas({ width: 1080, height: 1920 });
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(molduraOverlay, 0, 0, canvas.width, canvas.height);
-            const base64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
-            const form = new FormData(); form.append('image', base64);
-            const res = await fetch("https://api.imgbb.com/1/upload?key=" + IMGBB_API_KEY, { method: 'POST', body: form });
-            const imgData = await res.json();
-            if (imgData.success) {
-               await addDoc(collection(db, "eventos/" + EVENTO_ID + "/postagens"), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() }); 
-                document.getElementById('modalEstudio').style.display = 'none'; fecharInterface();
+            const btn = document.getElementById('btnConfirmarCorte');
+            const textoOriginal = btn.innerHTML;
+            btn.innerHTML = "⏳ Enviando...";
+            btn.disabled = true;
+            try {
+                const canvas = cropper.getCroppedCanvas({ width: 1080, height: 1920 });
+                const ctx = canvas.getContext('2d');
+                
+                if (molduraOverlay.complete && molduraOverlay.naturalWidth > 0) {
+                    ctx.drawImage(molduraOverlay, 0, 0, canvas.width, canvas.height);
+                }
+                
+                const base64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+                const form = new FormData(); form.append('image', base64);
+                const res = await fetch("https://api.imgbb.com/1/upload?key=" + IMGBB_API_KEY, { method: 'POST', body: form });
+                const imgData = await res.json();
+                if (imgData.success) {
+                   await addDoc(collection(db, "eventos/" + EVENTO_ID + "/postagens"), { url_imagem: imgData.data.url, curtidas: 0, data_envio: serverTimestamp() }); 
+                    document.getElementById('modalEstudio').style.display = 'none'; 
+                    fecharInterface();
+                }
+            } catch(e) {
+                alert("Aviso do Sistema: Erro ao enviar foto da galeria. " + e.message);
+            } finally {
+                btn.innerHTML = textoOriginal;
+                btn.disabled = false;
             }
         };
 
