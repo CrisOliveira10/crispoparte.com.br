@@ -490,7 +490,7 @@ inputUploadArquivo.onchange = (event) => {
         Object.assign(modalAviso.style, { position: "fixed", inset: "0", backgroundColor: "rgba(0,0,0,0.8)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: "9999" });
         modalAviso.innerHTML = `<div class="aviso-redirecionar"><p style="font-weight:bold; font-size:1.2rem; margin-bottom:15px; color:#333;">🎬 Vídeo</p><p>Saindo para gerar o vídeo com moldura.</p><button class="btn-confirmar-sair" id="confirmarSair">Ir para o Filtro</button><button id="cancelarSair" style="background:none; border:none; color:#888; margin-top:15px; cursor:pointer;">Cancelar</button></div>`;
         document.body.appendChild(modalAviso);
-        document.getElementById('confirmarSair').onclick = () => { window.open("https://crispoparte.com.br/juliana50/", "_blank"); modalAviso.remove(); };
+        document.getElementById('confirmarSair').onclick = () => { window.open("https://crispoparte.com.br/soufacris/", "_blank"); modalAviso.remove(); };
         document.getElementById('cancelarSair').onclick = () => modalAviso.remove();
     };
     document.getElementById('btnVideoLink').onclick = window.avisarSaida;
