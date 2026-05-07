@@ -1,1 +1,796 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<script>
+const senhaCorreta = "1234";
 
+const senha = prompt("Digite a senha:");
+
+if (senha !== senhaCorreta) {
+    alert("Senha incorreta!");
+    window.location.href = "https://google.com";
+}
+</script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Gerador - Lista de Presentes</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+  :root {
+    --bg: #f4f7f6;
+    --primary: #235587;
+    --secondary: #6daccb;
+    --text: #333;
+    --card: #fff;
+    --border: #e0e0e0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); padding: 20px; display: flex; flex-direction: column; min-height: 100vh; }
+  .container { max-width: 900px; margin: 0 auto; background: var(--card); padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); flex: 1; width: 100%; }
+  h1 { font-family: 'Nunito', sans-serif; font-weight: 900; color: var(--primary); text-align: center; margin-bottom: 30px; font-size: 2rem; }
+  h2 { font-family: 'Nunito', sans-serif; font-size: 1.3rem; color: var(--secondary); margin-bottom: 15px; border-bottom: 2px solid var(--border); padding-bottom: 5px; }
+  
+  .section { margin-bottom: 30px; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
+  
+  .form-group { margin-bottom: 15px; }
+  .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; color: #555; }
+  .form-group input[type="text"], .form-group input[type="number"], .form-group input[type="url"], .form-group textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-family: 'Poppins', sans-serif; font-size: 0.9rem; }
+  .form-group input[type="file"] { width: 100%; padding: 8px; font-size: 0.85rem; background: #f9f9f9; border: 1px dashed var(--secondary); border-radius: 6px; cursor: pointer; }
+  
+  .color-input-wrapper { display: flex; gap: 10px; align-items: center; }
+  .color-input-wrapper input[type="text"] { flex: 1; font-family: monospace; font-size: 1rem; font-weight: bold; color: var(--primary); }
+  .color-input-wrapper input[type="color"] { width: 45px; height: 45px; border: none; border-radius: 6px; cursor: pointer; padding: 0; flex-shrink: 0; }
+
+  .produto-item { background: #fdfdfd; border: 1px solid var(--border); padding: 15px; border-radius: 8px; margin-bottom: 15px; position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; align-items: center; }
+  .produto-item .btn-remover { position: absolute; top: -10px; right: -10px; background: #e74c3c; color: #fff; border: none; width: 25px; height: 25px; border-radius: 50%; cursor: pointer; font-weight: bold; }
+  .produto-img-group { grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #f4f7f6; padding: 10px; border-radius: 6px; border: 1px dashed #ccc; }
+
+  button { font-family: 'Nunito', sans-serif; font-weight: 700; cursor: pointer; border: none; border-radius: 6px; transition: 0.2s; }
+  .btn-add { background: var(--secondary); color: #fff; padding: 10px 20px; font-size: 0.9rem; display: block; width: 100%; margin-top: 10px; }
+  .btn-add:hover { background: var(--primary); }
+  
+  .btn-gerar { background: var(--primary); color: #fff; padding: 15px; font-size: 1.1rem; width: 100%; border-radius: 30px; }
+  .btn-gerar:hover { background: #1a416b; transform: scale(1.02); }
+
+  .btn-demo { background: #f39c12; color: #fff; padding: 15px; font-size: 1.1rem; width: 100%; border-radius: 30px; }
+  .btn-demo:hover { background: #d68910; transform: scale(1.02); }
+
+  .gerador-footer { text-align: center; font-size: 0.85rem; color: #777; padding: 20px 0; font-family: 'Nunito', sans-serif; font-weight: 600; margin-top: 20px; }
+
+  #loading { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 1000; align-items: center; justify-content: center; flex-direction: column; font-family: 'Nunito', sans-serif; font-size: 1.5rem; color: var(--primary); font-weight: bold; }
+  .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+  /* Estilos do Modal de Demonstração */
+  .preview-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; align-items: center; justify-content: center; flex-direction: column; }
+  .preview-content { width: 375px; height: 75vh; background: #fff; border-radius: 20px; position: relative; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 8px solid #222; }
+  .preview-iframe { width: 100%; height: 100%; border: none; }
+  .preview-actions { margin-top: 20px; display: flex; gap: 15px; }
+  .btn-fechar { background: #e74c3c; color: white; padding: 12px 24px; border: none; border-radius: 30px; cursor: pointer; font-weight: bold; font-size: 1rem; }
+  .btn-img { background: #2ecc71; color: white; padding: 12px 24px; border: none; border-radius: 30px; cursor: pointer; font-weight: bold; font-size: 1rem; }
+
+  @media (max-width: 600px) {
+    .grid-2, .grid-3, .produto-img-group { grid-template-columns: 1fr; }
+    .produto-item { grid-template-columns: 1fr; }
+    .preview-actions { flex-direction: column; width: 80%; }
+    .btn-fechar, .btn-img { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Gerador de Link Único</h1>
+
+  <div class="section">
+    <h2>🎨 Identidade Visual</h2>
+    <div class="grid-2">
+      <div class="form-group">
+        <label>Upload Cabeçalho (Banner)</label>
+        <input type="file" id="uploadBanner" accept="image/*">
+      </div>
+      <div class="form-group">
+        <label>Upload Círculo (Foto Destaque)</label>
+        <input type="file" id="uploadCirculo" accept="image/*">
+      </div>
+    </div>
+    <div class="grid-3">
+      <div class="form-group">
+        <label>Cor Primária (HEX)</label>
+        <div class="color-input-wrapper">
+          <input type="text" id="corPrimaria" value="#235587" oninput="document.getElementById('corPrimariaPicker').value = this.value">
+          <input type="color" id="corPrimariaPicker" value="#235587" oninput="document.getElementById('corPrimaria').value = this.value">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Cor Secundária (HEX)</label>
+        <div class="color-input-wrapper">
+          <input type="text" id="corSecundaria" value="#6daccb" oninput="document.getElementById('corSecundariaPicker').value = this.value">
+          <input type="color" id="corSecundariaPicker" value="#6daccb" oninput="document.getElementById('corSecundaria').value = this.value">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Cor do Rodapé (HEX)</label>
+        <div class="color-input-wrapper">
+          <input type="text" id="corRodape" value="#235587" oninput="document.getElementById('corRodapePicker').value = this.value">
+          <input type="color" id="corRodapePicker" value="#235587" oninput="document.getElementById('corRodape').value = this.value">
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Tamanho Base da Fonte (px)</label>
+      <input type="number" id="tamanhoFonte" value="16" placeholder="Ex: 16">
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>📝 Informações do Evento</h2>
+    <div class="grid-2">
+      <div class="form-group">
+        <label>Título (Nome do Aniversariante)</label>
+        <input type="text" id="nomeEvento" placeholder="Ex: Aniversário do Ruan" value="Aniversário do Ruan">
+      </div>
+      <div class="form-group">
+        <label>Organizador</label>
+        <input type="text" id="organizador" placeholder="Ex: Cris Oliveira" value="Cris Oliveira">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Saudação</label>
+      <input type="text" id="saudacao" placeholder="Ex: Sejam bem-vindos!" value="Sejam bem-vindos!">
+    </div>
+    <div class="form-group">
+      <label>Texto de Boas-Vindas (Cada parágrafo em uma linha)</label>
+      <textarea id="textoBemVindo" rows="4">Estamos organizando esse evento com muito amor e carinho. Criamos esse espaço para facilitar para todos.
+E para aqueles que querem presentear com um MIMO, criamos uma lista de presentes online para evitar dúvidas, economizar tempo e incentivar o consumo consciente.
+Por favor, confirmem a presença no site logo abaixo e deixem um recadinho!</textarea>
+    </div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label>Chave Pix</label>
+        <input type="text" id="chavePix" placeholder="E-mail, CPF ou Celular">
+      </div>
+      <div class="form-group">
+        <label>WhatsApp (DDI + DDD + Número)</label>
+        <input type="text" id="whatsapp" placeholder="Ex: 5571999999999">
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>⚙️ Configurações</h2>
+    <div class="grid-2">
+      <div class="form-group">
+        <label>Cards Visíveis no Carrossel</label>
+        <input type="number" id="cardsVisiveis" value="3" min="1" max="5">
+      </div>
+      <div class="form-group">
+        <label>Direitos Autorais (Rodapé da Página Gerada)</label>
+        <input type="text" id="rodapeTexto" value="© Todos os direitos reservados a Cristiane Oliveira - crispoparte.com.br" readonly style="background: #eee; cursor: not-allowed;">
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>🛍️ Produtos</h2>
+    <div id="produtos-container"></div>
+    <button type="button" class="btn-add" onclick="addProduto()">+ Adicionar Produto</button>
+  </div>
+
+  <div class="grid-2" style="margin-top: 30px;">
+    <button class="btn-demo" onclick="abrirDemonstracao()">📱 Visualizar Demonstração</button>
+    <button class="btn-gerar" onclick="gerarLink()">💾 Baixar Link Único (HTML)</button>
+  </div>
+</div>
+
+<div class="gerador-footer">
+  © Todos os direitos reservados a Cristiane Oliveira - crispoparte.com.br
+</div>
+
+<div id="loading">
+  <div class="spinner"></div>
+  Processando Imagens e Código...
+</div>
+
+<div id="previewModal" class="preview-modal">
+  <div class="preview-content">
+    <iframe id="previewFrame" class="preview-iframe"></iframe>
+  </div>
+  <div class="preview-actions">
+    <button class="btn-fechar" onclick="fecharDemonstracao()">❌ Fechar</button>
+    <button class="btn-img" id="btnBaixarImg" onclick="baixarImagemDemo()">📸 Baixar Imagem (PNG)</button>
+  </div>
+</div>
+
+<script>
+  let produtoCount = 0;
+
+  function addProduto() {
+    produtoCount++;
+    const container = document.getElementById('produtos-container');
+    const div = document.createElement('div');
+    div.className = 'produto-item';
+    div.id = `produto-${produtoCount}`;
+    div.innerHTML = `
+      <button class="btn-remover" onclick="removerProduto(${produtoCount})">X</button>
+      <div class="form-group">
+        <label>Nome do Produto</label>
+        <input type="text" class="prod-nome" placeholder="Ex: Lego Minecraft">
+      </div>
+      <div class="form-group">
+        <label>Preço (R$)</label>
+        <input type="number" step="0.01" class="prod-preco" placeholder="Ex: 89.90">
+      </div>
+      <div class="form-group" style="grid-column: span 2;">
+        <label>Link do Modelo (Opcional - Exibe botão "Ver Modelo")</label>
+        <input type="url" class="prod-link" placeholder="https://exemplo.com/modelo">
+      </div>
+      <div class="produto-img-group">
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>Enviar Arquivo da Imagem</label>
+          <input type="file" class="prod-imagem-file" accept="image/*">
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>OU Colar URL/Link da Imagem</label>
+          <input type="text" class="prod-imagem-url" placeholder="https://link-da-foto.jpg">
+        </div>
+      </div>
+    `;
+    container.appendChild(div);
+  }
+
+  function removerProduto(id) { document.getElementById(`produto-${id}`).remove(); }
+  addProduto();
+
+  const fileToBase64 = file => new Promise((resolve, reject) => {
+    if (!file) { resolve(""); return; }
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+  });
+
+  async function prepararDados() {
+    const bannerFile = document.getElementById('uploadBanner').files[0];
+    const circuloFile = document.getElementById('uploadCirculo').files[0];
+    const bannerBase64 = await fileToBase64(bannerFile);
+    const circuloBase64 = await fileToBase64(circuloFile);
+
+    const textoBemVindoArray = document.getElementById('textoBemVindo').value
+      .split('\\n').map(linha => linha.trim()).filter(linha => linha !== '');
+
+    const produtosItems = document.querySelectorAll('.produto-item');
+    const produtosArray = [];
+    for (let i = 0; i < produtosItems.length; i++) {
+      const item = produtosItems[i];
+      const nome = item.querySelector('.prod-nome').value;
+      const preco = parseFloat(item.querySelector('.prod-preco').value) || 0;
+      const linkModelo = item.querySelector('.prod-link').value.trim();
+      const imgFile = item.querySelector('.prod-imagem-file').files[0];
+      const imgUrl = item.querySelector('.prod-imagem-url').value.trim();
+      
+      let imagemFinal = "https://via.placeholder.com/200x160?text=" + encodeURIComponent(nome || 'Sem Imagem');
+      if (imgFile) imagemFinal = await fileToBase64(imgFile);
+      else if (imgUrl) imagemFinal = imgUrl;
+
+      if (nome) produtosArray.push({ id: i + 1, nome: nome, preco: preco, imagem: imagemFinal, linkModelo: linkModelo });
+    }
+
+    return {
+      configObj: {
+        nomeEvento: document.getElementById('nomeEvento').value,
+        organizador: document.getElementById('organizador').value,
+        saudacao: document.getElementById('saudacao').value,
+        textoBemVindo: textoBemVindoArray,
+        logoSrc: "",
+        bannerSrc: bannerBase64,
+        circuloSrc: circuloBase64,
+        chavePix: document.getElementById('chavePix').value,
+        whatsapp: document.getElementById('whatsapp').value,
+        rodapeTexto: document.getElementById('rodapeTexto').value,
+        rodapeCNPJ: "",
+        produtos: produtosArray,
+        cardsVisiveis: parseInt(document.getElementById('cardsVisiveis').value) || 3
+      },
+      cPri: document.getElementById('corPrimaria').value,
+      cSec: document.getElementById('corSecundaria').value,
+      cRod: document.getElementById('corRodape').value,
+      fonte: parseInt(document.getElementById('tamanhoFonte').value) || 16
+    };
+  }
+
+  async function gerarLink() {
+    document.getElementById('loading').style.display = 'flex';
+    try {
+      const dados = await prepararDados();
+      const templateFinal = generateHTMLString(dados.configObj, dados.cPri, dados.cSec, dados.cRod, dados.fonte);
+      const blob = new Blob([templateFinal], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      document.getElementById('loading').style.display = 'none';
+
+      window.open(url, '_blank');
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `lista_${dados.configObj.nomeEvento.replace(/\\s+/g, '_').toLowerCase()}.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch (e) {
+      console.error(e);
+      alert("Ocorreu um erro ao gerar o link.");
+      document.getElementById('loading').style.display = 'none';
+    }
+  }
+
+  async function abrirDemonstracao() {
+    document.getElementById('loading').style.display = 'flex';
+    try {
+      const dados = await prepararDados();
+      const templateFinal = generateHTMLString(dados.configObj, dados.cPri, dados.cSec, dados.cRod, dados.fonte);
+      const iframe = document.getElementById('previewFrame');
+      iframe.srcdoc = templateFinal;
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('previewModal').style.display = 'flex';
+    } catch (e) {
+      console.error(e);
+      alert("Erro ao preparar demonstração.");
+      document.getElementById('loading').style.display = 'none';
+    }
+  }
+
+  function fecharDemonstracao() {
+    document.getElementById('previewModal').style.display = 'none';
+    document.getElementById('previewFrame').srcdoc = '';
+  }
+
+  async function baixarImagemDemo() {
+    const btn = document.getElementById('btnBaixarImg');
+    const iframe = document.getElementById('previewFrame');
+    btn.innerText = "⏳ Gerando Imagem...";
+    
+    try {
+      const canvas = await html2canvas(iframe.contentDocument.body, {
+        useCORS: true,
+        allowTaint: true,
+        scale: 2
+      });
+      const a = document.createElement('a');
+      a.href = canvas.toDataURL("image/png");
+      a.download = "demonstracao.png";
+      a.click();
+    } catch(err) {
+      console.error(err);
+      alert("Erro ao gerar imagem. Dica: Se o gerador estiver rodando diretamente do arquivo local (file://), o navegador pode bloquear o print por segurança. Recomenda-se hospedar o HTML do gerador em um ambiente web.");
+    }
+    btn.innerText = "📸 Baixar Imagem (PNG)";
+  }
+
+  // Template HTML
+  function generateHTMLString(config, corPri, corSec, corRod, fontSize) {
+    const configString = JSON.stringify(config, null, 2);
+
+    return `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Lista de Presentes</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+
+<style>
+:root {
+  --cor-primaria:      ${corPri};
+  --cor-secundaria:    ${corSec};
+  --cor-fundo:         #ffffff;
+  --cor-texto:         #333333;
+  --cor-rodape:        ${corRod};
+  --cor-card-borda:    #e0e0e0;
+  --cor-btn-texto:     #ffffff;
+  --fonte-titulo:      'Nunito', sans-serif;
+  --fonte-corpo:       'Poppins', sans-serif;
+  --raio-btn:          30px;
+  --raio-card:         12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: ${fontSize}px; }
+body { font-family: var(--fonte-corpo); color: var(--cor-texto); background: var(--cor-fundo); }
+img { max-width: 100%; display: block; }
+a { text-decoration: none; color: inherit; }
+
+header { display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.08); position: sticky; top: 0; z-index: 100; }
+.header-logo img { height: 38px; }
+.header-logo span { font-family: var(--fonte-titulo); font-size: 1.5rem; font-weight: 900; color: var(--cor-primaria); letter-spacing: -1px; }
+.header-right { display: flex; align-items: center; gap: 14px; }
+.hamburger-btn { background: none; border: none; cursor: pointer; display: flex; flex-direction: column; gap: 5px; padding: 4px; }
+.hamburger-btn span { display: block; width: 24px; height: 2.5px; background: var(--cor-texto); border-radius: 2px; transition: .3s; }
+
+.menu-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 200; }
+.menu-overlay.open { display: block; }
+.menu-drawer { position: fixed; top: 0; left: -280px; width: 260px; height: 100%; background: #fff; z-index: 201; padding: 32px 24px; transition: left .3s ease; box-shadow: 4px 0 20px rgba(0,0,0,.12); }
+.menu-drawer.open { left: 0; }
+.menu-drawer .close-menu { background: none; border: none; cursor: pointer; font-size: 1.5rem; color: var(--cor-texto); position: absolute; top: 14px; right: 18px; }
+.menu-drawer nav { margin-top: 40px; }
+.menu-drawer nav a { display: block; padding: 14px 0; font-family: var(--fonte-titulo); font-weight: 700; font-size: 1.05rem; color: var(--cor-texto); border-bottom: 1px solid #f0f0f0; transition: color .2s; }
+.menu-drawer nav a:hover { color: var(--cor-primaria); }
+
+.hero { position: relative; width: 100%; background: var(--cor-secundaria); overflow: visible; }
+.hero-banner { width: 100%; height: 220px; object-fit: cover; display: block; }
+.hero-circle-wrap { position: absolute; bottom: -65px; left: 50%; transform: translateX(-50%); width: 130px; height: 130px; border-radius: 50%; border: 5px solid #fff; box-shadow: 0 4px 16px rgba(0,0,0,.18); overflow: hidden; background: var(--cor-secundaria); z-index: 10; }
+.hero-circle-wrap img { width: 100%; height: 100%; object-fit: cover; }
+
+.hero-placeholder { width: 100%; height: 220px; background: linear-gradient(135deg, var(--cor-secundaria) 0%, #4a2880 100%); display: flex; align-items: center; justify-content: flex-start; padding: 0 32px; position: relative; overflow: hidden; }
+.hero-placeholder::after { content: ''; position: absolute; right: -40px; top: -40px; width: 260px; height: 260px; border: 50px solid var(--cor-primaria); border-radius: 50%; opacity: .7; }
+.hero-placeholder-text { font-family: var(--fonte-titulo); font-weight: 900; font-size: 2.4rem; color: var(--cor-primaria); z-index: 1; }
+.hero-placeholder-sub { font-size: .55rem; letter-spacing: 2px; color: rgba(255,255,255,.8); margin-top: 2px; }
+
+.profile-section { text-align: center; padding: 90px 20px 30px; }
+.event-title { font-family: var(--fonte-titulo); font-size: 1.7rem; font-weight: 900; color: var(--cor-primaria); margin-bottom: 4px; }
+.event-organizer { font-size: .9rem; color: #777; margin-bottom: 28px; }
+
+.welcome-section { max-width: 600px; margin: 0 auto; padding: 0 24px 48px; text-align: center; }
+.welcome-section h2 { font-family: var(--fonte-titulo); font-size: 1.3rem; font-weight: 800; color: var(--cor-primaria); margin-bottom: 16px; }
+.welcome-section p { font-size: .88rem; line-height: 1.8; color: #555; margin-bottom: 12px; text-align: justify; }
+
+.gifts-section { padding: 0 0 40px; text-align: center; }
+.gifts-section h2 { font-family: var(--fonte-titulo); font-size: 1.5rem; font-weight: 900; color: var(--cor-primaria); margin-bottom: 28px; }
+.carousel-wrapper { position: relative; display: flex; align-items: center; gap: 8px; max-width: 900px; margin: 0 auto; padding: 0 12px; }
+.carousel-track-container { overflow: hidden; flex: 1; }
+.carousel-track { display: flex; gap: 16px; transition: transform .4s ease; }
+
+.product-card { flex: 0 0 calc(25% - 12px); min-width: 200px; border: 1.5px solid var(--cor-card-borda); border-radius: var(--raio-card); padding: 16px 12px 12px; background: #fff; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,.05); transition: box-shadow .2s, transform .2s; }
+.product-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,.1); transform: translateY(-3px); }
+.product-card img { width: 100%; height: 140px; object-fit: cover; border-radius: 8px; margin-bottom: 10px; background: #f5f5f5; }
+.product-card .product-name { font-family: var(--fonte-titulo); font-weight: 700; font-size: .92rem; margin-bottom: 4px; }
+.product-card .product-price { font-size: .85rem; color: #555; margin-bottom: 14px; }
+
+.btn-presentear { display: block; width: 100%; padding: 10px; background: var(--cor-primaria); color: var(--cor-btn-texto); border: none; border-radius: var(--raio-btn); font-family: var(--fonte-titulo); font-weight: 800; font-size: .8rem; letter-spacing: 1px; cursor: pointer; transition: opacity .2s, transform .15s; }
+.btn-presentear:hover { opacity: .88; transform: scale(1.02); }
+.btn-modelo { display: block; width: 100%; padding: 8px; background: transparent; color: var(--cor-primaria); border: 2px solid var(--cor-primaria); border-radius: var(--raio-btn); font-family: var(--fonte-titulo); font-weight: 800; font-size: .75rem; letter-spacing: 1px; cursor: pointer; transition: all .2s; margin-top: 8px; text-align: center; text-decoration: none; }
+.btn-modelo:hover { background: var(--cor-primaria); color: #fff; }
+
+.carousel-arrow { background: #fff; border: 1.5px solid #ddd; border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem; color: #555; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,.1); transition: background .2s, color .2s; z-index: 2; }
+.carousel-arrow:hover { background: var(--cor-primaria); color: #fff; border-color: var(--cor-primaria); }
+.carousel-arrow:disabled { opacity: .3; cursor: default; }
+
+.carousel-dots { display: flex; justify-content: center; gap: 8px; margin-top: 20px; }
+.carousel-dots button { width: 10px; height: 10px; border-radius: 50%; border: none; background: #ddd; cursor: pointer; transition: background .2s, transform .2s; }
+.carousel-dots button.active { background: var(--cor-primaria); transform: scale(1.2); }
+
+.btn-ver-lista { display: inline-block; margin-top: 28px; padding: 12px 36px; border: 2px solid var(--cor-primaria); border-radius: var(--raio-btn); color: var(--cor-primaria); font-family: var(--fonte-titulo); font-weight: 800; font-size: .9rem; letter-spacing: 1px; cursor: pointer; background: transparent; transition: background .2s, color .2s; }
+.btn-ver-lista:hover { background: var(--cor-primaria); color: #fff; }
+
+.recados-section { background: var(--cor-primaria); padding: 52px 20px; text-align: center; clip-path: polygon(0 30px, 2% 0, 4% 30px, 6% 0, 8% 30px, 10% 0, 12% 30px, 14% 0, 16% 30px, 18% 0, 20% 30px, 22% 0, 24% 30px, 26% 0, 28% 30px, 30% 0, 32% 30px, 34% 0, 36% 30px, 38% 0, 40% 30px, 42% 0, 44% 30px, 46% 0, 48% 30px, 50% 0, 52% 30px, 54% 0, 56% 30px, 58% 0, 60% 30px, 62% 0, 64% 30px, 66% 0, 68% 30px, 70% 0, 72% 30px, 74% 0, 76% 30px, 78% 0, 80% 30px, 82% 0, 84% 30px, 86% 0, 88% 30px, 90% 0, 92% 30px, 94% 0, 96% 30px, 98% 0, 100% 30px, 100% 100%, 0 100%); margin-top: 20px; }
+.recados-section h2 { font-family: var(--fonte-titulo); font-size: 1.4rem; font-weight: 900; color: #fff; margin-bottom: 6px; }
+.recados-section p { color: rgba(255,255,255,.85); font-size: .88rem; margin-bottom: 28px; }
+.envelope-icon { width: 80px; height: 80px; margin: 0 auto 28px; background: rgba(255,255,255,.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.envelope-icon svg { width: 42px; fill: #fff; }
+.btn-recado { display: inline-block; padding: 12px 36px; border: 2px solid #fff; border-radius: var(--raio-btn); color: #fff; font-family: var(--fonte-titulo); font-weight: 800; font-size: .9rem; letter-spacing: 1px; background: transparent; cursor: pointer; transition: background .2s, color .2s; }
+.btn-recado:hover { background: #fff; color: var(--cor-primaria); }
+
+footer { background: var(--cor-rodape); color: #fff; text-align: center; padding: 24px 20px; font-size: .78rem; line-height: 1.8; }
+footer svg { width: 16px; vertical-align: middle; fill: #fff; margin-right: 4px; }
+
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 300; align-items: center; justify-content: center; padding: 16px; }
+.modal-overlay.open { display: flex; }
+.modal-box { background: #fff; border-radius: 18px; width: 100%; max-width: 480px; max-height: 90dvh; overflow-y: auto; padding: 28px 24px 20px; position: relative; box-shadow: 0 10px 40px rgba(0,0,0,.2); animation: slideUp .3s ease; }
+@keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.modal-close { position: absolute; top: 14px; right: 18px; background: none; border: none; font-size: 1.4rem; cursor: pointer; color: #888; }
+.modal-box h3 { font-family: var(--fonte-titulo); font-weight: 900; font-size: 1.25rem; color: var(--cor-texto); margin-bottom: 4px; }
+.modal-box .checkout-sub { font-size: .8rem; color: #888; margin-bottom: 20px; }
+.checkout-field { width: 100%; border: 1.5px solid #ddd; border-radius: 8px; padding: 11px 14px; font-family: var(--fonte-corpo); font-size: .88rem; margin-bottom: 12px; outline: none; transition: border-color .2s; }
+.checkout-field:focus { border-color: var(--cor-primaria); }
+
+.pix-row { display: flex; gap: 10px; align-items: center; margin-bottom: 6px; }
+.btn-pix { flex: 1; padding: 12px; background: var(--cor-primaria); color: #fff; border: none; border-radius: var(--raio-btn); font-family: var(--fonte-titulo); font-weight: 800; font-size: .88rem; letter-spacing: 1px; cursor: pointer; transition: opacity .2s; }
+.btn-pix:hover { opacity: .88; }
+.btn-enviar-presente { flex: 1; padding: 12px; background: #25d366; color: #fff; border: none; border-radius: var(--raio-btn); font-family: var(--fonte-titulo); font-weight: 800; font-size: .78rem; letter-spacing: .5px; cursor: pointer; transition: opacity .2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.btn-enviar-presente:hover { opacity: .88; }
+.btn-enviar-presente svg { width: 18px; fill: #fff; flex-shrink: 0; }
+.copy-pix-link { text-align: center; font-size: .78rem; color: #888; cursor: pointer; margin-bottom: 22px; display: block; }
+.copy-pix-link:hover { color: var(--cor-primaria); text-decoration: underline; }
+
+.resumo-box { background: #f9f9f9; border-radius: 12px; padding: 18px 16px; margin-bottom: 16px; }
+.resumo-box h4 { font-family: var(--fonte-titulo); font-weight: 900; font-size: .95rem; text-align: center; letter-spacing: 1px; margin-bottom: 16px; color: var(--cor-texto); }
+.resumo-item { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.resumo-item img { width: 52px; height: 52px; object-fit: cover; border-radius: 50%; border: 1.5px solid #ddd; background: #eee; }
+.resumo-item-info { flex: 1; }
+.resumo-item-info .rname { font-weight: 700; font-size: .88rem; }
+.resumo-item-info .rprice { font-size: .82rem; color: #555; font-weight: 700; }
+.qty-control { display: flex; align-items: center; gap: 8px; border: 1.5px solid #ddd; border-radius: 20px; padding: 4px 10px; }
+.qty-control button { background: none; border: none; cursor: pointer; font-size: 1rem; color: var(--cor-texto); font-weight: 700; width: 20px; text-align: center; }
+.qty-control span { font-size: .88rem; font-weight: 700; min-width: 16px; text-align: center; }
+.resumo-total { display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1.5px solid #eee; font-size: .88rem; font-weight: 700; }
+.resumo-total .total-val { font-family: var(--fonte-titulo); font-weight: 900; font-size: 1rem; color: var(--cor-primaria); }
+.btn-voltar { display: block; width: 100%; padding: 14px; background: var(--cor-primaria); color: #fff; border: none; border-radius: var(--raio-btn); font-family: var(--fonte-titulo); font-weight: 900; font-size: .95rem; cursor: pointer; transition: opacity .2s; margin-top: 4px; }
+.btn-voltar:hover { opacity: .88; }
+
+.modal-lista-box { background: #fff; border-radius: 18px; width: 100%; max-width: 700px; max-height: 90dvh; overflow-y: auto; padding: 28px 24px 24px; position: relative; box-shadow: 0 10px 40px rgba(0,0,0,.2); animation: slideUp .3s ease; }
+.modal-lista-box h3 { font-family: var(--fonte-titulo); font-weight: 900; font-size: 1.3rem; color: var(--cor-primaria); margin-bottom: 20px; text-align: center; }
+.lista-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
+
+.modal-recado-box { background: #fff; border-radius: 18px; width: 100%; max-width: 440px; padding: 32px 28px; position: relative; box-shadow: 0 10px 40px rgba(0,0,0,.2); animation: slideUp .3s ease; }
+.modal-recado-box h3 { font-family: var(--fonte-titulo); font-weight: 900; font-size: 1.2rem; color: var(--cor-primaria); margin-bottom: 6px; }
+.modal-recado-box p { font-size: .82rem; color: #888; margin-bottom: 20px; }
+.recado-textarea { width: 100%; min-height: 100px; resize: vertical; border: 1.5px solid #ddd; border-radius: 8px; padding: 11px 14px; font-family: var(--fonte-corpo); font-size: .88rem; outline: none; margin-bottom: 12px; transition: border-color .2s; }
+.recado-textarea:focus { border-color: var(--cor-primaria); }
+.btn-enviar-recado { width: 100%; padding: 12px; background: var(--cor-primaria); color: #fff; border: none; border-radius: var(--raio-btn); font-family: var(--fonte-titulo); font-weight: 800; font-size: .9rem; cursor: pointer; transition: opacity .2s; }
+.btn-enviar-recado:hover { opacity: .88; }
+
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(60px); background: #333; color: #fff; padding: 10px 22px; border-radius: 24px; font-size: .85rem; font-weight: 600; z-index: 500; opacity: 0; transition: all .4s ease; pointer-events: none; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+@media (max-width: 680px) { .product-card { flex: 0 0 calc(50% - 8px); min-width: 145px; } .hero-circle-wrap { width: 110px; height: 110px; bottom: -55px; } .profile-section { padding-top: 75px; } .pix-row { flex-direction: column; } .btn-pix, .btn-enviar-presente { width: 100%; } }
+@media (max-width: 420px) { .product-card { flex: 0 0 calc(100% - 4px); min-width: 200px; } }
+</style>
+</head>
+<body>
+<script>
+const CONFIG = ${configString};
+</`+`script>
+
+<header>
+  <button class="hamburger-btn" onclick="openMenu()" aria-label="Menu"><span></span><span></span><span></span></button>
+  <div class="header-logo"><img id="site-logo" src="" alt="Logo"/></div>
+  <div class="header-right"><img src="https://flagcdn.com/w40/br.png" alt="Brasil" style="width:28px;border-radius:50%;"/></div>
+</header>
+
+<div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
+<div class="menu-drawer" id="menuDrawer">
+  <button class="close-menu" onclick="closeMenu()">✕</button>
+  <nav>
+    <a href="#inicio" onclick="closeMenu()">Início</a>
+    <a href="#sobre" onclick="closeMenu()">Sobre</a>
+    <a href="#lista" onclick="closeMenu()">Lista de Presentes</a>
+    <a href="#recados" onclick="closeMenu()">Recados dos Convidados</a>
+  </nav>
+</div>
+
+<section id="inicio" class="hero">
+  <div id="heroBanner">
+    <div class="hero-placeholder">
+      <div>
+        <div class="hero-placeholder-text">Crispoparte</div>
+        <div class="hero-placeholder-sub">BABY | KIDS | DEBUTANTE | MARRY | BUSINESS</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-circle-wrap"><img id="heroCircle" src="" alt="Foto do evento"/></div>
+</section>
+
+<section class="profile-section" id="sobre">
+  <h1 class="event-title" id="eventTitle"></h1>
+  <p class="event-organizer" id="eventOrganizer"></p>
+</section>
+
+<section class="welcome-section">
+  <h2 id="saudacaoTitle"></h2>
+  <div id="welcomeText"></div>
+</section>
+
+<section class="gifts-section" id="lista">
+  <h2>Lista de Presentes</h2>
+  <div class="carousel-wrapper">
+    <button class="carousel-arrow" id="prevBtn" onclick="slidePrev()" aria-label="Anterior">&#8249;</button>
+    <div class="carousel-track-container"><div class="carousel-track" id="carouselTrack"></div></div>
+    <button class="carousel-arrow" id="nextBtn" onclick="slideNext()" aria-label="Próximo">&#8250;</button>
+  </div>
+  <div class="carousel-dots" id="carouselDots"></div>
+  <button class="btn-ver-lista" onclick="openListaCompleta()">VER LISTA COMPLETA</button>
+</section>
+
+<section class="recados-section" id="recados">
+  <h2>Recados dos Convidados</h2>
+  <p>Deixe uma mensagem especial!</p>
+  <div class="envelope-icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4C2.9 4 2 4.9 2 6v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 2-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z"/></svg></div>
+  <button class="btn-recado" onclick="openRecado()">ENVIAR RECADO</button>
+</section>
+
+<footer>
+  <p><svg viewBox="0 0 24 24"><path d="M12 1C8.676 1 6 3.676 6 7v1H4v14h16V8h-2V7c0-3.324-2.676-6-6-6zm0 2c2.276 0 4 1.724 4 4v1H8V7c0-2.276 1.724-4 4-4zm0 10a2 2 0 1 1 0 4 2 2 0 0 1 0-4z"/></svg> Ambiente seguro</p>
+  <p id="rodapeTexto"></p>
+  <p id="rodapeCNPJ"></p>
+</footer>
+
+<div class="modal-overlay" id="checkoutModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeCheckout()">✕</button>
+    <h3>Checkout</h3>
+    <p class="checkout-sub">Finalize seu presente e deixe um recado opcional.</p>
+    <input type="text" id="nomeComprador" class="checkout-field" placeholder="Seu nome"/>
+    <input type="text" id="msgComprador"  class="checkout-field" placeholder="Sua mensagem (opcional)"/>
+    <div class="pix-row">
+      <button class="btn-pix" onclick="copiarPix()">PIX</button>
+      <button class="btn-enviar-presente" onclick="enviarWhatsApp()">
+        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.05 2C6.495 2 2 6.478 2 12.013c0 1.789.476 3.492 1.383 4.98L2 22l5.158-1.353A9.959 9.959 0 0 0 12.05 22C17.605 22 22 17.522 22 11.987 22 6.478 17.605 2 12.05 2zm0 18c-1.577 0-3.108-.423-4.437-1.225l-.318-.189-3.06.803.817-2.977-.207-.324A7.93 7.93 0 0 1 4.05 12.013C4.05 7.587 7.623 4 12.05 4c4.427 0 8 3.587 8 8.013C20.05 16.439 16.477 20 12.05 20z"/></svg>
+        ENVIAR PRESENTE
+      </button>
+    </div>
+    <span class="copy-pix-link" onclick="copiarPix()" id="pixKeyLabel"></span>
+    <div class="resumo-box">
+      <h4>RESUMO DA COMPRA</h4>
+      <div id="resumoItens"></div>
+      <div class="resumo-total"><span>total</span><span class="total-val" id="totalVal">R$ 0,00</span></div>
+    </div>
+    <button class="btn-voltar" onclick="closeCheckout()">Voltar ao site</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="listaModal">
+  <div class="modal-lista-box">
+    <button class="modal-close" onclick="closeListaCompleta()">✕</button>
+    <h3>Lista de Presentes</h3>
+    <div class="lista-grid" id="listaGrid"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="recadoModal">
+  <div class="modal-recado-box">
+    <button class="modal-close" onclick="closeRecado()">✕</button>
+    <h3>Deixe seu Recado</h3>
+    <p>Escreva uma mensagem especial para o aniversariante!</p>
+    <input type="text" id="nomeRecado" class="checkout-field" placeholder="Seu nome"/>
+    <textarea id="textoRecado" class="recado-textarea" placeholder="Sua mensagem..."></textarea>
+    <button class="btn-enviar-recado" onclick="enviarRecado()">ENVIAR RECADO</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  const logoEl = document.getElementById('site-logo');
+  logoEl.src = CONFIG.logoSrc;
+  logoEl.onerror = () => { logoEl.style.display = 'none'; logoEl.insertAdjacentHTML('afterend', '<span class="header-logo-txt" style="font-family:var(--fonte-titulo);font-weight:900;color:var(--cor-primaria);font-size:1.4rem;">Crispoparte</span>'); };
+
+  const bannerWrap = document.getElementById('heroBanner');
+  if(CONFIG.bannerSrc) {
+    const bannerImg = new Image();
+    bannerImg.src = CONFIG.bannerSrc;
+    bannerImg.onload = () => { bannerWrap.innerHTML = ''; bannerImg.style.cssText = 'width:100%;height:220px;object-fit:cover;display:block;'; bannerWrap.appendChild(bannerImg); };
+  }
+
+  const circleEl = document.getElementById('heroCircle');
+  if(CONFIG.circuloSrc) circleEl.src = CONFIG.circuloSrc;
+  circleEl.onerror = () => { circleEl.closest('.hero-circle-wrap').innerHTML = \`<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--cor-secundaria);"><svg viewBox="0 0 60 60" width="60" fill="var(--cor-primaria)"><path d="M30 5 C17 5 7 15 7 28 C7 36 11 43 17 48 L17 55 L30 50 L43 55 L43 48 C49 43 53 36 53 28 C53 15 43 5 30 5Z" opacity=".7"/><circle cx="22" cy="26" r="4"/><circle cx="38" cy="26" r="4"/></svg></div>\`; };
+
+  document.getElementById('eventTitle').textContent = CONFIG.nomeEvento;
+  document.getElementById('eventOrganizer').textContent = CONFIG.organizador;
+  document.getElementById('saudacaoTitle').textContent = CONFIG.saudacao;
+  document.getElementById('welcomeText').innerHTML = CONFIG.textoBemVindo.map(t => \`<p>\${t}</p>\`).join('');
+  document.getElementById('rodapeTexto').textContent = CONFIG.rodapeTexto;
+  if (CONFIG.rodapeCNPJ) document.getElementById('rodapeCNPJ').textContent = \`CNPJ: \${CONFIG.rodapeCNPJ}\`;
+  document.getElementById('pixKeyLabel').textContent = \`copiar chave pix · \${CONFIG.chavePix}\`;
+
+  buildCarousel(); buildListaGrid();
+});
+
+let currentIndex = 0;
+const VISIBLE = () => window.innerWidth <= 420 ? 1 : window.innerWidth <= 680 ? 2 : CONFIG.cardsVisiveis;
+
+function buildCarousel() {
+  const track = document.getElementById('carouselTrack');
+  track.innerHTML = '';
+  CONFIG.produtos.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    
+    let botoesHTML = \`<button class="btn-presentear" onclick="openCheckout(\${p.id})">PEDIDO</button>\`;
+    if (p.linkModelo) {
+      botoesHTML += \`<a href="\${p.linkModelo}" target="_blank" class="btn-modelo">VER MODELO</a>\`;
+    }
+
+    card.innerHTML = \`<img src="\${p.imagem}" alt="\${p.nome}" onerror="this.src='https://via.placeholder.com/200x160?text=\${encodeURIComponent(p.nome)}'"/> <div class="product-name">\${p.nome}</div> <div class="product-price">R$ \${p.preco.toFixed(2).replace('.',',')}</div> \${botoesHTML}\`;
+    track.appendChild(card);
+  });
+  buildDots(); updateCarousel();
+}
+
+function buildDots() {
+  const vis = VISIBLE();
+  const total = Math.ceil(CONFIG.produtos.length / vis);
+  const dotsEl = document.getElementById('carouselDots');
+  dotsEl.innerHTML = '';
+  for (let i = 0; i < total; i++) {
+    const btn = document.createElement('button');
+    btn.onclick = () => { currentIndex = i * vis; updateCarousel(); };
+    dotsEl.appendChild(btn);
+  }
+  updateDots();
+}
+
+function updateCarousel() {
+  const track = document.getElementById('carouselTrack');
+  const cards = track.querySelectorAll('.product-card');
+  if (!cards.length) return;
+  const cardW = cards[0].offsetWidth;
+  const gap = 16;
+  track.style.transform = \`translateX(-\${currentIndex * (cardW + gap)}px)\`;
+  document.getElementById('prevBtn').disabled = currentIndex === 0;
+  document.getElementById('nextBtn').disabled = currentIndex >= CONFIG.produtos.length - VISIBLE();
+  updateDots();
+}
+
+function updateDots() {
+  const vis = VISIBLE();
+  const dots = document.querySelectorAll('#carouselDots button');
+  const activeGroup = Math.floor(currentIndex / vis);
+  dots.forEach((d, i) => d.classList.toggle('active', i === activeGroup));
+}
+
+function slidePrev() { currentIndex = Math.max(0, currentIndex - VISIBLE()); updateCarousel(); }
+function slideNext() { currentIndex = Math.min(CONFIG.produtos.length - VISIBLE(), currentIndex + VISIBLE()); updateCarousel(); }
+window.addEventListener('resize', () => { buildDots(); updateCarousel(); });
+
+let checkoutProduto = null; const qtds = {};
+function openCheckout(prodId) { checkoutProduto = CONFIG.produtos.find(p => p.id === prodId); if (!checkoutProduto) return; if (!qtds[prodId]) qtds[prodId] = 1; renderResumo([checkoutProduto]); document.getElementById('checkoutModal').classList.add('open'); }
+function closeCheckout() { document.getElementById('checkoutModal').classList.remove('open'); checkoutProduto = null; }
+
+function renderResumo(produtos) {
+  const el = document.getElementById('resumoItens'); el.innerHTML = ''; let total = 0;
+  produtos.forEach(p => {
+    if (!qtds[p.id]) qtds[p.id] = 1; total += p.preco * qtds[p.id];
+    el.innerHTML += \`<div class="resumo-item" id="item-\${p.id}"><img src="\${p.imagem}" alt="\${p.nome}" onerror="this.src='https://via.placeholder.com/52?text=?'"/><div class="resumo-item-info"><div class="rname">\${p.nome}</div><div class="rprice">R$ \${p.preco.toFixed(2).replace('.',',')}</div></div><div class="qty-control"><button onclick="changeQty(\${p.id}, -1)">−</button><span id="qty-\${p.id}">\${qtds[p.id]}</span><button onclick="changeQty(\${p.id}, 1)">+</button></div></div>\`;
+  });
+  document.getElementById('totalVal').textContent = 'R$ ' + total.toFixed(2).replace('.',',');
+}
+
+function changeQty(prodId, delta) { qtds[prodId] = Math.max(1, (qtds[prodId] || 1) + delta); document.getElementById(\`qty-\${prodId}\`).textContent = qtds[prodId]; const prods = checkoutProduto ? [checkoutProduto] : CONFIG.produtos; let total = 0; prods.forEach(p => { total += p.preco * (qtds[p.id] || 1); }); document.getElementById('totalVal').textContent = 'R$ ' + total.toFixed(2).replace('.',','); }
+
+function copiarPix() { navigator.clipboard.writeText(CONFIG.chavePix).then(() => showToast('Chave PIX copiada!')).catch(() => { showToast(\`Chave PIX: \${CONFIG.chavePix}\`); }); }
+
+function enviarWhatsApp() {
+  const nome = document.getElementById('nomeComprador').value.trim() || '(não informado)'; const msg = document.getElementById('msgComprador').value.trim(); if (!checkoutProduto) return;
+  const qtd = qtds[checkoutProduto.id] || 1; const total = (checkoutProduto.preco * qtd).toFixed(2).replace('.',',');
+  let texto = \`Olá, \${CONFIG.nomeEvento.split(' ').pop()} já reservei seu presente \${checkoutProduto.nome}\`;
+  if (qtd > 1) texto += \` (x\${qtd})\`;
+  texto += \`, total R$ \${total}.\\nNome: \${nome}.\`;
+  if (msg) texto += \`\\nRecado: \${msg}\`;
+  texto += \`\\nEstarei efetuando pix: Chave pix \${CONFIG.chavePix}\`;
+  window.open(\`https://wa.me/\${CONFIG.whatsapp}?text=\${encodeURIComponent(texto)}\`, '_blank');
+}
+
+function buildListaGrid() {
+  const grid = document.getElementById('listaGrid'); grid.innerHTML = '';
+  CONFIG.produtos.forEach(p => {
+    const card = document.createElement('div'); card.className = 'product-card';
+    
+    let botoesHTML = \`<button class="btn-presentear" onclick="openCheckout(\${p.id}); closeListaCompleta();">PEDIDO</button>\`;
+    if (p.linkModelo) {
+      botoesHTML += \`<a href="\${p.linkModelo}" target="_blank" class="btn-modelo">VER MODELO</a>\`;
+    }
+
+    card.innerHTML = \`<img src="\${p.imagem}" alt="\${p.nome}" onerror="this.src='https://via.placeholder.com/200x160?text=\${encodeURIComponent(p.nome)}'"/><div class="product-name">\${p.nome}</div><div class="product-price">R$ \${p.preco.toFixed(2).replace('.',',')}</div>\${botoesHTML}\`;
+    grid.appendChild(card);
+  });
+}
+
+function openListaCompleta() { document.getElementById('listaModal').classList.add('open'); }
+function closeListaCompleta() { document.getElementById('listaModal').classList.remove('open'); }
+function openRecado() { document.getElementById('recadoModal').classList.add('open'); }
+function closeRecado() { document.getElementById('recadoModal').classList.remove('open'); }
+
+function enviarRecado() {
+  const nome = document.getElementById('nomeRecado').value.trim(); const texto = document.getElementById('textoRecado').value.trim();
+  if (!nome || !texto) { showToast('Preencha seu nome e recado!'); return; }
+  window.open(\`https://wa.me/\${CONFIG.whatsapp}?text=\${encodeURIComponent(\`*Recado para \${CONFIG.nomeEvento}*\\nDe: \${nome}\\n\\n\${texto}\`)}\`, '_blank');
+  closeRecado(); document.getElementById('nomeRecado').value = ''; document.getElementById('textoRecado').value = '';
+}
+
+function openMenu() { document.getElementById('menuDrawer').classList.add('open'); document.getElementById('menuOverlay').classList.add('open'); }
+function closeMenu() { document.getElementById('menuDrawer').classList.remove('open'); document.getElementById('menuOverlay').classList.remove('open'); }
+
+function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
+
+document.querySelectorAll('.modal-overlay').forEach(overlay => { overlay.addEventListener('click', e => { if (e.target === overlay) { overlay.classList.remove('open'); checkoutProduto = null; } }); });
+</`+`script>
+</body>
+</html>`;
+  }
+</script>
+</body>
+</html>
