@@ -187,37 +187,37 @@ onclick="closeGallery()">
 
 
 <div class="slide">
-<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778276478/slide-taynara/b2btknoous3inb65rngx.png">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778279337/slide-taynara/xpldrvbr9iqgsq6ajnlt.png">
 </div>
 
 
 
 <div class="slide">
-<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778276483/slide-taynara/bsbha5ve2z336fteftnq.png">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778279336/slide-taynara/pxa0c96fluevi1kgvjwl.png">
 </div>
 
 
 
 <div class="slide">
-<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778276485/slide-taynara/vlpzelgjfy1neidnprjb.png">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778279334/slide-taynara/hneqq70jplwjscvrtnwb.png">
 </div>
 
 
 
 <div class="slide">
-<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778276490/slide-taynara/umdj9cucrhdipi4pbgfq.png">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778279331/slide-taynara/fnbk7ouqp4sgl285cfdv.png">
 </div>
 
 
 
 <div class="slide">
-<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778276492/slide-taynara/v5bmk0zjvyrr4dckqd5j.png">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778279332/slide-taynara/w6d8jzlx8pgisef4i6yz.png">
 </div>
 
 
 
 <div class="slide">
-<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778276497/slide-taynara/okusfdl3v15pocc6rfsx.png">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778279333/slide-taynara/yezygs2kutrkilx8dpht.png">
 </div>
 
 
@@ -364,12 +364,26 @@ FECHAR MODAL
 
 function closeGallery(){
 
-document
-.getElementById("galleryModal")
-.classList.remove("active");
+const params =
+new URLSearchParams(
+window.location.search
+);
+
+const returnUrl =
+params.get("return");
+
+if(returnUrl){
+
+window.location.href =
+returnUrl;
+
+}else{
+
+history.back();
 
 }
 
+}
 /* =========================
 AUTOPLAY
 ========================= */
