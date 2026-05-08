@@ -1,0 +1,250 @@
+
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Slide Fotos</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+background:#000;
+overflow:hidden;
+touch-action:pan-y;
+font-family:Arial,sans-serif;
+}
+
+.slider{
+position:relative;
+width:100vw;
+height:100vh;
+overflow:hidden;
+}
+
+.slides{
+display:flex;
+height:100%;
+transition:transform .4s ease;
+}
+
+.slide{
+min-width:100vw;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:#000;
+}
+
+.slide img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.nav{
+position:absolute;
+top:50%;
+transform:translateY(-50%);
+width:55px;
+height:55px;
+border:none;
+border-radius:50%;
+background:rgba(255,255,255,.25);
+backdrop-filter:blur(6px);
+color:#fff;
+font-size:24px;
+cursor:pointer;
+z-index:10;
+}
+
+.prev{
+left:15px;
+}
+
+.next{
+right:15px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="slider">
+
+<div class="slides" id="slides">
+
+
+
+<div class="slide">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778271644/xsm9thfemu4tfinfaly4.png">
+</div>
+
+
+
+<div class="slide">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778271603/uufmnw3zxum19q2duhbr.png">
+</div>
+
+
+
+<div class="slide">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778271605/gadksvx4zxqq7qwxssgx.png">
+</div>
+
+
+
+<div class="slide">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778271606/yp5hydam2b5gvneaznap.png">
+</div>
+
+
+
+<div class="slide">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778271608/c5dtrbnmlhoaihqp2c1l.png">
+</div>
+
+
+
+<div class="slide">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778271609/ecwvab6hvkoqf9mfooor.png">
+</div>
+
+
+
+</div>
+
+<button
+class="nav prev"
+onclick="prevSlide()">
+
+❮
+
+</button>
+
+<button
+class="nav next"
+onclick="nextSlide()">
+
+❯
+
+</button>
+
+</div>
+
+<script>
+
+const slidesContainer =
+document.getElementById("slides");
+
+const total = 6;
+
+let index = 0;
+
+function updateSlide(){
+
+slidesContainer.style.transform =
+`translateX(-${index * 100}vw)`;
+
+}
+
+function nextSlide(){
+
+index++;
+
+if(index >= total){
+
+index = 0;
+
+}
+
+updateSlide();
+
+}
+
+function prevSlide(){
+
+index--;
+
+if(index < 0){
+
+index = total - 1;
+
+}
+
+updateSlide();
+
+}
+
+/* SWIPE */
+
+let startX = 0;
+
+let endX = 0;
+
+document.addEventListener(
+"touchstart",
+e=>{
+
+startX =
+e.changedTouches[0].screenX;
+
+}
+);
+
+document.addEventListener(
+"touchend",
+e=>{
+
+endX =
+e.changedTouches[0].screenX;
+
+handleSwipe();
+
+}
+);
+
+function handleSwipe(){
+
+if(startX - endX > 50){
+
+nextSlide();
+
+}
+
+if(endX - startX > 50){
+
+prevSlide();
+
+}
+
+}
+
+/* AUTOPLAY */
+
+setInterval(()=>{
+
+nextSlide();
+
+},5000);
+
+</script>
+
+</body>
+</html>
+
