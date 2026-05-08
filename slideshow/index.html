@@ -79,11 +79,108 @@ left:15px;
 right:15px;
 }
 
+/* =========================
+BOTÃO ABRIR GALERIA
+========================= */
+
+.open-gallery{
+position:fixed;
+bottom:30px;
+left:50%;
+transform:translateX(-50%);
+padding:16px 28px;
+border:none;
+border-radius:50px;
+background:#e50914;
+color:#fff;
+font-size:18px;
+font-weight:bold;
+cursor:pointer;
+z-index:20;
+box-shadow:0 10px 30px rgba(0,0,0,.35);
+}
+
+/* =========================
+MODAL NETFLIX
+========================= */
+
+.gallery-modal{
+position:fixed;
+inset:0;
+background:#000;
+z-index:9999;
+display:none;
+justify-content:center;
+align-items:center;
+overflow:hidden;
+animation:fade .4s ease;
+}
+
+.gallery-modal.active{
+display:flex;
+}
+
+/* =========================
+FECHAR
+========================= */
+
+.close-gallery{
+position:absolute;
+top:20px;
+left:20px;
+border:none;
+background:rgba(255,255,255,.15);
+color:#fff;
+padding:12px 20px;
+border-radius:50px;
+font-size:16px;
+cursor:pointer;
+z-index:30;
+backdrop-filter:blur(8px);
+}
+/* =========================
+ANIMAÇÃO
+========================= */
+
+@keyframes fade{
+
+from{
+opacity:0;
+transform:scale(1.03);
+}
+
+to{
+opacity:1;
+transform:scale(1);
+}
+
+}
+
 </style>
 
 </head>
 
 <body>
+
+<button
+class="open-gallery"
+onclick="openGallery()">
+
+🎬 Ver Fotos
+
+</button>
+
+<div
+class="gallery-modal"
+id="galleryModal">
+
+<button
+class="close-gallery"
+onclick="closeGallery()">
+
+← Voltar
+
+</button>
 
 <div class="slider">
 
@@ -92,37 +189,37 @@ right:15px;
 
 
 <div class="slide">
-<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778271644/xsm9thfemu4tfinfaly4.png">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778274801/vkqsq3iglwzlwedbppsc.png">
 </div>
 
 
 
 <div class="slide">
-<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778271603/uufmnw3zxum19q2duhbr.png">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778274802/ebhnpj2zekakem2yrrs4.png">
 </div>
 
 
 
 <div class="slide">
-<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778271605/gadksvx4zxqq7qwxssgx.png">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778274803/xffch7qxvbsy3ctqgyyg.png">
 </div>
 
 
 
 <div class="slide">
-<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778271606/yp5hydam2b5gvneaznap.png">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778274805/nl3q3wxlwd5745urbaz6.png">
 </div>
 
 
 
 <div class="slide">
-<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778271608/c5dtrbnmlhoaihqp2c1l.png">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778274806/fuxcpfhxkmykaahczf5c.png">
 </div>
 
 
 
 <div class="slide">
-<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778271609/ecwvab6hvkoqf9mfooor.png">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778274808/wb1bil16cxcejqnjq9sn.png">
 </div>
 
 
@@ -147,6 +244,8 @@ onclick="nextSlide()">
 
 </div>
 
+</div>
+
 <script>
 
 const slidesContainer =
@@ -156,12 +255,20 @@ const total = 6;
 
 let index = 0;
 
+/* =========================
+ATUALIZAR SLIDE
+========================= */
+
 function updateSlide(){
 
 slidesContainer.style.transform =
 `translateX(-${index * 100}vw)`;
 
 }
+
+/* =========================
+PRÓXIMO
+========================= */
 
 function nextSlide(){
 
@@ -177,6 +284,10 @@ updateSlide();
 
 }
 
+/* =========================
+ANTERIOR
+========================= */
+
 function prevSlide(){
 
 index--;
@@ -191,7 +302,9 @@ updateSlide();
 
 }
 
-/* SWIPE */
+/* =========================
+SWIPE MOBILE
+========================= */
 
 let startX = 0;
 
@@ -235,7 +348,33 @@ prevSlide();
 
 }
 
-/* AUTOPLAY */
+/* =========================
+ABRIR MODAL
+========================= */
+
+function openGallery(){
+
+document
+.getElementById("galleryModal")
+.classList.add("active");
+
+}
+
+/* =========================
+FECHAR MODAL
+========================= */
+
+function closeGallery(){
+
+document
+.getElementById("galleryModal")
+.classList.remove("active");
+
+}
+
+/* =========================
+AUTOPLAY
+========================= */
 
 setInterval(()=>{
 
