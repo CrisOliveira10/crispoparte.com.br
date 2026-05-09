@@ -182,37 +182,37 @@ onclick="closeGallery()">
 
 
 <div class="slide">
-<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778284763/taynara-slide/tcihkzh9xe4vji1wsvkd.png">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778285821/taynara-slide/pfusuyxkrnrtb6qk2heb.png">
 </div>
 
 
 
 <div class="slide">
-<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778284757/taynara-slide/gqozskc8gnfiue79c9mt.png">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778285814/taynara-slide/tw8jq2hpupchg4dacemf.png">
 </div>
 
 
 
 <div class="slide">
-<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778284758/taynara-slide/zffmr4taqarh92sbtqab.png">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778285816/taynara-slide/oiwzfkittuojfzbvzwcw.png">
 </div>
 
 
 
 <div class="slide">
-<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778284759/taynara-slide/czxcxwpodrn04yg8lqhp.png">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778285817/taynara-slide/axnxlec1wrtuttyiygpn.png">
 </div>
 
 
 
 <div class="slide">
-<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778284761/taynara-slide/oii8xscmb8tgrne74duy.png">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778285820/taynara-slide/cc0fp6mmirlt1wzb1z6l.png">
 </div>
 
 
 
 <div class="slide">
-<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778284762/taynara-slide/u8r4fqzlodyj1iuiqvv6.png">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778285818/taynara-slide/ruyf8txnxhc7tyf3xyma.png">
 </div>
 
 
@@ -361,29 +361,27 @@ FECHAR MODAL
 FECHAR MODAL (CAMINHO DE VOLTA)
 ========================= */
 function closeGallery() {
+    // 1. Tenta pegar a URL de retorno via parâmetro ?ref= na barra de endereço
     const params = new URLSearchParams(window.location.search);
-    const returnUrl = params.get("return");
+    const returnUrl = params.get("ref");
 
-    // 1. Prioridade: Se houver um parâmetro ?return= na URL
     if (returnUrl) {
-        window.location.href = returnUrl;
-        return;
-    }
-
-    // 2. Segunda opção: Se houver um "referrer" (página de onde ele veio)
-    if (document.referrer && document.referrer !== window.location.href) {
+        // Se existir o parâmetro ?ref=, ele volta para lá (Ex: seu convite no Canva)
+        window.location.href = decodeURIComponent(returnUrl);
+    } else if (document.referrer && document.referrer.includes("crispoparte.com.br")) {
+        // 2. Se não tiver parâmetro, mas o navegador souber que veio do seu domínio
         window.location.href = document.referrer;
-        return;
-    }
-
-    // 3. Fallback: Se nada funcionar, tenta voltar no histórico ou fechar a aba
-    if (window.history.length > 1) {
-        history.back();
     } else {
-        // Se não houver histórico (abriu em aba nova), redireciona para um padrão ou fecha
-        window.close(); 
+        // 3. Fallback total: Volta no histórico ou tenta fechar
+        if (window.history.length > 1) {
+            history.back();
+        } else {
+            // Se tudo falhar, ele tenta fechar a aba (comum em mobile)
+            window.close();
+        }
     }
 }
+
 
 /* =========================
 AUTOPLAY
