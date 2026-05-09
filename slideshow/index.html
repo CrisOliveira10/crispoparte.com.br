@@ -182,37 +182,37 @@ onclick="closeGallery()">
 
 
 <div class="slide">
-<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778281017/taynara-slide/yhtkbyi5hnhucyvninx5.png">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778284763/taynara-slide/tcihkzh9xe4vji1wsvkd.png">
 </div>
 
 
 
 <div class="slide">
-<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778281011/taynara-slide/zwhqnh623lo2ebthajvk.png">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778284757/taynara-slide/gqozskc8gnfiue79c9mt.png">
 </div>
 
 
 
 <div class="slide">
-<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778281013/taynara-slide/ldjshsjsmqno4hagpxnm.png">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778284758/taynara-slide/zffmr4taqarh92sbtqab.png">
 </div>
 
 
 
 <div class="slide">
-<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778281014/taynara-slide/uxluor3d7gzxrao2awq0.png">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778284759/taynara-slide/czxcxwpodrn04yg8lqhp.png">
 </div>
 
 
 
 <div class="slide">
-<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778281016/taynara-slide/begqzth9p6tm8a9kkb3p.png">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778284761/taynara-slide/oii8xscmb8tgrne74duy.png">
 </div>
 
 
 
 <div class="slide">
-<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778281015/taynara-slide/ploxjvvjf3vlkwlgkkrb.png">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778284762/taynara-slide/u8r4fqzlodyj1iuiqvv6.png">
 </div>
 
 
@@ -357,28 +357,34 @@ document
 FECHAR MODAL
 ========================= */
 
-function closeGallery(){
+/* =========================
+FECHAR MODAL (CAMINHO DE VOLTA)
+========================= */
+function closeGallery() {
+    const params = new URLSearchParams(window.location.search);
+    const returnUrl = params.get("return");
 
-const params =
-new URLSearchParams(
-window.location.search
-);
+    // 1. Prioridade: Se houver um parâmetro ?return= na URL
+    if (returnUrl) {
+        window.location.href = returnUrl;
+        return;
+    }
 
-const returnUrl =
-params.get("return");
+    // 2. Segunda opção: Se houver um "referrer" (página de onde ele veio)
+    if (document.referrer && document.referrer !== window.location.href) {
+        window.location.href = document.referrer;
+        return;
+    }
 
-if(returnUrl){
-
-window.location.href =
-returnUrl;
-
-}else{
-
-history.back();
-
+    // 3. Fallback: Se nada funcionar, tenta voltar no histórico ou fechar a aba
+    if (window.history.length > 1) {
+        history.back();
+    } else {
+        // Se não houver histórico (abriu em aba nova), redireciona para um padrão ou fecha
+        window.close(); 
+    }
 }
 
-}
 /* =========================
 AUTOPLAY
 ========================= */
