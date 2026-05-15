@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Convite - Heitor</title>
+    <title>Convite - Heitor 5 anos</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Montserrat:wght@400;700&family=Poppins:wght@400;700&display=swap');
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -11,11 +11,11 @@
         .banner { width: 100%; aspect-ratio: 1080 / 500; object-fit: cover; display: block; }
         .content { padding: 20px; flex: 1; }
         .card { background: white; border-radius: 18px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.05); }
-        .btn-3d { display: block; width: 100%; text-align: center; padding: 16px; border-radius: 12px; text-decoration: none; font-weight: 700; border: none; cursor: pointer; transition: 0.2s; background: #69020C; color: white; box-shadow: 0 4px 0 rgba(0,0,0,0.2); margin-bottom: 12px; }
+        .btn-3d { display: block; width: 100%; text-align: center; padding: 16px; border-radius: 12px; text-decoration: none; font-weight: 700; border: none; cursor: pointer; transition: 0.2s; background: #235587; color: white; box-shadow: 0 4px 0 rgba(0,0,0,0.2); margin-bottom: 12px; }
         .btn-3d:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.2); }
         .tabs { display: flex; background: #eee; border-radius: 12px; padding: 4px; margin-bottom: 15px; }
         .tab { flex: 1; text-align: center; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: 600; color: #777; }
-        .tab.active { background: white; color: #69020C; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .tab.active { background: white; color: #235587; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .form-section { display: none; } .form-section.active { display: block; }
         input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 10px; font-family: inherit; }
         .admin-area { background: #f9f9f9; border-radius: 15px; padding: 15px; text-align: center; margin-top: 20px; border: 1px dashed #ccc; }
@@ -28,15 +28,15 @@
 <body>
     <img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778877480/banner_pvku2o.png" class="banner">
     <div class="content">
-        <h1 style="text-align:center; color:#69020C">Heitor</h1>
+        <h1 style="text-align:center; color:#235587">Heitor 5 anos</h1>
         <div class="card">
-            <p>📅 <b>08 de setembro, às 18:00</b></p>
-            <p>📍 Buffet Carros encantados, Rua das flores ,12</p>
+            <p>📅 <b>08 de setembro, às 15:00</b></p>
+            <p>📍 Buffet magico</p>
             <a href="https://maps.app.goo.gl/hiEGxeXeCWvweGEB7" target="_blank" class="btn-3d" style="background:#eee; color:#333; box-shadow: 0 4px 0 #ccc;">📍 Abrir Mapa</a>
         </div>
         
         <div class="card">
-            <h3 style="margin-top:0; font-size: 1.1rem; color:#69020C; text-align: center;">Mimos e Presentes</h3>
+            <h3 style="margin-top:0; font-size: 1.1rem; color:#235587; text-align: center;">Mimos e Presentes</h3>
             <p style="text-align: center; font-size: 0.9rem; color: #555; margin-bottom: 20px;">Sua presença é nosso maior presente!</p>
             <a href="https://crispoparte.com.br/listadepresentesruan/" target="_blank" class="btn-3d" style="background:#fff3e0; color:#e65100; box-shadow:0 4px 0 #ffe0b2">🎁 Lista de Presentes</a>
             <button onclick="copyPix()" class="btn-3d" style="background:#e0f2f1; color:#00695c; box-shadow:0 4px 0 #b2dfdb">💰 Copiar Chave Pix</button>
@@ -88,7 +88,7 @@
             const n = document.getElementById('nA').value; if(!n) return alert('Digite seu nome!');
             try {
                 await addDoc(colA, { n, t: Date.now() }); document.getElementById('nA').value = ''; alert('Confirmado!');
-            } catch (e) { alert('Erro ao salvar. Verifique as Regras do Firebase.'); }
+            } catch (e) { alert('Erro ao salvar.'); }
         };
         window.svK = async () => {
             const n = document.getElementById('nK').value; const r = document.getElementById('rK').value;
@@ -116,7 +116,7 @@
         });
 
         window.copyL = () => {
-            const t = "*Lista Heitor*\n\n*Adultos:*\n" + ad.join("\n") + "\n\n*Crianças:*\n" + ki.join("\n");
+            const t = "*Lista Heitor 5 anos*\n\n*Adultos:*\n" + ad.join("\n") + "\n\n*Crianças:*\n" + ki.join("\n");
             navigator.clipboard.writeText(t).then(()=>alert('Lista Copiada!'));
         };
     </script>
@@ -128,7 +128,7 @@
             document.getElementById('tK').classList.toggle('active', t==='K');
         }
         function auth(){ if(document.getElementById('pass').value === '1234') document.body.classList.add('adm'); else alert('Senha Incorreta!'); }
-        function copyPix(){ navigator.clipboard.writeText('crispoparte@gmail.com').then(()=>alert('Pix Copiado!')); }
+        function copyPix(){ navigator.clipboard.writeText('71993233142').then(()=>alert('Pix Copiado!')); }
     </script>
 </body>
 </html>
