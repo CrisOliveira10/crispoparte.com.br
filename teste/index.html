@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Convite - Ruan 14 anos</title>
+    <title>Convite - Heitor 1 ano</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Montserrat:wght@400;700&family=Poppins:wght@400;700&display=swap');
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Inter', sans-serif; background-color: #D8D8DA; margin: 0 auto; max-width: 480px; min-height: 100dvh; display: flex; flex-direction: column; color: #333; }
+        body { font-family: 'Montserrat', sans-serif; background-color: #f8faf8; margin: 0 auto; max-width: 480px; min-height: 100dvh; display: flex; flex-direction: column; color: #333; }
         .banner { width: 100%; aspect-ratio: 1080 / 500; object-fit: cover; display: block; }
         .content { padding: 20px; flex: 1; }
         .card { background: white; border-radius: 18px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.05); }
-        .btn-3d { display: block; width: 100%; text-align: center; padding: 16px; border-radius: 12px; text-decoration: none; font-weight: 700; border: none; cursor: pointer; transition: 0.2s; background: #7C0404; color: white; box-shadow: 0 4px 0 rgba(0,0,0,0.2); margin-bottom: 12px; }
+        .btn-3d { display: block; width: 100%; text-align: center; padding: 16px; border-radius: 12px; text-decoration: none; font-weight: 700; border: none; cursor: pointer; transition: 0.2s; background: #710505; color: white; box-shadow: 0 4px 0 rgba(0,0,0,0.2); margin-bottom: 12px; }
         .btn-3d:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.2); }
         .tabs { display: flex; background: #eee; border-radius: 12px; padding: 4px; margin-bottom: 15px; }
         .tab { flex: 1; text-align: center; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: 600; color: #777; }
-        .tab.active { background: white; color: #7C0404; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .tab.active { background: white; color: #710505; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .form-section { display: none; } .form-section.active { display: block; }
         input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 10px; font-family: inherit; }
         .admin-area { background: #f9f9f9; border-radius: 15px; padding: 15px; text-align: center; margin-top: 20px; border: 1px dashed #ccc; }
@@ -26,9 +26,9 @@
     </style>
 </head>
 <body>
-    <img src="https://res.cloudinary.com/dlbft9sjz/image/upload/v1778888872/banner_r2lwbk.png" class="banner">
+    <img src="https://res.cloudinary.com/dlbft9sjz/image/upload/q_auto/f_auto/v1778888872/banner_r2lwbk.png" class="banner">
     <div class="content">
-        <h1 style="text-align:center; color:#7C0404">Ruan 14 anos</h1>
+        <h1 style="text-align:center; color:#710505">Heitor 1 ano</h1>
         <div class="card">
             <p>📅 <b>31 de dezembro, às 15h</b></p>
             <p>📍 Milmar Gelateria - próximo ao Farol da Barra</p>
@@ -36,7 +36,7 @@
         </div>
         
         <div class="card">
-            <h3 style="margin-top:0; font-size: 1.1rem; color:#7C0404; text-align: center;">Mimos e Presentes</h3>
+            <h3 style="margin-top:0; font-size: 1.1rem; color:#710505; text-align: center;">Mimos e Presentes</h3>
             <p style="text-align: center; font-size: 0.9rem; color: #555; margin-bottom: 20px;">Sua presença é nosso maior presente!</p>
             <a href="https://crispoparte.com.br/listadepresentesruan/" target="_blank" class="btn-3d" style="background:#fff3e0; color:#e65100; box-shadow:0 4px 0 #ffe0b2">🎁 Lista de Presentes</a>
             <button onclick="copyPix()" class="btn-3d" style="background:#e0f2f1; color:#00695c; box-shadow:0 4px 0 #b2dfdb">💰 Copiar Chave Pix</button>
@@ -53,7 +53,7 @@
                 <button class="btn-3d" onclick="svA()">Confirmar Presença</button>
             </div>
             <div id="fK" class="form-section">
-                <input type="text" id="nK" placeholder="Nome da Criança">
+                <input type="text" id="nK" placeholder="Nome da Criança -Idade">
                 <select id="rK"><option value="">Quem é o responsável?</option></select>
                 <button class="btn-3d" style="background:#f39c12; color:white;" onclick="svK()">Confirmar Criança</button>
             </div>
@@ -76,8 +76,8 @@
     </footer>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         
          const firebaseConfig = {
     apiKey: "AIzaSyAnY6A4mSu4MR9Opd-K502Z0wqiv23vpfQ",
@@ -89,9 +89,9 @@
   };
 
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const colA = collection(db, "festa-ruan14_A");
-        const colK = collection(db, "festa-ruan14_K");
+        const db = getFirestore(app, "formulario");
+        const colA = collection(db, "festa-heitor1ano_A");
+        const colK = collection(db, "festa-heitor1ano_K");
 
         window.svA = async () => {
             const n = document.getElementById('nA').value; if(!n) return alert('Digite seu nome!');
@@ -107,25 +107,40 @@
             } catch (e) { alert('Erro ao salvar no banco.'); }
         };
 
+        window.delA = async (id) => {
+            if(confirm('Remover este adulto da lista?')) {
+                await deleteDoc(doc(db, "festa-heitor1ano_A", id));
+            }
+        };
+
+        window.delK = async (id) => {
+            if(confirm('Remover esta criança da lista?')) {
+                await deleteDoc(doc(db, "festa-heitor1ano_K", id));
+            }
+        };
+
         let ad = []; let ki = [];
         onSnapshot(query(colA, orderBy("t")), (s) => {
            document.getElementById('st-db').innerText = "🟢 Online";
             const l = document.getElementById('lA'); const sel = document.getElementById('rK');
             l.innerHTML = '<h4>Adultos (' + s.size + ')</h4>'; sel.innerHTML = '<option value="">Responsável...</option>';
-            ad = []; s.forEach(doc => { 
-                const x = doc.data(); ad.push(x.n);
-                l.innerHTML += `<div class="item">${ad.length}. ${x.n}</div>`;
+            ad = []; s.forEach(docSnap => { 
+                const x = docSnap.data(); ad.push(x.n);
+                l.innerHTML += `<div class="item"><span>${ad.length}. ${x.n}</span> <span style="cursor:pointer; color:red; font-size:1.1rem;" onclick="delA('${docSnap.id}')" title="Excluir">❌</span></div>`;
                 sel.innerHTML += `<option value="${x.n}">${x.n}</option>`;
             });
         }, (e) => { document.getElementById('st-db').innerText = "🔴 Erro de Conexão"; });
 
         onSnapshot(query(colK, orderBy("t")), (s) => {
             const l = document.getElementById('lK'); l.innerHTML = '<br><h4>Crianças (' + s.size + ')</h4>'; ki = [];
-            s.forEach(doc => { const x = doc.data(); ki.push(x.n + " (com " + x.r + ")"); l.innerHTML += `<div class="item">${ki.length}. ${x.n} (com ${x.r})</div>`; });
+            s.forEach(docSnap => { 
+                const x = docSnap.data(); ki.push(x.n + " (com " + x.r + ")"); 
+                l.innerHTML += `<div class="item"><span>${ki.length}. ${x.n} (com ${x.r})</span> <span style="cursor:pointer; color:red; font-size:1.1rem;" onclick="delK('${docSnap.id}')" title="Excluir">❌</span></div>`; 
+            });
         });
 
         window.copyL = () => {
-            const t = "*Lista Ruan 14 anos*\n\n*Adultos:*\n" + ad.join("\n") + "\n\n*Crianças:*\n" + ki.join("\n");
+            const t = "*Lista Heitor 1 ano*\n\n*Adultos:*\n" + ad.join("\n") + "\n\n*Crianças:*\n" + ki.join("\n");
             navigator.clipboard.writeText(t).then(()=>alert('Lista Copiada!'));
         };
     </script>
