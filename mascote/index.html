@@ -1,48 +1,1183 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Painel</title>
-    <!-- Estilos omitidos para brevidade, mantenha os seus -->
-    <style>
-        body { background: #111a24; display: flex; justify-content: center; align-items: center; min-height: 100vh; font-family: sans-serif; }
-        .card-glass { background: rgba(255, 255, 255, 0.05); padding: 40px; border-radius: 24px; text-align: center; border: 1px solid #1dbab3; }
-        button { background: #1dbab3; border: none; padding: 15px; color: white; cursor: pointer; width: 100%; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Crispoparte - Gerador Inteligente V2.0</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<style>
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Segoe UI',sans-serif;
+    background:
+    radial-gradient(circle at top,#3b1a75,#0f172a);
+    min-height:100vh;
+    padding:30px;
+    color:#ffffff;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+}
+
+.logo-area{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.logo{
+    width:180px;
+    max-width:90%;
+}
+
+.card{
+    background:rgba(255,255,255,0.06);
+    backdrop-filter:blur(20px);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:24px;
+    padding:30px;
+    box-shadow:
+    0 20px 50px rgba(0,0,0,.35);
+}
+
+h1{
+    text-align:center;
+    margin-bottom:10px;
+    font-size:32px;
+}
+
+.subtitulo{
+    text-align:center;
+    color:#cbd5e1;
+    margin-bottom:30px;
+}
+
+h2{
+    margin-bottom:15px;
+    margin-top:10px;
+}
+
+hr{
+    border:none;
+    height:1px;
+    background:rgba(255,255,255,.1);
+    margin:30px 0;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:
+    repeat(auto-fit,minmax(250px,1fr));
+    gap:15px;
+}
+
+.campo{
+    margin-bottom:16px;
+}
+
+label{
+    display:block;
+    margin-bottom:6px;
+    font-size:14px;
+    color:#cbd5e1;
+}
+
+input,
+select,
+textarea{
+    width:100%;
+    padding:14px;
+    border-radius:14px;
+    border:none;
+    outline:none;
+    font-size:15px;
+
+    background:
+    rgba(15,23,42,.8);
+
+    color:#ffffff;
+
+    border:
+    1px solid rgba(255,255,255,.08);
+
+    transition:.25s;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+    border-color:#14b8a6;
+    box-shadow:
+    0 0 0 3px rgba(20,184,166,.15);
+}
+
+textarea{
+    resize:vertical;
+}
+
+.preview-box{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    margin-top:15px;
+    margin-bottom:20px;
+
+    min-height:220px;
+
+    border-radius:20px;
+
+    border:2px dashed rgba(255,255,255,.15);
+
+    overflow:hidden;
+}
+
+#preview{
+    max-width:100%;
+    max-height:450px;
+    display:none;
+}
+
+.btn-primary{
+
+    width:100%;
+
+    padding:16px;
+
+    border:none;
+
+    border-radius:14px;
+
+    cursor:pointer;
+
+    font-size:16px;
+
+    font-weight:700;
+
+    color:white;
+
+    background:
+    linear-gradient(
+    135deg,
+    #14b8a6,
+    #0f766e
+    );
+
+    transition:.25s;
+}
+
+.btn-primary:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+    0 12px 30px rgba(20,184,166,.3);
+
+}
+
+.btn-secondary{
+
+    flex:1;
+
+    padding:14px;
+
+    border:none;
+
+    border-radius:14px;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+    color:white;
+
+    background:#334155;
+
+    transition:.25s;
+}
+
+.btn-secondary:hover{
+
+    background:#475569;
+
+}
+
+.acoes{
+
+    display:flex;
+
+    gap:10px;
+
+    margin-top:15px;
+
+}
+
+#resultado{
+
+    min-height:350px;
+
+    font-family:
+    Consolas,
+    monospace;
+
+    line-height:1.6;
+
+}
+
+.status-box{
+
+    margin-top:15px;
+
+    padding:15px;
+
+    border-radius:14px;
+
+    background:
+    rgba(20,184,166,.1);
+
+    border:
+    1px solid rgba(20,184,166,.2);
+
+    display:none;
+}
+
+.loader{
+
+    width:28px;
+    height:28px;
+
+    border-radius:50%;
+
+    border:4px solid rgba(255,255,255,.15);
+
+    border-top:
+    4px solid #14b8a6;
+
+    animation:
+    girar 1s linear infinite;
+}
+
+@keyframes girar{
+
+    from{
+        transform:rotate(0deg);
+    }
+
+    to{
+        transform:rotate(360deg);
+    }
+
+}
+
+@media(max-width:768px){
+
+    body{
+        padding:15px;
+    }
+
+    .card{
+        padding:20px;
+    }
+
+    h1{
+        font-size:26px;
+    }
+
+    .acoes{
+        flex-direction:column;
+    }
+
+}
+
+</style>
+</style>
+
 </head>
+
 <body>
-    <div id="tela-login" class="card-glass">
-        <h2>Área Restrita</h2>
-        <input type="password" id="senha-acesso" placeholder="Senha">
-        <button id="btn-entrar" onclick="verificarSenha()">ENTRAR</button>
+
+<div class="container">
+
+    <!-- LOGO -->
+    <div class="logo-area">
+        <img
+            src="https://res.cloudinary.com/dtshawz5x/image/upload/v1780435649/logotipo_jhde8q.png"
+            alt="Crispoparte"
+            class="logo"
+        >
     </div>
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
-    
-    <script>
-        const firebaseConfig = { apiKey: "AIzaSyBas2xIT1YsC2NcTcJP0bCWW1ZuFZDb2RI", authDomain: "gerador-mascote.firebaseapp.com", projectId: "gerador-mascote", storageBucket: "gerador-mascote.firebasestorage.app", messagingSenderId: "709992550205", appId: "1:709992550205:web:bf9df2d56fb18a258d3f54" };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+    <div class="card">
 
-        function verificarSenha() {
-            const btn = document.getElementById('btn-entrar');
-            btn.innerText = "Conectando...";
-            const digitada = document.getElementById('senha-acesso').value.trim();
+        <h1>Gerador Inteligente de Mascotes</h1>
 
-            db.collection("acesso").doc("geradormascote").get()
-            .then((doc) => {
-                if (doc.exists && doc.data().senha_alunos == digitada) {
-                    alert("Acesso liberado!"); // Se vir isto, a ligação está perfeita!
-                } else {
-                    alert("Senha incorreta ou erro no banco.");
-                }
+        <p class="subtitulo">
+            Crie prompts profissionais para personagens infantis
+        </p>
+
+        <!-- CHAVE GEMINI -->
+        <div class="campo">
+            <label>Chave Gemini</label>
+
+            <input
+                type="password"
+                id="geminiKey"
+                placeholder="Cole sua chave Gemini aqui"
+            >
+        </div>
+
+        <!-- FOTO -->
+        <div class="campo">
+
+            <label>Foto da Criança</label>
+
+            <input
+                type="file"
+                id="foto"
+                accept="image/*"
+            >
+
+        </div>
+
+        <!-- PREVIEW -->
+
+        <div class="preview-box">
+
+            <img
+                id="preview"
+                src=""
+                alt=""
+            >
+
+        </div>
+
+        <button
+            id="btnAnalisar"
+            class="btn-primary"
+        >
+            🔍 ANALISAR FOTO
+        </button>
+
+        <hr>
+
+        <h2>Informações Detectadas</h2>
+
+        <div class="grid">
+
+            <div class="campo">
+                <label>Nome</label>
+                <input type="text" id="nome">
+            </div>
+
+            <div class="campo">
+                <label>Sexo</label>
+                <input type="text" id="sexo">
+            </div>
+
+            <div class="campo">
+                <label>Idade Aproximada</label>
+                <input type="text" id="idade">
+            </div>
+
+            <div class="campo">
+                <label>Cor da Pele</label>
+                <input type="text" id="pele">
+            </div>
+
+            <div class="campo">
+                <label>Cor dos Olhos</label>
+                <input type="text" id="olhos">
+            </div>
+
+            <div class="campo">
+                <label>Cor do Cabelo</label>
+                <input type="text" id="cabelo">
+            </div>
+
+            <div class="campo">
+                <label>Tipo de Cabelo</label>
+                <input type="text" id="tipoCabelo">
+            </div>
+
+            <div class="campo">
+                <label>Expressão</label>
+                <input type="text" id="expressao">
+            </div>
+
+        </div>
+
+        <hr>
+
+        <h2>Configuração da Arte</h2>
+
+        <div class="campo">
+
+            <label>Estilo</label>
+
+            <select id="estilo">
+
+                <option>Kawaii Chibi</option>
+
+                <option>Pixar 3D</option>
+
+                <option>Realista Premium</option>
+
+                <option>Cartoon</option>
+
+                <option>Mascote Profissional</option>
+
+            </select>
+
+        </div>
+
+        <div class="campo">
+
+            <label>Tema da Festa</label>
+
+            <input
+                type="text"
+                id="tema"
+                placeholder="Ex: Hulk e Homem-Aranha"
+            >
+
+        </div>
+
+        <div class="campo">
+
+            <label>Cenário</label>
+
+            <input
+                type="text"
+                id="cenario"
+                placeholder="Ex: Cidade dos Vingadores"
+            >
+
+        </div>
+
+        <div class="campo">
+
+            <label>Pose</label>
+
+            <input
+                type="text"
+                id="pose"
+                placeholder="Ex: segurando bolo e acenando"
+            >
+
+        </div>
+
+        <div class="campo">
+
+            <label>Sugestões de Pose</label>
+
+            <select id="poseSugestao">
+
+                <option value="">Selecionar</option>
+
+                <option>Em pé</option>
+
+                <option>Sentado</option>
+
+                <option>Pulando</option>
+
+                <option>Braços abertos</option>
+
+                <option>Segurando bolo</option>
+
+                <option>Fazendo sinal positivo</option>
+
+            </select>
+
+        </div>
+
+        <div class="campo">
+
+            <label>Fundo</label>
+
+            <select id="fundo">
+
+                <option>Transparente</option>
+
+                <option>Cenário Completo</option>
+
+                <option>Outro</option>
+
+            </select>
+
+        </div>
+
+        <div class="campo">
+
+            <label>Uso da Arte</label>
+
+            <select id="uso">
+
+                <option>Convite</option>
+
+                <option>Painel</option>
+
+                <option>Topo de Bolo</option>
+
+                <option>Personalizados</option>
+
+                <option>Outro</option>
+
+            </select>
+
+        </div>
+
+        <div class="campo">
+
+            <label>Detalhes Extras</label>
+
+            <textarea
+                id="detalhes"
+                rows="5"
+            ></textarea>
+
+        </div>
+
+        <button
+            id="btnPrompt"
+            class="btn-primary"
+        >
+            ✨ GERAR PROMPT
+        </button>
+
+        <hr>
+
+        <h2>Prompt Profissional</h2>
+
+        <textarea
+            id="resultado"
+            rows="16"
+        ></textarea>
+
+        <div class="acoes">
+
+            <button
+                id="btnCopiar"
+                class="btn-secondary"
+            >
+                Copiar Prompt
+            </button>
+
+            <button
+                id="btnTXT"
+                class="btn-secondary"
+            >
+                Baixar TXT
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+
+
+// ======================================
+// PREVIEW DA FOTO
+// ======================================
+
+const foto = document.getElementById("foto");
+const preview = document.getElementById("preview");
+
+foto.addEventListener("change", function(e){
+
+    const arquivo = e.target.files[0];
+
+    if(!arquivo) return;
+
+    const leitor = new FileReader();
+
+    leitor.onload = function(evento){
+
+        preview.src = evento.target.result;
+
+        preview.style.display = "block";
+
+    }
+
+    leitor.readAsDataURL(arquivo);
+
+});
+
+
+// ======================================
+// CONVERTER FOTO PARA BASE64
+// ======================================
+
+function arquivoParaBase64(file){
+
+    return new Promise((resolve,reject)=>{
+
+        const reader = new FileReader();
+
+        reader.onload = () => {
+
+            const resultado =
+            reader.result.split(",")[1];
+
+            resolve(resultado);
+
+        };
+
+        reader.onerror = error =>
+        reject(error);
+
+        reader.readAsDataURL(file);
+
+    });
+
+}
+
+
+// ======================================
+// ANALISAR FOTO COM GEMINI
+// ======================================
+
+document
+.getElementById("btnAnalisar")
+.addEventListener("click", analisarFoto);
+
+
+async function analisarFoto(){
+
+    const chave =
+    document
+    .getElementById("geminiKey")
+    .value
+    .trim();
+
+    if(!chave){
+
+        alert(
+        "Informe sua chave Gemini."
+        );
+
+        return;
+
+    }
+
+    const arquivo =
+    document
+    .getElementById("foto")
+    .files[0];
+
+    if(!arquivo){
+
+        alert(
+        "Selecione uma foto."
+        );
+
+        return;
+
+    }
+
+    try{
+
+        const imagemBase64 =
+        await arquivoParaBase64(
+        arquivo
+        );
+
+        const promptAnalise = `
+Analyze this child photo.
+
+Return ONLY JSON.
+
+{
+"sexo":"",
+"idade":"",
+"pele":"",
+"olhos":"",
+"cabelo":"",
+"tipoCabelo":"",
+"expressao":"",
+"acessorios":""
+}
+
+Rules:
+
+- Estimate age.
+- Describe skin tone.
+- Describe hair color.
+- Describe hair type.
+- Describe eye color if visible.
+- Describe facial expression.
+- Describe visible accessories.
+
+Return only valid JSON.
+`;
+
+        const resposta =
+        await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${chave}`,
+        {
+            method:"POST",
+
+            headers:{
+                "Content-Type":
+                "application/json"
+            },
+
+            body:JSON.stringify({
+
+                contents:[{
+
+                    parts:[
+
+                        {
+                            text:
+                            promptAnalise
+                        },
+
+                        {
+                            inline_data:{
+
+                                mime_type:
+                                arquivo.type,
+
+                                data:
+                                imagemBase64
+
+                            }
+                        }
+
+                    ]
+
+                }]
+
             })
-            .catch((error) => {
-                alert("Erro de conexão Firebase: " + error.message);
-            });
+
+        });
+
+      const dados =
+await resposta.json();
+
+console.log("RESPOSTA GEMINI:");
+console.log(dados);
+
+alert(JSON.stringify(dados,null,2));
+
+        const texto =
+        dados
+        ?.candidates?.[0]
+        ?.content?.parts?.[0]
+        ?.text;
+
+        if(!texto){
+
+            alert(
+            "Gemini não retornou resposta."
+            );
+
+            return;
+
         }
-    </script>
+
+        const jsonLimpo =
+        texto
+        .replace("```json","")
+        .replace("```","")
+        .trim();
+
+        const info =
+        JSON.parse(jsonLimpo);
+
+        document
+        .getElementById("sexo")
+        .value =
+        info.sexo || "";
+
+        document
+        .getElementById("idade")
+        .value =
+        info.idade || "";
+
+        document
+        .getElementById("pele")
+        .value =
+        info.pele || "";
+
+        document
+        .getElementById("olhos")
+        .value =
+        info.olhos || "";
+
+        document
+        .getElementById("cabelo")
+        .value =
+        info.cabelo || "";
+
+        document
+        .getElementById("tipoCabelo")
+        .value =
+        info.tipoCabelo || "";
+
+        document
+        .getElementById("expressao")
+        .value =
+        info.expressao || "";
+
+        alert(
+        "Foto analisada com sucesso!"
+        );
+
+    }
+
+    catch(erro){
+
+        console.error(
+        erro
+        );
+
+        alert(
+        "Erro ao analisar foto. Verifique sua chave Gemini."
+        );
+
+    }
+
+}
+
+
+
+// ======================================
+// POSE SUGERIDA
+// ======================================
+
+document
+.getElementById("poseSugestao")
+.addEventListener("change",function(){
+
+    if(this.value){
+
+        document
+        .getElementById("pose")
+        .value =
+        this.value;
+
+    }
+
+});
+
+
+// ======================================
+// MAPA DE ESTILOS
+// ======================================
+
+function obterEstilo(){
+
+    const estilo =
+    document
+    .getElementById("estilo")
+    .value;
+
+    const estilos = {
+
+        "Kawaii Chibi":
+        "kawaii chibi character, oversized head, adorable face, cute proportions, soft colors, highly detailed",
+
+        "Pixar 3D":
+        "pixar style 3d character, disney pixar quality, cinematic lighting, ultra detailed, professional render",
+
+        "Realista Premium":
+        "hyper realistic child portrait, realistic skin texture, cinematic photography, ultra detailed",
+
+        "Cartoon":
+        "high quality cartoon character, vibrant colors, expressive face, family friendly style",
+
+        "Mascote Profissional":
+        "professional mascot artwork, premium mascot design, clean lines, commercial quality"
+    };
+
+    return estilos[estilo];
+
+}
+
+
+// ======================================
+// GERAR PROMPT
+// ======================================
+
+document
+.getElementById("btnPrompt")
+.addEventListener("click",gerarPrompt);
+
+
+function gerarPrompt(){
+
+    const nome =
+    document
+    .getElementById("nome")
+    .value;
+
+    const sexo =
+    document
+    .getElementById("sexo")
+    .value;
+
+    const idade =
+    document
+    .getElementById("idade")
+    .value;
+
+    const pele =
+    document
+    .getElementById("pele")
+    .value;
+
+    const olhos =
+    document
+    .getElementById("olhos")
+    .value;
+
+    const cabelo =
+    document
+    .getElementById("cabelo")
+    .value;
+
+    const tipoCabelo =
+    document
+    .getElementById("tipoCabelo")
+    .value;
+
+    const expressao =
+    document
+    .getElementById("expressao")
+    .value;
+
+    const tema =
+    document
+    .getElementById("tema")
+    .value;
+
+    const cenario =
+    document
+    .getElementById("cenario")
+    .value;
+
+    const pose =
+    document
+    .getElementById("pose")
+    .value;
+
+    const uso =
+    document
+    .getElementById("uso")
+    .value;
+
+    const detalhes =
+    document
+    .getElementById("detalhes")
+    .value;
+
+    const fundo =
+    document
+    .getElementById("fundo")
+    .value;
+
+    const estiloFinal =
+    obterEstilo();
+
+    let fundoPrompt = "";
+
+    if(fundo === "Transparente"){
+
+        fundoPrompt = `
+transparent background,
+isolated character,
+full body,
+centered composition,
+clean png cutout,
+sticker style,
+no shadows,
+no objects around
+`;
+
+    }else{
+
+        fundoPrompt = `
+detailed background,
+themed environment,
+professional scene composition
+`;
+
+    }
+
+    const prompt = `
+
+Transform the child from the uploaded photo into a professional character artwork.
+
+IMPORTANT:
+
+Preserve exact facial identity.
+Preserve face shape.
+Preserve skin tone.
+Preserve hairstyle.
+Preserve eye color.
+Preserve age appearance.
+Preserve expression.
+
+Character Information:
+
+Name:
+${nome}
+
+Gender:
+${sexo}
+
+Age:
+${idade}
+
+Skin Tone:
+${pele}
+
+Eyes:
+${olhos}
+
+Hair Color:
+${cabelo}
+
+Hair Type:
+${tipoCabelo}
+
+Expression:
+${expressao}
+
+Theme:
+
+${tema}
+
+Scene:
+
+${cenario}
+
+Pose:
+
+${pose}
+
+Artwork Style:
+
+${estiloFinal}
+
+Background:
+
+${fundoPrompt}
+
+Usage:
+
+${uso}
+
+Additional Details:
+
+${detalhes}
+
+High quality.
+
+Ultra detailed.
+
+8K quality.
+
+Professional children's party artwork.
+
+Premium mascot design.
+
+Commercial quality.
+
+`;
+
+    document
+    .getElementById("resultado")
+    .value =
+    prompt.trim();
+
+}
+
+
+// ======================================
+// COPIAR PROMPT
+// ======================================
+
+document
+.getElementById("btnCopiar")
+.addEventListener("click",function(){
+
+    const area =
+    document
+    .getElementById("resultado");
+
+    area.select();
+
+    area.setSelectionRange(
+    0,
+    99999
+    );
+
+    navigator
+    .clipboard
+    .writeText(area.value);
+
+    alert(
+    "Prompt copiado!"
+    );
+
+});
+
+
+// ======================================
+// BAIXAR TXT
+// ======================================
+
+document
+.getElementById("btnTXT")
+.addEventListener("click",function(){
+
+    const texto =
+    document
+    .getElementById("resultado")
+    .value;
+
+    const blob =
+    new Blob(
+    [texto],
+    {
+        type:
+        "text/plain"
+    }
+    );
+
+    const link =
+    document
+    .createElement("a");
+
+    link.href =
+    URL.createObjectURL(blob);
+
+    link.download =
+    "Prompt-Crispoparte.txt";
+
+    link.click();
+
+});
+
+</script>
+
 </body>
 </html>
