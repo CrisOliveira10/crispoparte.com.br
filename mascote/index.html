@@ -2,70 +2,47 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Crispoparte - Painel de Criação</title>
+    <title>Painel</title>
+    <!-- Estilos omitidos para brevidade, mantenha os seus -->
     <style>
-        body { background: linear-gradient(135deg, #111a24, #1a2535, #111a24); color: white; min-height: 100dvh; display: flex; justify-content: center; align-items: center; }
-        .card-glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); border: 1px solid #1dbab3; border-radius: 24px; padding: 40px; text-align: center; width: 100%; max-width: 450px; }
-        .container-app { display: none; width: 100%; max-width: 450px; }
-        input { width: 100%; padding: 15px; margin-bottom: 20px; border-radius: 12px; background: rgba(0,0,0,0.3); color: white; border: 1px solid #fff; }
-        button { width: 100%; padding: 15px; border: none; border-radius: 12px; background: #1dbab3; color: white; font-weight: bold; cursor: pointer; }
+        body { background: #111a24; display: flex; justify-content: center; align-items: center; min-height: 100vh; font-family: sans-serif; }
+        .card-glass { background: rgba(255, 255, 255, 0.05); padding: 40px; border-radius: 24px; text-align: center; border: 1px solid #1dbab3; }
+        button { background: #1dbab3; border: none; padding: 15px; color: white; cursor: pointer; width: 100%; }
     </style>
 </head>
 <body>
-
     <div id="tela-login" class="card-glass">
         <h2>Área Restrita</h2>
-        <input type="password" id="senha-acesso" placeholder="Digite a senha...">
-        <button id="btn-entrar">ENTRAR</button>
+        <input type="password" id="senha-acesso" placeholder="Senha">
+        <button id="btn-entrar" onclick="verificarSenha()">ENTRAR</button>
     </div>
 
-    <div id="tela-app" class="card-glass container-app">
-        <h2>Transformação Mágica</h2>
-        <input type="file" id="upload-foto" accept="image/*">
-        <button id="btn-transformar">TRANSFORMAR IMAGEM</button>
-        <div id="resultado" style="margin-top:20px;"></div>
-    </div>
-
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+    
     <script>
-        const API_KEY = "AIzaSyDfpfq4sbFg_YvNMxgnU63bkpke_m-_-Gk"; // Sua chave já inserida
-        
         const firebaseConfig = { apiKey: "AIzaSyBas2xIT1YsC2NcTcJP0bCWW1ZuFZDb2RI", authDomain: "gerador-mascote.firebaseapp.com", projectId: "gerador-mascote", storageBucket: "gerador-mascote.firebasestorage.app", messagingSenderId: "709992550205", appId: "1:709992550205:web:bf9df2d56fb18a258d3f54" };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        document.getElementById('btn-entrar').addEventListener('click', () => {
+        function verificarSenha() {
+            const btn = document.getElementById('btn-entrar');
+            btn.innerText = "Conectando...";
             const digitada = document.getElementById('senha-acesso').value.trim();
-            db.collection("acesso").doc("geradormascote").get().then((doc) => {
+
+            db.collection("acesso").doc("geradormascote").get()
+            .then((doc) => {
                 if (doc.exists && doc.data().senha_alunos == digitada) {
-                    document.getElementById('tela-login').style.display = 'none';
-                    document.getElementById('tela-app').style.display = 'block';
-                } else { alert("Senha incorreta!"); }
+                    alert("Acesso liberado!"); // Se vir isto, a ligação está perfeita!
+                } else {
+                    alert("Senha incorreta ou erro no banco.");
+                }
+            })
+            .catch((error) => {
+                alert("Erro de conexão Firebase: " + error.message);
             });
-        });
-
-        document.getElementById('btn-transformar').addEventListener('click', async () => {
-            const btn = document.getElementById('btn-transformar');
-            btn.innerText = "Enviando para IA...";
-
-            // Aqui o Gemini recebe o texto. 
-            // DICA: Para enviar a imagem real, o Gemini exige que ela seja convertida em Base64.
-            try {
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: "Atue como um designer gráfico expert. Transforme a imagem que o usuário enviar num estilo 3D Pixar super fofo." }] }]
-                    })
-                });
-                const data = await response.json();
-                document.getElementById('resultado').innerText = "IA Recebeu o pedido! O seu app está 100% conectado.";
-            } catch(e) {
-                alert("Erro: " + e.message);
-            }
-        });
+        }
     </script>
 </body>
 </html>
