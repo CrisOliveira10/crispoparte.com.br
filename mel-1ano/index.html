@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Convite Especial Mel 1 Ano</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body {
+            background-color: #000;
+            display: flex; justify-content: center; align-items: center;
+            height: 100dvh; overflow: hidden; font-family: sans-serif;
+        }
+        .story-container {
+            width: 100%; max-width: 56.25dvh; height: 100dvh; position: relative; overflow: hidden;
+        }
+       /* Transição Cinematográfica com Blur e Zoom */
+        .page {
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background-size: cover; 
+            background-position: center;
+            opacity: 0; 
+            visibility: hidden;
+            
+            /* O segredo: Blur inicial e um leve zoom */
+            filter: blur(20px); 
+            transform: scale(1.05); 
+            
+            /* Duração de 1 segundo para ficar bem fluido */
+            transition: opacity 1s ease, filter 1s ease, transform 1s ease;
+            z-index: 10;
+        }
+
+        .page.active { 
+            opacity: 1; 
+            visibility: visible;
+            filter: blur(0px); /* O borrão desaparece quando a página ativa */
+            transform: scale(1); /* O zoom volta ao normal */
+        }
+        
+        /* Drag P1 */
+        #drag-el {
+            position: fixed;
+            bottom: 12%; /* Inicia na posição de retorno */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 80px;
+            background-image: url('https://res.cloudinary.com/dtshawz5x/image/upload/v1782230953/elemento_tdqwih.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            z-index: 9999;
+            cursor: grab;
+            touch-action: none;
+            animation: pulsar 2s infinite ease-in-out; /* Efeito de pulsar */
+        }
+
+        @keyframes pulsar {
+            0% { transform: translateX(-50%) scale(1); filter: brightness(1); }
+            50% { transform: translateX(-50%) scale(1.1); filter: brightness(1.2); }
+            100% { transform: translateX(-50%) scale(1); filter: brightness(1); }
+        }
+
+        /* P2 Video */
+        #video-p2 { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* Controles Laterais (Pular / Som) */
+        .controls-row {
+            position: absolute; bottom: 30px; left: 20px; right: 20px;
+            display: flex; justify-content: space-between; z-index: 100; pointer-events: none;
+        }
+        .control-btn {
+            pointer-events: auto; padding: 10px 20px; border-radius: 30px;
+            background: rgba(0,0,0,0.6); color: #fff; border: 1px solid rgba(255,255,255,0.3);
+            font-size: 12px; font-weight: bold; cursor: pointer; backdrop-filter: blur(4px);
+        }
+
+        /* Hotspots & Retorno */
+        .hotspot { position: absolute; z-index: 40; cursor: pointer; }
+        .btn-back {
+            position: absolute; top: 20px; left: 20px; padding: 8px 16px;
+            background: rgba(0,0,0,0.5); color: #fff; border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; z-index: 60;
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bg-music" src="audio.mp3" loop playsinline></audio>
+
+    <div class="story-container">
+        
+        <div class="controls-row">
+            <button id="btn-sound" class="control-btn" onclick="toggleSound()">🔊 SOM</button>
+            <button id="btn-skip" class="control-btn" style="display:none;" onclick="skipP2()">PULAR ➔</button>
+        </div>
+
+        <div id="page-1" class="page active" style="background-image: url('https://res.cloudinary.com/dtshawz5x/image/upload/v1782231689/pagina1_sz4xmt.jpg');">
+            <div id="drag-el"></div>
+        </div>
+
+        <div id="page-2" class="page" style="background-color: #000;">
+            <video id="video-p2" src="video_intro.mp4" playsinline webkit-playsinline></video>
+        </div>
+
+        <div id="page-3" class="page" style="background-image: url('https://res.cloudinary.com/dtshawz5x/image/upload/v1782222593/pagina3_lofl13.jpg');">
+      <a href="https://wa.me/5571993233142" target="_blank" class="hotspot" style="top:49.34%; left:10.74%; width:26.41%; height:19.92%;"></a>
+      <a href="https://maps.app.goo.gl/HFHwpFUTUmKPLjcHA" target="_blank" class="hotspot" style="top:48.38%; left:40.67%; width:24.30%; height:20.89%;"></a>
+      <div class="hotspot" onclick="goToPage(4)" style="top:47.99%; left:67.43%; width:23.94%; height:21.08%;"></div>
+        </div>
+
+        <div id="page-4" class="page" style="background-image: url('https://res.cloudinary.com/dtshawz5x/image/upload/v1782222618/pagina4_b1amox.jpg');">
+            <button class="btn-back" onclick="goToPage(3)">✕ Voltar</button>
+
+        </div>
+
+
+    </div>
+
+    <script>
+        const audio = document.getElementById('bg-music');
+        const dragEl = document.getElementById('drag-el');
+        const btnSkip = document.getElementById('btn-skip');
+        const btnSound = document.getElementById('btn-sound');
+        const isVideo = true;
+
+      // Lógica de Arrastar Livre
+        let isDragging = false;
+        let offsetX, offsetY;
+
+        // Captura o evento corretamente seja no rato (PC) ou no toque (Mobile)
+        const getEvent = (e) => (e.touches && e.touches.length > 0) ? e.touches[0] : e;
+
+        const startDrag = (e) => {
+            // Evita o "drag nativo" fantasma de imagens no navegador do computador
+            if (e.type === 'mousedown') e.preventDefault(); 
+            
+            isDragging = true;
+            dragEl.style.animation = 'none'; // Para de pulsar ao tocar
+            
+            const evt = getEvent(e);
+            const rect = dragEl.getBoundingClientRect();
+            
+            // Pega a distância exata entre o clique e o canto do elemento
+            offsetX = evt.clientX - rect.left;
+            offsetY = evt.clientY - rect.top;
+            
+            dragEl.style.transition = 'none';
+        };
+
+        const dragMove = (e) => {
+            if(!isDragging) return;
+            if(e.cancelable) e.preventDefault();
+            
+            const evt = getEvent(e);
+            
+            // Onde o elemento deveria ficar em relação ao monitor inteiro
+            const targetX = evt.clientX - offsetX;
+            const targetY = evt.clientY - offsetY;
+            
+            // Descobre a posição atual do contêiner pai (.page) no monitor
+            const parentRect = dragEl.parentElement.getBoundingClientRect();
+            
+            // Subtrai a posição do pai para que o elemento não seja arremessado para fora no PC
+            dragEl.style.left = (targetX - parentRect.left) + 'px';
+            dragEl.style.top = (targetY - parentRect.top) + 'px';
+            dragEl.style.bottom = 'auto';
+            dragEl.style.transform = 'none'; 
+        };
+
+        const endDrag = (e) => {
+            if(!isDragging) return;
+            isDragging = false;
+            dragEl.style.animation = 'pulsar 2s infinite ease-in-out'; // Volta a pulsar
+
+            const rect = dragEl.getBoundingClientRect();
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            
+            // Verifica se chegou ao centro
+            const distX = Math.abs((rect.left + rect.width/2) - centerX);
+            const distY = Math.abs((rect.top + rect.height/2) - centerY);
+            
+            if (distX < 100 && distY < 100) {
+                 audio.play().catch(e => console.log(e));
+                 goToPage(2);
+            }
+        };
+
+        // Eventos unificados
+        dragEl.addEventListener('mousedown', startDrag);
+        dragEl.addEventListener('touchstart', startDrag, {passive: false});
+        window.addEventListener('mousemove', dragMove);
+        window.addEventListener('touchmove', dragMove, {passive: false});
+        window.addEventListener('mouseup', endDrag);
+        window.addEventListener('touchend', endDrag);
+
+        function goToPage(num) {
+            // Verifica se a página destino existe no código antes de tentar abrir
+            const targetPage = document.getElementById('page-' + num);
+            if (!targetPage) return; 
+
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            targetPage.classList.add('active');
+
+            if (num === 2) {
+                btnSkip.style.display = 'block';
+                if (isVideo) {
+                    const vid = document.getElementById('video-p2');
+                    vid.currentTime = 0;
+                    vid.play();
+                    vid.onended = () => { goToPage(3) };
+                } else {
+                    setTimeout(() => { if(document.getElementById('page-2').classList.contains('active')) goToPage(3); }, 5000);
+                }
+            } else {
+                btnSkip.style.display = 'none';
+                if(isVideo) {
+                    const vid = document.getElementById('video-p2');
+                    if(vid) vid.pause();
+                }
+            }
+        }
+
+        function skipP2() { goToPage(3); }
+
+        function toggleSound() {
+            if(audio.paused) { audio.play(); btnSound.innerHTML = '🔊 SOM'; }
+            else { audio.pause(); btnSound.innerHTML = '🔇 MUTADO'; }
+        }
+    </script>
+</body>
+</html>
