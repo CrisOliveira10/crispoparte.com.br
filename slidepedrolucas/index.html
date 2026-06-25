@@ -1,0 +1,394 @@
+
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Slide Fotos</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+background:#000;
+overflow:hidden;
+touch-action:pan-y;
+font-family:Arial,sans-serif;
+}
+
+.slider{
+position:relative;
+width:100vw;
+height:100vh;
+overflow:hidden;
+}
+
+.slides{
+display:flex;
+height:100%;
+transition:transform .4s ease;
+}
+
+.slide{
+min-width:100vw;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:#000;
+}
+
+.slide img{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+.nav{
+position:absolute;
+top:50%;
+transform:translateY(-50%);
+width:55px;
+height:55px;
+border:none;
+border-radius:50%;
+background:rgba(255,255,255,.25);
+backdrop-filter:blur(6px);
+color:#fff;
+font-size:24px;
+cursor:pointer;
+z-index:10;
+}
+
+.prev{
+left:15px;
+}
+
+.next{
+right:15px;
+}
+
+/* =========================
+BOTÃO ABRIR GALERIA
+========================= */
+
+.open-gallery{
+position:fixed;
+bottom:30px;
+left:50%;
+transform:translateX(-50%);
+padding:16px 28px;
+border:none;
+border-radius:50px;
+background:#e50914;
+color:#fff;
+font-size:18px;
+font-weight:bold;
+cursor:pointer;
+z-index:20;
+box-shadow:0 10px 30px rgba(0,0,0,.35);
+}
+
+/* =========================
+MODAL NETFLIX
+========================= */
+
+.gallery-modal{
+position:fixed;
+inset:0;
+background:#000;
+z-index:9999;
+display:none;
+justify-content:center;
+align-items:center;
+overflow:hidden;
+animation:fade .4s ease;
+}
+
+.gallery-modal.active{
+display:flex;
+}
+
+/* =========================
+FECHAR
+========================= */
+
+.close-gallery{
+position:absolute;
+top:20px;
+left:20px;
+border:none;
+background:rgba(255,255,255,.15);
+color:#fff;
+padding:12px 20px;
+border-radius:50px;
+font-size:16px;
+cursor:pointer;
+z-index:30;
+backdrop-filter:blur(8px);
+}
+/* =========================
+ANIMAÇÃO
+========================= */
+
+@keyframes fade{
+
+from{
+opacity:0;
+transform:scale(1.03);
+}
+
+to{
+opacity:1;
+transform:scale(1);
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+
+<div
+class="gallery-modal active"
+id="galleryModal">
+<button
+class="close-gallery"
+onclick="closeGallery()">
+
+← Voltar
+
+</button>
+
+<div class="slider">
+
+<div class="slides" id="slides">
+
+
+
+<div class="slide">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1782405325/Pedro%20lucas/zbpj8jhiohtoz3ajhf6n.png">
+</div>
+
+
+
+<div class="slide">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1782405341/Pedro%20lucas/ue8yecdudleiosrsodlr.png">
+</div>
+
+
+
+<div class="slide">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1782405309/Pedro%20lucas/uffiqfnrlr8pfkuojwk3.png">
+</div>
+
+
+
+<div class="slide">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1782405354/Pedro%20lucas/rwfbqdvq2jle2vqbsd30.png">
+</div>
+
+
+
+<div class="slide">
+<img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1782405387/Pedro%20lucas/yzoi3abicwhod3pfqm9v.png">
+</div>
+
+
+
+</div>
+
+<button
+class="nav prev"
+onclick="prevSlide()">
+
+❮
+
+</button>
+
+<button
+class="nav next"
+onclick="nextSlide()">
+
+❯
+
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+const slidesContainer =
+document.getElementById("slides");
+
+const total = 5;
+
+let index = 0;
+
+/* =========================
+ATUALIZAR SLIDE
+========================= */
+
+function updateSlide(){
+
+slidesContainer.style.transform =
+`translateX(-${index * 100}vw)`;
+
+}
+
+/* =========================
+PRÓXIMO
+========================= */
+
+function nextSlide(){
+
+index++;
+
+if(index >= total){
+
+index = 0;
+
+}
+
+updateSlide();
+
+}
+
+/* =========================
+ANTERIOR
+========================= */
+
+function prevSlide(){
+
+index--;
+
+if(index < 0){
+
+index = total - 1;
+
+}
+
+updateSlide();
+
+}
+
+/* =========================
+SWIPE MOBILE
+========================= */
+
+let startX = 0;
+
+let endX = 0;
+
+document.addEventListener(
+"touchstart",
+e=>{
+
+startX =
+e.changedTouches[0].screenX;
+
+}
+);
+
+document.addEventListener(
+"touchend",
+e=>{
+
+endX =
+e.changedTouches[0].screenX;
+
+handleSwipe();
+
+}
+);
+
+function handleSwipe(){
+
+if(startX - endX > 50){
+
+nextSlide();
+
+}
+
+if(endX - startX > 50){
+
+prevSlide();
+
+}
+
+}
+
+/* =========================
+ABRIR MODAL
+========================= */
+
+function openGallery(){
+
+document
+.getElementById("galleryModal")
+.classList.add("active");
+
+}
+
+/* =========================
+FECHAR MODAL
+========================= */
+
+/* =========================
+FECHAR MODAL (CAMINHO DE VOLTA)
+========================= */
+function closeGallery() {
+    // 1. Tenta pegar a URL de retorno via parâmetro ?ref= na barra de endereço
+    const params = new URLSearchParams(window.location.search);
+    const returnUrl = params.get("ref");
+
+    if (returnUrl) {
+        // Se existir o parâmetro ?ref=, ele volta para lá (Ex: seu convite no Canva)
+        window.location.href = decodeURIComponent(returnUrl);
+    } else if (document.referrer && document.referrer.includes("crispoparte.com.br")) {
+        // 2. Se não tiver parâmetro, mas o navegador souber que veio do seu domínio
+        window.location.href = document.referrer;
+    } else {
+        // 3. Fallback total: Volta no histórico ou tenta fechar
+        if (window.history.length > 1) {
+            history.back();
+        } else {
+            // Se tudo falhar, ele tenta fechar a aba (comum em mobile)
+            window.close();
+        }
+    }
+}
+
+
+/* =========================
+AUTOPLAY
+========================= */
+
+setInterval(()=>{
+
+nextSlide();
+
+},5000);
+
+</script>
+
+</body>
+</html>
+
