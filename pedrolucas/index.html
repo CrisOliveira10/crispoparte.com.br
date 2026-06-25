@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Convite Especial Pedro Lucas 1 ano</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body {
+            background-color: #000;
+            display: flex; justify-content: center; align-items: center;
+            height: 100dvh; overflow: hidden; font-family: sans-serif;
+        }
+        .story-container {
+            width: 100%; max-width: 56.25dvh; height: 100dvh; position: relative; overflow: hidden;
+        }
+       /* Transição Cinematográfica com Blur e Zoom */
+        .page {
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background-size: cover; 
+            background-position: center;
+            opacity: 0; 
+            visibility: hidden;
+            filter: blur(20px); 
+            transform: scale(1.05); 
+            transition: opacity 1s ease, filter 1s ease, transform 1s ease;
+            z-index: 10;
+        }
+
+        .page.active { 
+            opacity: 1; 
+            visibility: visible;
+            filter: blur(0px); 
+            transform: scale(1); 
+        }
+        
+        /* Controles Gamer */
+        .gamer-controls {
+            position: absolute; bottom: 5%; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 15px; z-index: 100;
+        }
+        .btn-gamer {
+            width: 55px; height: 55px; background: rgba(255,255,255,0.2); 
+            border: 2px solid rgba(255,255,255,0.6); border-radius: 12px; 
+            font-size: 24px; color: #fff; display: flex; justify-content: center; 
+            align-items: center; cursor: pointer; backdrop-filter: blur(5px);
+            user-select: none; -webkit-user-select: none;
+        }
+        .btn-gamer:active { background: rgba(255,255,255,0.5); transform: scale(0.90); }
+
+        /* Personagem e Bloco Alvo */
+        #character {
+            position: absolute; bottom: 15%; left: 50%; transform: translateX(-50%);
+            width: 180px; height: 180px; background-image: url('https://res.cloudinary.com/dtshawz5x/image/upload/v1782247329/elemento_15x150_pvkybh.gif');
+            background-size: contain; background-repeat: no-repeat; background-position: center bottom;
+            transition: bottom 0.3s cubic-bezier(0.25, 1, 0.5, 1), left 0.2s ease; z-index: 90;
+        }
+        
+        #target-block {
+            position: absolute; top: 35%; left: 50%; transform: translateX(-50%);
+            width: 70px; height: 70px; 
+            background-image: url('https://res.cloudinary.com/dtshawz5x/image/upload/v1782401639/alvo_bn8mof.gif');
+            background-size: contain; background-repeat: no-repeat; background-position: center;
+            z-index: 80;
+            transition: transform 0.1s ease;
+        }
+
+        /* P2 Video */
+        #video-p2 { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* Controles Laterais (Pular / Som) */
+        .controls-row {
+            position: absolute; bottom: 30px; left: 20px; right: 20px;
+            display: flex; justify-content: space-between; z-index: 100; pointer-events: none;
+        }
+        .control-btn {
+            pointer-events: auto; padding: 10px 20px; border-radius: 30px;
+            background: rgba(0,0,0,0.6); color: #fff; border: 1px solid rgba(255,255,255,0.3);
+            font-size: 12px; font-weight: bold; cursor: pointer; backdrop-filter: blur(4px);
+        }
+
+        /* Hotspots & Retorno */
+        .hotspot { position: absolute; z-index: 40; cursor: pointer; }
+        .btn-back {
+            position: absolute; top: 20px; left: 20px; padding: 8px 16px;
+            background: rgba(0,0,0,0.5); color: #fff; border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; z-index: 60;
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="bg-music" src="audio.mp3" loop playsinline></audio>
+    <audio id="sfx-teclas" src="https://res.cloudinary.com/dtshawz5x/video/upload/v1782251564/teclas_vtx07e.mp3" preload="auto"></audio>
+    <audio id="sfx-bloco" src="https://res.cloudinary.com/dtshawz5x/video/upload/v1782251566/blocoalvo_cwb8dj.mp3" preload="auto"></audio>
+
+    <div class="story-container">        
+        <div class="controls-row">
+            <button id="btn-sound" class="control-btn" onclick="toggleSound()">🔊 SOM</button>
+            <button id="btn-skip" class="control-btn" style="display:none;" onclick="skipP2()">PULAR ➔</button>
+        </div>
+
+        <div id="page-1" class="page active" style="background-image: url('https://res.cloudinary.com/dtshawz5x/image/upload/v1782401578/pagina1_y45glg.gif');">
+            <div id="target-block"></div>
+            <div id="character"></div>
+            
+            <div class="gamer-controls">
+                <div class="btn-gamer" id="btn-left">◀</div>
+                <div class="btn-gamer" id="btn-jump">▲</div>
+                <div class="btn-gamer" id="btn-right">▶</div>
+            </div>
+        </div>
+
+        <div id="page-2" class="page" style="background-color: #000;">
+            <video id="video-p2" src="video_intro.mp4" playsinline webkit-playsinline></video>
+        </div>
+
+        <div id="page-3" class="page" style="background-image: url('https://res.cloudinary.com/dtshawz5x/image/upload/v1782401690/pagina3_kfy4cl.gif');">
+      <a href="https://maps.app.goo.gl/HFHwpFUTUmKPLjcHA" target="_blank" class="hotspot" style="top:48.18%; left:19.19%; width:61.27%; height:7.35%;"></a>
+      <a href="https://wa.me/5571993233142" target="_blank" class="hotspot" style="top:58.44%; left:18.84%; width:61.62%; height:7.35%;"></a>
+      <div class="hotspot" onclick="goToPage(4)" style="top:66.75%; left:19.19%; width:60.92%; height:7.93%;"></div>
+        </div>
+
+        <div id="page-4" class="page" style="background-image: url('https://res.cloudinary.com/dtshawz5x/image/upload/v1782255993/pagina4_ggqbvp.jpg');">
+            <button class="btn-back" onclick="goToPage(3)">✕ Voltar</button>
+
+        </div>
+
+
+    </div>
+
+    <script>
+        const audio = document.getElementById('bg-music');
+        const btnSkip = document.getElementById('btn-skip');
+        const btnSound = document.getElementById('btn-sound');
+        const isVideo = true;
+
+        // Lógica Gamer (Movimento e Colisão)
+        const charEl = document.getElementById('character');
+        const targetBlock = document.getElementById('target-block');
+        
+        // Mapeamento dos efeitos sonoros
+        const sfxTeclas = document.getElementById('sfx-teclas');
+        const sfxBloco = document.getElementById('sfx-bloco');
+
+        // Função para tocar o som do botão permitindo cliques rápidos
+        const playSfxTecla = () => {
+            sfxTeclas.currentTime = 0;
+            sfxTeclas.play().catch(e => console.log('Áudio bloqueado pelo navegador', e));
+        };
+
+        let posX = 50; 
+        let isJumping = false;
+
+        const moveLeft = () => { playSfxTecla(); if (posX > 15) posX -= 20; charEl.style.left = posX + '%'; };
+        const moveRight = () => { playSfxTecla(); if (posX < 85) posX += 20; charEl.style.left = posX + '%'; };
+        
+        const jump = () => {
+            if (isJumping) return;
+            playSfxTecla();
+            isJumping = true;
+            charEl.style.bottom = '50%'; 
+            
+            setTimeout(() => {
+                checkCollision();
+                charEl.style.bottom = '15%'; 
+                setTimeout(() => { isJumping = false; }, 300); 
+            }, 300); 
+        };
+
+        const checkCollision = () => {
+            // Trava para não registrar múltiplas colisões durante os 2 segundos
+            if (targetBlock.dataset.hit === 'true') return; 
+
+            const charRect = charEl.getBoundingClientRect();
+            const blockRect = targetBlock.getBoundingClientRect();
+
+            if (charRect.left < blockRect.right &&
+                charRect.right > blockRect.left &&
+                charRect.top < blockRect.bottom &&
+                charRect.bottom > blockRect.top) {
+                
+                targetBlock.dataset.hit = 'true'; // Ativa a trava
+
+                // Toca o som de acerto
+                sfxBloco.currentTime = 0;
+                sfxBloco.play().catch(e => {});
+
+                // ANIMAÇÃO GAMER: Pulo e Zoom
+                // Passo 1: O bloco pula para cima e aumenta um pouco
+                targetBlock.style.transition = 'all 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
+                targetBlock.style.transform = 'translateX(-50%) translateY(-50px) scale(1.3)'; 
+                
+                // Passo 2: O bloco volta para a base, dá um mega zoom e esmaece (efeito transição)
+                setTimeout(() => {
+                    targetBlock.style.transform = 'translateX(-50%) translateY(0px) scale(3)'; 
+                    targetBlock.style.opacity = '0'; 
+                }, 400);
+                
+                // Aguarda 2 segundos para transição de tela
+                setTimeout(() => {
+                    // CORREÇÃO 1: Muta e zera o efeito sonoro do bloco alvo
+                    sfxBloco.pause(); 
+                    sfxBloco.currentTime = 0;
+                    
+                    // Inicia áudio principal e vai para Página 2
+                    audio.play().catch(e => console.log(e));
+                    goToPage(2);
+                }, 2000);
+            }
+        };
+
+        const btnL = document.getElementById('btn-left');
+        const btnR = document.getElementById('btn-right');
+        const btnJ = document.getElementById('btn-jump');
+
+        btnL.addEventListener('touchstart', (e) => { e.preventDefault(); moveLeft(); }, {passive: false});
+        btnL.addEventListener('mousedown', moveLeft);
+
+        btnR.addEventListener('touchstart', (e) => { e.preventDefault(); moveRight(); }, {passive: false});
+        btnR.addEventListener('mousedown', moveRight);
+
+        btnJ.addEventListener('touchstart', (e) => { e.preventDefault(); jump(); }, {passive: false});
+        btnJ.addEventListener('mousedown', jump);
+
+        function goToPage(num) {
+            const targetPage = document.getElementById('page-' + num);
+            if (!targetPage) return; 
+
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            targetPage.classList.add('active');
+
+            if (num === 2) {
+                btnSkip.style.display = 'block';
+                if (isVideo) {
+                    const vid = document.getElementById('video-p2');
+                    vid.currentTime = 0;
+                    vid.play();
+                    vid.onended = () => { goToPage(3) };
+                } else {
+                    setTimeout(() => { if(document.getElementById('page-2').classList.contains('active')) goToPage(3); }, 5000);
+                }
+            } else {
+                btnSkip.style.display = 'none';
+                if(isVideo) {
+                    const vid = document.getElementById('video-p2');
+                    if(vid) vid.pause();
+                }
+            }
+        }
+
+        function skipP2() { goToPage(3); }
+
+        function toggleSound() {
+            if(audio.paused) { audio.play(); btnSound.innerHTML = '🔊 SOM'; }
+            else { audio.pause(); btnSound.innerHTML = '🔇 MUTADO'; }
+        }
+    </script>
+</body>
+</html>
