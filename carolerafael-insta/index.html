@@ -7,6 +7,8 @@
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
     <style>
         .aba-comentarios { position: absolute; bottom: 0; width: 100%; height: 55%; background: #fff; border-radius: 20px 20px 0 0; display: none; flex-direction: column; z-index: 2100; box-shadow: 0 -5px 15px rgba(0,0,0,0.3); animation: subir 0.3s ease; }
@@ -73,6 +75,7 @@
         </div>
     </header>
     <main class="galeria-grid" id="feedGaleria"></main>
+    <button id="btnBaixarTudoZip" class="btn-principal-festa" style="margin-top: 20px; margin-bottom: 30px; display: none; background-color: #333;">📦 Baixar Tudo (ZIP)</button>
 </div>
 
 <div id="cameraContainer" class="camera-container">
@@ -149,7 +152,7 @@
     
     const IMGBB_API_KEY = "aa0c9dc6122e459a16cf1f6e8d9d3686";
     const EVENTO_ID = "carol_rafael"; 
-    const LINK_VIDEO_EXTERNO = "";
+    const LINK_VIDEO_EXTERNO = "https://crispoparte.com.br/carolerafael-molduravideo/";
 
     try {
         const app = initializeApp(firebaseConfig);
@@ -230,15 +233,21 @@
             }
         });
 
+        let urlsParaZip = []; // Lista que vai guardar as fotos
+
         onSnapshot(query(collection(db, "eventos/" + EVENTO_ID + "/postagens"), orderBy("data_envio", "desc")), (snap) => {
             const feed = document.getElementById('feedGaleria');
             feed.innerHTML = "";
             let totalC = 0, totalComent = 0;
+            urlsParaZip = []; // Limpa a lista a cada atualização
 
             snap.forEach(docSnap => {
                 const p = docSnap.data();
                 totalC += (p.curtidas || 0);
                 totalComent += (p.total_comentarios || 0);
+                
+                if (p.url_imagem) urlsParaZip.push(p.url_imagem); // Guarda a URL da foto para o ZIP
+
                 const card = document.createElement('div');
                 card.className = 'post-container';
                 card.innerHTML = '<div class="media-wrapper" style="cursor: pointer;" onclick="window.abrirModal(\'' + p.url_imagem + '\', \'' + docSnap.id + '\', ' + (p.curtidas || 0) + ')">' +
@@ -249,10 +258,50 @@
                 feed.appendChild(card);
             });
 
+            // Mostra o botão de baixar tudo apenas se houver fotos
+            const btnZip = document.getElementById('btnBaixarTudoZip');
+            if(btnZip) btnZip.style.display = snap.size > 0 ? 'block' : 'none';
+
             document.getElementById('totalFotos').textContent = snap.size;
             document.getElementById('totalCurtidas').textContent = totalC;
             document.getElementById('totalComentariosGeral').textContent = totalComent;
         });
+// FUNÇÃO DE BAIXAR TUDO EM ZIP
+        document.getElementById('btnBaixarTudoZip').onclick = async () => {
+            if (urlsParaZip.length === 0) return alert("Nenhuma foto disponível para baixar.");
+            
+            const btn = document.getElementById('btnBaixarTudoZip');
+            const textoOriginal = btn.innerHTML;
+            btn.innerHTML = "⏳ Empacotando... (Pode demorar)";
+            btn.disabled = true;
+
+            try {
+                const zip = new JSZip();
+                const pasta = zip.folder("Fotos_" + EVENTO_ID);
+                
+                for (let i = 0; i < urlsParaZip.length; i++) {
+                    try {
+                        // nocache ajuda a evitar bloqueios do navegador ao baixar do ImgBB
+                        const res = await fetch(urlsParaZip[i] + "?nocache=" + new Date().getTime());
+                        const blob = await res.blob();
+                        pasta.file("Foto_" + (i + 1) + ".jpg", blob);
+                    } catch(err) {
+                        console.error("Erro ao baixar a foto " + (i+1), err);
+                    }
+                }
+
+                btn.innerHTML = "📦 Gerando ZIP...";
+                const conteudo = await zip.generateAsync({ type: "blob" });
+                saveAs(conteudo, "Instamomentos_" + EVENTO_ID + ".zip");
+                
+                alert("Download concluído com sucesso!");
+            } catch (erroZip) {
+                alert("Aviso: Erro ao gerar o arquivo ZIP. " + erroZip.message);
+            } finally {
+                btn.innerHTML = textoOriginal;
+                btn.disabled = false;
+            }
+        };
 
         window.abrirModal = (url, id, curtidas) => {
             document.getElementById('imgModalExpandida').src = url;
