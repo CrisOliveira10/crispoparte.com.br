@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Turma da Gigi 5 Anos - Instamomentos</title>
+    
+    <!-- Bibliotecas auxiliares: Cropper.js e JSZip para compactação de arquivos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <style>
+        :root { --cor-fundo: #121212; --cor-texto: #ffffff; --cor-destaque: #9d0303; --cor-secundaria: #8E8E8E; --card-bg: #1e1e1e; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--cor-fundo); color: var(--cor-texto); min-height: 100dvh; display: flex; flex-direction: column; overflow-x: hidden; }
+        
+        /* TELA DE CAPA (STORY 9:16) */
+        #storyCapaScreen {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100dvh;
+            background-color: #000;
+            z-index: 99999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        #storyCapaScreen img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            cursor: pointer;
+        }
+
+        /* App Principal */
+        #mainAppContainer {
+            display: flex;
+            flex-direction: column;
+            min-height: 100dvh;
+            width: 100%;
+        }
+
+        .event-header { width: 100%; background-color: #000; overflow: hidden; }
+        .event-header img { width: 100%; height: 180px; display: block; object-fit: cover; }
+        .event-info { text-align: center; padding: 12px; background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(18,18,18,1) 100%); }
+        .event-info h1 { font-size: 1.3rem; color: var(--cor-destaque); margin-bottom: 3px; font-weight: bold; }
+        .event-info p { font-size: 0.8rem; color: #aaa; }
+
+        .nav-tabs { display: flex; background-color: var(--card-bg); border-bottom: 2px solid #333; }
+        .tab-btn { flex: 1; padding: 12px 6px; background: none; border: none; color: #888; font-weight: bold; font-size: 0.8rem; cursor: pointer; text-align: center; transition: 0.3s; white-space: nowrap; }
+        .tab-btn.active { color: var(--cor-destaque); border-bottom: 3px solid var(--cor-destaque); background-color: rgba(255, 51, 102, 0.05); }
+
+        .container-conteudo { padding: 15px; max-width: 600px; margin: 0 auto; width: 100%; flex: 1; }
+        .section-tab { display: none; }
+        .section-tab.active { display: block; }
+
+        .capture-box { background: var(--card-bg); padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .capture-box h3 { margin-bottom: 5px; font-size: 1.1rem; }
+        .options-group { margin: 15px 0; display: flex; justify-content: center; gap: 15px; font-size: 0.9rem; color: #ccc; }
+        .btn-acao { background-color: var(--cor-destaque); color: white; border: none; padding: 12px 20px; border-radius: 30px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; font-size: 0.95rem; box-shadow: 0 4px 12px rgba(255, 51, 102, 0.3); }
+        .btn-secundario { background-color: #333; color: #fff; box-shadow: none; }
+
+        .feed-grid { display: flex; flex-direction: column; gap: 20px; }
+        .feed-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .media-container { position: relative; width: 100%; background: #000; display: flex; justify-content: center; align-items: center; }
+        .media-container img, .media-container video { width: 100%; max-height: 450px; display: block; object-fit: contain; }
+        .feed-actions { padding: 12px; display: flex; align-items: center; gap: 15px; justify-content: space-between; }
+        .feed-actions-left { display: flex; align-items: center; gap: 15px; }
+        .like-btn { background: none; border: none; font-size: 1.3rem; cursor: pointer; color: #fff; display: flex; align-items: center; gap: 5px; }
+        .comment-count-btn { background: none; border: none; font-size: 1.3rem; cursor: pointer; color: #fff; display: flex; align-items: center; gap: 5px; }
+        .btn-baixar-card { background: #333; color: #fff; border: none; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+        .btn-baixar-card:hover { background: var(--cor-destaque); }
+
+        /* INTERFACE DA CÂMERA COM TRAVA RETRATO 9:16 RIGOROSA */
+        .camera-container { position: fixed; inset: 0; width: 100vw; height: 100dvh; background-color: #000; z-index: 1000; display: none; overflow: hidden; touch-action: none; }
+        .video-wrapper { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; overflow: hidden; display: flex; justify-content: center; align-items: center; background: #000; }
+        #videoElement { width: 100%; height: 100%; object-fit: cover; transform-origin: center center; transition: transform 0.05s linear; }
+        #molduraOverlay { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; z-index: 2; }
+        
+        .flash-effect { position: absolute; inset: 0; background: #fff; z-index: 99; opacity: 0; pointer-events: none; transition: opacity 0.15s ease-out; }
+
+        .camera-header { position: absolute; top: 0; width: 100%; padding: 20px; z-index: 10; background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent); display: flex; justify-content: space-between; align-items: center; }
+        .btn-fechar { background: rgba(0,0,0,0.6); color: #fff; border: 1px solid rgba(255,255,255,0.3); padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; }
+        
+        #recordingTimerBadge { display: none; background: rgba(0,0,0,0.7); color: #fff; padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; border: 1px solid #ff3366; }
+
+        .camera-controles { position: absolute; bottom: 0; width: 100%; padding: 40px 20px; z-index: 10; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); display: flex; flex-direction: column; gap: 20px; }
+        .filtros { display: flex; gap: 10px; justify-content: center; }
+        .btn-filtro { background-color: rgba(255,255,255,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.4); padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; }
+        .btn-filtro.ativo { background-color: var(--cor-destaque); border-color: var(--cor-destaque); }
+        .acoes-principais { display: flex; justify-content: space-around; align-items: center; }
+        .btn-acao-camera { background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; width: 60px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .btn-acao-camera span { font-size: 0.65rem; color: #fff; margin-top: 4px; font-weight: bold; }
+        .btn-capturar-final { width: 75px; height: 75px; border-radius: 50%; background-color: #fff; border: 5px solid rgba(255,255,255,0.3); cursor: pointer; transition: transform 0.1s, background-color 0.2s; }
+        .btn-capturar-final:active { transform: scale(0.9); }
+
+        /* MODO TELÃO (SLIDESHOW COM BOTÃO DE ZIP) */
+        #telaoModal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 9999; display: none; flex-direction: column; }
+        .telao-topbar { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%); z-index: 10000; flex-wrap: wrap; gap: 10px; }
+        .telao-topbar h2 { color: var(--cor-destaque); font-size: 1.3rem; text-shadow: 0 2px 5px rgba(0,0,0,0.8); margin: 0; }
+        .telao-topbar-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .telao-filtros { display: flex; gap: 8px; }
+        .telao-filtro-btn { background: #333; color: #aaa; border: none; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .telao-filtro-btn.ativo { background: var(--cor-destaque); color: #fff; }
+        .btn-baixar-tudo { background: #28a745; color: #fff; border: none; padding: 8px 16px; font-size: 0.9rem; border-radius: 8px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 5px; transition: opacity 0.2s; }
+        .btn-baixar-tudo:hover { opacity: 0.9; }
+        .close-telao { background: #ff3366; color: #fff; border: none; padding: 8px 16px; font-size: 0.9rem; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        
+        .telao-body { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; position: relative; }
+        .telao-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.6); color: #fff; border: 2px solid rgba(255,255,255,0.2); font-size: 2rem; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 10005; transition: 0.2s; }
+        .telao-nav:hover { background: var(--cor-destaque); border-color: var(--cor-destaque); }
+        .telao-prev { left: 25px; }
+        .telao-next { right: 25px; }
+
+        /* MODAL DE FOTO/VÍDEO E COMENTÁRIOS */
+        .modal-foto { position: fixed; inset: 0; background-color: rgba(0,0,0,0.95); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 15px; }
+        .btn-fechar-modal { position: absolute; top: 25px; left: 20px; background: none; border: none; color: #fff; font-size: 1.1rem; cursor: pointer; z-index: 2010; font-weight: bold; }
+        .modal-media-wrapper { width: 100%; display: flex; justify-content: center; align-items: center; max-height: 42vh; margin-bottom: 8px; }
+        .modal-media-wrapper img, .modal-media-wrapper video { max-width: 90%; max-height: 42vh; object-fit: contain; border-radius: 8px; }
+        .modal-acoes { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 10px; }
+        .btn-acao-modal { background-color:#333; color:white; padding:8px 14px; border-radius:25px; border:none; font-weight:bold; cursor: pointer; font-size: 0.8rem; text-decoration: none; display: inline-flex; align-items: center; }
+
+        .modal-comentarios-container { width: 100%; max-width: 450px; background: #1a1a1a; border-radius: 12px; padding: 10px; display: flex; flex-direction: column; max-height: 38vh; border: 1px solid #333; }
+        .modal-comentarios-lista { flex: 1; overflow-y: auto; list-style: none; padding-right: 5px; margin-bottom: 8px; }
+        .comentario-item { font-size: 0.85rem; color: #ccc; margin-bottom: 6px; border-bottom: 1px dashed #333; padding-bottom: 4px; text-align: left; }
+        
+        .comentario-form { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+        .comentario-form input#inputNomeConvidado { width: 100%; background: #2a2a2a; border: 1px solid #444; padding: 8px 12px; border-radius: 20px; color: #fff; font-size: 0.85rem; outline: none; }
+        .comentario-linha-inferior { display: flex; gap: 6px; width: 100%; }
+        .comentario-linha-inferior input#inputTextoComentario { flex: 1; min-width: 0; background: #2a2a2a; border: 1px solid #444; padding: 8px 12px; border-radius: 20px; color: #fff; font-size: 0.85rem; outline: none; }
+        .comentario-linha-inferior button#btnEnviarComentarioModal { background: var(--cor-destaque); border: none; color: #fff; padding: 8px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 0.85rem; flex: 0 0 auto; }
+
+        .file-input-hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- TELA DE CAPA STORY -->
+    <div id="storyCapaScreen" style="display: flex;">
+        <img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1785776803/abrir_hkf3hr.jpg" alt="Capa Story" onclick="entrarNoApp()">
+    </div>
+
+    <!-- APLICATIVO PRINCIPAL -->
+    <div id="mainAppContainer">
+        <header class="event-header">
+            <img src="https://res.cloudinary.com/dtshawz5x/image/upload/v1785776024/banner_ismmk4.jpg" alt="Capa do Evento">
+        </header>
+        <div class="event-info">
+            <h1>Turma da Gigi 5 Anos</h1>
+            <p>22 de agosto de 2026</p>
+        </div>
+
+        <nav class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('capture')">📸 Câmera</button>
+            <button class="tab-btn" onclick="switchTab('photosFeed')">🖼️ Fotos</button>
+            <button class="tab-btn" onclick="switchTab('videosFeed')">🎥 Vídeos</button>
+            <button class="tab-btn" onclick="openTelao()" style="color: #4285F4;">🖥️ Telão</button>
+        </nav>
+
+        <div class="container-conteudo">
+            <div id="capture" class="section-tab active">
+                <div class="capture-box">
+                    <h3>Compartilhe seu Momento</h3>
+                    <p style="font-size: 0.8rem; color: #aaa; margin-bottom: 10px;">Vídeos aceitam até 30s em retrato (9:16).</p>
+
+                    <div class="options-group">
+                        <label><input type="radio" name="frameMode" value="withFrame" checked> Com Moldura</label>
+                        <label><input type="radio" name="frameMode" value="noFrame"> Sem Moldura</label>
+                    </div>
+
+                    <button class="btn-acao" onclick="openCamera('photo')">Tirar Foto (Câmera)</button>
+                    <button class="btn-acao" onclick="openCamera('video')">Gravar Vídeo (Até 30s)</button>
+                    <button class="btn-acao btn-secundario" onclick="document.getElementById('galleryInput').click()">Enviar da Galeria</button>
+                    <input type="file" id="galleryInput" class="file-input-hidden" accept="image/*,video/*" onchange="handleGalleryUpload(event)">
+                </div>
+            </div>
+
+            <div id="photosFeed" class="section-tab">
+                <div class="feed-grid" id="photoGridContainer"></div>
+            </div>
+
+            <div id="videosFeed" class="section-tab">
+                <div class="feed-grid" id="videoGridContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODO TELÃO COM BOTÃO DE ZIP -->
+    <div id="telaoModal">
+        <div class="telao-topbar">
+            <h2>Turma da Gigi 5 Anos - Ao Vivo</h2>
+            <div class="telao-topbar-right">
+                <div class="telao-filtros">
+                    <button class="telao-filtro-btn ativo" onclick="setTelaoFilter('todos', this)">Todos</button>
+                    <button class="telao-filtro-btn" onclick="setTelaoFilter('fotos', this)">🖼️ Fotos</button>
+                    <button class="telao-filtro-btn" onclick="setTelaoFilter('videos', this)">🎥 Vídeos</button>
+                </div>
+                <button class="btn-baixar-tudo" onclick="baixarTudoZip()">📦 Baixar Tudo (ZIP)</button>
+                <button class="close-telao" onclick="closeTelao()">Fechar Telão</button>
+            </div>
+        </div>
+        <div class="telao-body" id="telaoMediaContainer">
+            <button class="telao-nav telao-prev" onclick="telaoAnterior()">❮</button>
+            <button class="telao-nav telao-next" onclick="telaoProximo()">❯</button>
+        </div>
+    </div>
+
+    <!-- INTERFACE DA CÂMERA -->
+    <div id="cameraContainer" class="camera-container">
+        <div class="flash-effect" id="flashEffect"></div>
+        <div class="camera-header">
+            <button id="btnFecharCamera" class="btn-fechar">❌ Voltar</button>
+            <div id="recordingTimerBadge">
+                🔴 <span id="timerCount">00:00</span> / 00:30
+            </div>
+        </div>
+        <div class="video-wrapper" id="videoWrapper">
+            <video id="videoElement" autoplay playsinline muted></video>
+            <img id="molduraOverlay" src="https://res.cloudinary.com/dtshawz5x/image/upload/v1785782327/moldura1_xeoewi.png" crossorigin="anonymous" alt="Moldura">
+        </div>
+        <div class="camera-controles">
+            <div class="filtros" id="grupoFiltros">
+                <button id="btnFiltroNormal" class="btn-filtro ativo">Normal</button>
+                <button id="btnFiltroPB" class="btn-filtro">P&B</button>
+            </div>
+            <div class="acoes-principais">
+                <button id="btnUploadFoto" class="btn-acao-camera">🖼️<span>Galeria</span></button>
+                <input type="file" id="inputUploadArquivo" class="file-input-hidden" accept="image/*,video/*" onchange="handleGalleryUpload(event)">
+                <button id="btnFlash" class="btn-acao-camera">⚡<span>Flash</span></button>
+                <button id="btnCapturarFinal" class="btn-capturar-final"></button>
+                <button id="btnVideoLink" class="btn-acao-camera" style="color: #FFD700;">🎬<span>Vídeo</span></button>
+                <button id="btnInverterCamera" class="btn-acao-camera">🔄<span>Trocar</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE PREVIEW DA CÂMERA -->
+    <div id="modalPreviewCamera" class="modal-foto" style="z-index: 3000;">
+        <h3 style="color: white; margin-bottom: 10px;">Gostou da foto?</h3>
+        <div style="width: 100%; max-width: 320px; aspect-ratio: 9 / 16; background-color: #000; overflow: hidden; border-radius: 12px; position: relative;">
+            <img id="imgPreviewCamera" style="display: block; width: 100%; height: 100%; object-fit: contain;">
+            <img id="molduraPreviewCamera" src="https://res.cloudinary.com/dtshawz5x/image/upload/v1785782327/moldura1_xeoewi.png" crossorigin="anonymous" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; pointer-events: none; z-index: 3010; display: none;">
+        </div>
+        <div class="modal-acoes" style="margin-top: 15px;">
+            <button id="btnDescartarFoto" class="btn-acao-modal" style="background-color:#ff4444;">❌ Tentar Novamente</button>
+            <button id="btnEnviarFotoCamera" class="btn-acao-modal" style="background-color:var(--cor-destaque);">✅ Enviar Foto</button>
+        </div>
+    </div>
+
+    <!-- MODAL DE ESTÚDIO / CORTE -->
+    <div id="modalEstudio" class="modal-foto" style="z-index: 3000;">
+        <h3 style="color: white; margin-bottom: 10px;">Ajuste sua foto com o toque</h3>
+        <div style="width: 100%; max-width: 320px; aspect-ratio: 9 / 16; background-color: #000; overflow: hidden; border-radius: 12px; position: relative;">
+            <img id="imagemParaCortar" style="display: block; max-width: 100%;">
+            <img id="molduraEstudio" src="https://res.cloudinary.com/dtshawz5x/image/upload/v1785782327/moldura1_xeoewi.png" crossorigin="anonymous" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; pointer-events: none; z-index: 3010;">
+        </div>
+        <div class="modal-acoes" style="margin-top: 15px;">
+            <button id="btnCancelarCorte" class="btn-acao-modal" style="background-color:#ff4444;">❌ Cancelar</button>
+            <button id="btnConfirmarCorte" class="btn-acao-modal" style="background-color:var(--cor-destaque);">✅ Enviar Foto</button>
+        </div>
+    </div>
+
+    <!-- MODAL DE VISUALIZAÇÃO E COMENTÁRIOS -->
+    <div id="modalFoto" class="modal-foto">
+        <button onclick="window.fecharModal()" class="btn-fechar-modal">❌ Voltar</button>
+        <div class="modal-media-wrapper" id="modalMediaWrapper"></div>
+        <div class="modal-acoes">
+            <button id="btnModalCurtir" class="btn-acao-modal">❤️ <span id="contadorModalCurtidas">0</span></button>
+            <a id="btnModalBaixar" class="btn-acao-modal" href="#" target="_blank" style="text-decoration:none; display:inline-flex; align-items:center;">⬇️ Baixar Mídia</a>
+            <button id="btnModalDeletar" class="btn-acao-modal" style="background-color:#441111;">🗑️ Excluir</button>
+        </div>
+        <div class="modal-comentarios-container">
+            <ul id="listaComentariosModal" class="modal-comentarios-lista"></ul>
+            <div class="comentario-form">
+                <input type="text" id="inputNomeConvidado" placeholder="Seu Nome">
+                <div class="comentario-linha-inferior">
+                    <input type="text" id="inputTextoComentario" placeholder="Escreva um comentário...">
+                    <button id="btnEnviarComentarioModal">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, collection, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc, increment, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAvisu9SIfgYWo-23qjjGCJctGtRVdzGj4",
+        projectId: "insta-momentos-drive",
+        appId: "1:235265106885:web:3a4c77698c6d0392e221ac"
+    };
+    
+    const IMGBB_API_KEY = "aa0c9dc6122e459a16cf1f6e8d9d3686";
+    const CLOUD_NAME = "dtshawz5x";
+    const UPLOAD_PRESET = "instamomentos_videos";
+    const EVENTO_ID = "festa_gigi";
+    const DRIVE_EMAIL = "instamomentogiovanna@gmail.com"; 
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxjGbf5nQ30epXlCjO_ciit_-mfl0L3LG2vYodzdQkxxM_cCqNgP0tD99Me2tK5YIs7ag/exec";
+    const LINK_VIDEO_EXTERNO = "https://molduracriativa.github.io/meu-filtro/gigi-03082026-crispoparte/";
+    const MOLDURA_URL = "https://res.cloudinary.com/dtshawz5x/image/upload/v1785782327/moldura1_xeoewi.png";
+    const ADMIN_SENHA_HASH = "6a175db84aeefddbe58bf92a5d67b372c78505c75b079912b89a0e599fe91317";
+
+    let appData = { photos: [], videos: [] };
+    let cropper = null;
+    let torchOn = false;
+    let currentZoom = 1;
+    let cameraType = 'photo'; 
+    let mediaRecorder = null;
+    let recordedChunks = [];
+    let recordingTimer = null;
+    let recordingSeconds = 0;
+    let isRecordingVideo = false;
+
+    let recordCanvas = null;
+    let recordCtx = null;
+    let videoRecordingFrameId = null;
+    let lastFrameTime = 0;
+
+    window.entrarNoApp = function() {
+        const capaScreen = document.getElementById('storyCapaScreen');
+        if (capaScreen) {
+            capaScreen.style.opacity = '0';
+            setTimeout(() => { capaScreen.style.display = 'none'; }, 400);
+        }
+    };
+
+    try {
+        const app = initializeApp(firebaseConfig);
+        const db = initializeFirestore(app, {
+            localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+        });
+
+        const videoElement = document.getElementById('videoElement');
+        videoElement.muted = true;
+        
+        const cameraContainer = document.getElementById('cameraContainer');
+        const molduraOverlay = document.getElementById('molduraOverlay');
+        const flashEffect = document.getElementById('flashEffect');
+        const videoWrapper = document.getElementById('videoWrapper');
+        let stream = null;
+        let usandocameraFrontal = false;
+
+        function playCameraShutterSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(900, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.08);
+                gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.08);
+            } catch(e) {}
+        }
+
+        let initialDist = 0;
+        videoWrapper.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                initialDist = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+            }
+        });
+
+        videoWrapper.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2 && initialDist > 0) {
+                const dist = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+                let zoomFactor = currentZoom * (dist / initialDist);
+                zoomFactor = Math.max(1, Math.min(zoomFactor, 4));
+                currentZoom = zoomFactor;
+                videoElement.style.transform = `scale(${currentZoom})`;
+            }
+        });
+
+        videoWrapper.addEventListener('touchend', (e) => {
+            if (e.touches.length < 2) initialDist = 0;
+        });
+
+        window.switchTab = function(tabId) {
+            document.querySelectorAll('.section-tab').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            event?.currentTarget?.classList?.add('active');
+
+            if(tabId === 'photosFeed') renderPhotos();
+            if(tabId === 'videosFeed') renderVideos();
+        }
+
+        window.openCamera = async (type) => {
+            cameraType = type;
+            cameraContainer.style.display = 'block';
+            const useFrame = document.querySelector('input[name="frameMode"]:checked')?.value === 'withFrame';
+            molduraOverlay.style.display = (useFrame && type === 'photo') ? 'block' : 'none';
+            
+            const grupoFiltros = document.getElementById('grupoFiltros');
+            const btnVideoExt = document.getElementById('btnVideoLink');
+            
+            if (type === 'video') {
+                if(grupoFiltros) grupoFiltros.style.display = 'none';
+                if(btnVideoExt) btnVideoExt.style.display = 'none';
+            } else {
+                if(grupoFiltros) grupoFiltros.style.display = 'flex';
+                if(btnVideoExt) btnVideoExt.style.display = 'flex';
+            }
+
+            videoElement.style.filter = "none";
+            const btnNorm = document.getElementById('btnFiltroNormal');
+            const btnPB = document.getElementById('btnFiltroPB');
+            if(btnNorm) btnNorm.classList.add('ativo');
+            if(btnPB) btnPB.classList.remove('ativo');
+
+            currentZoom = 1;
+            videoElement.style.transform = 'scale(1)';
+            isRecordingVideo = false;
+            hideRecordingTimer();
+            
+            const btnCap = document.getElementById('btnCapturarFinal');
+            btnCap.style.backgroundColor = '#fff';
+            
+            await startStream(type);
+        };
+
+        document.querySelectorAll('input[name="frameMode"]').forEach(radio => {
+            radio.onchange = (e) => {
+                const useFrame = e.target.value === 'withFrame';
+                molduraOverlay.style.display = (useFrame && cameraType === 'photo') ? 'block' : 'none';
+            };
+        });
+
+        function drawToCanvas(ctx, canvasWidth, canvasHeight, withMoldura) {
+            const vWidth = videoElement.videoWidth || canvasWidth;
+            const vHeight = videoElement.videoHeight || canvasHeight;
+            const canvasRatio = canvasWidth / canvasHeight;
+            const videoRatio = vWidth / vHeight;
+            
+            let sWidth = vWidth;
+            let sHeight = vHeight;
+            
+            if (videoRatio > canvasRatio) {
+                sWidth = vHeight * canvasRatio;
+            } else {
+                sHeight = vWidth / canvasRatio;
+            }
+            
+            const zW = sWidth / currentZoom;
+            const zH = sHeight / currentZoom;
+            const sX = (vWidth - zW) / 2;
+            const sY = (vHeight - zH) / 2;
+
+            ctx.save();
+            if (document.getElementById('btnFiltroPB') && document.getElementById('btnFiltroPB').classList.contains('ativo')) {
+                ctx.filter = 'grayscale(100%)';
+            }
+            if (usandocameraFrontal) { 
+                ctx.translate(canvasWidth, 0); 
+                ctx.scale(-1, 1); 
+            }
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+            ctx.drawImage(videoElement, sX, sY, zW, zH, 0, 0, canvasWidth, canvasHeight);
+            ctx.restore();
+            
+            if (withMoldura && molduraOverlay.complete && molduraOverlay.naturalWidth > 0) {
+                ctx.drawImage(molduraOverlay, 0, 0, canvasWidth, canvasHeight);
+            }
+        }
+
+        async function startStream(type = 'photo') {
+            const modo = usandocameraFrontal ? "user" : "environment";
+            torchOn = false;
+            document.getElementById('btnFlash').style.color = '#fff';
+            try {
+                if (stream) stream.getTracks().forEach(t => t.stop());
+                
+                // CORREÇÃO SÊNIOR: Removidas travas rígidas de largura/altura que causavam zoom artificial ("ampliado demais") na selfie.
+                // O navegador agora usa a resolução nativa do sensor frontal/traseiro, permitindo visão aberta e natural.
+                const constraints = {
+                    video: { 
+                        facingMode: modo
+                    },
+                    audio: true
+                };
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
+                videoElement.srcObject = stream;
+                videoElement.muted = true;
+            } catch (err) { 
+                alert("Erro ao acessar câmera do celular: " + err.message); 
+                fecharInterface(); 
+            }
+        }
+
+        document.getElementById('btnFiltroNormal').onclick = () => {
+            videoElement.style.filter = "none";
+            document.getElementById('btnFiltroNormal').classList.add('ativo');
+            document.getElementById('btnFiltroPB').classList.remove('ativo');
+        };
+        
+        document.getElementById('btnFiltroPB').onclick = () => {
+            videoElement.style.filter = "grayscale(100%)";
+            document.getElementById('btnFiltroPB').classList.add('ativo');
+            document.getElementById('btnFiltroNormal').classList.remove('ativo');
+        };
+
+        function drawVideoFrame(timestamp) {
+            if (!isRecordingVideo || !recordCtx) return;
+            videoRecordingFrameId = requestAnimationFrame(drawVideoFrame);
+            
+            if (timestamp - lastFrameTime < 33) return;
+            lastFrameTime = timestamp;
+
+            const useFrame = document.querySelector('input[name="frameMode"]:checked')?.value === 'withFrame';
+            drawToCanvas(recordCtx, recordCanvas.width, recordCanvas.height, useFrame);
+        }
+
+        function prepareVideoRecorder() {
+            recordedChunks = [];
+            if (!recordCanvas) {
+                recordCanvas = document.createElement('canvas');
+                recordCanvas.style.position = 'fixed';
+                recordCanvas.style.top = '-9999px';
+                recordCanvas.style.opacity = '0';
+                document.body.appendChild(recordCanvas);
+            }
+            const isLandscape = window.innerWidth > window.innerHeight;
+            recordCanvas.width = isLandscape ? 1280 : 720;
+            recordCanvas.height = isLandscape ? 720 : 1280;
+            recordCtx = recordCanvas.getContext('2d');
+
+            const canvasStream = recordCanvas.captureStream(30);
+            const audioTracks = stream.getAudioTracks();
+            if (audioTracks.length > 0) {
+                canvasStream.addTrack(audioTracks[0]);
+            }
+
+            let options = { mimeType: 'video/mp4', videoBitsPerSecond: 1000000 };
+            try {
+                if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                    options = { mimeType: 'video/webm;codecs=vp9,opus', videoBitsPerSecond: 1000000 };
+                    if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                        options = { mimeType: 'video/webm', videoBitsPerSecond: 1000000 };
+                    }
+                }
+                mediaRecorder = new MediaRecorder(canvasStream, options);
+            } catch (e) {
+                mediaRecorder = new MediaRecorder(canvasStream);
+            }
+
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data && event.data.size > 0) {
+                    recordedChunks.push(event.data);
+                }
+            };
+
+            mediaRecorder.onstop = async () => {
+                clearInterval(recordingTimer);
+                if (videoRecordingFrameId) cancelAnimationFrame(videoRecordingFrameId);
+                hideRecordingTimer();
+                
+                const mimeType = mediaRecorder.mimeType || 'video/webm';
+                let ext = mimeType.includes('mp4') ? 'mp4' : 'webm';
+                
+                const blob = new Blob(recordedChunks, { type: mimeType });
+                const file = new File([blob], "Instamomento_Video_" + Date.now() + "." + ext, { type: blob.type });
+                
+                fecharInterface();
+                alert("⏳ Processando vídeo... Não feche o aplicativo enquanto preparamos sua mídia para a nuvem.");
+                await enviarVideoServidores(file);
+            };
+        }
+
+        function showRecordingTimer() {
+            const badge = document.getElementById('recordingTimerBadge');
+            if (badge) badge.style.display = 'block';
+        }
+
+        function hideRecordingTimer() {
+            const badge = document.getElementById('recordingTimerBadge');
+            if (badge) badge.style.display = 'none';
+        }
+
+        function updateRecordingTimerDisplay(sec) {
+            const timerCount = document.getElementById('timerCount');
+            if (timerCount) {
+                const mins = String(Math.floor(sec / 60)).padStart(2, '0');
+                const secs = String(sec % 60).padStart(2, '0');
+                timerCount.textContent = `${mins}:${secs}`;
+            }
+        }
+
+        function fecharInterface() {
+            if (isRecordingVideo) {
+                stopVideoRecording();
+            }
+            if (stream) stream.getTracks().forEach(t => t.stop());
+            cameraContainer.style.display = 'none';
+            hideRecordingTimer();
+        }
+
+        document.getElementById('btnFecharCamera').onclick = fecharInterface;
+        document.getElementById('btnInverterCamera').onclick = () => { usandocameraFrontal = !usandocameraFrontal; startStream(cameraType); };
+
+        document.getElementById('btnFlash').onclick = async () => {
+            if (!stream) { alert("A câmera não está ativa."); return; }
+            const track = stream.getVideoTracks()[0];
+            const capabilities = track.getCapabilities ? track.getCapabilities() : {};
+            if (!capabilities.torch) { alert("O flash não é suportado por este dispositivo."); return; }
+            torchOn = !torchOn;
+            try {
+                await track.applyConstraints({ advanced: [{ torch: torchOn }] });
+                document.getElementById('btnFlash').style.color = torchOn ? '#FFD700' : '#fff';
+            } catch (err) { alert("Não foi possível ativar o flash."); }
+        };
+
+        onSnapshot(query(collection(db, "eventos/" + EVENTO_ID + "/postagens"), orderBy("data_envio", "desc")), (snap) => {
+            appData.photos = [];
+            appData.videos = [];
+
+            snap.forEach(docSnap => {
+                const p = docSnap.data();
+                const item = { 
+                    id: docSnap.id, 
+                    url: p.url_imagem, 
+                    tipo: p.tipo || 'foto',
+                    likes: p.curtidas || 0, 
+                    comments: p.total_comentarios || 0 
+                };
+                if(p.tipo === 'video') {
+                    appData.videos.push(item);
+                } else {
+                    appData.photos.push(item);
+                }
+            });
+            renderPhotos();
+            renderVideos();
+        });
+
+        async function enviarMidiaServidores(base64Data, tipo = 'foto') {
+            let imgUrl = "";
+            try {
+                const form = new FormData(); 
+                form.append('image', base64Data);
+                const r = await fetch("https://api.imgbb.com/1/upload?key=" + IMGBB_API_KEY, { method: 'POST', body: form });
+                const d = await r.json();
+                if(d.success) imgUrl = d.data.url;
+            } catch(e) { console.error("Erro ImgBB:", e); }
+
+            if (SCRIPT_URL && SCRIPT_URL.includes("script.google.com")) {
+                try {
+                    await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({
+                            base64: "data:image/jpeg;base64," + base64Data,
+                            filename: "Instamomento_" + Date.now() + ".jpg"
+                        })
+                    });
+                } catch(err) { console.error("Erro Apps Script Drive Foto:", err); }
+            }
+
+            if (imgUrl) {
+               await addDoc(collection(db, "eventos/" + EVENTO_ID + "/postagens"), { 
+                   url_imagem: imgUrl, 
+                   tipo: tipo,
+                   curtidas: 0, 
+                   total_comentarios: 0,
+                   data_envio: serverTimestamp() 
+               });
+            }
+        }
+
+        async function enviarVideoServidores(file) {
+            let videoUrl = "";
+
+            if (CLOUD_NAME && UPLOAD_PRESET) {
+                try {
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('upload_preset', UPLOAD_PRESET);
+                    formData.append('folder', EVENTO_ID);
+                    const resCloud = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/video/upload`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const cloudData = await resCloud.json();
+                    if (cloudData.secure_url) {
+                        videoUrl = cloudData.secure_url;
+                    }
+                } catch (err) {
+                    console.error("Erro Cloudinary Vídeo:", err);
+                }
+            }
+
+            if (!videoUrl) {
+                videoUrl = URL.createObjectURL(file);
+            }
+
+            await addDoc(collection(db, "eventos/" + EVENTO_ID + "/postagens"), { 
+                url_imagem: videoUrl, 
+                tipo: 'video',
+                curtidas: 0, 
+                total_comentarios: 0,
+                data_envio: serverTimestamp() 
+            });
+            switchTab('videosFeed');
+
+            if (SCRIPT_URL && SCRIPT_URL.includes("script.google.com")) {
+                const reader = new FileReader();
+                reader.onload = async (ev) => {
+                    try {
+                        await fetch(SCRIPT_URL, {
+                            method: 'POST',
+                            mode: 'no-cors',
+                            headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
+                            body: JSON.stringify({
+                                base64: ev.target.result,
+                                filename: file.name
+                            })
+                        });
+                    } catch(err) { console.error("Erro Vídeo Drive:", err); }
+                };
+                reader.readAsDataURL(file); 
+            }
+        }
+
+        document.getElementById('btnCapturarFinal').onclick = async () => {
+            const btnCap = document.getElementById('btnCapturarFinal');
+
+            if (cameraType === 'video') {
+                if (!isRecordingVideo) {
+                    isRecordingVideo = true;
+                    recordingSeconds = 0;
+                    showRecordingTimer();
+                    updateRecordingTimerDisplay(0);
+                    
+                    prepareVideoRecorder();
+                    mediaRecorder.start();
+                    
+                    btnCap.style.backgroundColor = '#ff3366';
+                    btnCap.style.transform = 'scale(0.85)';
+                    
+                    lastFrameTime = performance.now();
+                    drawVideoFrame(lastFrameTime);
+                    
+                    recordingTimer = setInterval(() => {
+                        recordingSeconds++;
+                        updateRecordingTimerDisplay(recordingSeconds);
+                        if (recordingSeconds >= 30) {
+                            stopVideoRecording();
+                        }
+                    }, 1000);
+                } else {
+                    stopVideoRecording();
+                }
+            } else {
+                btnCap.style.pointerEvents = 'none';
+
+                playCameraShutterSound();
+                flashEffect.style.opacity = '1';
+                setTimeout(() => { flashEffect.style.opacity = '0'; }, 150);
+
+                const useFrame = document.querySelector('input[name="frameMode"]:checked')?.value === 'withFrame';
+                const canvas = document.createElement('canvas');
+                const isLandscape = window.innerWidth > window.innerHeight;
+                canvas.width = isLandscape ? 1920 : 1080; 
+                canvas.height = isLandscape ? 1080 : 1920;
+                const ctx = canvas.getContext('2d');
+                
+                drawToCanvas(ctx, canvas.width, canvas.height, useFrame);
+
+                const base64Full = canvas.toDataURL('image/jpeg', 0.85);
+                const base64Data = base64Full.split(',')[1];
+                
+                document.getElementById('imgPreviewCamera').src = base64Full;
+                document.getElementById('modalPreviewCamera').style.display = 'flex';
+                
+                document.getElementById('btnDescartarFoto').onclick = () => {
+                    document.getElementById('modalPreviewCamera').style.display = 'none';
+                    btnCap.style.pointerEvents = 'auto'; 
+                };
+
+                document.getElementById('btnEnviarFotoCamera').onclick = async () => {
+                    const btnEnviar = document.getElementById('btnEnviarFotoCamera');
+                    const textoOriginalBtn = btnEnviar.innerHTML;
+                    btnEnviar.innerHTML = "⏳ Enviando...";
+                    btnEnviar.disabled = true;
+                    try {
+                        await enviarMidiaServidores(base64Data, 'foto');
+                        document.getElementById('modalPreviewCamera').style.display = 'none';
+                        fecharInterface(); 
+                        switchTab('photosFeed');
+                    } catch(e) {
+                        alert("Erro ao enviar foto: " + e.message);
+                    } finally {
+                        btnEnviar.innerHTML = textoOriginalBtn;
+                        btnEnviar.disabled = false;
+                        btnCap.style.pointerEvents = 'auto';
+                    }
+                };
+            }
+        };
+
+        function stopVideoRecording() {
+            if (isRecordingVideo && mediaRecorder && mediaRecorder.state === 'recording') {
+                isRecordingVideo = false;
+                clearInterval(recordingTimer);
+                if (videoRecordingFrameId) cancelAnimationFrame(videoRecordingFrameId);
+                const btnCap = document.getElementById('btnCapturarFinal');
+                btnCap.style.backgroundColor = '#fff';
+                btnCap.style.transform = 'scale(1)';
+                mediaRecorder.stop();
+            }
+        }
+
+        document.getElementById('btnUploadFoto').onclick = () => {
+            document.getElementById('inputUploadArquivo').click();
+        };
+
+        window.handleGalleryUpload = async (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (file.type.startsWith('video/')) {
+                const videoCheck = document.createElement('video');
+                videoCheck.preload = 'metadata';
+                videoCheck.onloadedmetadata = async function() {
+                    window.URL.revokeObjectURL(videoCheck.src);
+                    if (videoCheck.duration > 31) {
+                        alert("⚠️ O vídeo selecionado é muito longo! O limite máximo permitido é de 30 segundos.");
+                        return;
+                    }
+                    alert("⏳ Enviando vídeo da galeria...");
+                    fecharInterface();
+                    await enviarVideoServidores(file);
+                };
+                videoCheck.onerror = function() {
+                    alert("Não foi possível verificar a duração do vídeo. Tente novamente.");
+                };
+                videoCheck.src = URL.createObjectURL(file);
+                return;
+            }
+
+            if (cropper) { cropper.destroy(); cropper = null; }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const imagem = document.getElementById('imagemParaCortar');
+                const useFrame = document.querySelector('input[name="frameMode"]:checked')?.value === 'withFrame';
+                document.getElementById('molduraEstudio').style.display = useFrame ? 'block' : 'none';
+                document.getElementById('modalEstudio').style.display = 'flex';
+                imagem.src = e.target.result;
+                imagem.onload = () => {
+                    setTimeout(() => {
+                        cropper = new Cropper(imagem, {
+                            aspectRatio: 9 / 16, 
+                            viewMode: 0, 
+                            dragMode: 'move', 
+                            autoCropArea: 1, 
+                            background: false, 
+                            guides: false, 
+                            center: false, 
+                            highlight: false, 
+                            cropBoxMovable: false, 
+                            cropBoxResizable: false,
+                            ready() { 
+                                const containerData = this.cropper.getContainerData();
+                                this.cropper.setCropBoxData({ left: 0, top: 0, width: containerData.width, height: containerData.height }); 
+                            }
+                        });
+                    }, 200);
+                };
+            };
+            reader.readAsDataURL(file);
+        };
+
+        document.getElementById('btnCancelarCorte').onclick = () => {
+            document.getElementById('modalEstudio').style.display = 'none';
+            if (cropper) cropper.destroy();
+        };
+
+        document.getElementById('btnConfirmarCorte').onclick = async () => {
+            const btn = document.getElementById('btnConfirmarCorte');
+            btn.innerHTML = "⏳ Enviando...";
+            btn.disabled = true;
+            try {
+                const useFrame = document.querySelector('input[name="frameMode"]:checked')?.value === 'withFrame';
+                const canvas = cropper.getCroppedCanvas({ width: 1080, height: 1920 });
+                const ctx = canvas.getContext('2d');
+                
+                const molduraEstudio = document.getElementById('molduraEstudio');
+                if (useFrame && molduraEstudio.complete && molduraEstudio.naturalWidth > 0) {
+                    ctx.drawImage(molduraEstudio, 0, 0, canvas.width, canvas.height);
+                }
+                
+                const base64 = canvas.toDataURL('image/jpeg', 0.85).split(',')[1];
+                await enviarMidiaServidores(base64, 'foto');
+                document.getElementById('modalEstudio').style.display = 'none';
+                if (cropper) cropper.destroy();
+                fecharInterface();
+                switchTab('photosFeed');
+            } catch(e) {
+                alert("Erro ao enviar foto da galeria: " + e.message);
+            } finally {
+                btn.innerHTML = "✅ Enviar Foto";
+                btn.disabled = false;
+            }
+        };
+
+        window.renderPhotos = function() {
+            const container = document.getElementById('photoGridContainer');
+            if(appData.photos.length === 0) {
+                container.innerHTML = "<p style='text-align:center; color:#888; padding:30px;'>Nenhuma foto enviada ainda.</p>";
+                return;
+            }
+            container.innerHTML = appData.photos.map(item => `
+                <div class="feed-card">
+                    <div class="media-container" style="cursor: pointer;" onclick="abrirModal('${item.url}', '${item.id}', ${item.likes}, 'foto')">
+                        <img src="${item.url}" alt="Foto">
+                    </div>
+                    <div class="feed-actions">
+                        <div class="feed-actions-left">
+                            <button class="like-btn" onclick="toggleLike('${item.id}')">❤️ ${item.likes}</button>
+                            <button class="comment-count-btn" onclick="abrirModal('${item.url}', '${item.id}', ${item.likes}, 'foto')">💬 ${item.comments}</button>
+                        </div>
+                        <a href="${item.url}" target="_blank" download class="btn-baixar-card">⬇️ Baixar</a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.renderVideos = function() {
+            const container = document.getElementById('videoGridContainer');
+            if(appData.videos.length === 0) {
+                container.innerHTML = "<p style='text-align:center; color:#888; padding:30px;'>Nenhum vídeo enviado ainda.</p>";
+                return;
+            }
+            container.innerHTML = appData.videos.map(item => `
+                <div class="feed-card">
+                    <div class="media-container">
+                        <video src="${item.url}" controls playsinline preload="metadata" style="cursor:pointer;" onclick="abrirModal('${item.url}', '${item.id}', ${item.likes}, 'video')"></video>
+                    </div>
+                    <div class="feed-actions">
+                        <div class="feed-actions-left">
+                            <button class="like-btn" onclick="toggleLike('${item.id}')">❤️ ${item.likes}</button>
+                            <button class="comment-count-btn" onclick="abrirModal('${item.url}', '${item.id}', ${item.likes}, 'video')">💬 ${item.comments} (comentário)</button>
+                        </div>
+                        <a href="${item.url}" target="_blank" download class="btn-baixar-card">⬇️ Baixar</a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.abrirModal = (url, id, likes, tipo) => {
+            const mediaWrapper = document.getElementById('modalMediaWrapper');
+            if (tipo === 'video') {
+                mediaWrapper.innerHTML = `<video src="${url}" controls autoplay playsinline style="max-width:90%; max-height:42vh; object-fit:contain; border-radius:8px;"></video>`;
+            } else {
+                mediaWrapper.innerHTML = `<img src="${url}" style="max-width:90%; max-height:42vh; object-fit:contain; border-radius:8px;">`;
+            }
+
+            document.getElementById('contadorModalCurtidas').textContent = likes;
+            
+            document.getElementById('btnModalCurtir').onclick = () => {
+                updateDoc(doc(db, "eventos/" + EVENTO_ID + "/postagens", id), { curtidas: increment(1) });
+            };
+
+            document.getElementById('btnModalDeletar').onclick = async () => {
+                const senhaDigitada = prompt("Senha Admin:");
+                if (!senhaDigitada) return;
+
+                const msgBuffer = new TextEncoder().encode(senhaDigitada);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+                if (hashHex === ADMIN_SENHA_HASH) {
+                    deleteDoc(doc(db, "eventos/" + EVENTO_ID + "/postagens", id));
+                    window.fecharModal();
+                } else {
+                    alert("Senha incorreta!");
+                }
+            };
+
+            const btnBaixar = document.getElementById('btnModalBaixar');
+            btnBaixar.href = url;
+            btnBaixar.setAttribute('download', 'Instamomento_' + Date.now());
+
+            const listaComentarios = document.getElementById('listaComentariosModal');
+            listaComentarios.innerHTML = "<li class='comentario-item'>Carregando comentários...</li>";
+
+            onSnapshot(query(collection(db, "eventos/" + EVENTO_ID + "/postagens/" + id + "/comentarios"), orderBy("data_envio", "asc")), (snapComent) => {
+                listaComentarios.innerHTML = "";
+                if(snapComent.empty) {
+                    listaComentarios.innerHTML = "<li class='comentario-item' style='color:#777;'>Nenhum comentário ainda. Seja o primeiro!</li>";
+                    return;
+                }
+                snapComent.forEach(cDoc => {
+                    const cData = cDoc.data();
+                    const li = document.createElement('li');
+                    li.className = 'comentario-item';
+                    li.innerHTML = `<strong style="color:var(--cor-destaque)">${cData.nome}:</strong> ${cData.texto}`;
+                    listaComentarios.appendChild(li);
+                });
+                listaComentarios.scrollTop = listaComentarios.scrollHeight;
+            });
+
+            document.getElementById('btnEnviarComentarioModal').onclick = async () => {
+                const nomeInput = document.getElementById('inputNomeConvidado');
+                const textoInput = document.getElementById('inputTextoComentario');
+                const nomeVal = nomeInput.value.trim();
+                const textoVal = textoInput.value.trim();
+
+                if(!nomeVal || !textoVal) {
+                    alert("Preencha seu nome e o comentário!");
+                    return;
+                }
+
+                localStorage.setItem('nomeConvidado', nomeVal);
+                await addDoc(collection(db, "eventos/" + EVENTO_ID + "/postagens/" + id + "/comentarios"), {
+                    nome: nomeVal,
+                    texto: textoVal,
+                    data_envio: serverTimestamp()
+                });
+                await updateDoc(doc(db, "eventos/" + EVENTO_ID + "/postagens", id), {
+                    total_comentarios: increment(1)
+                });
+                textoInput.value = "";
+            };
+
+            if(localStorage.getItem('nomeConvidado')) {
+                document.getElementById('inputNomeConvidado').value = localStorage.getItem('nomeConvidado');
+            }
+
+            document.getElementById('modalFoto').style.display = 'flex';
+        }
+
+        window.fecharModal = () => {
+            const wrapper = document.getElementById('modalMediaWrapper');
+            const videos = wrapper.querySelectorAll('video');
+            videos.forEach(v => {
+                v.pause();
+                v.removeAttribute('src'); 
+                v.load();
+            });
+            document.getElementById('modalFoto').style.display = 'none';
+            wrapper.innerHTML = "";
+        };
+
+        window.toggleLike = (id) => {
+            updateDoc(doc(db, "eventos/" + EVENTO_ID + "/postagens", id), { curtidas: increment(1) });
+        };
+
+        let telaoTimer = null;
+        let telaoFilter = 'todos';
+        let telaoIndex = 0;
+
+        window.openTelao = () => {
+            document.getElementById('telaoModal').style.display = 'flex';
+            telaoIndex = 0;
+            startTelaoSlideshow();
+        }
+
+        window.closeTelao = () => {
+            const container = document.getElementById('telaoMediaContainer');
+            const videos = container.querySelectorAll('video');
+            videos.forEach(v => {
+                v.pause();
+                v.removeAttribute('src'); 
+                v.load();
+            });
+            document.getElementById('telaoModal').style.display = 'none';
+            if (telaoTimer) clearTimeout(telaoTimer);
+            container.innerHTML = "";
+        }
+
+        window.setTelaoFilter = (filtro, btnEl) => {
+            telaoFilter = filtro;
+            telaoIndex = 0;
+            document.querySelectorAll('.telao-filtro-btn').forEach(b => b.classList.remove('ativo'));
+            btnEl.classList.add('ativo');
+            if (telaoTimer) clearTimeout(telaoTimer);
+            startTelaoSlideshow();
+        }
+
+        window.telaoProximo = () => {
+            if (telaoTimer) clearTimeout(telaoTimer);
+            telaoIndex++;
+            startTelaoSlideshow(true);
+        }
+
+        window.telaoAnterior = () => {
+            if (telaoTimer) clearTimeout(telaoTimer);
+            telaoIndex--;
+            startTelaoSlideshow(true);
+        }
+
+        function getListaFiltrada() {
+            if (telaoFilter === 'fotos') return appData.photos;
+            if (telaoFilter === 'videos') return appData.videos;
+            return [...appData.photos, ...appData.videos];
+        }
+
+        function startTelaoSlideshow(manual = false) {
+            const container = document.getElementById('telaoMediaContainer');
+            let list = getListaFiltrada();
+            
+            if(list.length === 0) {
+                container.innerHTML = `<button class="telao-nav telao-prev" onclick="telaoAnterior()">❮</button><h3 style='color:#aaa;'>Nenhuma mídia encontrada para este filtro...</h3><button class="telao-nav telao-next" onclick="telaoProximo()">❯</button>`;
+                return;
+            }
+
+            telaoIndex = (telaoIndex + list.length) % list.length;
+            const item = list[telaoIndex];
+
+            if (item.tipo === 'video') {
+                container.innerHTML = `
+                    <button class="telao-nav telao-prev" onclick="telaoAnterior()">❮</button>
+                    <video src="${item.url}" autoplay controls playsinline style="max-width:100%; max-height:80vh; object-fit:contain; border-radius:8px; background:#000;"></video>
+                    <button class="telao-nav telao-next" onclick="telaoProximo()">❯</button>
+                `;
+                const vidEl = container.querySelector('video');
+                vidEl.onended = () => {
+                    telaoIndex++;
+                    startTelaoSlideshow();
+                };
+                vidEl.onerror = () => {
+                    telaoTimer = setTimeout(() => { telaoIndex++; startTelaoSlideshow(); }, 3000);
+                };
+            } else {
+                container.innerHTML = `
+                    <button class="telao-nav telao-prev" onclick="telaoAnterior()">❮</button>
+                    <img src="${item.url}" style="max-width:100%; max-height:80vh; object-fit:contain; border-radius:8px;">
+                    <button class="telao-nav telao-next" onclick="telaoProximo()">❯</button>
+                `;
+                telaoTimer = setTimeout(() => {
+                    telaoIndex++;
+                    startTelaoSlideshow();
+                }, 5000);
+            }
+        }
+
+        window.baixarTudoZip = async function() {
+            const senhaDigitada = prompt("Digite a Senha Admin para baixar o ZIP de todas as mídias:");
+            if (!senhaDigitada) return;
+
+            const msgBuffer = new TextEncoder().encode(senhaDigitada);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+            if (hashHex !== ADMIN_SENHA_HASH) {
+                alert("Senha incorreta! Download bloqueado.");
+                return;
+            }
+
+            const todasMidias = [...appData.photos, ...appData.videos];
+            if (todasMidias.length === 0) {
+                alert("Não há mídias para baixar no momento.");
+                return;
+            }
+
+            if (typeof JSZip === 'undefined') {
+                alert("Biblioteca de compactação carregando... Tente novamente em 2 segundos.");
+                return;
+            }
+
+            const btnZip = document.querySelector('.btn-baixar-tudo');
+            const textoOriginal = btnZip.innerHTML;
+            btnZip.innerHTML = "📦 Compactando (0/" + todasMidias.length + ")...";
+            btnZip.disabled = true;
+
+            const zip = new JSZip();
+            const pastaFotos = zip.folder("fotos");
+            const pastaVideos = zip.folder("videos");
+
+            let concluidas = 0;
+
+            for (let i = 0; i < todasMidias.length; i++) {
+                const item = todasMidias[i];
+                try {
+                    const response = await fetch(item.url);
+                    const blob = await response.blob();
+                    const ext = item.tipo === 'video' ? 'mp4' : 'jpg';
+                    const nomeArquivo = `${item.tipo}_${i + 1}_${item.id}.${ext}`;
+                    
+                    if (item.tipo === 'video') {
+                        pastaVideos.file(nomeArquivo, blob);
+                    } else {
+                        pastaFotos.file(nomeArquivo, blob);
+                    }
+                } catch (e) {
+                    console.error("Erro ao baixar arquivo para o ZIP:", item.url, e);
+                }
+                concluidas++;
+                btnZip.innerHTML = `📦 Compactando (${concluidas}/${todasMidias.length})...`;
+            }
+
+            try {
+                btnZip.innerHTML = "⏳ Gerando arquivo ZIP...";
+                const content = await zip.generateAsync({ type: "blob" });
+                const url = window.URL.createObjectURL(content);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `Instamomentos_${EVENTO_ID}.zip`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                a.remove();
+                alert("✅ Arquivo ZIP gerado e baixado com sucesso!");
+            } catch (err) {
+                alert("Erro ao gerar arquivo ZIP: " + err.message);
+            } finally {
+                btnZip.innerHTML = textoOriginal;
+                btnZip.disabled = false;
+            }
+        };
+        
+        const btnVideoLink = document.getElementById('btnVideoLink');
+        if (btnVideoLink) {
+            btnVideoLink.onclick = () => {
+                if(LINK_VIDEO_EXTERNO) window.open(LINK_VIDEO_EXTERNO, "_blank");
+                else alert("Link externo não configurado.");
+            };
+        }
+
+    } catch(e) { console.error("Erro:", e); }
+</script>
+</body>
+</html>
