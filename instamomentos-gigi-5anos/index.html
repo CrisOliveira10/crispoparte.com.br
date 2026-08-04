@@ -668,18 +668,15 @@
                 return;
             }
 
-            let imgUrl = "";
-            try {
-                const form = new FormData(); 
-                form.append('image', base64Data);
-                const r = await fetch("https://api.imgbb.com/1/upload?key=" + IMGBB_API_KEY, { method: 'POST', body: form });
-                const d = await r.json();
-                if(d.success) imgUrl = d.data.url;
-            } catch(e) { 
-                if (!daFila) {
-                    salvarNaFilaOffline('foto', base64Data);
-                    throw new Error("Erro de rede com o ImgBB. Envio guardado na fila.");
-                }
+           if (imgUrl) {
+               await addDoc(collection(db, "eventos/" + EVENTO_ID + "/postagens"), { 
+                   url_imagem: imgUrl, 
+                   preview_url: previewUrl, // Adicionamos a miniatura aqui
+                   tipo: tipo,
+                   curtidas: 0, 
+                   total_comentarios: 0,
+                   data_envio: serverTimestamp() 
+               });
             }
 
             if (SCRIPT_URL && SCRIPT_URL.includes("script.google.com")) {
@@ -972,16 +969,16 @@
             container.innerHTML = appData.photos.map(item => `
                 <div class="feed-card">
                     <div class="media-container" style="cursor: pointer; background:#000;" onclick="abrirModal('${item.url}', '${item.id}', ${item.likes}, 'foto')">
-                        <img
-                            src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
-                            data-src="${item.url}"
-                            alt="Foto"
-                            width="720"
-                            height="1280"
-                            loading="lazy"
-                            decoding="async"
-                            style="width:100%; height:auto; display:block;"
-                        >
+                       <img
+    src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+    data-src="${item.preview_url || item.url}"
+    alt="Foto"
+    width="720"
+    height="1280"
+    loading="lazy"
+    decoding="async"
+    style="width:100%; height:auto; display:block;"
+>
                     </div>
                     <div class="feed-actions">
                         <div class="feed-actions-left">
