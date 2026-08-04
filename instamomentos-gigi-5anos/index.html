@@ -699,6 +699,7 @@
             if (imgUrl) {
                await addDoc(collection(db, "eventos/" + EVENTO_ID + "/postagens"), { 
                    url_imagem: imgUrl, 
+                   preview_url: d.data?.medium?.url || d.data?.thumb?.url || imgUrl,
                    tipo: tipo,
                    curtidas: 0, 
                    total_comentarios: 0,
@@ -957,11 +958,15 @@
         // GALERIA DE FOTOS — mesma aparência, carregamento sob demanda
         let fotoObserver = null;
 
+        // GALERIA DE FOTOS V2 — preview leve na galeria; original somente no modal/download.
+        let photoObserver = null;
+
         window.renderPhotos = function() {
             const container = document.getElementById('photoGridContainer');
-            if (fotoObserver) {
-                fotoObserver.disconnect();
-                fotoObserver = null;
+
+            if (photoObserver) {
+                photoObserver.disconnect();
+                photoObserver = null;
             }
 
             if(appData.photos.length === 0) {
@@ -969,69 +974,63 @@
                 return;
             }
 
-            container.innerHTML = appData.photos.map(item => `
+            container.innerHTML = appData.photos.map(item => {
+                const originalUrl = item.url || item.url_imagem || '';
+                const previewUrl = item.preview_url || originalUrl;
+                const safeOriginal = String(originalUrl).replace(/'/g, "\\'");
+                const safeId = String(item.id).replace(/'/g, "\\'");
+
+                return `
                 <div class="feed-card">
-                    <div class="media-container" style="cursor: pointer; background:#000;" onclick="abrirModal('${item.url}', '${item.id}', ${item.likes}, 'foto')">
+                    <div class="media-container photo-media-lazy"
+                         style="cursor:pointer; min-height:120px; background:#111;"
+                         onclick="abrirModal('${safeOriginal}', '${safeId}', ${item.likes}, 'foto')">
                         <img
+                            data-photo-preview="${previewUrl}"
                             src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
-                            data-src="${item.url}"
                             alt="Foto"
-                            width="720"
-                            height="1280"
-                            loading="lazy"
                             decoding="async"
-                            style="width:100%; height:auto; display:block;"
+                            style="width:100%; height:auto; display:block; object-fit:contain;"
                         >
                     </div>
                     <div class="feed-actions">
                         <div class="feed-actions-left">
-                            <button class="like-btn" onclick="toggleLike('${item.id}')">❤️ ${item.likes}</button>
-                            <button class="comment-count-btn" onclick="abrirModal('${item.url}', '${item.id}', ${item.likes}, 'foto')">💬 ${item.comments}</button>
+                            <button class="like-btn" onclick="toggleLike('${safeId}')">❤️ ${item.likes}</button>
+                            <button class="comment-count-btn" onclick="abrirModal('${safeOriginal}', '${safeId}', ${item.likes}, 'foto')">💬 ${item.comments}</button>
                         </div>
-                        <a href="${item.url}" target="_blank" download class="btn-baixar-card">⬇️ Baixar</a>
+                        <a href="${safeOriginal}" target="_blank" download class="btn-baixar-card">⬇️ Baixar</a>
                     </div>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
 
-            const imagens = container.querySelectorAll('img[data-src]');
-            const carregarImagem = (img) => {
-                const url = img.dataset.src;
-                if (!url || img.dataset.loaded === '1') return;
+            const lazyImages = container.querySelectorAll('img[data-photo-preview]');
+
+            const loadPhoto = (img) => {
+                if (!img || img.dataset.loaded === '1') return;
+                const url = img.getAttribute('data-photo-preview');
+                if (!url) return;
                 img.dataset.loaded = '1';
                 img.src = url;
+                img.removeAttribute('data-photo-preview');
             };
 
             if ('IntersectionObserver' in window) {
-                fotoObserver = new IntersectionObserver((entries, observer) => {
+                photoObserver = new IntersectionObserver((entries, observer) => {
                     entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            carregarImagem(entry.target);
-                            observer.unobserve(entry.target);
-                        }
+                        if (!entry.isIntersecting) return;
+                        loadPhoto(entry.target);
+                        observer.unobserve(entry.target);
                     });
-                }, { rootMargin: '500px 0px' });
-                imagens.forEach(img => fotoObserver.observe(img));
+                }, {
+                    root: null,
+                    rootMargin: '150px 0px',
+                    threshold: 0.01
+                });
+                lazyImages.forEach(img => photoObserver.observe(img));
             } else {
-                imagens.forEach(carregarImagem);
+                Array.from(lazyImages).slice(0, 4).forEach(loadPhoto);
             }
-        };
-
-        // PRÉVIA DOS VÍDEOS — primeiro frame real do Cloudinary
-        window.criarPreviewVideoCloudinary = function(url, segundo = 0) {
-            if (!url || !url.includes('/video/upload/')) return '';
-            try {
-                const transformacao = segundo > 0
-                    ? `so_${segundo},w_720,q_auto`
-                    : 'so_0,w_720,q_auto';
-                return url
-                    .replace('/video/upload/', `/video/upload/${transformacao}/`)
-                    .replace(/\.(mp4|webm|mov|m4v)(\?.*)?$/i, '.jpg$2');
-            } catch(e) { return ''; }
-        };
-
-        window.getVideoPreviewUrl = function(item) {
-            return item.preview_url || criarPreviewVideoCloudinary(item.url, 0);
-        };
+        }
 
         window.renderVideos = function() {
             const container = document.getElementById('videoGridContainer');
