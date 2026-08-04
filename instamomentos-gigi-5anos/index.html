@@ -669,12 +669,24 @@
             }
 
             let imgUrl = "";
+            let previewUrl = "";
             try {
                 const form = new FormData(); 
                 form.append('image', base64Data);
                 const r = await fetch("https://api.imgbb.com/1/upload?key=" + IMGBB_API_KEY, { method: 'POST', body: form });
                 const d = await r.json();
-                if(d.success) imgUrl = d.data.url;
+
+                if(d.success && d.data) {
+                    imgUrl = d.data.url || "";
+
+                    // O ImgBB pode disponibilizar diferentes tamanhos.
+                    // A galeria usa a menor versão disponível; o original
+                    // continua reservado para modal e download.
+                    previewUrl =
+                        (d.data.medium && d.data.medium.url) ||
+                        (d.data.thumb && d.data.thumb.url) ||
+                        imgUrl;
+                }
             } catch(e) { 
                 if (!daFila) {
                     salvarNaFilaOffline('foto', base64Data);
@@ -699,7 +711,7 @@
             if (imgUrl) {
                await addDoc(collection(db, "eventos/" + EVENTO_ID + "/postagens"), { 
                    url_imagem: imgUrl, 
-                   preview_url: d.data?.medium?.url || d.data?.thumb?.url || imgUrl,
+                   preview_url: previewUrl || imgUrl,
                    tipo: tipo,
                    curtidas: 0, 
                    total_comentarios: 0,
