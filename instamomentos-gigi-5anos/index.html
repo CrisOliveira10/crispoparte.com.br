@@ -661,22 +661,39 @@
         }
         window.addEventListener('online', processarFilaOffline);
 
-        async function enviarMidiaServidores(base64Data, tipo = 'foto', daFila = false) {
+       async function enviarMidiaServidores(base64Data, tipo = 'foto', daFila = false) {
             if (!navigator.onLine && !daFila) {
                 salvarNaFilaOffline('foto', base64Data);
                 alert("⚠️ Sem conexão com a internet! Sua foto foi salva na fila e será enviada assim que o sinal voltar.");
                 return;
             }
 
-           if (imgUrl) {
-               await addDoc(collection(db, "eventos/" + EVENTO_ID + "/postagens"), { 
-                   url_imagem: imgUrl, 
-                   preview_url: previewUrl, // Adicionamos a miniatura aqui
-                   tipo: tipo,
-                   curtidas: 0, 
-                   total_comentarios: 0,
-                   data_envio: serverTimestamp() 
-               });
+            // As variáveis precisam nascer aqui fora do bloco try para funcionarem lá no final
+            let imgUrl = "";
+            let previewUrl = ""; 
+            
+            try {
+                const form = new FormData(); 
+                form.append('image', base64Data);
+                const r = await fetch("https://api.imgbb.com/1/upload?key=" + IMGBB_API_KEY, { method: 'POST', body: form });
+                const d = await r.json();
+                
+                if(d.success) {
+                    imgUrl = d.data.url;
+                    // Tenta capturar a miniatura média ou pequena para o feed
+                    if (d.data.medium) {
+                        previewUrl = d.data.medium.url;
+                    } else if (d.data.thumb) {
+                        previewUrl = d.data.thumb.url;
+                    } else {
+                        previewUrl = d.data.url;
+                    }
+                }
+            } catch(e) { 
+                if (!daFila) {
+                    salvarNaFilaOffline('foto', base64Data);
+                    throw new Error("Erro de rede com o ImgBB. Envio guardado na fila.");
+                }
             }
 
             if (SCRIPT_URL && SCRIPT_URL.includes("script.google.com")) {
@@ -696,6 +713,7 @@
             if (imgUrl) {
                await addDoc(collection(db, "eventos/" + EVENTO_ID + "/postagens"), { 
                    url_imagem: imgUrl, 
+                   preview_url: previewUrl, // Salvando a miniatura leve
                    tipo: tipo,
                    curtidas: 0, 
                    total_comentarios: 0,
