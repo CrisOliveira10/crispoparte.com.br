@@ -281,7 +281,7 @@
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxjGbf5nQ30epXlCjO_ciit_-mfl0L3LG2vYodzdQkxxM_cCqNgP0tD99Me2tK5YIs7ag/exec";
     const LINK_VIDEO_EXTERNO = "https://molduracriativa.github.io/meu-filtro/gigi-03082026-crispoparte/";
     const MOLDURA_URL = "https://res.cloudinary.com/dtshawz5x/image/upload/v1785791538/moldura1_mgcg65.png";
-    const ADMIN_SENHA_HASH = "fe2592b42a727e977f055947385b709cc82b16b9a87f88c6abf3900d65d0cdc3";
+    const ADMIN_SENHA_HASH = "6a175db84aeefddbe58bf92a5d67b372c78505c75b079912b89a0e599fe91317";
 
     let appData = { photos: [], videos: [] };
     let cropper = null;
@@ -610,7 +610,8 @@
                     url: p.url_imagem, 
                     tipo: p.tipo || 'foto',
                     likes: p.curtidas || 0, 
-                    comments: p.total_comentarios || 0 
+                    comments: p.total_comentarios || 0,
+                    preview_url: p.preview_url || ''
                 };
                 if(p.tipo === 'video') {
                     appData.videos.push(item);
@@ -618,8 +619,16 @@
                     appData.photos.push(item);
                 }
             });
-            renderPhotos();
-            renderVideos();
+            // PERFORMANCE: não renderiza as duas galerias ao mesmo tempo.
+            // Isso evita criar dezenas/centenas de <img> e previews de vídeo
+            // enquanto o convidado está em outra aba.
+            const photosFeed = document.getElementById('photosFeed');
+            const videosFeed = document.getElementById('videosFeed');
+            if (photosFeed && photosFeed.classList.contains('active')) {
+                renderPhotos();
+            } else if (videosFeed && videosFeed.classList.contains('active')) {
+                renderVideos();
+            }
         });
 
         // FILA DE UPLOAD RESILIENTE (FALHAS DE INTERNET / OFFLINE)
@@ -722,8 +731,11 @@
                 videoUrl = URL.createObjectURL(file);
             }
 
+            const previewUrl = criarPreviewVideoCloudinary(videoUrl);
+
             await addDoc(collection(db, "eventos/" + EVENTO_ID + "/postagens"), { 
                 url_imagem: videoUrl, 
+                preview_url: previewUrl || '',
                 tipo: 'video',
                 curtidas: 0, 
                 total_comentarios: 0,
@@ -942,16 +954,34 @@
             }
         };
 
+        // GALERIA DE FOTOS — mesma aparência, carregamento sob demanda
+        let fotoObserver = null;
+
         window.renderPhotos = function() {
             const container = document.getElementById('photoGridContainer');
+            if (fotoObserver) {
+                fotoObserver.disconnect();
+                fotoObserver = null;
+            }
+
             if(appData.photos.length === 0) {
                 container.innerHTML = "<p style='text-align:center; color:#888; padding:30px;'>Nenhuma foto enviada ainda.</p>";
                 return;
             }
+
             container.innerHTML = appData.photos.map(item => `
                 <div class="feed-card">
-                    <div class="media-container" style="cursor: pointer;" onclick="abrirModal('${item.url}', '${item.id}', ${item.likes}, 'foto')">
-                        <img src="${item.url}" alt="Foto" loading="lazy">
+                    <div class="media-container" style="cursor: pointer; background:#000;" onclick="abrirModal('${item.url}', '${item.id}', ${item.likes}, 'foto')">
+                        <img
+                            src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+                            data-src="${item.url}"
+                            alt="Foto"
+                            width="720"
+                            height="1280"
+                            loading="lazy"
+                            decoding="async"
+                            style="width:100%; height:auto; display:block;"
+                        >
                     </div>
                     <div class="feed-actions">
                         <div class="feed-actions-left">
@@ -962,84 +992,73 @@
                     </div>
                 </div>
             `).join('');
-        }
 
-        // PRÉVIA DOS VÍDEOS — usa o primeiro frame real entregue pelo Cloudinary
-        window.getVideoPreviewUrl = function(url) {
-            if (!url) return '';
+            const imagens = container.querySelectorAll('img[data-src]');
+            const carregarImagem = (img) => {
+                const url = img.dataset.src;
+                if (!url || img.dataset.loaded === '1') return;
+                img.dataset.loaded = '1';
+                img.src = url;
+            };
 
+            if ('IntersectionObserver' in window) {
+                fotoObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            carregarImagem(entry.target);
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { rootMargin: '500px 0px' });
+                imagens.forEach(img => fotoObserver.observe(img));
+            } else {
+                imagens.forEach(carregarImagem);
+            }
+        };
+
+        // PRÉVIA DOS VÍDEOS — primeiro frame real do Cloudinary
+        window.criarPreviewVideoCloudinary = function(url, segundo = 0) {
+            if (!url || !url.includes('/video/upload/')) return '';
             try {
-                // Vídeos hospedados no Cloudinary
-                if (url.includes('/video/upload/')) {
-                    let preview = url.replace(
-                        '/video/upload/',
-                        '/video/upload/so_0,q_auto,f_auto/'
-                    );
+                const transformacao = segundo > 0
+                    ? `so_${segundo},w_720,q_auto`
+                    : 'so_0,w_720,q_auto';
+                return url
+                    .replace('/video/upload/', `/video/upload/${transformacao}/`)
+                    .replace(/\.(mp4|webm|mov|m4v)(\?.*)?$/i, '.jpg$2');
+            } catch(e) { return ''; }
+        };
 
-                    // Converte a extensão do vídeo para JPG.
-                    preview = preview.replace(
-                        /\.(mp4|webm|mov|m4v)(\?.*)?$/i,
-                        '.jpg$2'
-                    );
-
-                    return preview;
-                }
-            } catch (e) {}
-
-            // Se não for Cloudinary (por exemplo, URL temporária/local),
-            // não cria uma imagem falsa; o player normal será usado como fallback.
-            return '';
+        window.getVideoPreviewUrl = function(item) {
+            return item.preview_url || criarPreviewVideoCloudinary(item.url, 0);
         };
 
         window.renderVideos = function() {
             const container = document.getElementById('videoGridContainer');
-
             if(appData.videos.length === 0) {
                 container.innerHTML = "<p style='text-align:center; color:#888; padding:30px;'>Nenhum vídeo enviado ainda.</p>";
                 return;
             }
 
             container.innerHTML = appData.videos.map(item => {
-                const preview = getVideoPreviewUrl(item.url);
-
-                const mediaHtml = preview
-                    ? `
-                        <div style="position:relative; width:100%; overflow:hidden; cursor:pointer;"
-                             onclick="abrirModal('${item.url}', '${item.id}', ${item.likes}, 'video')">
-
-                            <img
-                                src="${preview}"
-                                alt="Prévia do vídeo"
-                                loading="lazy"
-                                decoding="async"
-                                style="width:100%; max-height:450px; object-fit:contain; display:block;"
-                                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                            >
-
-                            <div style="display:none; width:100%; min-height:300px; align-items:center; justify-content:center; background:#222;">
-                                <div style="width:68px; height:68px; border-radius:50%; background:#fff; color:#111; display:flex; align-items:center; justify-content:center; font-size:32px; padding-left:4px;">▶</div>
-                            </div>
-
-                            <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none;">
-                                <div style="width:68px; height:68px; border-radius:50%; background:rgba(255,255,255,.92); color:#111; display:flex; align-items:center; justify-content:center; font-size:32px; padding-left:4px; box-shadow:0 3px 15px rgba(0,0,0,.35);">
-                                    ▶
-                                </div>
-                            </div>
-                        </div>
-                    `
-                    : `
-                        <div style="width:100%; min-height:300px; display:flex; align-items:center; justify-content:center; background:#222; cursor:pointer;"
-                             onclick="abrirModal('${item.url}', '${item.id}', ${item.likes}, 'video')">
-                            <div style="width:68px; height:68px; border-radius:50%; background:#fff; color:#111; display:flex; align-items:center; justify-content:center; font-size:32px; padding-left:4px;">
-                                ▶
-                            </div>
-                        </div>
-                    `;
-
+                const preview = getVideoPreviewUrl(item);
                 return `
                 <div class="feed-card">
-                    <div class="media-container" style="position:relative; overflow:hidden;">
-                        ${mediaHtml}
+                    <div class="media-container" style="position:relative; overflow:hidden; background:#222; cursor:pointer;" onclick="abrirModal('${item.url}', '${item.id}', ${item.likes}, 'video')">
+                        <img
+                            src="${preview}"
+                            data-preview-primary="${preview}"
+                            data-preview-fallback="${criarPreviewVideoCloudinary(item.url, 0.5)}"
+                            data-preview-fallback2="${criarPreviewVideoCloudinary(item.url, 1)}"
+                            alt="Prévia do vídeo"
+                            loading="lazy"
+                            decoding="async"
+                            style="width:100%; max-height:450px; object-fit:contain; display:block; min-height:220px; background:#222;"
+                            onerror="trocarPreviewVideo(this)"
+                        >
+                        <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none;">
+                            <div style="width:68px; height:68px; border-radius:50%; background:rgba(255,255,255,.92); color:#111; display:flex; align-items:center; justify-content:center; font-size:32px; padding-left:4px; box-shadow:0 3px 15px rgba(0,0,0,.35);">▶</div>
+                        </div>
                     </div>
                     <div class="feed-actions">
                         <div class="feed-actions-left">
@@ -1048,10 +1067,26 @@
                         </div>
                         <a href="${item.url}" target="_blank" download class="btn-baixar-card">⬇️ Baixar</a>
                     </div>
-                </div>
-                `;
+                </div>`;
             }).join('');
-        }
+        };
+
+        window.trocarPreviewVideo = function(img) {
+            const tentativa = Number(img.dataset.previewAttempt || 0);
+            const urls = [
+                img.dataset.previewPrimary,
+                img.dataset.previewFallback,
+                img.dataset.previewFallback2
+            ];
+            if (tentativa < urls.length - 1) {
+                img.dataset.previewAttempt = String(tentativa + 1);
+                setTimeout(() => { img.src = urls[tentativa + 1]; }, 700 * (tentativa + 1));
+            } else {
+                // Último fallback: deixa o cartão utilizável mesmo se o frame
+                // ainda estiver sendo processado pelo Cloudinary.
+                img.style.display = 'none';
+            }
+        };
 
         window.abrirModal = (url, id, likes, tipo) => {
             const mediaWrapper = document.getElementById('modalMediaWrapper');
