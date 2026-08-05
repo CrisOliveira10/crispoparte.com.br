@@ -130,7 +130,7 @@
     }
 
     if("sim"==='sim'){ setInterval(()=>{ 
-        const dist=new Date("")-new Date(); if(dist<0)return;
+        const dist=new Date("2026-08-12T17:00")-new Date(); if(dist<0)return;
         document.getElementById('d').innerText=Math.floor(dist/86400000).toString().padStart(2,'0');
         document.getElementById('h').innerText=Math.floor((dist%86400000)/3600000).toString().padStart(2,'0');
         document.getElementById('mi').innerText=Math.floor((dist%3600000)/60000).toString().padStart(2,'0');
