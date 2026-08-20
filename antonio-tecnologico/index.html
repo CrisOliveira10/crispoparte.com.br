@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>${nomeEvento}</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+        body { background:#000; overflow:hidden; height:100dvh; display:flex; justify-content:center; align-items:center; font-family:sans-serif; }
+        .app-container { position:relative; width:100%; height:100%; max-width:min(100vw, calc(100dvh * 9 / 16)); max-height:100dvh; aspect-ratio:9/16; overflow:hidden; background:#000; }
+        .page { position:absolute; width:100%; height:100%; top:0; left:0; opacity:0; z-index:1; transition:opacity 0.6s; display:flex; justify-content:center; align-items:center; pointer-events:none; }
+        .active { opacity:1; z-index:10; pointer-events:auto; }
+        .media-wrapper { width:100%; height:100%; position:relative; display:flex; justify-content:center; align-items:center; overflow:hidden; }
+        .media-wrapper img, .media-wrapper video { width:100%; height:100%; object-fit:contain; position:absolute; top:0; left:0; }
+        .hotspot { position:absolute; transform:translate(-50%, -50%); z-index:100; border-radius:50%; cursor:pointer; }
+        #btn-s { position:absolute; bottom:25px; left:20px; width:45px; height:45px; background:rgba(255,255,255,0.4); border:1px solid rgba(255,255,255,0.6); border-radius:50%; z-index:9999; display:none; justify-content:center; align-items:center; color:white; backdrop-filter:blur(5px); font-weight:bold; font-size:14px; box-shadow:0 4px 10px rgba(0,0,0,0.3); touch-action:manipulation; }
+        #skip { position:absolute; bottom:25px; right:20px; z-index:9999; padding:10px 20px; border-radius:20px; background:rgba(0,0,0,0.6); color:#c9a96e; display:none; border:1px solid #c9a96e; font-size:11px; text-transform:uppercase; letter-spacing:1px; font-weight:bold; box-shadow:0 4px 10px rgba(0,0,0,0.3); touch-action:manipulation; }
+        #form-modal { display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:99999; align-items:center; justify-content:center; padding:15px; box-sizing:border-box; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+        .form-box { background:#fff; width:100%; max-width:360px; border-radius:15px; box-shadow:0 4px 20px rgba(0,0,0,0.5); text-align:center; padding-bottom:20px; position:relative; font-family:'Segoe UI', sans-serif; max-height:92%; overflow-y:auto; }
+        .form-box label { display:block; text-align:left; margin:8px 20px 4px; font-size:0.8rem; color:#333; font-weight:bold; }
+        .form-box input, .form-box select { width:calc(100% - 40px); margin:0 20px; padding:8px 10px; border:1px solid #ccc; border-radius:5px; font-size:0.95rem; box-sizing:border-box; }
+        .form-box button { width:calc(100% - 40px); margin:15px 20px 0; padding:12px; background:#25d366; color:white; border:none; border-radius:5px; font-weight:bold; font-size:1.05rem; cursor:pointer; }
+        ${timerCSS}
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <audio id="m" src="${audioUrl}" loop preload="auto"></audio>
+    <button id="btn-s" onclick="t()">II</button>
+    <button id="skip" onclick="g(3)">PULAR</button>
+
+    <div id="timer-wrapper">
+        <div id="timer">
+            <p>${document.getElementById('textoCronometro').value}</p>
+            <div class="t-container">
+                <div class="t-num"><span class="t-val" id="d">00</span><span class="t-lab">DIAS</span></div>
+                <div class="t-num"><span class="t-val" id="h">00</span><span class="t-lab">HORAS</span></div>
+                <div class="t-num"><span class="t-val" id="mi">00</span><span class="t-lab">MIN</span></div>
+                <div class="t-num"><span class="t-val" id="se">00</span><span class="t-lab">SEG</span></div>
+            </div>
+        </div>
+    </div>
+
+    ${paginasHTML}
+
+    <div id="form-modal">
+        <div class="form-box">
+            <img src="${headerUrl}" style="width:100%; height:auto; display:block; margin-bottom:10px;" alt="Cabeçalho">
+            <h2 style="color:#333; margin-bottom:10px; font-size:1.3rem;">Confirmação de Presença</h2>
+            <label>Nome completo:</label><input type="text" id="fnome" placeholder="Digite seu nome completo">
+            <label>Nomes dos acompanhantes:</label><input type="text" id="fconvidados" placeholder="Ex: João, Maria...">
+            <label>Você vai participar?</label>
+            <select id="fparticipa"><option value="" disabled selected>Selecione uma opção</option><option value="Sim, com certeza!">Sim, com certeza!</option><option value="Não poderei comparecer.">Não poderei comparecer.</option></select>
+            <label>Quantidade de adultos:</label><select id="fadultos"><option value="0">Nenhum</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4+">4 ou mais</option></select>
+            <label>Quantidade de crianças:</label><select id="fcriancas"><option value="0">Nenhuma</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4+">4 ou mais</option></select>
+            <label>Idade das crianças:</label><input type="text" id="fidades" placeholder="Ex: 2 anos e 5 anos (se houver)">
+            <button onclick="enviarWhats()">Enviar para WhatsApp</button>
+            <p onclick="document.getElementById('form-modal').style.display='none'" style="margin-top:12px; font-size:0.85rem; color:red; cursor:pointer; font-weight:bold;">FECHAR X</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    const mu=document.getElementById('m'), btn=document.getElementById('btn-s'), sk=document.getElementById('skip'), tm=document.getElementById('timer-wrapper');
+    const hasP2 = ${hasP2 ? "true" : "false"}, hasP3 = ${hasP3 ? "true" : "false"};
+    let lastPg = 1, iniciado = false, currentZap = "", volInterval;
+    
+    function fadeAudio(target) {
+        clearInterval(volInterval);
+        let step = target > mu.volume ? 0.05 : -0.05;
+        volInterval = setInterval(() => {
+            let nextVol = mu.volume + step;
+            if ((step > 0 && nextVol >= target) || (step < 0 && nextVol <= target)) {
+                mu.volume = target; clearInterval(volInterval);
+            } else { mu.volume = nextVol; }
+        }, 100);
+    }
+    
+    function s(el){ 
+        if(iniciado) return; iniciado = true;
+        if(el && el.tagName === 'DIV') el.removeAttribute('onclick');
+        
+        mu.load(); 
+        mu.play().catch(()=>{}); 
+        
+        mu.volume = 0.8; 
+        const vAct = document.querySelector('.page.active video');
+        if(vAct) { vAct.muted = false; vAct.play().catch(()=>{}); }
+        
+        btn.style.display='flex'; 
+        if (hasP2) { 
+            if("${document.getElementById('usarPular').value}"==='sim' && hasP3) sk.style.display='block'; 
+            g(2); 
+            const v2=document.getElementById('v2'); 
+            if(v2 && v2.tagName==='VIDEO'){ v2.play().catch(()=>{}); v2.onended=()=> { if(hasP3) g(3); } }
+            else if(hasP3) { setTimeout(()=>g(3),4000); } 
+        } else {
+            const v1=document.getElementById('v1'); 
+            if(v1) { v1.muted = false; v1.play().catch(()=>{}); }
+        }
+    }
+    
+    function g(n){ 
+        if(n <= 3) lastPg = n; 
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        if(n==3 || (!hasP3 && n==2) || (!hasP2 && n==1) || n > 3) sk.style.display='none';
+        else if ("${document.getElementById('usarPular').value}"==='sim' && hasP3 && n < 3) sk.style.display='block';
+        tm.style.display = ("${document.getElementById('usarCronometro').value}"==='sim' && n=="${document.getElementById('pgCronometro').value}") ? 'block' : 'none';
+        const t=document.getElementById('pg'+n); 
+        if(t){
+            t.classList.add('active'); 
+            const v=t.querySelector('video'); 
+            if(v) { 
+                if(iniciado) { v.muted = false; v.play().catch(()=>{}); } 
+            }
+        }
+    }
+    
+    function rv(){ g(lastPg); } 
+    function t(){ mu.paused ? mu.play() : mu.pause(); }
+    function abrirForm(z){ currentZap = z; document.getElementById('form-modal').style.display='flex'; }
+    
+    function enviarWhats() {
+        let nome = document.getElementById("fnome").value;
+        let convidados = document.getElementById("fconvidados").value;
+        let participa = document.getElementById("fparticipa").value;
+        let adultos = document.getElementById("fadultos").value;
+        let criancas = document.getElementById("fcriancas").value;
+        let idades = document.getElementById("fidades").value;
+
+        if(nome === "" || participa === "") { alert("Por favor, preencha seu nome e se você vai participar."); return; }
+        let infoIdade = idades ? idades : "Não informado";
+        let msg = `✨ *CONFIRMAÇÃO DE PRESENÇA* ✨\n\n👤 *Nome:* ${nome}\n🙌 *Vai participar?* ${participa}\n👥 *Acompanhantes:* ${convidados}\n👨‍👩‍👧‍👦 *Total de Adultos:* ${adultos}\n👶 *Total de Crianças:* ${criancas}\n🎂 *Idade das Crianças:* ${infoIdade}\n\n_Enviado via Formulário_`;
+        window.open(`https://wa.me/${currentZap}?text=${encodeURIComponent(msg)}`);
+    }
+
+    if("${document.getElementById('usarCronometro').value}"==='sim'){ setInterval(()=>{ 
+        const dist=new Date("${document.getElementById('dataEvento').value}")-new Date(); if(dist<0)return;
+        document.getElementById('d').innerText=Math.floor(dist/86400000).toString().padStart(2,'0');
+        document.getElementById('h').innerText=Math.floor((dist%86400000)/3600000).toString().padStart(2,'0');
+        document.getElementById('mi').innerText=Math.floor((dist%3600000)/60000).toString().padStart(2,'0');
+        document.getElementById('se').innerText=Math.floor((dist%60000)/1000).toString().padStart(2,'0');
+    },1000); }
+</script>
+${paddingBufferBlock}
+</body>
+</html>
