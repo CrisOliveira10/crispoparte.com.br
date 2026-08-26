@@ -11,8 +11,8 @@
     <style>
         :root {
             --font-title: 'Playfair Display', serif;
-            --font-color: #c59ef5;
-            --final-text-color: #8449ab;
+            --font-color: #cdc2d3;
+            --final-text-color: #a37fe6;
         }
         body, html { 
             margin: 0; 
@@ -34,11 +34,15 @@
             z-index: 1; 
         }
 
-        /* AJUSTE PARA TABLET E PC - Simula a tela do celular no centro */
+        /* AJUSTE PARA TABLET E PC - Simula a tela do celular no centro na proporção exata 9:16 */
         @media (min-width: 768px) {
             .video-background {
-                max-width: 450px;
-                box-shadow: 0 0 30px rgba(0,0,0,0.15); 
+                width: 100%;
+                max-width: 420px;          /* Largura base de um smartphone */
+                height: 100%;              
+                max-height: 746px;         /* Trava a altura na proporção exata 16:9 em relação aos 420px */
+                border-radius: 18px;       /* Bordas arredondadas imitando o aparelho */
+                box-shadow: 0 15px 40px rgba(0,0,0,0.25); 
             }
         }
         
