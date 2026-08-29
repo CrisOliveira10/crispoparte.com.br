@@ -986,38 +986,10 @@ footer {
 
 
 <!-- =========================
-     MATERIAL
+     MATERIAIS DINÂMICOS
 ========================= -->
 
-<section
-    class="material"
-    id="material"
->
-
-    <div class="icone-material">
-        ↓
-    </div>
-
-    <div class="material-info">
-
-        <h2>
-            Material complementar
-        </h2>
-
-        <p>
-            Material de apoio deste módulo.
-        </p>
-
-    </div>
-
-    <button
-        class="btn-material"
-        id="btnMaterial"
-    >
-        Acessar material
-    </button>
-
-</section>
+<div id="containerMateriais"></div>
 
 
 <!-- =========================
@@ -1305,11 +1277,8 @@ const descricaoModulo =
 const listaAulas =
     document.getElementById("listaAulas");
 
-const material =
-    document.getElementById("material");
-
-const btnMaterial =
-    document.getElementById("btnMaterial");
+const containerMateriais =
+    document.getElementById("containerMateriais");
 
 const feedback =
     document.getElementById("feedback");
@@ -1984,6 +1953,7 @@ async function carregarAulas() {
 
 
     listaAulas.innerHTML = "";
+    containerMateriais.innerHTML = "";
 
 
     /* =========================
@@ -1998,6 +1968,7 @@ async function carregarAulas() {
             "block";
 
         listaAulas.innerHTML = "";
+        containerMateriais.innerHTML = "";
 
         await carregarDepoimentos();
 
@@ -2036,7 +2007,7 @@ async function carregarAulas() {
 
 
     /* =========================
-       CRIA CARDS
+       CRIA CARDS AULAS
     ========================= */
 
     aulasDisponiveis.forEach(
@@ -2057,13 +2028,9 @@ async function carregarAulas() {
             if (moduloSelecionado === "3") prefixoCard = "MATERIAL";
 
 
-            /* NOVA LÓGICA DE DETECÇÃO DE MATERIAL */
+            /* LÓGICA DE DETECÇÃO DE AULA MISTA */
             const linkYoutubeValido = converterYoutube(aula.videoUrl);
-            
-            // É considerado material se tiver materialUrl OU se preencheram um link (como Google Drive) em videoUrl
             const ehApenasMaterial = aula.materialUrl || (aula.videoUrl && !linkYoutubeValido);
-            
-            // O link que a aluna vai acessar (dá preferência para o campo materialUrl, se existir)
             const linkParaBaixar = aula.materialUrl || aula.videoUrl;
 
 
@@ -2158,64 +2125,70 @@ async function carregarAulas() {
 
 
     /* =========================
-       MATERIAL
+       CRIA CARDS MATERIAIS
     ========================= */
 
     if (
         materiais.length > 0
     ) {
 
-        const primeiroMaterial =
-            materiais[0];
+        materiais.forEach((mat) => {
 
+            const cardMat = document.createElement("section");
+            cardMat.className = "material";
+            cardMat.style.display = "flex";
 
-        material.style.display =
-            "flex";
+            cardMat.innerHTML = `
 
+                <div class="icone-material">
+                    ↓
+                </div>
 
-        btnMaterial.onclick =
-            () => {
+                <div class="material-info">
+                    <h2>
+                        ${mat.titulo || "Material complementar"}
+                    </h2>
+                    <p>
+                        ${mat.descricao || "Material de apoio deste módulo."}
+                    </p>
+                </div>
 
-                if (
-                    primeiroMaterial.materialUrl
-                ) {
+                <button class="btn-material">
+                    Acessar material
+                </button>
 
-                    let linkMaterial =
-                        String(
-                            primeiroMaterial.materialUrl
-                        ).trim();
+            `;
 
+            const btn = cardMat.querySelector(".btn-material");
+
+            btn.addEventListener("click", () => {
+
+                let linkMaterial = String(mat.materialUrl || mat.videoUrl || "").trim();
+
+                if (linkMaterial) {
 
                     if (
-                        !linkMaterial.startsWith(
-                            "http://"
-                        ) &&
-                        !linkMaterial.startsWith(
-                            "https://"
-                        )
+                        !linkMaterial.startsWith("http://") &&
+                        !linkMaterial.startsWith("https://")
                     ) {
 
-                        linkMaterial =
-                            "https://" +
-                            linkMaterial;
+                        linkMaterial = "https://" + linkMaterial;
 
                     }
 
-
-                    window.open(
-                        linkMaterial,
-                        "_blank"
-                    );
+                    window.open(linkMaterial, "_blank");
 
                 } else {
 
-                    alert(
-                        "O material ainda não foi disponibilizado."
-                    );
+                    alert("O material ainda não foi disponibilizado.");
 
                 }
 
-            };
+            });
+
+            containerMateriais.appendChild(cardMat);
+
+        });
 
     }
 
