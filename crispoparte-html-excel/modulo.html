@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -1640,8 +1639,12 @@ function abrirAula(indice) {
     }
 
 
+    let prefixoVideo = "AULA";
+    if (moduloSelecionado === "2") prefixoVideo = "SUPORTE";
+    if (moduloSelecionado === "3") prefixoVideo = "MATERIAL";
+
     videoNumero.textContent =
-        "AULA " +
+        prefixoVideo + " " +
         String(
             aula.ordem ||
             aulaAtual + 1
@@ -2049,6 +2052,10 @@ async function carregarAulas() {
                 "aula";
 
 
+            let prefixoCard = "AULA";
+            if (moduloSelecionado === "2") prefixoCard = "SUPORTE";
+            if (moduloSelecionado === "3") prefixoCard = "MATERIAL";
+
             card.innerHTML = `
 
                 <div class="icone-aula">
@@ -2059,7 +2066,7 @@ async function carregarAulas() {
 
                     <div class="numero-aula">
 
-                        AULA ${String(
+                        ${prefixoCard} ${String(
                             aula.ordem ||
                             indice + 1
                         ).padStart(
@@ -2646,4 +2653,3 @@ document
 </body>
 
 </html>
-```
