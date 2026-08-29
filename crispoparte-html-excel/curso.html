@@ -1,0 +1,875 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Meu Curso | Cris Pop Arte</title>
+
+<style>
+
+:root {
+    --fundo: #f6f5f5;
+    --roxo: #a24ecc;
+    --roxo-escuro: #716a96;
+    --rosa: #fa5882;
+    --turquesa: #24bab4;
+    --branco: #ffffff;
+    --texto: #292442;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--fundo);
+    color: var(--texto);
+}
+
+
+/* =========================
+   CABEÇALHO
+========================= */
+
+header {
+    background:
+        linear-gradient(
+            135deg,
+            var(--roxo),
+            #8d39b7
+        );
+
+    min-height: 90px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 12px 5%;
+
+    color: white;
+}
+
+.logo-header {
+    height: 65px;
+    max-width: 220px;
+    object-fit: contain;
+}
+
+.btn-sair {
+    border: 1px solid rgba(255,255,255,.8);
+    background: transparent;
+    color: white;
+    padding: 11px 22px;
+    border-radius: 10px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.btn-sair:hover {
+    background: rgba(255,255,255,.15);
+}
+
+
+/* =========================
+   CONTEÚDO
+========================= */
+
+main {
+    width: 90%;
+    max-width: 1050px;
+    margin: 40px auto 80px;
+}
+
+
+/* =========================
+   BOAS-VINDAS
+========================= */
+
+.boas-vindas {
+    margin-bottom: 30px;
+}
+
+.boas-vindas h1 {
+    margin: 0;
+    color: var(--roxo);
+    font-size: 34px;
+}
+
+.boas-vindas p {
+    color: var(--roxo-escuro);
+    font-size: 17px;
+    line-height: 1.5;
+}
+
+
+/* =========================
+   CURSO PRINCIPAL
+========================= */
+
+.curso-destaque {
+    position: relative;
+    overflow: hidden;
+
+    background: white;
+
+    border-radius: 20px;
+
+    padding: 32px;
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,.07);
+
+    margin-bottom: 28px;
+}
+
+.curso-destaque::after {
+    content: "";
+
+    position: absolute;
+
+    width: 220px;
+    height: 220px;
+
+    background: var(--roxo);
+
+    right: -100px;
+    bottom: -120px;
+
+    border-radius: 50%;
+
+    opacity: .9;
+}
+
+.curso-label {
+    color: var(--rosa);
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.curso-destaque h2 {
+    font-size: 28px;
+    margin: 8px 0 12px;
+}
+
+.curso-destaque p {
+    max-width: 700px;
+    line-height: 1.6;
+    color: var(--roxo-escuro);
+}
+
+
+/* =========================
+   GERADOR
+========================= */
+
+.acesso-gerador {
+    background: white;
+
+    border-radius: 18px;
+
+    padding: 22px 26px;
+
+    margin-bottom: 38px;
+
+    box-shadow:
+        0 5px 18px rgba(0,0,0,.05);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+}
+
+.gerador-info {
+    flex: 1;
+}
+
+.gerador-info strong {
+    display: block;
+
+    color: var(--roxo);
+
+    font-size: 18px;
+
+    margin-bottom: 5px;
+}
+
+.gerador-info span {
+    color: #6d6980;
+    font-size: 14px;
+}
+
+.btn-gerador {
+    border: none;
+
+    background: var(--turquesa);
+
+    color: white;
+
+    padding: 13px 20px;
+
+    border-radius: 10px;
+
+    font-weight: bold;
+
+    font-size: 15px;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+}
+
+.btn-gerador:hover {
+    filter: brightness(.95);
+}
+
+
+/* =========================
+   MÓDULOS
+========================= */
+
+.titulo-modulos {
+    color: var(--roxo);
+    font-size: 27px;
+    margin-bottom: 18px;
+}
+
+.modulos {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.modulo {
+    background: white;
+
+    border-radius: 18px;
+
+    padding: 22px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 20px;
+
+    box-shadow:
+        0 4px 16px rgba(0,0,0,.05);
+
+    transition: .2s;
+}
+
+.modulo:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 22px rgba(0,0,0,.08);
+}
+
+
+/* ÍCONES */
+
+.icone {
+    width: 65px;
+    height: 65px;
+
+    flex-shrink: 0;
+
+    border-radius: 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 27px;
+
+    background: #f8eafc;
+
+    color: var(--roxo);
+}
+
+.modulo:nth-child(2) .icone {
+    background: #fce8ef;
+    color: var(--rosa);
+}
+
+.modulo:nth-child(3) .icone {
+    background: #e6f8f7;
+    color: var(--turquesa);
+}
+
+.modulo:nth-child(4) .icone {
+    background: #f0ebf8;
+    color: var(--roxo-escuro);
+}
+
+
+/* INFORMAÇÕES */
+
+.info {
+    flex: 1;
+}
+
+.numero {
+    font-size: 13px;
+
+    font-weight: bold;
+
+    color: var(--rosa);
+}
+
+.modulo h3 {
+    margin: 5px 0;
+
+    font-size: 19px;
+}
+
+.modulo p {
+    margin: 0;
+
+    color: #6d6980;
+
+    line-height: 1.4;
+}
+
+
+/* BOTÃO */
+
+.btn-aulas {
+    border: 2px solid var(--roxo);
+
+    color: var(--roxo);
+
+    background: white;
+
+    padding: 11px 18px;
+
+    border-radius: 10px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+}
+
+.btn-aulas:hover {
+    background: var(--roxo);
+    color: white;
+}
+
+
+/* =========================
+   RODAPÉ
+========================= */
+
+footer {
+    text-align: center;
+
+    padding: 30px;
+
+    color: var(--roxo-escuro);
+
+    font-size: 13px;
+}
+
+
+/* =========================
+   CELULAR
+========================= */
+
+@media (max-width: 700px) {
+
+    header {
+        padding: 12px 20px;
+    }
+
+    .logo-header {
+        height: 52px;
+        max-width: 170px;
+    }
+
+    main {
+        width: 92%;
+        margin-top: 30px;
+    }
+
+    .boas-vindas h1 {
+        font-size: 27px;
+    }
+
+    .curso-destaque {
+        padding: 24px;
+    }
+
+    .curso-destaque h2 {
+        font-size: 23px;
+    }
+
+    .acesso-gerador {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .btn-gerador {
+        width: 100%;
+    }
+
+    .modulo {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .info {
+        min-width: calc(100% - 85px);
+    }
+
+    .btn-aulas {
+        width: 100%;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<header>
+
+    <img
+        class="logo-header"
+        src="https://res.cloudinary.com/dtshawz5x/image/upload/v1787936331/logo_weeuae.png"
+        alt="Cris Pop Arte"
+    >
+
+    <button
+        class="btn-sair"
+        id="sair"
+    >
+        Sair
+    </button>
+
+</header>
+
+
+<main>
+
+
+<!-- =========================
+     BOAS-VINDAS
+========================= -->
+
+<section class="boas-vindas">
+
+    <h1>
+        Olá, <span id="nome">...</span>!
+    </h1>
+
+    <p>
+        Bem-vinda à sua área de aprendizagem.
+    </p>
+
+</section>
+
+
+<!-- =========================
+     CURSO
+========================= -->
+
+<section class="curso-destaque">
+
+    <div class="curso-label">
+        Seu curso
+    </div>
+
+    <h2>
+        Formulário de Confirmação de Presença
+        em Excel em Tempo Real
+    </h2>
+
+    <p>
+        Aprenda a criar um formulário profissional
+        de confirmação de presença e acompanhe
+        as respostas diretamente no Excel em tempo real.
+    </p>
+
+</section>
+
+
+<!-- =========================
+     GERADOR
+========================= -->
+
+<section class="acesso-gerador">
+
+    <div class="gerador-info">
+
+        <strong>
+            Acesse o Gerador
+        </strong>
+
+        <span>
+            Crie seu formulário de confirmação de presença.
+        </span>
+
+    </div>
+
+    <button
+        class="btn-gerador"
+        id="gerador"
+    >
+        Acessar o Gerador →
+    </button>
+
+</section>
+
+
+<!-- =========================
+     MÓDULOS
+========================= -->
+
+<h2 class="titulo-modulos">
+    Sua área de conteúdo
+</h2>
+
+
+<section class="modulos">
+
+
+<!-- MÓDULO 01 -->
+
+<div class="modulo">
+
+    <div class="icone">
+        ▶
+    </div>
+
+    <div class="info">
+
+        <div class="numero">
+            MÓDULO 01
+        </div>
+
+        <h3>
+            Curso: Formulário de Confirmação
+        </h3>
+
+        <p>
+            Aulas passo a passo para criar
+            seu formulário e integrar ao Excel.
+        </p>
+
+    </div>
+
+    <button
+        class="btn-aulas"
+        onclick="window.location.href='modulo.html?modulo=1'"
+    >
+        Acessar aulas →
+    </button>
+
+</div>
+
+
+<!-- MÓDULO 02 -->
+
+<div class="modulo">
+
+    <div class="icone">
+        ?
+    </div>
+
+    <div class="info">
+
+        <div class="numero">
+            MÓDULO 02
+        </div>
+
+        <h3>
+            Suporte às Alunas
+        </h3>
+
+        <p>
+            Aulas e orientações para as principais
+            dúvidas e dificuldades.
+        </p>
+
+    </div>
+
+    <button
+        class="btn-aulas"
+        onclick="window.location.href='modulo.html?modulo=2'"
+    >
+        Acessar suporte →
+    </button>
+
+</div>
+
+
+<!-- MÓDULO 03 -->
+
+<div class="modulo">
+
+    <div class="icone">
+        ↓
+    </div>
+
+    <div class="info">
+
+        <div class="numero">
+            MÓDULO 03
+        </div>
+
+        <h3>
+            Materiais Extras
+        </h3>
+
+        <p>
+            Acesse materiais complementares,
+            arquivos, PDFs e conteúdos de apoio.
+        </p>
+
+    </div>
+
+    <button
+        class="btn-aulas"
+        onclick="window.location.href='modulo.html?modulo=3'"
+    >
+        Ver materiais →
+    </button>
+
+</div>
+
+
+<!-- MÓDULO 04 -->
+
+<div class="modulo">
+
+    <div class="icone">
+        ★
+    </div>
+
+    <div class="info">
+
+        <div class="numero">
+            MÓDULO 04
+        </div>
+
+        <h3>
+            Feedback das Alunas
+        </h3>
+
+        <p>
+            Conte sua experiência e ajude a
+            melhorar cada vez mais o curso.
+        </p>
+
+    </div>
+
+    <button
+        class="btn-aulas"
+        onclick="window.location.href='modulo.html?modulo=4'"
+    >
+        Deixar feedback →
+    </button>
+
+</div>
+
+
+</section>
+
+</main>
+
+
+<footer>
+
+    Cris Pop Arte - Designer Digital<br>
+
+    © 2026 Todos os direitos reservados.
+
+</footer>
+
+
+<script type="module">
+
+
+import {
+    auth,
+    db,
+    doc,
+    getDoc
+} from "./firebase.js";
+
+
+import {
+    onAuthStateChanged,
+    signOut
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+/* =========================
+   ELEMENTOS
+========================= */
+
+const nome =
+    document.getElementById("nome");
+
+
+/* =========================
+   VERIFICA ACESSO
+========================= */
+
+onAuthStateChanged(
+    auth,
+    async (usuario) => {
+
+        if (!usuario) {
+
+            window.location.href =
+                "index.html";
+
+            return;
+
+        }
+
+
+        try {
+
+            const referencia =
+                doc(
+                    db,
+                    "alunas",
+                    usuario.uid
+                );
+
+
+            const cadastro =
+                await getDoc(
+                    referencia
+                );
+
+
+            if (!cadastro.exists()) {
+
+                await signOut(auth);
+
+                window.location.href =
+                    "index.html";
+
+                return;
+
+            }
+
+
+            const dados =
+                cadastro.data();
+
+
+            if (
+                dados.status !==
+                "ativo"
+            ) {
+
+                await signOut(auth);
+
+                alert(
+                    "Seu acesso ao curso está bloqueado."
+                );
+
+                window.location.href =
+                    "index.html";
+
+                return;
+
+            }
+
+
+            /* =========================
+               NOME DA ALUNA
+            ========================= */
+
+            nome.textContent =
+                dados.nome ||
+                usuario.email.split("@")[0];
+
+
+        } catch (erro) {
+
+            console.error(erro);
+
+            alert(
+                "Não foi possível verificar seu acesso."
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================
+   SAIR
+========================= */
+
+document
+    .getElementById("sair")
+    .addEventListener(
+        "click",
+        async () => {
+
+            await signOut(auth);
+
+            window.location.href =
+                "index.html";
+
+        }
+    );
+
+
+/* =========================
+   GERADOR
+========================= */
+
+document
+    .getElementById("gerador")
+    .addEventListener(
+        "click",
+        () => {
+
+            window.open(
+                "https://site-confirmar-planilha.web.app",
+                "_blank"
+            );
+
+        }
+    );
+
+
+</script>
+
+</body>
+
+</html>
+```
