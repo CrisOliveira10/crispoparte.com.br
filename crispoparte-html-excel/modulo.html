@@ -257,10 +257,12 @@ main {
 
     padding: 22px;
 
+    margin-top: 25px;
+
     box-shadow:
         0 5px 18px rgba(0,0,0,.06);
 
-    display: flex;
+    display: none;
 
     align-items: center;
 
@@ -317,11 +319,6 @@ main {
     font-weight: bold;
 
     cursor: pointer;
-    white-space: nowrap;
-}
-
-.btn-material:hover {
-    filter: brightness(.95);
 }
 
 
@@ -989,18 +986,38 @@ footer {
 
 
 <!-- =========================
-     MATERIAIS EXTRAS
+     MATERIAL
 ========================= -->
 
-<div
-    id="containerMateriaisGeral"
-    style="display: none; margin-top: 25px;"
+<section
+    class="material"
+    id="material"
 >
-    <div
-        id="listaMateriais"
-        style="display: flex; flex-direction: column; gap: 16px;"
-    ></div>
-</div>
+
+    <div class="icone-material">
+        ↓
+    </div>
+
+    <div class="material-info">
+
+        <h2>
+            Material complementar
+        </h2>
+
+        <p>
+            Material de apoio deste módulo.
+        </p>
+
+    </div>
+
+    <button
+        class="btn-material"
+        id="btnMaterial"
+    >
+        Acessar material
+    </button>
+
+</section>
 
 
 <!-- =========================
@@ -1288,11 +1305,11 @@ const descricaoModulo =
 const listaAulas =
     document.getElementById("listaAulas");
 
-const containerMateriaisGeral =
-    document.getElementById("containerMateriaisGeral");
+const material =
+    document.getElementById("material");
 
-const listaMateriais =
-    document.getElementById("listaMateriais");
+const btnMaterial =
+    document.getElementById("btnMaterial");
 
 const feedback =
     document.getElementById("feedback");
@@ -1990,7 +2007,7 @@ async function carregarAulas() {
 
 
     /* =========================
-       SEM AULAS NEM MATERIAIS
+       SEM AULAS
     ========================= */
 
     if (
@@ -2019,7 +2036,7 @@ async function carregarAulas() {
 
 
     /* =========================
-       CRIA CARDS DE AULAS
+       CRIA CARDS
     ========================= */
 
     aulasDisponiveis.forEach(
@@ -2039,10 +2056,21 @@ async function carregarAulas() {
             if (moduloSelecionado === "2") prefixoCard = "SUPORTE";
             if (moduloSelecionado === "3") prefixoCard = "MATERIAL";
 
+
+            /* NOVA LÓGICA DE DETECÇÃO DE MATERIAL */
+            const linkYoutubeValido = converterYoutube(aula.videoUrl);
+            
+            // É considerado material se tiver materialUrl OU se preencheram um link (como Google Drive) em videoUrl
+            const ehApenasMaterial = aula.materialUrl || (aula.videoUrl && !linkYoutubeValido);
+            
+            // O link que a aluna vai acessar (dá preferência para o campo materialUrl, se existir)
+            const linkParaBaixar = aula.materialUrl || aula.videoUrl;
+
+
             card.innerHTML = `
 
-                <div class="icone-aula">
-                    ▶
+                <div class="icone-aula" ${ehApenasMaterial ? 'style="font-size:26px;"' : ''}>
+                    ${ehApenasMaterial ? '↓' : '▶'}
                 </div>
 
                 <div class="info-aula">
@@ -2078,7 +2106,7 @@ async function carregarAulas() {
                 <button
                     class="btn-aula"
                 >
-                    Assistir aula →
+                    ${ehApenasMaterial ? 'Acessar material' : 'Assistir aula →'}
                 </button>
 
             `;
@@ -2094,9 +2122,28 @@ async function carregarAulas() {
                 "click",
                 () => {
 
-                    abrirAula(
-                        indice
-                    );
+                    if (ehApenasMaterial) {
+
+                        let linkFinal = String(linkParaBaixar).trim();
+
+                        if (
+                            !linkFinal.startsWith("http://") &&
+                            !linkFinal.startsWith("https://")
+                        ) {
+
+                            linkFinal = "https://" + linkFinal;
+
+                        }
+
+                        window.open(linkFinal, "_blank");
+
+                    } else {
+
+                        abrirAula(
+                            indice
+                        );
+
+                    }
 
                 }
             );
@@ -2111,81 +2158,49 @@ async function carregarAulas() {
 
 
     /* =========================
-       MATERIAIS EXTRAS DINÂMICOS
+       MATERIAL
     ========================= */
 
-    if (materiais.length > 0) {
+    if (
+        materiais.length > 0
+    ) {
 
-        containerMateriaisGeral.style.display = "block";
-        listaMateriais.innerHTML = "";
+        const primeiroMaterial =
+            materiais[0];
 
-        materiais.forEach((mat) => {
 
-            let linkMaterial =
-                String(
-                    mat.materialUrl ||
-                    ""
-                ).trim();
+        material.style.display =
+            "flex";
 
-            if (
-                linkMaterial &&
-                !linkMaterial.startsWith("http://") &&
-                !linkMaterial.startsWith("https://")
-            ) {
-                linkMaterial =
-                    "https://" + linkMaterial;
-            }
 
-            const cardMaterial =
-                document.createElement("div");
+        btnMaterial.onclick =
+            () => {
 
-            cardMaterial.className = "material";
-            cardMaterial.style.display = "flex";
+                if (
+                    primeiroMaterial.materialUrl
+                ) {
 
-            cardMaterial.innerHTML = `
+                    let linkMaterial =
+                        String(
+                            primeiroMaterial.materialUrl
+                        ).trim();
 
-                <div class="icone-material">
-                    ↓
-                </div>
 
-                <div class="material-info">
+                    if (
+                        !linkMaterial.startsWith(
+                            "http://"
+                        ) &&
+                        !linkMaterial.startsWith(
+                            "https://"
+                        )
+                    ) {
 
-                    <h2>
-                        ${
-                            escaparHtml(
-                                mat.titulo ||
-                                "Material complementar"
-                            )
-                        }
-                    </h2>
+                        linkMaterial =
+                            "https://" +
+                            linkMaterial;
 
-                    <p>
-                        ${
-                            escaparHtml(
-                                mat.descricao ||
-                                "Material de apoio deste módulo."
-                            )
-                        }
-                    </p>
+                    }
 
-                </div>
-
-                <button
-                    class="btn-material"
-                >
-                    Acessar material
-                </button>
-
-            `;
-
-            const btnMat =
-                cardMaterial.querySelector(
-                    ".btn-material"
-                );
-
-            btnMat.onclick = () => {
-
-                if (linkMaterial) {
 
                     window.open(
                         linkMaterial,
@@ -2201,16 +2216,6 @@ async function carregarAulas() {
                 }
 
             };
-
-            listaMateriais.appendChild(
-                cardMaterial
-            );
-
-        });
-
-    } else {
-
-        containerMateriaisGeral.style.display = "none";
 
     }
 
@@ -2337,7 +2342,7 @@ async function carregarDepoimentos() {
 
 
         /* =========================
-           CRIA CARDS DEPOIMENTOS
+           CRIA CARDS
         ========================= */
 
         depoimentosAprovados.forEach(
@@ -2381,6 +2386,11 @@ async function carregarDepoimentos() {
                         "Aluna"
                     ).trim();
 
+
+                /*
+                 * Mostra somente o primeiro nome
+                 * para preservar a privacidade.
+                 */
 
                 const primeiroNome =
                     nomeCompleto
@@ -2536,6 +2546,10 @@ enviarFeedback.addEventListener(
 
 
         try {
+
+            /*
+             * ID automático do documento.
+             */
 
             const referencia =
                 doc(
