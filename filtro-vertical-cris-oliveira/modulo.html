@@ -1353,7 +1353,7 @@ const modulos = {
             "Conhecendo o Sistema",
 
         descricao:
-            "Nesta etapa você vai conhecer o funcionamento do sistema e entender como será sua jornada para criar seu formulário de confirmação."
+            "Nesta etapa você vai conhecer o funcionamento do sistema e entender como será sua jornada para criar seu filtro moldura."
 
     },
 
@@ -1870,27 +1870,39 @@ onAuthStateChanged(
 
 async function carregarAulas() {
 
-   const colecoesParaBuscar = ["aulas", "suporte", "material"];
+    const referencia =
+        collection(
+            db,
+            "aulas"
+        );
+
+
+    const resultado =
+        await getDocs(
+            referencia
+        );
+
+
     const todasAulas = [];
 
-    for (const nomeColecao of colecoesParaBuscar) {
-        const referencia = collection(db, nomeColecao);
-        const resultado = await getDocs(referencia);
 
-        resultado.forEach((documento) => {
-            const dados = documento.data();
+    resultado.forEach(
+        (documento) => {
+
+            const dados =
+                documento.data();
+
 
             if (
-                String(dados.modulo) === String(moduloSelecionado) &&
+                String(
+                    dados.modulo
+                ) ===
+                String(
+                    moduloSelecionado
+                )
+                &&
                 dados.ativo !== false
             ) {
-                todasAulas.push({
-                    id: documento.id,
-                    ...dados
-                });
-            }
-        });
-    }
 
                 todasAulas.push({
 
