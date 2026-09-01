@@ -1,1 +1,936 @@
 
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Área do Aluno | Cris Pop Arte</title>
+
+<style>
+
+:root {
+    --fundo: #f6f5f5;
+    --roxo: #a24ecc;
+    --roxo-escuro: #716a96;
+    --rosa: #fa5882;
+    --turquesa: #24bab4;
+    --branco: #ffffff;
+    --texto: #292442;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--fundo);
+    color: var(--texto);
+}
+
+.container {
+    min-height: 100vh;
+    display: flex;
+}
+
+
+/* =========================
+   LADO ESQUERDO
+========================= */
+
+.esquerda {
+    width: 45%;
+    min-height: 100vh;
+    background: var(--branco);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+.conteudo-login {
+    width: 100%;
+    max-width: 430px;
+    position: relative;
+    z-index: 2;
+}
+
+.logo {
+    width: 190px;
+    max-width: 70%;
+    display: block;
+    margin: 0 auto 25px;
+}
+
+h1 {
+    text-align: center;
+    color: var(--roxo);
+    font-size: 38px;
+    margin: 10px 0;
+}
+
+.subtitulo {
+    text-align: center;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--roxo-escuro);
+    margin-bottom: 35px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin: 18px 0 8px;
+}
+
+input {
+    width: 100%;
+    height: 52px;
+    border: 2px solid #f3b9ca;
+    border-radius: 12px;
+    padding: 0 16px;
+    font-size: 16px;
+    outline: none;
+    transition: .2s;
+}
+
+input:focus {
+    border-color: var(--roxo);
+}
+
+
+/* =========================
+   CAMPO DE SENHA
+========================= */
+
+.campo-senha {
+    position: relative;
+    width: 100%;
+}
+
+.campo-senha input {
+    padding-right: 90px;
+}
+
+.mostrar-senha {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    border: none;
+    background: transparent;
+
+    color: var(--roxo);
+
+    font-size: 13px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    padding: 6px 5px;
+}
+
+.mostrar-senha:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================
+   OPÇÕES
+========================= */
+
+.opcoes {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.lembrar {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0;
+}
+
+.lembrar input {
+    width: 17px;
+    height: 17px;
+    margin: 0;
+}
+
+.esqueci {
+    color: var(--roxo);
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+
+/* =========================
+   BOTÃO ENTRAR
+========================= */
+
+.btn-entrar {
+    width: 100%;
+    height: 54px;
+    margin-top: 25px;
+    border: none;
+    border-radius: 12px;
+    background: var(--rosa);
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.btn-entrar:hover {
+    transform: translateY(-2px);
+    filter: brightness(.95);
+}
+
+.btn-entrar:disabled {
+    opacity: .7;
+    cursor: wait;
+    transform: none;
+}
+
+#mensagem {
+    text-align: center;
+    margin-top: 15px;
+    min-height: 22px;
+    font-size: 14px;
+}
+
+
+/* =========================
+   DECORAÇÃO
+========================= */
+
+.forma-roxa {
+    position: absolute;
+    width: 280px;
+    height: 160px;
+    background: var(--roxo);
+    bottom: -70px;
+    right: -50px;
+    border-radius: 80% 0 0 0;
+}
+
+.forma-rosa {
+    position: absolute;
+    width: 250px;
+    height: 90px;
+    background: var(--rosa);
+    bottom: -45px;
+    left: -70px;
+    border-radius: 0 100% 0 0;
+}
+
+.forma-turquesa {
+    position: absolute;
+    width: 300px;
+    height: 100px;
+    background: var(--turquesa);
+    bottom: -55px;
+    left: 80px;
+    border-radius: 50% 50% 0 0;
+}
+
+
+/* =========================
+   LADO DIREITO
+========================= */
+
+.direita {
+    width: 55%;
+    min-height: 100vh;
+    padding: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--fundo);
+}
+
+.apresentacao {
+    max-width: 620px;
+}
+
+.apresentacao h2 {
+    color: var(--roxo);
+    font-size: 38px;
+    margin-bottom: 10px;
+}
+
+.apresentacao p {
+    color: var(--roxo-escuro);
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+.lista {
+    margin-top: 30px;
+}
+
+.item {
+    background: white;
+    padding: 18px;
+    margin-bottom: 15px;
+    border-radius: 14px;
+    box-shadow: 0 5px 18px rgba(0,0,0,.06);
+}
+
+.item strong {
+    color: var(--roxo);
+}
+
+
+/* =========================
+   CELULAR
+========================= */
+
+@media (max-width: 850px) {
+
+    .container {
+        display: block;
+    }
+
+    .esquerda,
+    .direita {
+        width: 100%;
+        min-height: auto;
+    }
+
+    .esquerda {
+        padding: 45px 25px 80px;
+    }
+
+    .direita {
+        padding: 45px 25px;
+    }
+
+    .apresentacao h2 {
+        font-size: 30px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+
+    <!-- =========================
+         LADO ESQUERDO
+    ========================== -->
+
+    <section class="esquerda">
+
+        <div class="conteudo-login">
+
+            <img
+                class="logo"
+                src="https://res.cloudinary.com/dtshawz5x/image/upload/v1787936331/logo_weeuae.png"
+                alt="Cris Pop Arte"
+            >
+
+            <h1>Bem-vinda!</h1>
+
+            <div class="subtitulo">
+                Entre com seu e-mail e senha<br>
+                para acessar sua área de aprendizagem.
+            </div>
+
+
+            <!-- E-MAIL -->
+
+            <label for="email">
+                E-mail
+            </label>
+
+            <input
+                type="email"
+                id="email"
+                placeholder="seu@email.com"
+                autocomplete="email"
+            >
+
+
+            <!-- SENHA -->
+
+            <label for="senha">
+                Senha
+            </label>
+
+            <div class="campo-senha">
+
+                <input
+                    type="password"
+                    id="senha"
+                    placeholder="Sua senha"
+                    autocomplete="current-password"
+                >
+
+                <button
+                    type="button"
+                    id="mostrarSenha"
+                    class="mostrar-senha"
+                    aria-label="Mostrar senha"
+                >
+                    Mostrar
+                </button>
+
+            </div>
+
+
+            <!-- OPÇÕES -->
+
+            <div class="opcoes">
+
+                <label class="lembrar">
+
+                    <input
+                        type="checkbox"
+                        id="lembrar"
+                    >
+
+                    Lembrar-me
+
+                </label>
+
+
+                <span
+                    class="esqueci"
+                    id="esqueci"
+                >
+                    Esqueci minha senha
+                </span>
+
+            </div>
+
+
+            <!-- ENTRAR -->
+
+            <button
+                type="button"
+                class="btn-entrar"
+                id="entrar"
+            >
+                Entrar
+            </button>
+
+
+            <div id="mensagem"></div>
+
+        </div>
+
+
+        <div class="forma-roxa"></div>
+        <div class="forma-turquesa"></div>
+        <div class="forma-rosa"></div>
+
+    </section>
+
+
+
+    <!-- =========================
+         LADO DIREITO
+    ========================== -->
+
+    <section class="direita">
+
+        <div class="apresentacao">
+
+            <h2>
+                Aprenda, crie e transforme.
+            </h2>
+
+            <p>
+                Sua área exclusiva de aprendizagem da
+                <strong>Cris Pop Arte</strong>.
+            </p>
+
+
+            <div class="lista">
+
+                <div class="item">
+
+                    <strong>
+                        Filtro Moldura Personaliza
+                    </strong>
+
+                    <br>
+
+                    Aprenda a criar seu próprio filtro
+                    de moldura personalizada.
+
+                </div>
+
+
+                <div class="item">
+
+                    <strong>
+                        Abre direto no dispositivo
+                    </strong>
+
+                    <br>
+
+                    Registre momentos e compartilhe
+                    nas redes sociais.
+
+                </div>
+
+
+                <div class="item">
+
+                    <strong>
+                        Aulas passo a passo
+                    </strong>
+
+                    <br>
+
+                    Conteúdo organizado para você
+                    aprender no seu ritmo.
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<script type="module">
+
+import {
+    auth,
+    db,
+    doc,
+    getDoc
+} from "./firebase.js";
+
+import {
+    signInWithEmailAndPassword,
+    sendPasswordResetEmail,
+    onAuthStateChanged,
+    signOut
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+/* =========================
+   ELEMENTOS
+========================= */
+
+const email =
+    document.getElementById("email");
+
+const senha =
+    document.getElementById("senha");
+
+const botao =
+    document.getElementById("entrar");
+
+const mensagem =
+    document.getElementById("mensagem");
+
+const esqueci =
+    document.getElementById("esqueci");
+
+const mostrarSenha =
+    document.getElementById("mostrarSenha");
+
+
+/* =========================
+   MOSTRAR / OCULTAR SENHA
+========================= */
+
+mostrarSenha.addEventListener(
+    "click",
+    () => {
+
+        if (senha.type === "password") {
+
+            senha.type = "text";
+
+            mostrarSenha.textContent =
+                "Ocultar";
+
+            mostrarSenha.setAttribute(
+                "aria-label",
+                "Ocultar senha"
+            );
+
+        } else {
+
+            senha.type = "password";
+
+            mostrarSenha.textContent =
+                "Mostrar";
+
+            mostrarSenha.setAttribute(
+                "aria-label",
+                "Mostrar senha"
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================
+   PERMITIR ENTER NO LOGIN
+========================= */
+
+senha.addEventListener(
+    "keydown",
+    (evento) => {
+
+        if (evento.key === "Enter") {
+
+            botao.click();
+
+        }
+
+    }
+);
+
+email.addEventListener(
+    "keydown",
+    (evento) => {
+
+        if (evento.key === "Enter") {
+
+            botao.click();
+
+        }
+
+    }
+);
+
+
+/* =========================
+   LOGIN
+========================= */
+
+botao.addEventListener(
+    "click",
+    async () => {
+
+        const emailDigitado =
+            email.value.trim();
+
+        const senhaDigitada =
+            senha.value;
+
+
+        /* VALIDA CAMPOS */
+
+        if (
+            !emailDigitado ||
+            !senhaDigitada
+        ) {
+
+            mensagem.textContent =
+                "Preencha seu e-mail e sua senha.";
+
+            return;
+
+        }
+
+
+        botao.disabled = true;
+
+        botao.textContent =
+            "Entrando...";
+
+        mensagem.textContent = "";
+
+
+        try {
+
+            /* =========================
+               AUTENTICA NO FIREBASE
+            ========================== */
+
+            const resultado =
+                await signInWithEmailAndPassword(
+                    auth,
+                    emailDigitado,
+                    senhaDigitada
+                );
+
+
+            const usuario =
+                resultado.user;
+
+
+            /* =========================
+               BUSCA CADASTRO DA ALUNA
+            ========================== */
+
+            const referencia =
+                doc(
+                    db,
+                    "alunas",
+                    usuario.uid
+                );
+
+
+            const cadastro =
+                await getDoc(
+                    referencia
+                );
+
+
+            /* =========================
+               CADASTRO NÃO EXISTE
+            ========================== */
+
+            if (
+                !cadastro.exists()
+            ) {
+
+                await signOut(auth);
+
+                mensagem.textContent =
+                    "Seu cadastro ainda não foi liberado para acessar o curso.";
+
+                botao.disabled = false;
+
+                botao.textContent =
+                    "Entrar";
+
+                return;
+
+            }
+
+
+            const dados =
+                cadastro.data();
+
+
+            /* =========================
+               STATUS DO ACESSO
+            ========================== */
+
+            if (
+                dados.status !==
+                "ativo"
+            ) {
+
+                await signOut(auth);
+
+                mensagem.textContent =
+                    "Seu acesso ao curso está bloqueado.";
+
+                botao.disabled = false;
+
+                botao.textContent =
+                    "Entrar";
+
+                return;
+
+            }
+
+
+            /* =========================
+               LOGIN AUTORIZADO
+            ========================== */
+
+            window.location.href =
+                "curso.html";
+
+        }
+
+
+        catch (erro) {
+
+            console.error(
+                "Erro no login:",
+                erro
+            );
+
+
+            mensagem.textContent =
+                "E-mail ou senha incorretos.";
+
+            botao.disabled = false;
+
+            botao.textContent =
+                "Entrar";
+
+        }
+
+    }
+);
+
+
+/* =========================
+   RECUPERAR SENHA
+========================= */
+
+esqueci.addEventListener(
+    "click",
+    async () => {
+
+        const emailDigitado =
+            email.value.trim();
+
+
+        if (!emailDigitado) {
+
+            mensagem.textContent =
+                "Digite seu e-mail primeiro.";
+
+            email.focus();
+
+            return;
+
+        }
+
+
+        try {
+
+            await sendPasswordResetEmail(
+                auth,
+                emailDigitado
+            );
+
+
+            mensagem.textContent =
+                "Enviamos um link para redefinir sua senha.";
+
+        }
+
+
+        catch (erro) {
+
+            console.error(
+                "Erro ao recuperar senha:",
+                erro
+            );
+
+            mensagem.textContent =
+                "Não foi possível enviar o e-mail.";
+
+        }
+
+    }
+);
+
+
+/* =========================
+   VERIFICA SESSÃO EXISTENTE
+========================= */
+
+onAuthStateChanged(
+    auth,
+    async (usuario) => {
+
+        /* NÃO ESTÁ LOGADA */
+
+        if (!usuario) {
+
+            return;
+
+        }
+
+
+        try {
+
+            /* =========================
+               BUSCA CADASTRO
+            ========================== */
+
+            const referencia =
+                doc(
+                    db,
+                    "alunas",
+                    usuario.uid
+                );
+
+
+            const cadastro =
+                await getDoc(
+                    referencia
+                );
+
+
+            /* =========================
+               SEM CADASTRO
+            ========================== */
+
+            if (
+                !cadastro.exists()
+            ) {
+
+                await signOut(auth);
+
+                return;
+
+            }
+
+
+            const dados =
+                cadastro.data();
+
+
+            /* =========================
+               ACESSO BLOQUEADO
+            ========================== */
+
+            if (
+                dados.status !==
+                "ativo"
+            ) {
+
+                await signOut(auth);
+
+                return;
+
+            }
+
+
+            /* =========================
+               SESSÃO VÁLIDA
+            ========================== */
+
+            window.location.href =
+                "curso.html";
+
+        }
+
+
+        catch (erro) {
+
+            console.error(
+                "Erro ao verificar sessão:",
+                erro
+            );
+
+            await signOut(auth);
+
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>
+```
