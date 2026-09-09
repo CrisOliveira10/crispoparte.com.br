@@ -1,0 +1,2658 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>Módulo | Cris Pop Arte</title>
+
+<style>
+
+:root {
+    --fundo: #f6f5f5;
+    --roxo: #a24ecc;
+    --roxo-escuro: #716a96;
+    --rosa: #fa5882;
+    --turquesa: #24bab4;
+    --branco: #ffffff;
+    --texto: #292442;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--fundo);
+    color: var(--texto);
+}
+
+
+/* =========================
+   CABEÇALHO
+========================= */
+
+header {
+    background: linear-gradient(
+        135deg,
+        var(--roxo),
+        #8d39b7
+    );
+
+    min-height: 90px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 12px 5%;
+
+    color: white;
+}
+
+.logo-header {
+    height: 65px;
+    max-width: 220px;
+    object-fit: contain;
+}
+
+.acoes-header {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-header {
+    border: 1px solid rgba(255,255,255,.8);
+    background: transparent;
+    color: white;
+
+    padding: 11px 18px;
+
+    border-radius: 10px;
+
+    font-size: 14px;
+
+    cursor: pointer;
+}
+
+.btn-header:hover {
+    background: rgba(255,255,255,.15);
+}
+
+
+/* =========================
+   CONTEÚDO
+========================= */
+
+main {
+    width: 90%;
+    max-width: 1050px;
+
+    margin: 40px auto 80px;
+}
+
+
+/* =========================
+   CABEÇALHO MÓDULO
+========================= */
+
+.cabecalho-modulo {
+    margin-bottom: 30px;
+}
+
+.numero-modulo {
+    color: var(--rosa);
+
+    font-size: 14px;
+    font-weight: bold;
+
+    text-transform: uppercase;
+}
+
+.cabecalho-modulo h1 {
+    margin: 8px 0 10px;
+
+    color: var(--roxo);
+
+    font-size: 34px;
+}
+
+.cabecalho-modulo p {
+    margin: 0;
+
+    color: var(--roxo-escuro);
+
+    font-size: 17px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================
+   LISTA DE AULAS
+========================= */
+
+.lista-aulas {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.aula {
+    background: var(--branco);
+
+    border-radius: 18px;
+
+    padding: 22px;
+
+    box-shadow:
+        0 5px 18px rgba(0,0,0,.06);
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 20px;
+}
+
+.icone-aula {
+    width: 60px;
+    height: 60px;
+
+    flex-shrink: 0;
+
+    border-radius: 16px;
+
+    background: #f8eafc;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--roxo);
+
+    font-size: 24px;
+
+    font-weight: bold;
+}
+
+.aula:nth-child(2) .icone-aula {
+    background: #fce8ef;
+    color: var(--rosa);
+}
+
+.aula:nth-child(3) .icone-aula {
+    background: #e6f8f7;
+    color: var(--turquesa);
+}
+
+.info-aula {
+    flex: 1;
+}
+
+.numero-aula {
+    color: var(--rosa);
+
+    font-size: 12px;
+
+    font-weight: bold;
+
+    margin-bottom: 5px;
+}
+
+.info-aula h2 {
+    margin: 0 0 6px;
+
+    font-size: 19px;
+}
+
+.info-aula p {
+    margin: 0;
+
+    color: #6d6980;
+
+    line-height: 1.4;
+}
+
+.btn-aula {
+    border: 2px solid var(--roxo);
+
+    color: var(--roxo);
+
+    background: white;
+
+    padding: 11px 18px;
+
+    border-radius: 10px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+}
+
+.btn-aula:hover {
+    background: var(--roxo);
+    color: white;
+}
+
+
+/* =========================
+   MATERIAL
+========================= */
+
+.material {
+    background: white;
+
+    border-radius: 18px;
+
+    padding: 22px;
+
+    margin-top: 25px;
+
+    box-shadow:
+        0 5px 18px rgba(0,0,0,.06);
+
+    display: none;
+
+    align-items: center;
+
+    gap: 18px;
+}
+
+.icone-material {
+    width: 60px;
+    height: 60px;
+
+    flex-shrink: 0;
+
+    border-radius: 16px;
+
+    background: #e6f8f7;
+
+    color: var(--turquesa);
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 25px;
+}
+
+.material-info {
+    flex: 1;
+}
+
+.material-info h2 {
+    margin: 0 0 5px;
+
+    font-size: 19px;
+}
+
+.material-info p {
+    margin: 0;
+
+    color: #6d6980;
+}
+
+.btn-material {
+    border: none;
+
+    background: var(--turquesa);
+
+    color: white;
+
+    padding: 12px 18px;
+
+    border-radius: 10px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+
+/* =========================
+   FEEDBACK
+========================= */
+
+.feedback {
+    background: white;
+
+    border-radius: 18px;
+
+    padding: 28px;
+
+    margin-top: 25px;
+
+    box-shadow:
+        0 5px 18px rgba(0,0,0,.06);
+
+    display: none;
+}
+
+.feedback h2 {
+    margin: 0 0 8px;
+
+    color: var(--roxo);
+
+    font-size: 24px;
+}
+
+.feedback p {
+    color: var(--roxo-escuro);
+
+    line-height: 1.5;
+}
+
+
+/* =========================
+   CAMPOS FEEDBACK
+========================= */
+
+.campo-feedback {
+    margin-top: 18px;
+}
+
+.campo-feedback label {
+    display: block;
+
+    font-weight: bold;
+
+    margin-bottom: 8px;
+}
+
+.campo-feedback input,
+.campo-feedback textarea,
+.campo-feedback select {
+
+    width: 100%;
+
+    border: 2px solid #f3b9ca;
+
+    border-radius: 10px;
+
+    padding: 13px;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    font-size: 15px;
+
+    outline: none;
+}
+
+.campo-feedback input:focus,
+.campo-feedback textarea:focus,
+.campo-feedback select:focus {
+    border-color: var(--roxo);
+}
+
+.campo-feedback textarea {
+    min-height: 130px;
+
+    resize: vertical;
+}
+
+
+/* =========================
+   AUTORIZAÇÃO
+========================= */
+
+.autorizacao {
+    margin-top: 18px;
+
+    padding: 16px;
+
+    background: #faf7fc;
+
+    border: 1px solid #ead8f0;
+
+    border-radius: 12px;
+}
+
+.autorizacao-label {
+    display: flex !important;
+
+    align-items: flex-start;
+
+    gap: 10px;
+
+    font-weight: normal !important;
+
+    line-height: 1.5;
+
+    cursor: pointer;
+}
+
+.autorizacao-label input {
+    width: 18px !important;
+    height: 18px !important;
+
+    flex-shrink: 0;
+
+    margin-top: 2px;
+
+    accent-color: var(--roxo);
+}
+
+
+/* =========================
+   BOTÃO FEEDBACK
+========================= */
+
+.btn-feedback {
+    margin-top: 20px;
+
+    border: none;
+
+    background: var(--rosa);
+
+    color: white;
+
+    padding: 13px 22px;
+
+    border-radius: 10px;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+.btn-feedback:hover {
+    filter: brightness(.95);
+}
+
+.btn-feedback:disabled {
+    opacity: .7;
+
+    cursor: wait;
+}
+
+#mensagemFeedback {
+    margin-top: 15px;
+
+    font-size: 14px;
+
+    min-height: 20px;
+}
+
+
+/* =========================
+   DEPOIMENTOS
+========================= */
+
+.depoimentos {
+    margin-top: 35px;
+
+    display: none;
+}
+
+.titulo-depoimentos {
+    color: var(--roxo);
+
+    font-size: 27px;
+
+    margin: 0 0 8px;
+}
+
+.subtitulo-depoimentos {
+    color: var(--roxo-escuro);
+
+    line-height: 1.5;
+
+    margin: 0 0 20px;
+}
+
+.lista-depoimentos {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(0, 1fr)
+        );
+
+    gap: 18px;
+}
+
+.card-depoimento {
+    background: white;
+
+    border-radius: 18px;
+
+    padding: 22px;
+
+    box-shadow:
+        0 5px 18px rgba(0,0,0,.06);
+
+    border-top: 4px solid var(--rosa);
+}
+
+.estrelas {
+    color: #f4b400;
+
+    font-size: 20px;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 12px;
+}
+
+.texto-depoimento {
+    color: #5f5a70;
+
+    font-size: 15px;
+
+    line-height: 1.6;
+
+    margin: 0 0 16px;
+}
+
+.nome-depoimento {
+    color: var(--roxo);
+
+    font-weight: bold;
+
+    font-size: 15px;
+}
+
+.carregando-depoimentos {
+    background: white;
+
+    padding: 25px;
+
+    border-radius: 16px;
+
+    color: var(--roxo-escuro);
+
+    text-align: center;
+}
+
+.sem-depoimentos {
+    background: white;
+
+    padding: 25px;
+
+    border-radius: 16px;
+
+    color: var(--roxo-escuro);
+
+    text-align: center;
+}
+
+
+/* =========================
+   CARREGANDO
+========================= */
+
+.carregando {
+    background: white;
+
+    padding: 30px;
+
+    border-radius: 18px;
+
+    text-align: center;
+
+    color: var(--roxo-escuro);
+}
+
+
+/* =========================
+   SEM AULAS
+========================= */
+
+.sem-aulas {
+    background: white;
+
+    padding: 35px;
+
+    border-radius: 18px;
+
+    text-align: center;
+
+    color: var(--roxo-escuro);
+
+    box-shadow:
+        0 5px 18px rgba(0,0,0,.05);
+}
+
+
+/* =========================
+   PLAYER SOBREPOSTO
+========================= */
+
+.video-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(20, 15, 30, .94);
+
+    z-index: 9999;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 25px;
+}
+
+.video-overlay.ativo {
+    display: flex;
+}
+
+.video-modal {
+    width: 100%;
+
+    max-width: 1100px;
+
+    max-height: 95vh;
+
+    position: relative;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 15px;
+}
+
+.video-topo {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    color: white;
+}
+
+.video-topo-info {
+    flex: 1;
+}
+
+.video-numero {
+    color: #f7a4ba;
+
+    font-size: 13px;
+
+    font-weight: bold;
+}
+
+.video-titulo {
+    margin: 4px 0 0;
+
+    font-size: 24px;
+}
+
+.btn-fechar {
+    border: 1px solid rgba(255,255,255,.5);
+
+    background: rgba(255,255,255,.08);
+
+    color: white;
+
+    width: 42px;
+
+    height: 42px;
+
+    border-radius: 50%;
+
+    font-size: 22px;
+
+    cursor: pointer;
+
+    flex-shrink: 0;
+}
+
+.btn-fechar:hover {
+    background: rgba(255,255,255,.18);
+}
+
+
+/* =========================
+   PLAYER YOUTUBE
+========================= */
+
+.video-container {
+    position: relative;
+
+    width: 100%;
+
+    aspect-ratio: 16 / 9;
+
+    background: #000;
+
+    border-radius: 14px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 10px 50px rgba(0,0,0,.45);
+}
+
+.video-container iframe {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+
+    height: 100%;
+
+    border: 0;
+}
+
+
+/* =========================
+   CONTROLES
+========================= */
+
+.controles-video {
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 12px;
+}
+
+.btn-video {
+    border: none;
+
+    background: rgba(255,255,255,.12);
+
+    color: white;
+
+    padding: 12px 20px;
+
+    border-radius: 10px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    border: 1px solid rgba(255,255,255,.25);
+}
+
+.btn-video:hover {
+    background: var(--roxo);
+}
+
+.btn-video:disabled {
+    opacity: .35;
+
+    cursor: not-allowed;
+}
+
+
+/* =========================
+   RODAPÉ
+========================= */
+
+footer {
+    text-align: center;
+
+    padding: 30px;
+
+    color: var(--roxo-escuro);
+
+    font-size: 13px;
+}
+
+
+/* =========================
+   CELULAR
+========================= */
+
+@media (max-width: 700px) {
+
+    header {
+        padding: 12px 20px;
+    }
+
+    .logo-header {
+        height: 52px;
+        max-width: 170px;
+    }
+
+    .acoes-header {
+        gap: 6px;
+    }
+
+    .btn-header {
+        padding: 9px 10px;
+        font-size: 12px;
+    }
+
+    main {
+        width: 92%;
+        margin-top: 30px;
+    }
+
+    .cabecalho-modulo h1 {
+        font-size: 27px;
+    }
+
+    .aula {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .info-aula {
+        min-width: calc(100% - 80px);
+    }
+
+    .btn-aula {
+        width: 100%;
+    }
+
+    .video-overlay {
+        padding: 10px;
+    }
+
+    .video-modal {
+        max-width: 100%;
+    }
+
+    .video-topo {
+        align-items: flex-start;
+    }
+
+    .video-titulo {
+        font-size: 18px;
+    }
+
+    .video-container {
+        border-radius: 8px;
+    }
+
+    .controles-video {
+        flex-direction: column;
+    }
+
+    .btn-video {
+        width: 100%;
+    }
+
+    .material {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .material-info {
+        min-width: calc(100% - 80px);
+    }
+
+    .btn-material {
+        width: 100%;
+    }
+
+    .feedback {
+        padding: 22px;
+    }
+
+    .lista-depoimentos {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<header>
+
+    <img
+        class="logo-header"
+        src="https://res.cloudinary.com/dtshawz5x/image/upload/v1787936331/logo_weeuae.png"
+        alt="Cris Pop Arte"
+    >
+
+    <div class="acoes-header">
+
+        <button
+            class="btn-header"
+            id="voltar"
+        >
+            ← Área do curso
+        </button>
+
+        <button
+            class="btn-header"
+            id="sair"
+        >
+            Sair
+        </button>
+
+    </div>
+
+</header>
+
+
+<main>
+
+
+<section class="cabecalho-modulo">
+
+    <div
+        class="numero-modulo"
+        id="numeroModulo"
+    >
+        MÓDULO
+    </div>
+
+    <h1 id="tituloModulo">
+        Carregando...
+    </h1>
+
+    <p id="descricaoModulo">
+        Aguarde enquanto carregamos o conteúdo.
+    </p>
+
+</section>
+
+
+<section
+    class="lista-aulas"
+    id="listaAulas"
+>
+
+    <div class="carregando">
+        Carregando conteúdo...
+    </div>
+
+</section>
+
+
+<!-- =========================
+     MATERIAIS DINÂMICOS
+========================= -->
+
+<div id="containerMateriais"></div>
+
+
+<!-- =========================
+     FEEDBACK
+========================= -->
+
+<section
+    class="feedback"
+    id="feedback"
+>
+
+    <h2>
+        Quero saber sua opinião
+    </h2>
+
+    <p>
+        Seu feedback é muito importante para mim.
+        Conte como foi sua experiência com o curso.
+    </p>
+
+
+    <div class="campo-feedback">
+
+        <label for="nota">
+            Como você avalia o curso?
+        </label>
+
+        <select id="nota">
+
+            <option value="">
+                Selecione uma nota
+            </option>
+
+            <option value="5">
+                5 - Excelente
+            </option>
+
+            <option value="4">
+                4 - Muito bom
+            </option>
+
+            <option value="3">
+                3 - Bom
+            </option>
+
+            <option value="2">
+                2 - Precisa melhorar
+            </option>
+
+            <option value="1">
+                1 - Não gostei
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <div class="campo-feedback">
+
+        <label for="mensagem">
+            Sua mensagem
+        </label>
+
+        <textarea
+            id="mensagem"
+            placeholder="Escreva aqui sua opinião sobre o curso..."
+        ></textarea>
+
+    </div>
+
+
+    <!-- =========================
+         AUTORIZAÇÃO
+    ========================== -->
+
+    <div class="autorizacao">
+
+        <label
+            class="autorizacao-label"
+            for="autorizaPublicacao"
+        >
+
+            <input
+                type="checkbox"
+                id="autorizaPublicacao"
+            >
+
+            <span>
+                Autorizo que minha mensagem seja publicada
+                na área de Feedback das Alunas para que
+                outras alunas possam conhecer minha experiência
+                com o curso.
+            </span>
+
+        </label>
+
+    </div>
+
+
+    <button
+        class="btn-feedback"
+        id="enviarFeedback"
+    >
+        Enviar feedback
+    </button>
+
+
+    <div id="mensagemFeedback"></div>
+
+</section>
+
+
+<!-- =========================
+     DEPOIMENTOS
+========================= -->
+
+<section
+    class="depoimentos"
+    id="depoimentos"
+>
+
+    <h2 class="titulo-depoimentos">
+        O que nossas alunas estão dizendo
+    </h2>
+
+    <p class="subtitulo-depoimentos">
+        Veja a experiência de outras alunas com o curso.
+    </p>
+
+
+    <div
+        class="lista-depoimentos"
+        id="listaDepoimentos"
+    >
+
+        <div class="carregando-depoimentos">
+            Carregando depoimentos...
+        </div>
+
+    </div>
+
+</section>
+
+
+<h2
+    id="tituloConteudo"
+    style="
+        color:var(--roxo);
+        font-size:27px;
+        margin-top:35px;
+        display:none;
+    "
+>
+    Conteúdo
+</h2>
+
+
+</main>
+
+
+<footer>
+
+    Cris Pop Arte - Designer Digital<br>
+
+    © 2026 Todos os direitos reservados.
+
+</footer>
+
+
+<!-- =========================
+     PLAYER SOBREPOSTO
+========================= -->
+
+<div
+    class="video-overlay"
+    id="videoOverlay"
+>
+
+    <div class="video-modal">
+
+
+        <div class="video-topo">
+
+            <div class="video-topo-info">
+
+                <div
+                    class="video-numero"
+                    id="videoNumero"
+                >
+                    AULA
+                </div>
+
+                <h2
+                    class="video-titulo"
+                    id="videoTitulo"
+                >
+                    Aula
+                </h2>
+
+            </div>
+
+
+            <button
+                class="btn-fechar"
+                id="fecharVideo"
+                title="Fechar"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="video-container">
+
+            <iframe
+                id="videoFrame"
+                src=""
+                title="Aula"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+            ></iframe>
+
+        </div>
+
+
+        <div class="controles-video">
+
+            <button
+                class="btn-video"
+                id="anterior"
+            >
+                ← Aula anterior
+            </button>
+
+
+            <button
+                class="btn-video"
+                id="proxima"
+            >
+                Próxima aula →
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script type="module">
+
+
+import {
+    auth,
+    db,
+    doc,
+    getDoc,
+    collection,
+    getDocs,
+    setDoc
+} from "./firebase.js";
+
+
+import {
+    onAuthStateChanged,
+    signOut
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+/* =========================
+   ELEMENTOS
+========================= */
+
+const numeroModulo =
+    document.getElementById("numeroModulo");
+
+const tituloModulo =
+    document.getElementById("tituloModulo");
+
+const descricaoModulo =
+    document.getElementById("descricaoModulo");
+
+const listaAulas =
+    document.getElementById("listaAulas");
+
+const containerMateriais =
+    document.getElementById("containerMateriais");
+
+const feedback =
+    document.getElementById("feedback");
+
+const nota =
+    document.getElementById("nota");
+
+const mensagem =
+    document.getElementById("mensagem");
+
+const autorizaPublicacao =
+    document.getElementById("autorizaPublicacao");
+
+const enviarFeedback =
+    document.getElementById("enviarFeedback");
+
+const mensagemFeedback =
+    document.getElementById("mensagemFeedback");
+
+const depoimentos =
+    document.getElementById("depoimentos");
+
+const listaDepoimentos =
+    document.getElementById("listaDepoimentos");
+
+const videoOverlay =
+    document.getElementById("videoOverlay");
+
+const videoFrame =
+    document.getElementById("videoFrame");
+
+const videoNumero =
+    document.getElementById("videoNumero");
+
+const videoTitulo =
+    document.getElementById("videoTitulo");
+
+const anterior =
+    document.getElementById("anterior");
+
+const proxima =
+    document.getElementById("proxima");
+
+const fecharVideo =
+    document.getElementById("fecharVideo");
+
+
+/* =========================
+   IDENTIFICA MÓDULO
+========================= */
+
+const parametros =
+    new URLSearchParams(
+        window.location.search
+    );
+
+const moduloSelecionado =
+    parametros.get("modulo") || "1";
+
+
+/* =========================
+   INFORMAÇÕES DOS MÓDULOS
+========================= */
+
+const modulos = {
+
+    "1": {
+
+        numero: "MÓDULO 01",
+
+        titulo:
+            "Conhecendo o Sistema",
+
+        descricao:
+            "Nesta etapa você vai conhecer o funcionamento do sistema e entender como será sua jornada para criar seu formulário de confirmação."
+
+    },
+
+    "2": {
+
+        numero: "MÓDULO 02",
+
+        titulo:
+            "Suporte à Aluna",
+
+        descricao:
+            "Aqui você encontrará aulas de suporte para dificuldades específicas e orientações que podem ajudar durante sua jornada."
+
+    },
+
+    "3": {
+
+        numero: "MÓDULO 03",
+
+        titulo:
+            "Material Extra",
+
+        descricao:
+            "Acesse materiais complementares, arquivos, PDFs e conteúdos extras disponibilizados para você."
+
+    },
+
+    "4": {
+
+        numero: "MÓDULO 04",
+
+        titulo:
+            "Feedback das Alunas",
+
+        descricao:
+            "Sua opinião é muito importante. Deixe aqui seu feedback sobre o curso e conheça a experiência de outras alunas."
+
+    }
+
+};
+
+
+/* =========================
+   CABEÇALHO
+========================= */
+
+const dadosModulo =
+    modulos[moduloSelecionado];
+
+
+if (!dadosModulo) {
+
+    tituloModulo.textContent =
+        "Módulo não encontrado";
+
+    descricaoModulo.textContent =
+        "O módulo solicitado não existe.";
+
+} else {
+
+    numeroModulo.textContent =
+        dadosModulo.numero;
+
+    tituloModulo.textContent =
+        dadosModulo.titulo;
+
+    descricaoModulo.textContent =
+        dadosModulo.descricao;
+
+}
+
+
+/* =========================
+   AULAS
+========================= */
+
+let aulasDisponiveis = [];
+
+let aulaAtual = 0;
+
+
+/* =========================
+   USUÁRIO LOGADO
+========================= */
+
+let usuarioAtual = null;
+
+
+/* =========================
+   CONVERTER YOUTUBE
+========================= */
+
+function converterYoutube(url) {
+
+    if (!url) {
+        return "";
+    }
+
+    try {
+
+        let link =
+            String(url).trim();
+
+        if (
+            !link.startsWith("http://") &&
+            !link.startsWith("https://")
+        ) {
+
+            link =
+                "https://" + link;
+
+        }
+
+        const endereco =
+            new URL(link);
+
+        let id = "";
+
+
+        /* youtu.be/ID */
+
+        if (
+            endereco.hostname === "youtu.be" ||
+            endereco.hostname === "www.youtu.be"
+        ) {
+
+            id =
+                endereco.pathname
+                    .replace(/^\/+/, "")
+                    .split("/")[0];
+
+        }
+
+
+        /* youtube.com */
+
+        else if (
+            endereco.hostname.includes("youtube.com")
+        ) {
+
+            /* watch?v=ID */
+
+            if (
+                endereco.pathname === "/watch"
+            ) {
+
+                id =
+                    endereco.searchParams.get("v") ||
+                    "";
+
+            }
+
+
+            /* embed/ID */
+
+            else if (
+                endereco.pathname.startsWith(
+                    "/embed/"
+                )
+            ) {
+
+                id =
+                    endereco.pathname
+                        .split("/embed/")[1]
+                        .split("/")[0];
+
+            }
+
+
+            /* shorts/ID */
+
+            else if (
+                endereco.pathname.startsWith(
+                    "/shorts/"
+                )
+            ) {
+
+                id =
+                    endereco.pathname
+                        .split("/shorts/")[1]
+                        .split("/")[0];
+
+            }
+
+        }
+
+
+        if (!id) {
+            return "";
+        }
+
+
+        return (
+            "https://www.youtube.com/embed/" +
+            encodeURIComponent(id) +
+            "?rel=0&modestbranding=1"
+        );
+
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao converter YouTube:",
+            erro
+        );
+
+        return "";
+
+    }
+
+}
+
+
+/* =========================
+   ABRIR AULA
+========================= */
+
+function abrirAula(indice) {
+
+    if (
+        indice < 0 ||
+        indice >= aulasDisponiveis.length
+    ) {
+
+        return;
+
+    }
+
+
+    aulaAtual =
+        indice;
+
+
+    const aula =
+        aulasDisponiveis[aulaAtual];
+
+
+    const video =
+        converterYoutube(
+            aula.videoUrl
+        );
+
+
+    if (!video) {
+
+        alert(
+            "O vídeo desta aula ainda não foi disponibilizado ou o link não é válido."
+        );
+
+        return;
+
+    }
+
+
+    let prefixoVideo = "AULA";
+    if (moduloSelecionado === "2") prefixoVideo = "SUPORTE";
+    if (moduloSelecionado === "3") prefixoVideo = "MATERIAL";
+
+    videoNumero.textContent =
+        prefixoVideo + " " +
+        String(
+            aula.ordem ||
+            aulaAtual + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    videoTitulo.textContent =
+        aula.titulo ||
+        "Aula";
+
+
+    videoFrame.src =
+        video +
+        "&autoplay=1";
+
+
+    videoOverlay.classList.add(
+        "ativo"
+    );
+
+
+    document.body.style.overflow =
+        "hidden";
+
+
+    anterior.disabled =
+        aulaAtual === 0;
+
+
+    proxima.disabled =
+        aulaAtual ===
+        aulasDisponiveis.length - 1;
+
+}
+
+
+/* =========================
+   FECHAR PLAYER
+========================= */
+
+function fecharPlayer() {
+
+    videoFrame.src = "";
+
+    videoOverlay.classList.remove(
+        "ativo"
+    );
+
+    document.body.style.overflow =
+        "";
+
+}
+
+
+/* =========================
+   PRÓXIMA
+========================= */
+
+proxima.addEventListener(
+    "click",
+    () => {
+
+        if (
+            aulaAtual <
+            aulasDisponiveis.length - 1
+        ) {
+
+            abrirAula(
+                aulaAtual + 1
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================
+   ANTERIOR
+========================= */
+
+anterior.addEventListener(
+    "click",
+    () => {
+
+        if (
+            aulaAtual > 0
+        ) {
+
+            abrirAula(
+                aulaAtual - 1
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================
+   FECHAR
+========================= */
+
+fecharVideo.addEventListener(
+    "click",
+    fecharPlayer
+);
+
+
+/* =========================
+   CLICAR FORA
+========================= */
+
+videoOverlay.addEventListener(
+    "click",
+    (evento) => {
+
+        if (
+            evento.target ===
+            videoOverlay
+        ) {
+
+            fecharPlayer();
+
+        }
+
+    }
+);
+
+
+/* =========================
+   ESC
+========================= */
+
+document.addEventListener(
+    "keydown",
+    (evento) => {
+
+        if (
+            evento.key === "Escape"
+        ) {
+
+            fecharPlayer();
+
+        }
+
+    }
+);
+
+
+/* =========================
+   VERIFICA LOGIN
+========================= */
+
+onAuthStateChanged(
+    auth,
+    async (usuario) => {
+
+        if (!usuario) {
+
+            window.location.href =
+                "index.html";
+
+            return;
+
+        }
+
+
+        usuarioAtual =
+            usuario;
+
+
+        try {
+
+            const referencia =
+                doc(
+                    db,
+                    "alunas",
+                    usuario.uid
+                );
+
+
+            const cadastro =
+                await getDoc(
+                    referencia
+                );
+
+
+            if (!cadastro.exists()) {
+
+                await signOut(auth);
+
+                window.location.href =
+                    "index.html";
+
+                return;
+
+            }
+
+
+            const dados =
+                cadastro.data();
+
+
+            if (
+                dados.status !==
+                "ativo"
+            ) {
+
+                await signOut(auth);
+
+                alert(
+                    "Seu acesso ao curso está bloqueado."
+                );
+
+                window.location.href =
+                    "index.html";
+
+                return;
+
+            }
+
+
+            await carregarAulas();
+
+
+        } catch (erro) {
+
+            console.error(erro);
+
+            listaAulas.innerHTML = `
+
+                <div class="sem-aulas">
+
+                    Não foi possível carregar
+                    este módulo.
+
+                </div>
+
+            `;
+
+        }
+
+    }
+);
+
+
+/* =========================
+   CARREGAR AULAS
+========================= */
+
+async function carregarAulas() {
+
+    const referencia =
+        collection(
+            db,
+            "aulas"
+        );
+
+
+    const resultado =
+        await getDocs(
+            referencia
+        );
+
+
+    const todasAulas = [];
+
+
+    resultado.forEach(
+        (documento) => {
+
+            const dados =
+                documento.data();
+
+
+            if (
+                String(
+                    dados.modulo
+                ) ===
+                String(
+                    moduloSelecionado
+                )
+                &&
+                dados.ativo !== false
+            ) {
+
+                todasAulas.push({
+
+                    id:
+                        documento.id,
+
+                    ...dados
+
+                });
+
+            }
+
+        }
+    );
+
+
+    /* ORGANIZA */
+
+    todasAulas.sort(
+        (a, b) =>
+            Number(
+                a.ordem || 0
+            ) -
+            Number(
+                b.ordem || 0
+            )
+    );
+
+
+    /* VÍDEOS */
+
+    aulasDisponiveis =
+        todasAulas.filter(
+            aula =>
+                aula.tipo !==
+                "material"
+        );
+
+
+    /* MATERIAIS */
+
+    const materiais =
+        todasAulas.filter(
+            aula =>
+                aula.tipo ===
+                "material"
+        );
+
+
+    listaAulas.innerHTML = "";
+    containerMateriais.innerHTML = "";
+
+
+    /* =========================
+       MÓDULO 04
+    ========================= */
+
+    if (
+        moduloSelecionado === "4"
+    ) {
+
+        feedback.style.display =
+            "block";
+
+        listaAulas.innerHTML = "";
+        containerMateriais.innerHTML = "";
+
+        await carregarDepoimentos();
+
+        return;
+
+    }
+
+
+    /* =========================
+       SEM AULAS
+    ========================= */
+
+    if (
+        aulasDisponiveis.length === 0 &&
+        materiais.length === 0
+    ) {
+
+        listaAulas.innerHTML = `
+
+            <div class="sem-aulas">
+
+                <strong>
+                    Conteúdo em preparação
+                </strong>
+
+                <br><br>
+
+                O conteúdo deste módulo
+                ainda será disponibilizado.
+
+            </div>
+
+        `;
+
+    }
+
+
+    /* =========================
+       CRIA CARDS AULAS
+    ========================= */
+
+    aulasDisponiveis.forEach(
+        (aula, indice) => {
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "aula";
+
+
+            let prefixoCard = "AULA";
+            if (moduloSelecionado === "2") prefixoCard = "SUPORTE";
+            if (moduloSelecionado === "3") prefixoCard = "MATERIAL";
+
+
+            /* LÓGICA DE DETECÇÃO DE AULA MISTA */
+            const linkYoutubeValido = converterYoutube(aula.videoUrl);
+            const ehApenasMaterial = aula.materialUrl || (aula.videoUrl && !linkYoutubeValido);
+            const linkParaBaixar = aula.materialUrl || aula.videoUrl;
+
+
+            card.innerHTML = `
+
+                <div class="icone-aula" ${ehApenasMaterial ? 'style="font-size:26px;"' : ''}>
+                    ${ehApenasMaterial ? '↓' : '▶'}
+                </div>
+
+                <div class="info-aula">
+
+                    <div class="numero-aula">
+
+                        ${prefixoCard} ${String(
+                            aula.ordem ||
+                            indice + 1
+                        ).padStart(
+                            2,
+                            "0"
+                        )}
+
+                    </div>
+
+                    <h2>
+                        ${
+                            aula.titulo ||
+                            "Aula"
+                        }
+                    </h2>
+
+                    <p>
+                        ${
+                            aula.descricao ||
+                            ""
+                        }
+                    </p>
+
+                </div>
+
+                <button
+                    class="btn-aula"
+                >
+                    ${ehApenasMaterial ? 'Acessar material' : 'Assistir aula →'}
+                </button>
+
+            `;
+
+
+            const botao =
+                card.querySelector(
+                    ".btn-aula"
+                );
+
+
+            botao.addEventListener(
+                "click",
+                () => {
+
+                    if (ehApenasMaterial) {
+
+                        let linkFinal = String(linkParaBaixar).trim();
+
+                        if (
+                            !linkFinal.startsWith("http://") &&
+                            !linkFinal.startsWith("https://")
+                        ) {
+
+                            linkFinal = "https://" + linkFinal;
+
+                        }
+
+                        window.open(linkFinal, "_blank");
+
+                    } else {
+
+                        abrirAula(
+                            indice
+                        );
+
+                    }
+
+                }
+            );
+
+
+            listaAulas.appendChild(
+                card
+            );
+
+        }
+    );
+
+
+    /* =========================
+       CRIA CARDS MATERIAIS
+    ========================= */
+
+    if (
+        materiais.length > 0
+    ) {
+
+        materiais.forEach((mat) => {
+
+            const cardMat = document.createElement("section");
+            cardMat.className = "material";
+            cardMat.style.display = "flex";
+
+            cardMat.innerHTML = `
+
+                <div class="icone-material">
+                    ↓
+                </div>
+
+                <div class="material-info">
+                    <h2>
+                        ${mat.titulo || "Material complementar"}
+                    </h2>
+                    <p>
+                        ${mat.descricao || "Material de apoio deste módulo."}
+                    </p>
+                </div>
+
+                <button class="btn-material">
+                    Acessar material
+                </button>
+
+            `;
+
+            const btn = cardMat.querySelector(".btn-material");
+
+            btn.addEventListener("click", () => {
+
+                let linkMaterial = String(mat.materialUrl || mat.videoUrl || "").trim();
+
+                if (linkMaterial) {
+
+                    if (
+                        !linkMaterial.startsWith("http://") &&
+                        !linkMaterial.startsWith("https://")
+                    ) {
+
+                        linkMaterial = "https://" + linkMaterial;
+
+                    }
+
+                    window.open(linkMaterial, "_blank");
+
+                } else {
+
+                    alert("O material ainda não foi disponibilizado.");
+
+                }
+
+            });
+
+            containerMateriais.appendChild(cardMat);
+
+        });
+
+    }
+
+}
+
+
+/* =========================
+   CARREGAR DEPOIMENTOS
+========================= */
+
+async function carregarDepoimentos() {
+
+    depoimentos.style.display =
+        "block";
+
+
+    listaDepoimentos.innerHTML = `
+
+        <div class="carregando-depoimentos">
+
+            Carregando depoimentos...
+
+        </div>
+
+    `;
+
+
+    try {
+
+        const referencia =
+            collection(
+                db,
+                "feedback"
+            );
+
+
+        const resultado =
+            await getDocs(
+                referencia
+            );
+
+
+        const depoimentosAprovados = [];
+
+
+        resultado.forEach(
+            (documento) => {
+
+                const dados =
+                    documento.data();
+
+
+                if (
+                    dados.status ===
+                    "aprovado"
+                    &&
+                    dados.autorizaPublicacao ===
+                    true
+                ) {
+
+                    depoimentosAprovados.push(
+                        dados
+                    );
+
+                }
+
+            }
+        );
+
+
+        /* =========================
+           ORGANIZA POR DATA
+        ========================== */
+
+        depoimentosAprovados.sort(
+            (a, b) => {
+
+                const dataA =
+                    a.data?.toDate
+                        ? a.data.toDate()
+                        : new Date(0);
+
+                const dataB =
+                    b.data?.toDate
+                        ? b.data.toDate()
+                        : new Date(0);
+
+                return (
+                    dataB.getTime() -
+                    dataA.getTime()
+                );
+
+            }
+        );
+
+
+        listaDepoimentos.innerHTML =
+            "";
+
+
+        /* =========================
+           NENHUM DEPOIMENTO
+        ========================== */
+
+        if (
+            depoimentosAprovados.length ===
+            0
+        ) {
+
+            listaDepoimentos.innerHTML = `
+
+                <div class="sem-depoimentos">
+
+                    Os primeiros depoimentos
+                    das nossas alunas aparecerão aqui.
+
+                </div>
+
+            `;
+
+            return;
+
+        }
+
+
+        /* =========================
+           CRIA CARDS
+        ========================= */
+
+        depoimentosAprovados.forEach(
+            (depoimento) => {
+
+                const card =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                card.className =
+                    "card-depoimento";
+
+
+                const notaNumero =
+                    Math.max(
+                        1,
+                        Math.min(
+                            5,
+                            Number(
+                                depoimento.nota ||
+                                5
+                            )
+                        )
+                    );
+
+
+                const estrelas =
+                    "★".repeat(
+                        notaNumero
+                    ) +
+                    "☆".repeat(
+                        5 - notaNumero
+                    );
+
+
+                const nomeCompleto =
+                    String(
+                        depoimento.nome ||
+                        "Aluna"
+                    ).trim();
+
+
+                /*
+                 * Mostra somente o primeiro nome
+                 * para preservar a privacidade.
+                 */
+
+                const primeiroNome =
+                    nomeCompleto
+                        .split(/\s+/)[0] ||
+                        "Aluna";
+
+
+                card.innerHTML = `
+
+                    <div class="estrelas">
+                        ${estrelas}
+                    </div>
+
+                    <p class="texto-depoimento">
+                        ${escaparHtml(
+                            depoimento.feedback ||
+                            ""
+                        )}
+                    </p>
+
+                    <div class="nome-depoimento">
+                        ${escaparHtml(
+                            primeiroNome
+                        )}
+                    </div>
+
+                `;
+
+
+                listaDepoimentos.appendChild(
+                    card
+                );
+
+            }
+        );
+
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao carregar depoimentos:",
+            erro
+        );
+
+
+        listaDepoimentos.innerHTML = `
+
+            <div class="sem-depoimentos">
+
+                Não foi possível carregar
+                os depoimentos neste momento.
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* =========================
+   PROTEGE TEXTO HTML
+========================= */
+
+function escaparHtml(texto) {
+
+    return String(texto)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+/* =========================
+   ENVIAR FEEDBACK
+========================= */
+
+enviarFeedback.addEventListener(
+    "click",
+    async () => {
+
+        if (!usuarioAtual) {
+
+            mensagemFeedback.textContent =
+                "Sua sessão não está disponível. Entre novamente.";
+
+            return;
+
+        }
+
+
+        const notaEscolhida =
+            nota.value;
+
+
+        const texto =
+            mensagem.value.trim();
+
+
+        const autorizado =
+            autorizaPublicacao.checked;
+
+
+        if (!notaEscolhida) {
+
+            mensagemFeedback.textContent =
+                "Selecione uma nota para o curso.";
+
+            return;
+
+        }
+
+
+        if (!texto) {
+
+            mensagemFeedback.textContent =
+                "Escreva sua mensagem antes de enviar.";
+
+            mensagem.focus();
+
+            return;
+
+        }
+
+
+        enviarFeedback.disabled =
+            true;
+
+        enviarFeedback.textContent =
+            "Enviando...";
+
+        mensagemFeedback.textContent =
+            "";
+
+
+        try {
+
+            /*
+             * ID automático do documento.
+             */
+
+            const referencia =
+                doc(
+                    collection(
+                        db,
+                        "feedback"
+                    )
+                );
+
+
+            await setDoc(
+                referencia,
+                {
+
+                    uid:
+                        usuarioAtual.uid,
+
+                    nome:
+                        usuarioAtual.displayName ||
+                        usuarioAtual.email.split("@")[0],
+
+                    email:
+                        usuarioAtual.email,
+
+                    nota:
+                        Number(
+                            notaEscolhida
+                        ),
+
+                    feedback:
+                        texto,
+
+                    autorizaPublicacao:
+                        autorizado,
+
+                    status:
+                        "pendente",
+
+                    data:
+                        new Date()
+
+                }
+            );
+
+
+            mensagemFeedback.textContent =
+                autorizado
+                    ? "Seu feedback foi enviado! Após análise, ele poderá aparecer na área de depoimentos. Muito obrigada!"
+                    : "Seu feedback foi enviado com sucesso. Muito obrigada por compartilhar sua opinião!";
+
+
+            nota.value =
+                "";
+
+            mensagem.value =
+                "";
+
+            autorizaPublicacao.checked =
+                false;
+
+
+            enviarFeedback.textContent =
+                "Feedback enviado";
+
+
+        } catch (erro) {
+
+            console.error(
+                "Erro ao enviar feedback:",
+                erro
+            );
+
+
+            mensagemFeedback.textContent =
+                "Não foi possível enviar seu feedback. Tente novamente.";
+
+
+            enviarFeedback.disabled =
+                false;
+
+            enviarFeedback.textContent =
+                "Enviar feedback";
+
+        }
+
+    }
+);
+
+
+/* =========================
+   VOLTAR
+========================= */
+
+document
+    .getElementById("voltar")
+    .addEventListener(
+        "click",
+        () => {
+
+            fecharPlayer();
+
+            window.location.href =
+                "curso.html";
+
+        }
+    );
+
+
+/* =========================
+   SAIR
+========================= */
+
+document
+    .getElementById("sair")
+    .addEventListener(
+        "click",
+        async () => {
+
+            fecharPlayer();
+
+            await signOut(auth);
+
+            window.location.href =
+                "index.html";
+
+        }
+    );
+
+</script>
+
+</body>
+
+</html>
