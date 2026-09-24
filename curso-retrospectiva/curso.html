@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -168,6 +169,75 @@ main {
     max-width: 700px;
     line-height: 1.6;
     color: var(--roxo-escuro);
+}
+
+
+/* =========================
+   GERADOR
+========================= */
+
+.acesso-gerador {
+    background: white;
+
+    border-radius: 18px;
+
+    padding: 22px 26px;
+
+    margin-bottom: 38px;
+
+    box-shadow:
+        0 5px 18px rgba(0,0,0,.05);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+}
+
+.gerador-info {
+    flex: 1;
+}
+
+.gerador-info strong {
+    display: block;
+
+    color: var(--roxo);
+
+    font-size: 18px;
+
+    margin-bottom: 5px;
+}
+
+.gerador-info span {
+    color: #6d6980;
+    font-size: 14px;
+}
+
+.btn-gerador {
+    border: none;
+
+    background: var(--turquesa);
+
+    color: white;
+
+    padding: 13px 20px;
+
+    border-radius: 10px;
+
+    font-weight: bold;
+
+    font-size: 15px;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+}
+
+.btn-gerador:hover {
+    filter: brightness(.95);
 }
 
 
@@ -355,6 +425,15 @@ footer {
         font-size: 23px;
     }
 
+    .acesso-gerador {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .btn-gerador {
+        width: 100%;
+    }
+
     .modulo {
         align-items: flex-start;
         flex-wrap: wrap;
@@ -426,32 +505,43 @@ footer {
     </div>
 
     <h2>
-       Retrospectiva Crispoparte
+       Filtro Moldura vertical
         
     </h2>
 
     <p>
-        Aprenda a criar uma linda Retrospectiva
-        Funções Fotos,Animações,Efeitos, Gif e audio.
+        Aprenda a criar uma moldura personalizada
+        que abre direto no dispositivo
+        Funções Foto,Galeria, Vídeo e Boomerang.
     </p>
 
 </section>
 
 
 <!-- =========================
-     GERADOR (EMBUTIDO)
+     GERADOR
 ========================= -->
 
-<section style="margin-bottom: 40px;">
-    
-    <h2 class="titulo-modulos" style="margin-bottom: 15px;">
-        Acesse o Gerador
-    </h2>
-    
-    <iframe 
-        src="https://retrospectiva-crispoparte.web.app" 
-        style="width: 100%; height: 800px; border: none; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-    </iframe>
+<section class="acesso-gerador">
+
+    <div class="gerador-info">
+
+        <strong>
+            Acesse o Gerador
+        </strong>
+
+        <span>
+            Crie seu Filtro Moldura personalizada.
+        </span>
+
+    </div>
+
+    <button
+        class="btn-gerador"
+        id="gerador"
+    >
+        Acessar o Gerador →
+    </button>
 
 </section>
 
@@ -483,12 +573,12 @@ footer {
         </div>
 
         <h3>
-            Curso: Retrospectiva Profissional
+            Curso: Filtro Moldura vertical
         </h3>
 
         <p>
             Aulas passo a passo para criar
-            sua retrospectiva personalizado.
+            seu filtro moldura personalizado.
         </p>
 
     </div>
@@ -757,8 +847,29 @@ document
         }
     );
 
+
+/* =========================
+   GERADOR
+========================= */
+
+document
+    .getElementById("gerador")
+    .addEventListener(
+        "click",
+        () => {
+
+            window.open(
+                "https://retrospectiva-crispoparte.web.app",
+                "_blank"
+            );
+
+        }
+    );
+
+
 </script>
 
 </body>
 
 </html>
+```
