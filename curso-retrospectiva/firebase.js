@@ -20,19 +20,19 @@ const firebaseConfig = {
     apiKey: "AIzaSyDrQyWZfnaun7bjnTwT67fkR3W5vkdlV3c",
 
     authDomain:
-        "retrospectiva-crispoparte.firebaseapp.com",
+       "retrospectiva-crispoparte.firebaseapp.com",
 
     projectId:
         "retrospectiva-crispoparte",
 
     storageBucket:
-        "retrospectiva-crispoparte.firebasestorage.app",
+         "retrospectiva-crispoparte.firebasestorage.app",
 
     messagingSenderId:
         "96658475034",
 
     appId:
-        "1:96658475034:web:5acaa5008fcccd04f4e9a3"
+         "1:96658475034:web:5acaa5008fcccd04f4e9a3"
 
 };
 
