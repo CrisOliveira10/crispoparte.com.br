@@ -18,13 +18,14 @@ button{border:0;border-radius:999px;padding:14px 20px;margin-top:12px;background
 </head>
 <body>
 <div class="page"><div class="overlay"><div class="content">
-<h1> Passaporte</h1><p>Garantir sua entrada, você pode utilizar o Pix abaixo. Muito obrigada!</p>
+<h1> Passaporte</h1><p>Garantir sua entrada, você pode
+utilizar o Pix abaixo. Muito obrigada!</p>
 <p>Recebedor: Simone Alencar Santos</p>
 <p>Valor: R$ 60,00</p>
 <button id="copy">COPIAR PIX</button><div id="status"></div>
 </div></div></div>
 <script>
-const pix="00020126330014br.gov.bcb.pix011103479931170520400005303986540560.005802BR5925SIMONE ALENCAR SANTOS DE 6006RIALMA62240520AniversrioMariaLuiza63043B7C";
+const pix="71993233142";
 document.getElementById("copy").addEventListener("click",async()=>{
  const status=document.getElementById("status");
  try{await navigator.clipboard.writeText(pix);}
