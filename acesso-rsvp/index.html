@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acesso - Gerador Crispoparte</title>
+
+    <style>
+        * { box-sizing: border-box; font-family: Arial, sans-serif; }
+        html, body { height: 100%; }
+        body {
+            margin: 0; padding: 0;
+            background-color: #f4f6f8;
+            min-height: 100dvh;
+            display: flex; align-items: center; justify-content: center;
+        }
+        body.logado { display: block; background: #fff; }
+
+        /* ---------- Telas de carregando e login ---------- */
+        #carregando { color: #555; font-size: 15px; text-align: center; }
+        #login-screen {
+            display: none;
+            background: #fff; padding: 40px; border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 100%; max-width: 400px; text-align: center;
+        }
+        #login-screen img.logo {
+            width: 100px; margin: 0 auto 15px; display: block;
+            animation: flutuar 3s ease-in-out infinite;
+        }
+        @keyframes flutuar { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        #login-screen h2 { color: #333; margin: 0 0 20px; }
+        #login-screen input {
+            width: 100%; padding: 12px; margin-bottom: 15px;
+            border: 1px solid #ddd; border-radius: 5px; font-size: 16px;
+        }
+        #login-screen button.principal {
+            width: 100%; padding: 12px; background-color: #333; color: #fff;
+            border: none; border-radius: 5px; font-size: 16px; cursor: pointer;
+        }
+        #login-screen button.principal:hover { background-color: #555; }
+        #login-screen button.principal:disabled { opacity: .6; cursor: default; }
+        #login-screen .link {
+            background: none; border: none; color: #555; font-size: 13px;
+            margin-top: 14px; cursor: pointer; text-decoration: underline; padding: 0;
+        }
+        #msg-login { font-size: 14px; margin-bottom: 15px; display: none; line-height: 1.4; }
+        #msg-login.erro { color: #c00; }
+        #msg-login.ok { color: #15803d; }
+
+        /* ---------- Gerador (depois do login) ---------- */
+        #app { display: none; flex-direction: column; width: 100%; height: 100dvh; }
+        #barra {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            padding: 8px 14px; background: #0f172a; color: #fff; font-size: 13px; flex-wrap: wrap;
+        }
+        #barra .botoes { display: flex; gap: 8px; }
+        #barra button {
+            background: #1e293b; color: #fff; border: 1px solid #334155; border-radius: 6px;
+            padding: 6px 12px; font-size: 12px; cursor: pointer;
+        }
+        #barra button:hover { background: #334155; }
+        #btn-admin { display: none; }
+        #gerador-frame { flex: 1; width: 100%; border: 0; background: #fff; }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== VERIFICANDO ==================== -->
+    <div id="carregando">Verificando acesso…</div>
+
+    <!-- ==================== TELA DE LOGIN ==================== -->
+    <div id="login-screen">
+        <img class="logo" src="https://res.cloudinary.com/dtshawz5x/image/upload/v1778939341/capa-circulo_cblblr.png" alt="Logo Crispoparte">
+        <h2>Acesso ao Sistema</h2>
+
+        <p id="msg-login"></p>
+        <input type="email" id="email" placeholder="Seu e-mail cadastrado" autocomplete="username">
+        <input type="password" id="senha" placeholder="Sua senha" autocomplete="current-password">
+        <button class="principal" id="btn-entrar" onclick="fazerLogin()">Entrar</button>
+        <button class="link" type="button" onclick="esqueciSenha()">Esqueci minha senha</button>
+    </div>
+
+    <!-- ==================== GERADOR (só carrega depois do login validado) ==================== -->
+    <div id="app">
+        <div id="barra">
+            <span id="barra-info"></span>
+            <span class="botoes">
+                <button id="btn-admin" type="button" onclick="document.getElementById('arq-gerador').click()">⚙️ Atualizar gerador</button>
+                <button type="button" onclick="sairManual()">Sair</button>
+            </span>
+        </div>
+        <iframe id="gerador-frame" title="Gerador de convites" allow="clipboard-write"></iframe>
+        <input type="file" id="arq-gerador" accept=".html,text/html" style="display:none;">
+    </div>
+
+    <!-- SCRIPTS DO FIREBASE -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+    <script>
+        // ⚠️ 1. COLOQUE AS CHAVES DO SEU PROJETO DO FIREBASE AQUI ⚠️
+        const firebaseConfig = {
+  apiKey: "AIzaSyDy2ln7vu0ZQMr7Oz8rf7mPqykC_3vCYAY",
+  authDomain: "gerador-master-url.firebaseapp.com",
+  projectId: "gerador-master-url",
+  storageBucket: "gerador-master-url.firebasestorage.app",
+  messagingSenderId: "618118361074",
+  appId: "1:618118361074:web:59f8814dae4f753a77c56b"
+};
+        // ⚠️ 2. SEU E-MAIL DE ADMINISTRADORA (o mesmo que está nas regras do Firestore) ⚠️
+        const ADMIN_EMAIL = "crispoparte@gmail.com";
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        const $ = function (id) { return document.getElementById(id); };
+        let unsubFicha = null;      // escuta da ficha da aluna (status, validade, sessão única)
+        let loginManual = false;    // true quando ela acabou de digitar e-mail e senha
+        let iniciando = false;
+        let chaveSessao = '';
+
+        function mostrar(tela) {
+            $('carregando').style.display = tela === 'carregando' ? 'block' : 'none';
+            $('login-screen').style.display = tela === 'login' ? 'block' : 'none';
+            $('app').style.display = tela === 'app' ? 'flex' : 'none';
+            document.body.classList.toggle('logado', tela === 'app');
+        }
+
+        function aviso(txt, tipo) {
+            const m = $('msg-login');
+            m.textContent = txt || '';
+            m.className = tipo === 'ok' ? 'ok' : 'erro';
+            m.style.display = txt ? 'block' : 'none';
+        }
+
+        function novoToken() {
+            try {
+                return Array.from(crypto.getRandomValues(new Uint8Array(14)), function (b) { return (b % 36).toString(36); }).join('');
+            } catch (e) {
+                return Math.random().toString(36).slice(2) + Date.now().toString(36);
+            }
+        }
+
+        function msgErro(err) {
+            const c = (err && err.code) || '';
+            if (c === 'auth/user-not-found' || c === 'auth/wrong-password' || c === 'auth/invalid-email' || c === 'auth/invalid-credential') return 'E-mail ou senha incorretos.';
+            if (c === 'auth/too-many-requests') return 'Muitas tentativas. Aguarde alguns minutos ou use "Esqueci minha senha".';
+            if (c === 'auth/network-request-failed') return 'Sem conexão com a internet.';
+            return 'Não foi possível entrar. Tente novamente.';
+        }
+
+        // ---------- Login ----------
+        function fazerLogin() {
+            const email = $('email').value.trim().toLowerCase();
+            const senha = $('senha').value;
+            if (!email || !senha) return aviso('Preencha o e-mail e a senha.');
+            aviso('');
+            $('btn-entrar').disabled = true;
+            loginManual = true;
+            auth.signInWithEmailAndPassword(email, senha).catch(function (err) {
+                loginManual = false;
+                $('btn-entrar').disabled = false;
+                aviso(msgErro(err));
+            });
+        }
+
+        function esqueciSenha() {
+            const email = $('email').value.trim().toLowerCase();
+            if (!email) return aviso('Digite seu e-mail acima e clique em "Esqueci minha senha".');
+            auth.sendPasswordResetEmail(email).then(function () {
+                aviso('Se este e-mail estiver cadastrado, enviamos um link para criar uma nova senha.', 'ok');
+            }).catch(function () {
+                aviso('Não foi possível enviar agora. Tente novamente.');
+            });
+        }
+
+        ['email', 'senha'].forEach(function (id) {
+            $(id).addEventListener('keydown', function (e) { if (e.key === 'Enter') fazerLogin(); });
+        });
+
+        // ---------- Regras de acesso da ficha (coleção "alunas") ----------
+        function motivoBloqueio(f) {
+            if (String(f.status || '').toLowerCase() !== 'ativo') return 'Seu acesso está desativado. Fale com o suporte.';
+            const exp = f.data_expira;
+            if (!exp) return 'Seu cadastro está sem data de validade. Fale com o suporte.';
+            const fim = new Date(exp + 'T23:59:59');
+            if (!isNaN(fim.getTime()) && new Date() > fim) return 'Seu acesso expirou em ' + String(exp).split('-').reverse().join('/') + '.';
+            return '';
+        }
+
+        function limparSessao() {
+            if (unsubFicha) { unsubFicha(); unsubFicha = null; }
+            $('gerador-frame').srcdoc = '';
+        }
+
+        // Sai e mostra a mensagem na tela de login
+        function sair(msg) {
+            limparSessao();
+            iniciando = false;
+            loginManual = false;
+            $('btn-entrar').disabled = false;
+            return auth.signOut().then(function () {
+                mostrar('login');
+                aviso(msg || '');
+            });
+        }
+
+        function sairManual() {
+            if (chaveSessao) localStorage.removeItem(chaveSessao);
+            sair('');
+        }
+
+        // ---------- Depois que o Firebase confirma o login ----------
+        auth.onAuthStateChanged(function (user) {
+            if (!user) { limparSessao(); iniciando = false; mostrar('login'); return; }
+            iniciar(user);
+        });
+
+        async function iniciar(user) {
+            if (iniciando) return;
+            iniciando = true;
+            mostrar('carregando');
+            const email = String(user.email || '').toLowerCase();
+            const uid = user.uid;                 // o documento da aluna tem o UID do Authentication como nome
+            chaveSessao = 'tok_' + uid;
+            try {
+                const ref = db.collection('alunas').doc(uid);
+                const snap = await ref.get();
+                if (!snap.exists) return sair('Cadastro não encontrado. Fale com o suporte.');
+                const f = snap.data();
+                const motivo = motivoBloqueio(f);
+                if (motivo) return sair(motivo);
+
+                // Sessão única: um novo login gera um novo token e derruba o outro aparelho
+                if (loginManual) {
+                    const t = novoToken();
+                    await ref.update({ token_sessao: t });
+                    localStorage.setItem(chaveSessao, t);
+                } else {
+                    const local = localStorage.getItem(chaveSessao);
+                    if (!local) return sair('Sessão expirada. Entre novamente.');
+                    if (f.token_sessao !== local) return sair('Esta conta foi aberta em outro aparelho. Entre novamente.');
+                }
+                loginManual = false;
+
+                // Gerador: só é baixado aqui, depois de tudo validado (as regras do Firestore conferem de novo no servidor)
+                const g = await db.collection('sistema').doc('gerador').get();
+                const ehAdmin = (email === String(ADMIN_EMAIL).toLowerCase());
+                if (!g.exists || !g.data().html) {
+                    if (!ehAdmin) return sair('O gerador ainda não foi publicado. Fale com o suporte.');
+                    // primeira vez: a administradora entra para poder publicar o gerador
+                    $('gerador-frame').srcdoc = '<p style="font-family:Arial;padding:30px;color:#444">O gerador ainda não foi publicado. Clique em <b>⚙️ Atualizar gerador</b> acima e escolha o arquivo do gerador (versão limpa).</p>';
+                } else {
+                    $('gerador-frame').srcdoc = g.data().html;
+                }
+
+                const exp = f.data_expira ? ' · válido até ' + String(f.data_expira).split('-').reverse().join('/') : '';
+                $('barra-info').textContent = '👤 ' + email + exp;
+                $('btn-admin').style.display = ehAdmin ? 'inline-block' : 'none';
+                mostrar('app');
+                iniciando = false;
+
+                // Fica de olho na ficha: se for desativada, expirar ou entrar em outro aparelho, sai na hora
+                unsubFicha = ref.onSnapshot(function (s) {
+                    if (!s.exists) return sair('Seu cadastro foi removido.');
+                    const d = s.data();
+                    const m = motivoBloqueio(d);
+                    if (m) return sair(m);
+                    if (d.token_sessao !== localStorage.getItem(chaveSessao)) return sair('Esta conta foi aberta em outro aparelho.');
+                });
+            } catch (err) {
+                const negado = err && err.code === 'permission-denied';
+                sair(negado ? 'Acesso negado. Fale com o suporte.' : 'Não foi possível carregar o gerador. Verifique a internet e tente de novo.');
+            }
+        }
+
+        // ---------- Administradora: atualizar o gerador publicado ----------
+        $('arq-gerador').addEventListener('change', async function (e) {
+            const file = e.target.files && e.target.files[0];
+            e.target.value = '';
+            if (!file) return;
+            if (file.size > 950000) {
+                return alert('Arquivo grande demais (' + Math.round(file.size / 1024) + ' KB). O limite é cerca de 1 MB. Use a versão LIMPA do gerador, sem o preenchimento de 2 MB.');
+            }
+            const html = await file.text();
+            if (html.indexOf('<html') === -1) return alert('Este arquivo não parece ser um HTML.');
+            if (!confirm('Substituir o gerador publicado por "' + file.name + '" (' + Math.round(file.size / 1024) + ' KB)?')) return;
+            try {
+                await db.collection('sistema').doc('gerador').set({
+                    html: html,
+                    arquivo: file.name,
+                    atualizado_em: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                alert('Gerador atualizado! A página vai recarregar.');
+                location.reload();
+            } catch (err) {
+                alert('Não foi possível atualizar: ' + ((err && err.code) || 'erro desconhecido'));
+            }
+        });
+    </script>
+</body>
+</html>
