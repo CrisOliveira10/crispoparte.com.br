@@ -1,0 +1,1718 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Rafael - Instamomentos</title>
+
+    <!-- Conexoes antecipadas: o navegador abre os canais antes de precisar deles -->
+    <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://i.ibb.co">
+    <link rel="preconnect" href="https://res.cloudinary.com">
+    <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js">
+    <link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js">
+    
+    <!-- Bibliotecas auxiliares: Cropper.js e JSZip -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <!-- Cropper.js e JSZip agora carregam sob demanda (estudio de foto / ZIP), para nao disputar banda com o feed -->
+
+    <style>
+        :root { --cor-fundo: #121212; --cor-texto: #ffffff; --cor-destaque: #0285B1; --cor-secundaria: #8E8E8E; --card-bg: #1e1e1e; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: var(--cor-fundo); color: var(--cor-texto); min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; overflow-x: hidden; }
+        
+        /* TELA DE CAPA (STORY 9:16) */
+        #storyCapaScreen {
+            position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; background-color: #000; z-index: 99999; display: flex; justify-content: center; align-items: center; overflow: hidden;
+        }
+        #storyCapaScreen img { width: 100%; height: 100%; object-fit: cover; display: block; cursor: pointer; }
+
+        /* App Principal */
+        #mainAppContainer { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; width: 100%; }
+        .event-header { width: 100%; background-color: #000; overflow: hidden; }
+        .event-header img { width: 100%; height: 180px; display: block; object-fit: cover; }
+        .event-info { text-align: center; padding: 12px; background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(18,18,18,1) 100%); }
+        .event-info h1 { font-size: 1.3rem; color: var(--cor-destaque); margin-bottom: 3px; font-weight: bold; }
+        .event-info p { font-size: 0.8rem; color: #aaa; }
+
+        .nav-tabs { display: flex; background-color: var(--card-bg); border-bottom: 2px solid #333; }
+        .tab-btn { flex: 1; padding: 12px 6px; background: none; border: none; color: #888; font-weight: bold; font-size: 0.8rem; cursor: pointer; text-align: center; transition: 0.3s; white-space: nowrap; }
+        .tab-btn.active { color: var(--cor-destaque); border-bottom: 3px solid var(--cor-destaque); background-color: rgba(255, 51, 102, 0.05); }
+
+        .container-conteudo { padding: 15px; max-width: 600px; margin: 0 auto; width: 100%; flex: 1; }
+        .section-tab { display: none; }
+        .section-tab.active { display: block; }
+
+        .capture-box { background: var(--card-bg); padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .capture-box h3 { margin-bottom: 5px; font-size: 1.1rem; }
+        .options-group { margin: 15px 0; display: flex; justify-content: center; gap: 15px; font-size: 0.9rem; color: #ccc; }
+        .btn-acao { background-color: var(--cor-destaque); color: white; border: none; padding: 12px 20px; border-radius: 30px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; font-size: 0.95rem; box-shadow: 0 4px 12px rgba(255, 51, 102, 0.3); }
+        .btn-secundario { background-color: #333; color: #fff; box-shadow: none; }
+
+        .feed-grid { display: flex; flex-direction: column; gap: 20px; }
+        .feed-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .media-container { position: relative; width: 100%; background: #000; display: flex; justify-content: center; align-items: center; }
+        .media-container img, .media-container video { width: 100%; max-height: 450px; display: block; object-fit: contain; }
+        .feed-actions { padding: 12px; display: flex; align-items: center; gap: 15px; justify-content: space-between; }
+        .feed-actions-left { display: flex; align-items: center; gap: 15px; }
+        .like-btn, .comment-count-btn { background: none; border: none; font-size: 1.3rem; cursor: pointer; color: #fff; display: flex; align-items: center; gap: 5px; }
+        .btn-baixar-card { background: #333; color: #fff; border: none; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+        .btn-baixar-card:hover { background: var(--cor-destaque); }
+
+        /* INTERFACE DA CÂMERA COM TRAVA RETRATO 9:16 RIGOROSA */
+        .camera-container { position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; background-color: #000; z-index: 1000; display: none; overflow: hidden; touch-action: none; }
+        .video-wrapper { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(100vw, calc(100vh * 9 / 16)); height: min(100vh, calc(100vw * 16 / 9)); width: min(100vw, calc(100dvh * 9 / 16)); height: min(100dvh, calc(100vw * 16 / 9)); z-index: 1; overflow: hidden; background: #000; }
+        #videoElement { width: 100%; height: 100%; object-fit: cover; transform-origin: center center; transition: transform 0.05s linear; }
+        #molduraOverlay { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; pointer-events: none; z-index: 2; }
+        
+        .flash-effect { position: absolute; inset: 0; background: #fff; z-index: 99; opacity: 0; pointer-events: none; transition: opacity 0.15s ease-out; }
+
+        .camera-header { position: absolute; top: 0; width: 100%; padding: 20px; padding-top: max(20px, env(safe-area-inset-top)); z-index: 10; background: linear-gradient(to bottom, rgba(0,0,0,0.5), transparent); display: flex; justify-content: space-between; align-items: center; }
+        .btn-fechar { background: rgba(0,0,0,0.6); color: #fff; border: 1px solid rgba(255,255,255,0.3); padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; }
+        
+        #recordingTimerBadge { display: none; background: rgba(0,0,0,0.7); color: #fff; padding: 6px 12px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; border: 1px solid #ff3366; }
+
+        .camera-controles { position: absolute; bottom: 0; width: 100%; padding: 40px 20px; padding-bottom: max(40px, calc(env(safe-area-inset-bottom) + 24px)); z-index: 10; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); display: flex; flex-direction: column; gap: 20px; }
+        .filtros { display: flex; gap: 10px; justify-content: center; }
+        .btn-filtro { background-color: rgba(255,255,255,0.2); color: #fff; border: 1px solid rgba(255,255,255,0.4); padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; }
+        .btn-filtro.ativo { background-color: var(--cor-destaque); border-color: var(--cor-destaque); }
+        .acoes-principais { display: flex; justify-content: space-around; align-items: center; }
+        .btn-acao-camera { background: none; border: none; color: #fff; font-size: 1.3rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; width: 60px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .btn-acao-camera span { font-size: 0.65rem; color: #fff; margin-top: 4px; font-weight: bold; }
+        .btn-capturar-final { width: 75px; height: 75px; border-radius: 50%; background-color: #fff; border: 5px solid rgba(255,255,255,0.3); cursor: pointer; transition: transform 0.1s, background-color 0.2s; }
+        .btn-capturar-final:active { transform: scale(0.9); }
+
+        /* MODO TELÃO (SLIDESHOW COM BOTÃO DE ZIP) */
+        #telaoModal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh; background: #000; z-index: 9999; display: none; flex-direction: column; }
+        .telao-topbar { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, transparent 100%); z-index: 10000; flex-wrap: wrap; gap: 10px; }
+        .telao-topbar h2 { color: var(--cor-destaque); font-size: 1.3rem; text-shadow: 0 2px 5px rgba(0,0,0,0.8); margin: 0; }
+        .telao-topbar-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .telao-filtros { display: flex; gap: 8px; }
+        .telao-filtro-btn { background: #333; color: #aaa; border: none; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .telao-filtro-btn.ativo { background: var(--cor-destaque); color: #fff; }
+        .btn-baixar-tudo { background: #28a745; color: #fff; border: none; padding: 8px 16px; font-size: 0.9rem; border-radius: 8px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 5px; transition: opacity 0.2s; }
+        .btn-baixar-tudo:hover { opacity: 0.9; }
+        .close-telao { background: #ff3366; color: #fff; border: none; padding: 8px 16px; font-size: 0.9rem; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        
+        .telao-body { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; position: relative; }
+        .telao-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.6); color: #fff; border: 2px solid rgba(255,255,255,0.2); font-size: 2rem; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 10005; transition: 0.2s; }
+        .telao-nav:hover { background: var(--cor-destaque); border-color: var(--cor-destaque); }
+        .telao-prev { left: 25px; }
+        .telao-next { right: 25px; }
+
+        /* MODAL DE FOTO/VÍDEO E COMENTÁRIOS */
+        .modal-foto { position: fixed; inset: 0; background-color: rgba(0,0,0,0.95); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; padding: 15px; }
+        .btn-fechar-modal { position: absolute; top: 25px; left: 20px; background: none; border: none; color: #fff; font-size: 1.1rem; cursor: pointer; z-index: 2010; font-weight: bold; }
+        .modal-media-wrapper { width: 100%; display: flex; justify-content: center; align-items: center; max-height: 42vh; margin-bottom: 8px; }
+        .modal-media-wrapper img, .modal-media-wrapper video { max-width: 90%; max-height: 42vh; object-fit: contain; border-radius: 8px; }
+        .modal-acoes { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 10px; }
+        .btn-acao-modal { background-color:#333; color:white; padding:8px 14px; border-radius:25px; border:none; font-weight:bold; cursor: pointer; font-size: 0.8rem; text-decoration: none; display: inline-flex; align-items: center; }
+
+        .modal-comentarios-container { width: 100%; max-width: 450px; background: #1a1a1a; border-radius: 12px; padding: 10px; display: flex; flex-direction: column; max-height: 38vh; border: 1px solid #333; }
+        .modal-comentarios-lista { flex: 1; overflow-y: auto; list-style: none; padding-right: 5px; margin-bottom: 8px; }
+        .comentario-item { font-size: 0.85rem; color: #ccc; margin-bottom: 6px; border-bottom: 1px dashed #333; padding-bottom: 4px; text-align: left; }
+        
+        .comentario-form { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+        .comentario-form input#inputNomeConvidado { width: 100%; background: #2a2a2a; border: 1px solid #444; padding: 8px 12px; border-radius: 20px; color: #fff; font-size: 16px; outline: none; }
+        .comentario-linha-inferior { display: flex; gap: 6px; width: 100%; }
+        .comentario-linha-inferior input#inputTextoComentario { flex: 1; min-width: 0; background: #2a2a2a; border: 1px solid #444; padding: 8px 12px; border-radius: 20px; color: #fff; font-size: 16px; outline: none; }
+        .comentario-linha-inferior button#btnEnviarComentarioModal { background: var(--cor-destaque); border: none; color: #fff; padding: 8px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 0.85rem; flex: 0 0 auto; }
+
+        .toast-aviso { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); background: rgba(0,0,0,0.88); color: #fff; padding: 10px 16px; border-radius: 20px; font-size: 0.85rem; z-index: 100001; display: none; max-width: 90%; text-align: center; border: 1px solid #444; }
+        .btn-carregar-mais { margin-bottom: 20px; }
+
+        .file-input-hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- TELA DE CAPA STORY -->
+    <div id="storyCapaScreen" onclick="window.entrarNoApp()" style="display: flex; position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; background: #000; z-index: 99999; justify-content: center; align-items: center;">
+        <img src="https://res.cloudinary.com/dh20cfdvx/image/upload/f_auto,q_auto,c_limit,w_1080/v1792066499/Filtro_365_sorrisos_1_yjp7gm.png" alt="Capa Story" style="width: 100%; height: 100%; object-fit: cover; cursor: pointer;" onclick="window.entrarNoApp()">
+    </div>
+
+    <!-- APLICATIVO PRINCIPAL -->
+    <div id="mainAppContainer">
+        <header class="event-header">
+            <img src="https://res.cloudinary.com/dh20cfdvx/image/upload/f_auto,q_auto,c_limit,w_1080/v1792066222/minha-arte_2_xz5eg9.png" alt="Capa do Evento">
+        </header>
+        <div class="event-info">
+            <h1>Rafael</h1>
+            <p>27 de abril de 2027</p>
+        </div>
+
+        <nav class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('capture')">📸 Câmera</button>
+            <button class="tab-btn" onclick="switchTab('photosFeed')">🖼️ Fotos</button>
+            <button class="tab-btn" onclick="switchTab('videosFeed')">🎥 Vídeos</button>
+            <button class="tab-btn" onclick="openTelao()" style="color: #4285F4;">🖥️ Telão</button>
+        </nav>
+
+        <div class="container-conteudo">
+            <div id="capture" class="section-tab active">
+                <div class="capture-box">
+                    <h3>Compartilhe seu Momento</h3>
+                    <p style="font-size: 0.8rem; color: #aaa; margin-bottom: 10px;">Vídeos aceitam até 30s em retrato (9:16).</p>
+
+                    <div class="options-group">
+                        <label><input type="radio" name="frameMode" value="withFrame" checked> Com Moldura</label>
+                        <label><input type="radio" name="frameMode" value="noFrame"> Sem Moldura</label>
+                    </div>
+
+                    <button class="btn-acao" onclick="openCamera('photo')">Tirar Foto (Câmera)</button>
+                    <button class="btn-acao" onclick="openCamera('video')">Gravar Vídeo (Até 30s)</button>
+                    <button class="btn-acao btn-secundario" onclick="document.getElementById('galleryInput').click()">Enviar da Galeria</button>
+                    <input type="file" id="galleryInput" class="file-input-hidden" accept="image/*,video/*" onchange="handleGalleryUpload(event)">
+                </div>
+            </div>
+
+            <div id="photosFeed" class="section-tab">
+                <div class="feed-grid" id="photoGridContainer"></div>
+                <button id="btnMaisFotos" class="btn-acao btn-secundario btn-carregar-mais" style="display:none;" onclick="carregarMais()">Carregar mais</button>
+            </div>
+
+            <div id="videosFeed" class="section-tab">
+                <div class="feed-grid" id="videoGridContainer"></div>
+                <button id="btnMaisVideos" class="btn-acao btn-secundario btn-carregar-mais" style="display:none;" onclick="carregarMais()">Carregar mais</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODO TELÃO COM BOTÃO DE ZIP -->
+    <div id="telaoModal">
+        <div class="telao-topbar">
+            <h2>Rafael - Ao Vivo</h2>
+            <div class="telao-topbar-right">
+                <div class="telao-filtros">
+                    <button class="telao-filtro-btn ativo" onclick="setTelaoFilter('todos', this)">Todos</button>
+                    <button class="telao-filtro-btn" onclick="setTelaoFilter('fotos', this)">🖼️ Fotos</button>
+                    <button class="telao-filtro-btn" onclick="setTelaoFilter('videos', this)">🎥 Vídeos</button>
+                </div>
+                <button class="btn-baixar-tudo" onclick="baixarTudoZip()">📦 Baixar Tudo (ZIP)</button>
+                <button class="close-telao" onclick="closeTelao()">Fechar Telão</button>
+            </div>
+        </div>
+        <div class="telao-body" id="telaoMediaContainer">
+            <button class="telao-nav telao-prev" onclick="telaoAnterior()">❮</button>
+            <button class="telao-nav telao-next" onclick="telaoProximo()">❯</button>
+        </div>
+    </div>
+
+    <div id="toastAviso" class="toast-aviso"></div>
+
+    <!-- INTERFACE DA CÂMERA -->
+    <div id="cameraContainer" class="camera-container">
+        <div class="flash-effect" id="flashEffect"></div>
+        <div class="camera-header">
+            <button id="btnFecharCamera" class="btn-fechar">❌ Voltar</button>
+            <div id="recordingTimerBadge">
+                🔴 <span id="timerCount">00:00</span> / 00:30
+            </div>
+        </div>
+        <div class="video-wrapper" id="videoWrapper">
+            <video id="videoElement" autoplay playsinline muted></video>
+            <img id="molduraOverlay" src="https://res.cloudinary.com/dh20cfdvx/image/upload/v1792066499/Filtro_365_sorrisos_b6gkuk.png" crossorigin="anonymous" alt="Moldura">
+        </div>
+        <div class="camera-controles">
+            <div class="filtros" id="grupoFiltros">
+                <button id="btnFiltroNormal" class="btn-filtro ativo">Normal</button>
+                <button id="btnFiltroPB" class="btn-filtro">P&B</button>
+            </div>
+            <div class="acoes-principais">
+                <button id="btnUploadFoto" class="btn-acao-camera">🖼️<span>Galeria</span></button>
+                <input type="file" id="inputUploadArquivo" class="file-input-hidden" accept="image/*,video/*" onchange="handleGalleryUpload(event)">
+                <button id="btnFlash" class="btn-acao-camera">⚡<span>Flash</span></button>
+                <button id="btnCapturarFinal" class="btn-capturar-final"></button>
+                <button id="btnVideoLink" class="btn-acao-camera" style="color: #FFD700;">🎬<span>Vídeo</span></button>
+                <button id="btnInverterCamera" class="btn-acao-camera">🔄<span>Trocar</span></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE PREVIEW DA CÂMERA -->
+    <div id="modalPreviewCamera" class="modal-foto" style="z-index: 3000;">
+        <h3 style="color: white; margin-bottom: 10px;">Gostou da foto?</h3>
+        <div style="width: 100%; max-width: 320px; aspect-ratio: 9 / 16; background-color: #000; overflow: hidden; border-radius: 12px; position: relative;">
+            <img id="imgPreviewCamera" style="display: block; width: 100%; height: 100%; object-fit: contain;">
+            <img id="molduraPreviewCamera" src="https://res.cloudinary.com/dh20cfdvx/image/upload/v1792066499/Filtro_365_sorrisos_b6gkuk.png" crossorigin="anonymous" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; pointer-events: none; z-index: 3010; display: none;">
+        </div>
+        <div class="modal-acoes" style="margin-top: 15px;">
+            <button id="btnDescartarFoto" class="btn-acao-modal" style="background-color:#ff4444;">❌ Tentar Novamente</button>
+            <button id="btnEnviarFotoCamera" class="btn-acao-modal" style="background-color:var(--cor-destaque);">✅ Enviar Foto</button>
+        </div>
+    </div>
+
+    <!-- MODAL DE ESTÚDIO / CORTE -->
+    <div id="modalEstudio" class="modal-foto" style="z-index: 3000;">
+        <h3 style="color: white; margin-bottom: 10px;">Ajuste sua foto com o toque</h3>
+        <div style="width: 100%; max-width: 320px; aspect-ratio: 9 / 16; background-color: #000; overflow: hidden; border-radius: 12px; position: relative;">
+            <img id="imagemParaCortar" style="display: block; max-width: 100%;">
+            <img id="molduraEstudio" src="https://res.cloudinary.com/dh20cfdvx/image/upload/v1792066499/Filtro_365_sorrisos_b6gkuk.png" crossorigin="anonymous" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; pointer-events: none; z-index: 3010;">
+        </div>
+        <div class="modal-acoes" style="margin-top: 15px;">
+            <button id="btnCancelarCorte" class="btn-acao-modal" style="background-color:#ff4444;">❌ Cancelar</button>
+            <button id="btnConfirmarCorte" class="btn-acao-modal" style="background-color:var(--cor-destaque);">✅ Enviar Foto</button>
+        </div>
+    </div>
+
+    <!-- MODAL DE VISUALIZAÇÃO E COMENTÁRIOS -->
+    <div id="modalFoto" class="modal-foto">
+        <button onclick="window.fecharModal()" class="btn-fechar-modal">❌ Voltar</button>
+        <div class="modal-media-wrapper" id="modalMediaWrapper"></div>
+        <div class="modal-acoes">
+            <button id="btnModalCurtir" class="btn-acao-modal">❤️ <span id="contadorModalCurtidas">0</span></button>
+            <a id="btnModalBaixar" class="btn-acao-modal" href="#" target="_blank" style="text-decoration:none; display:inline-flex; align-items:center;">⬇️ Baixar Mídia</a>
+            <button id="btnModalDeletar" class="btn-acao-modal" style="background-color:#441111;">🗑️ Excluir</button>
+        </div>
+        <div class="modal-comentarios-container">
+            <ul id="listaComentariosModal" class="modal-comentarios-lista"></ul>
+            <div class="comentario-form">
+                <input type="text" id="inputNomeConvidado" placeholder="Seu Nome" maxlength="40">
+                <div class="comentario-linha-inferior">
+                    <input type="text" id="inputTextoComentario" placeholder="Escreva um comentário..." maxlength="300">
+                    <button id="btnEnviarComentarioModal">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, memoryLocalCache, collection, onSnapshot, query, orderBy, limit, getDocs, doc, updateDoc, deleteDoc, increment, addDoc, serverTimestamp, writeBatch, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAvisu9SIfgYWo-23qjjGCJctGtRVdzGj4",
+        projectId: "insta-momentos-drive",
+        appId: "1:235265106885:web:3a4c77698c6d0392e221ac"
+    };
+    
+    const IMGBB_API_KEY = "aa0c9dc6122e459a16cf1f6e8d9d3686";
+    const CLOUD_NAME = "dh20cfdvx";
+    const UPLOAD_PRESET = "instamomentos_videos";
+    const EVENTO_ID = "galeria_fotos";
+    const DRIVE_EMAIL = "filtromoldura@gmail.com"; 
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbykElfuknk04fcIJFtHhht4alnIuvs0Hyxh__7RUWqfNG7TRn2hE1HWqUdULT4jROzq/exec";
+    const LINK_VIDEO_EXTERNO = "https://crispoparte.com.br/raiodesol-rafael/";
+    const MOLDURA_URL = "https://res.cloudinary.com/dh20cfdvx/image/upload/v1792066499/Filtro_365_sorrisos_b6gkuk.png";
+
+    let appData = { photos: [], videos: [] };
+    let cropper = null;
+    let torchOn = false;
+    let currentZoom = 1;
+    let cameraType = 'photo'; 
+    let mediaRecorder = null;
+    let recordedChunks = [];
+    let recordingTimer = null;
+    let recordingSeconds = 0;
+    let isRecordingVideo = false;
+
+    let recordCanvas = null;
+    let recordCtx = null;
+    let videoRecordingFrameId = null;
+    let lastFrameTime = 0;
+
+    const CROPPER_JS = "https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js";
+    const JSZIP_JS = "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js";
+
+    function carregarScriptExterno(url, nomeGlobal) {
+        return new Promise((resolve, reject) => {
+            if (window[nomeGlobal]) { resolve(); return; }
+            const el = document.createElement('script');
+            el.src = url;
+            el.onload = () => resolve();
+            el.onerror = () => reject(new Error('Falha ao carregar biblioteca'));
+            document.head.appendChild(el);
+        });
+    }
+    // O editor de foto so e preciso depois: carrega com calma, quando o feed ja apareceu
+    setTimeout(() => { carregarScriptExterno(CROPPER_JS, 'Cropper').catch(() => {}); }, 4000);
+
+    window.entrarNoApp = function() {
+        const capaScreen = document.getElementById('storyCapaScreen');
+        if (capaScreen) {
+            capaScreen.style.display = 'none';
+            capaScreen.remove();
+        }
+    };
+
+    try {
+        const app = initializeApp(firebaseConfig);
+        // Long polling automatico: redes de salao/evento costumam bloquear o canal padrao.
+        // Cache persistente com plano B em memoria (Safari privado / navegadores embutidos).
+        let db;
+        try {
+            db = initializeFirestore(app, {
+                experimentalAutoDetectLongPolling: true,
+                localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+            });
+        } catch (e) {
+            db = initializeFirestore(app, {
+                experimentalAutoDetectLongPolling: true,
+                localCache: memoryLocalCache()
+            });
+        }
+
+        const videoElement = document.getElementById('videoElement');
+        videoElement.muted = true;
+        
+        const cameraContainer = document.getElementById('cameraContainer');
+        const molduraOverlay = document.getElementById('molduraOverlay');
+        const flashEffect = document.getElementById('flashEffect');
+        const videoWrapper = document.getElementById('videoWrapper');
+        let stream = null;
+        let usandocameraFrontal = false;
+
+        let filtroPBAtivo = false;
+        let descartarVideo = false;
+        let unsubComentarios = null;
+        let audioCtxObturador = null;
+        let toastTimer = null;
+
+        function mostrarAviso(texto, ms) {
+            const el = document.getElementById('toastAviso');
+            if (!el) return;
+            el.textContent = texto;
+            el.style.display = 'block';
+            if (toastTimer) clearTimeout(toastTimer);
+            if (ms === undefined) ms = 3000;
+            if (ms > 0) toastTimer = setTimeout(() => { el.style.display = 'none'; }, ms);
+        }
+
+        function esconderAviso() {
+            const el = document.getElementById('toastAviso');
+            if (toastTimer) clearTimeout(toastTimer);
+            if (el) el.style.display = 'none';
+        }
+
+        // So aceita http(s) e codifica caracteres que quebram atributos HTML
+        function urlSegura(u) {
+            try {
+                const x = new URL(String(u || ''));
+                if (x.protocol !== 'https:' && x.protocol !== 'http:') return '';
+                return x.href.replace(/['"<>`\\]/g, c => '%' + c.charCodeAt(0).toString(16).toUpperCase());
+            } catch (e) { return ''; }
+        }
+
+        function numero(n) {
+            n = Number(n);
+            return Number.isFinite(n) ? n : 0;
+        }
+
+        // Preview espelhado na camera frontal = igual ao arquivo gerado
+        function aplicarTransformVideo() {
+            const espelho = usandocameraFrontal ? -1 : 1;
+            videoElement.style.transform = 'scaleX(' + espelho + ') scale(' + currentZoom + ')';
+        }
+
+        function playCameraShutterSound() {
+            try {
+                const Ctx = window.AudioContext || window.webkitAudioContext;
+                if (!Ctx) return;
+                if (!audioCtxObturador) audioCtxObturador = new Ctx();
+                const audioCtx = audioCtxObturador;
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(900, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.08);
+                gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.08);
+            } catch(e) {}
+        }
+
+        let initialDist = 0;
+        cameraContainer.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                initialDist = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+            }
+        });
+
+        cameraContainer.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 2 && initialDist > 0) {
+                const dist = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+                let zoomFactor = currentZoom * (dist / initialDist);
+                zoomFactor = Math.max(1, Math.min(zoomFactor, 4));
+                currentZoom = zoomFactor;
+                aplicarTransformVideo();
+            }
+        });
+
+        cameraContainer.addEventListener('touchend', (e) => {
+            if (e.touches.length < 2) initialDist = 0;
+        });
+
+        window.switchTab = function(tabId) {
+            document.querySelectorAll('.section-tab').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            const ordem = { capture: 0, photosFeed: 1, videosFeed: 2 };
+            const botoes = document.querySelectorAll('.tab-btn');
+            if (ordem[tabId] !== undefined && botoes[ordem[tabId]]) botoes[ordem[tabId]].classList.add('active');
+
+            if(tabId === 'photosFeed') renderPhotos();
+            if(tabId === 'videosFeed') renderVideos();
+        }
+
+        window.openCamera = async (type) => {
+            cameraType = type;
+            cameraContainer.style.display = 'block';
+            const useFrame = document.querySelector('input[name="frameMode"]:checked')?.value === 'withFrame';
+            molduraOverlay.style.display = (useFrame && type === 'photo') ? 'block' : 'none';
+            
+            const grupoFiltros = document.getElementById('grupoFiltros');
+            const btnVideoExt = document.getElementById('btnVideoLink');
+            
+            if (type === 'video') {
+                if(grupoFiltros) grupoFiltros.style.display = 'none';
+                if(btnVideoExt) btnVideoExt.style.display = 'none';
+            } else {
+                if(grupoFiltros) grupoFiltros.style.display = 'flex';
+                if(btnVideoExt) btnVideoExt.style.display = 'flex';
+            }
+
+            videoElement.style.filter = "none";
+            filtroPBAtivo = false;
+            const btnNorm = document.getElementById('btnFiltroNormal');
+            const btnPB = document.getElementById('btnFiltroPB');
+            if(btnNorm) btnNorm.classList.add('ativo');
+            if(btnPB) btnPB.classList.remove('ativo');
+
+            currentZoom = 1;
+            aplicarTransformVideo();
+            isRecordingVideo = false;
+            hideRecordingTimer();
+            
+            const btnCap = document.getElementById('btnCapturarFinal');
+            btnCap.style.backgroundColor = '#fff';
+            
+            await startStream(type);
+        };
+
+        document.querySelectorAll('input[name="frameMode"]').forEach(radio => {
+            radio.onchange = (e) => {
+                const useFrame = e.target.value === 'withFrame';
+                molduraOverlay.style.display = (useFrame && cameraType === 'photo') ? 'block' : 'none';
+            };
+        });
+
+        function drawToCanvas(ctx, canvasWidth, canvasHeight, withMoldura) {
+            const vWidth = videoElement.videoWidth || canvasWidth;
+            const vHeight = videoElement.videoHeight || canvasHeight;
+            const canvasRatio = canvasWidth / canvasHeight;
+            const videoRatio = vWidth / vHeight;
+            
+            let sWidth = vWidth;
+            let sHeight = vHeight;
+            
+            if (videoRatio > canvasRatio) {
+                sWidth = vHeight * canvasRatio;
+            } else {
+                sHeight = vWidth / canvasRatio;
+            }
+            
+            const zW = sWidth / currentZoom;
+            const zH = sHeight / currentZoom;
+            const sX = (vWidth - zW) / 2;
+            const sY = (vHeight - zH) / 2;
+
+            ctx.save();
+            if (usandocameraFrontal) { 
+                ctx.translate(canvasWidth, 0); 
+                ctx.scale(-1, 1); 
+            }
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+            ctx.drawImage(videoElement, sX, sY, zW, zH, 0, 0, canvasWidth, canvasHeight);
+            ctx.restore();
+
+            if (filtroPBAtivo) {
+                ctx.save();
+                ctx.globalCompositeOperation = 'saturation';
+                ctx.fillStyle = 'hsl(0, 0%, 50%)';
+                ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+                ctx.restore();
+            }
+            
+            if (withMoldura && molduraOverlay.complete && molduraOverlay.naturalWidth > 0) {
+                ctx.drawImage(molduraOverlay, 0, 0, canvasWidth, canvasHeight);
+            }
+        }
+
+        async function startStream(type = 'photo') {
+            const modo = usandocameraFrontal ? "user" : "environment";
+            torchOn = false;
+            document.getElementById('btnFlash').style.color = '#fff';
+            try {
+                if (stream) stream.getTracks().forEach(t => t.stop());
+                
+                const res = type === 'video' ? { w: 720, h: 1280 } : { w: 1080, h: 1920 };
+                const constraints = {
+                    video: { facingMode: modo, width: { ideal: res.w }, height: { ideal: res.h } },
+                    audio: type === 'video'
+                };
+                stream = await navigator.mediaDevices.getUserMedia(constraints);
+                videoElement.srcObject = stream;
+                videoElement.muted = true;
+                aplicarTransformVideo();
+                try { await videoElement.play(); } catch (e) {}
+            } catch (err) { 
+                alert("Erro ao acessar câmera do celular: " + err.message); 
+                fecharInterface(); 
+            }
+        }
+
+        document.getElementById('btnFiltroNormal').onclick = () => {
+            filtroPBAtivo = false;
+            videoElement.style.filter = "none";
+            document.getElementById('btnFiltroNormal').classList.add('ativo');
+            document.getElementById('btnFiltroPB').classList.remove('ativo');
+        };
+        
+        document.getElementById('btnFiltroPB').onclick = () => {
+            filtroPBAtivo = true;
+            videoElement.style.filter = "grayscale(100%)";
+            document.getElementById('btnFiltroPB').classList.add('ativo');
+            document.getElementById('btnFiltroNormal').classList.remove('ativo');
+        };
+
+        function drawVideoFrame(timestamp) {
+            if (!isRecordingVideo || !recordCtx) return;
+            videoRecordingFrameId = requestAnimationFrame(drawVideoFrame);
+            
+            if (timestamp - lastFrameTime < 33) return;
+            lastFrameTime = timestamp;
+
+            const useFrame = document.querySelector('input[name="frameMode"]:checked')?.value === 'withFrame';
+            drawToCanvas(recordCtx, recordCanvas.width, recordCanvas.height, useFrame);
+        }
+
+        function prepareVideoRecorder() {
+            recordedChunks = [];
+            if (!recordCanvas) {
+                recordCanvas = document.createElement('canvas');
+                recordCanvas.style.position = 'fixed';
+                recordCanvas.style.top = '-9999px';
+                recordCanvas.style.opacity = '0';
+                document.body.appendChild(recordCanvas);
+            }
+            recordCanvas.width = 720;
+            recordCanvas.height = 1280;
+            recordCtx = recordCanvas.getContext('2d');
+
+            const canvasStream = recordCanvas.captureStream(30);
+            const audioTracks = stream.getAudioTracks();
+            if (audioTracks.length > 0) {
+                canvasStream.addTrack(audioTracks[0]);
+            }
+
+            let options = { mimeType: 'video/mp4', videoBitsPerSecond: 800000 };
+            try {
+                if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                    options = { mimeType: 'video/webm;codecs=vp9,opus', videoBitsPerSecond: 800000 };
+                    if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                        options = { mimeType: 'video/webm', videoBitsPerSecond: 800000 };
+                    }
+                }
+                mediaRecorder = new MediaRecorder(canvasStream, options);
+            } catch (e) {
+                mediaRecorder = new MediaRecorder(canvasStream);
+            }
+
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data && event.data.size > 0) {
+                    recordedChunks.push(event.data);
+                }
+            };
+
+            mediaRecorder.onstop = async () => {
+                clearInterval(recordingTimer);
+                if (videoRecordingFrameId) cancelAnimationFrame(videoRecordingFrameId);
+                hideRecordingTimer();
+                
+                if (descartarVideo) { descartarVideo = false; recordedChunks = []; return; }
+                const mimeType = mediaRecorder.mimeType || 'video/webm';
+                let ext = mimeType.includes('mp4') ? 'mp4' : 'webm';
+                
+                const blob = new Blob(recordedChunks, { type: mimeType });
+                const file = new File([blob], "Instamomento_Video_" + Date.now() + "." + ext, { type: blob.type });
+                
+                fecharInterface();
+                await enviarVideoServidores(file);
+            };
+        }
+
+        function showRecordingTimer() {
+            const badge = document.getElementById('recordingTimerBadge');
+            if (badge) badge.style.display = 'block';
+        }
+
+        function hideRecordingTimer() {
+            const badge = document.getElementById('recordingTimerBadge');
+            if (badge) badge.style.display = 'none';
+        }
+
+        function updateRecordingTimerDisplay(sec) {
+            const timerCount = document.getElementById('timerCount');
+            if (timerCount) {
+                const mins = String(Math.floor(sec / 60)).padStart(2, '0');
+                const secs = String(sec % 60).padStart(2, '0');
+                timerCount.textContent = `${mins}:${secs}`;
+            }
+        }
+
+        function fecharInterface() {
+            if (isRecordingVideo) {
+                stopVideoRecording();
+            }
+            if (stream) stream.getTracks().forEach(t => t.stop());
+            cameraContainer.style.display = 'none';
+            hideRecordingTimer();
+        }
+
+        document.getElementById('btnFecharCamera').onclick = () => {
+            if (isRecordingVideo) descartarVideo = true;
+            fecharInterface();
+        };
+        document.getElementById('btnInverterCamera').onclick = () => {
+            if (isRecordingVideo) return;
+            usandocameraFrontal = !usandocameraFrontal;
+            currentZoom = 1;
+            startStream(cameraType);
+        };
+
+        document.getElementById('btnFlash').onclick = async () => {
+            if (!stream) { alert("A câmera não está ativa."); return; }
+            const track = stream.getVideoTracks()[0];
+            const capabilities = track.getCapabilities ? track.getCapabilities() : {};
+            if (!capabilities.torch) { alert("O flash não é suportado por este dispositivo."); return; }
+            torchOn = !torchOn;
+            try {
+                await track.applyConstraints({ advanced: [{ torch: torchOn }] });
+                document.getElementById('btnFlash').style.color = torchOn ? '#FFD700' : '#fff';
+            } catch (err) { alert("Não foi possível ativar o flash."); }
+        };
+
+        function processarSnapshot(snap) {
+            const out = { photos: [], videos: [] };
+            snap.forEach(docSnap => {
+                const p = docSnap.data();
+                const url = urlSegura(p.url_imagem);
+                if (!url) return;
+                const item = {
+                    id: docSnap.id,
+                    url: url,
+                    tipo: p.tipo === 'video' ? 'video' : 'foto',
+                    likes: numero(p.curtidas),
+                    comments: numero(p.total_comentarios),
+                    preview_url: urlSegura(p.preview_url)
+                };
+                if (item.tipo === 'video') out.videos.push(item); else out.photos.push(item);
+            });
+            return out;
+        }
+
+        // ---- Feed: atualiza so o que mudou (sem recriar a lista inteira a cada postagem)
+        function renderAbaAtiva() {
+            const photosFeed = document.getElementById('photosFeed');
+            const videosFeed = document.getElementById('videosFeed');
+            if (photosFeed && photosFeed.classList.contains('active')) renderPhotos();
+            else if (videosFeed && videosFeed.classList.contains('active')) renderVideos();
+        }
+
+        function abaAtivaSemCards() {
+            const pares = [['photosFeed', 'photoGridContainer'], ['videosFeed', 'videoGridContainer']];
+            for (const par of pares) {
+                const aba = document.getElementById(par[0]);
+                const cont = document.getElementById(par[1]);
+                if (aba && aba.classList.contains('active') && cont) return !cont.querySelector('.feed-card');
+            }
+            return false;
+        }
+
+        // devolve true se resolveu (inseriu ou nao precisa fazer nada); false = precisa renderizar tudo
+        function inserirCardNoTopo(item) {
+            const ehVideo = item.tipo === 'video';
+            const aba = document.getElementById(ehVideo ? 'videosFeed' : 'photosFeed');
+            const container = document.getElementById(ehVideo ? 'videoGridContainer' : 'photoGridContainer');
+            if (!aba || !container) return false;
+            if (!aba.classList.contains('active')) return true; // aba fechada: switchTab renderiza ao abrir
+            if (!container.querySelector('.feed-card')) return false; // estava vazia: render completo
+            if (container.querySelector('[data-card="' + item.id + '"]')) return true;
+            container.insertAdjacentHTML('afterbegin', ehVideo ? htmlCardVideo(item) : htmlCardFoto(item));
+            if (!ehVideo) observarImagens(container.firstElementChild);
+            return true;
+        }
+
+        function aplicarMudancasFeed(mudancas) {
+            if (!mudancas.length) return;
+            const todos = appData.photos.concat(appData.videos);
+            let precisaRenderizar = false;
+            mudancas.forEach(c => {
+                const id = c.doc.id;
+                if (c.type === 'modified') {
+                    const item = todos.find(x => x.id === id);
+                    if (!item) return;
+                    document.querySelectorAll('[data-like="' + id + '"]').forEach(el => { el.textContent = item.likes; });
+                    document.querySelectorAll('[data-comm="' + id + '"]').forEach(el => { el.textContent = item.comments; });
+                } else if (c.type === 'removed') {
+                    document.querySelectorAll('[data-card="' + id + '"]').forEach(el => el.remove());
+                } else if (c.type === 'added') {
+                    const item = todos.find(x => x.id === id);
+                    if (!item) return;
+                    if (!(c.newIndex === 0 && inserirCardNoTopo(item))) precisaRenderizar = true;
+                }
+            });
+            if (precisaRenderizar || abaAtivaSemCards()) renderAbaAtiva();
+        }
+
+        // FEED EM TEMPO REAL: so as postagens mais recentes (economiza leituras e memoria)
+        let limiteFeed = 40;
+        let unsubFeed = null;
+        let primeiraCargaFeed = true;
+
+        function iniciarFeed() {
+            if (unsubFeed) unsubFeed();
+            primeiraCargaFeed = true;
+            unsubFeed = onSnapshot(
+                query(collection(db, "eventos/" + EVENTO_ID + "/postagens"), orderBy("data_envio", "desc"), limit(limiteFeed)),
+                (snap) => {
+                    appData = processarSnapshot(snap);
+
+                    const maisDisponivel = snap.size >= limiteFeed;
+                    ['btnMaisFotos', 'btnMaisVideos'].forEach(idBtn => {
+                        const b = document.getElementById(idBtn);
+                        if (b) b.style.display = maisDisponivel ? 'block' : 'none';
+                    });
+
+                    const primeira = primeiraCargaFeed;
+                    primeiraCargaFeed = false;
+                    if (primeira) { renderAbaAtiva(); return; }
+                    aplicarMudancasFeed(snap.docChanges());
+                },
+                (err) => {
+                    console.error('Feed:', err);
+                    mostrarAviso("⚠️ Conexão instável com o álbum. Tentando reconectar...", 4000);
+                }
+            );
+        }
+        window.carregarMais = () => { limiteFeed += 40; iniciarFeed(); };
+        iniciarFeed();
+
+        // FILA DE UPLOAD RESILIENTE (FALHAS DE INTERNET / OFFLINE) - IndexedDB (nao estoura a cota do localStorage)
+        function filaAbrir() {
+            return new Promise((resolve, reject) => {
+                if (!window.indexedDB) { reject(new Error('sem indexedDB')); return; }
+                const req = indexedDB.open('insta_fila_' + EVENTO_ID, 1);
+                req.onupgradeneeded = () => { req.result.createObjectStore('fila', { autoIncrement: true }); };
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        async function filaAdicionar(base64) {
+            try {
+                const bd = await filaAbrir();
+                return await new Promise((resolve) => {
+                    const tx = bd.transaction('fila', 'readwrite');
+                    tx.objectStore('fila').add({ tipo: 'foto', dados: base64, ts: Date.now() });
+                    tx.oncomplete = () => resolve(true);
+                    tx.onerror = () => resolve(false);
+                    tx.onabort = () => resolve(false);
+                });
+            } catch (e) { return false; }
+        }
+
+        async function filaListar() {
+            const bd = await filaAbrir();
+            return new Promise((resolve, reject) => {
+                const itens = [];
+                const cur = bd.transaction('fila', 'readonly').objectStore('fila').openCursor();
+                cur.onsuccess = () => {
+                    const c = cur.result;
+                    if (c) { itens.push({ key: c.key, dados: c.value.dados }); c.continue(); }
+                    else resolve(itens);
+                };
+                cur.onerror = () => reject(cur.error);
+            });
+        }
+
+        async function filaRemover(key) {
+            const bd = await filaAbrir();
+            return new Promise((resolve) => {
+                const tx = bd.transaction('fila', 'readwrite');
+                tx.objectStore('fila').delete(key);
+                tx.oncomplete = () => resolve();
+                tx.onerror = () => resolve();
+            });
+        }
+
+        let processandoFila = false;
+        async function processarFilaOffline() {
+            if (processandoFila || !navigator.onLine) return;
+            processandoFila = true;
+            try {
+                const itens = await filaListar();
+                for (const item of itens) {
+                    try {
+                        await enviarMidiaServidores(item.dados, 'foto', true);
+                        await filaRemover(item.key);
+                        mostrarAviso("✅ Foto da fila enviada!", 2500);
+                    } catch (err) {
+                        // continua na fila; tenta de novo depois
+                    }
+                }
+            } catch (e) {
+            } finally {
+                processandoFila = false;
+            }
+        }
+        window.addEventListener('online', processarFilaOffline);
+        document.addEventListener('visibilitychange', () => { if (!document.hidden) processarFilaOffline(); });
+        setInterval(processarFilaOffline, 45000);
+        processarFilaOffline();
+
+        async function enviarMidiaServidores(base64Data, tipo = 'foto', daFila = false) {
+            if (!navigator.onLine && !daFila) {
+                if (await filaAdicionar(base64Data)) {
+                    alert("⚠️ Sem conexão com a internet! Sua foto foi salva na fila e será enviada assim que o sinal voltar.");
+                    return 'fila';
+                }
+                throw new Error("Sem conexão e não foi possível guardar a foto na fila. Tente novamente.");
+            }
+
+            let resposta = null;
+            try {
+                const form = new FormData();
+                form.append('image', base64Data);
+                resposta = await fetch("https://api.imgbb.com/1/upload?key=" + IMGBB_API_KEY, { method: 'POST', body: form });
+            } catch (e) {
+                resposta = null;
+            }
+
+            // Falha de rede ou servidor fora do ar: guarda na fila (nunca perde a foto em silencio)
+            if (!resposta || resposta.status >= 500) {
+                if (!daFila && await filaAdicionar(base64Data)) {
+                    alert("📶 Sem sinal estável. Sua foto foi guardada e será enviada automaticamente quando a conexão voltar.");
+                    return 'fila';
+                }
+                throw new Error("Sem conexão estável com o serviço de imagens.");
+            }
+
+            let d = null;
+            try { d = await resposta.json(); } catch (e) {}
+            if (!d || !d.success || !d.data) {
+                throw new Error((d && d.error && d.error.message) || "O serviço de imagens não aceitou a foto.");
+            }
+            const imgUrl = d.data.url;
+            const previewUrl = (d.data.medium && d.data.medium.url) || (d.data.thumb && d.data.thumb.url) || d.data.url;
+
+            // 1) Publica no feed primeiro: o convidado nao espera o Drive
+            await addDoc(collection(db, "eventos/" + EVENTO_ID + "/postagens"), {
+                url_imagem: imgUrl,
+                preview_url: previewUrl,
+                tipo: tipo,
+                curtidas: 0,
+                total_comentarios: 0,
+                data_envio: serverTimestamp()
+            });
+
+            // 2) Backup no Drive em segundo plano (sem await)
+            if (SCRIPT_URL && SCRIPT_URL.includes("script.google.com")) {
+                fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        base64: "data:image/jpeg;base64," + base64Data,
+                        filename: "Instamomento_" + Date.now() + ".jpg"
+                    })
+                }).catch(() => {});
+            }
+            return 'ok';
+        }
+
+        async function enviarVideoServidores(file) {
+            if (!CLOUD_NAME || !UPLOAD_PRESET) {
+                alert("O envio de vídeos não está configurado neste evento.");
+                return;
+            }
+
+            let videoUrl = "";
+            while (!videoUrl) {
+                try {
+                    mostrarAviso("⏳ Enviando vídeo... não feche o aplicativo.", 0);
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('upload_preset', UPLOAD_PRESET);
+                    formData.append('folder', EVENTO_ID);
+                    const resCloud = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/video/upload`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const cloudData = await resCloud.json();
+                    if (!resCloud.ok || !cloudData.secure_url) {
+                        throw new Error((cloudData && cloudData.error && cloudData.error.message) || 'o servidor recusou o vídeo');
+                    }
+                    videoUrl = cloudData.secure_url;
+                } catch (err) {
+                    esconderAviso();
+                    if (!confirm("Não foi possível enviar o vídeo (" + err.message + "). Tentar novamente?")) return;
+                }
+            }
+            esconderAviso();
+
+            const previewUrl = criarPreviewVideoCloudinary(videoUrl);
+
+            await addDoc(collection(db, "eventos/" + EVENTO_ID + "/postagens"), {
+                url_imagem: videoUrl,
+                preview_url: previewUrl || '',
+                tipo: 'video',
+                curtidas: 0,
+                total_comentarios: 0,
+                data_envio: serverTimestamp()
+            });
+            switchTab('videosFeed');
+            mostrarAviso("✅ Vídeo enviado!", 2500);
+
+            if (SCRIPT_URL && SCRIPT_URL.includes("script.google.com")) {
+                const reader = new FileReader();
+                reader.onload = async (ev) => {
+                    try {
+                        await fetch(SCRIPT_URL, {
+                            method: 'POST',
+                            mode: 'no-cors',
+                            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                            body: JSON.stringify({
+                                base64: ev.target.result,
+                                filename: file.name
+                            })
+                        });
+                    } catch(err) {}
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        document.getElementById('btnCapturarFinal').onclick = async () => {
+            const btnCap = document.getElementById('btnCapturarFinal');
+
+            if (cameraType === 'video') {
+                if (!isRecordingVideo) {
+                    isRecordingVideo = true;
+                    recordingSeconds = 0;
+                    showRecordingTimer();
+                    updateRecordingTimerDisplay(0);
+                    
+                    prepareVideoRecorder();
+                    mediaRecorder.start();
+                    
+                    btnCap.style.backgroundColor = '#ff3366';
+                    btnCap.style.transform = 'scale(0.85)';
+                    
+                    lastFrameTime = performance.now();
+                    drawVideoFrame(lastFrameTime);
+                    
+                    recordingTimer = setInterval(() => {
+                        recordingSeconds++;
+                        updateRecordingTimerDisplay(recordingSeconds);
+                        if (recordingSeconds >= 30) {
+                            stopVideoRecording();
+                        }
+                    }, 1000);
+                } else {
+                    stopVideoRecording();
+                }
+            } else {
+                btnCap.style.pointerEvents = 'none';
+
+                playCameraShutterSound();
+                flashEffect.style.opacity = '1';
+                setTimeout(() => { flashEffect.style.opacity = '0'; }, 150);
+
+                const useFrame = document.querySelector('input[name="frameMode"]:checked')?.value === 'withFrame';
+                const canvas = document.createElement('canvas');
+                canvas.width = 720;
+                canvas.height = 1280;
+                const ctx = canvas.getContext('2d');
+                
+                drawToCanvas(ctx, canvas.width, canvas.height, useFrame);
+
+                const base64Full = canvas.toDataURL('image/jpeg', 0.80);
+                const base64Data = base64Full.split(',')[1];
+                
+                document.getElementById('imgPreviewCamera').src = base64Full;
+                document.getElementById('modalPreviewCamera').style.display = 'flex';
+                
+                document.getElementById('btnDescartarFoto').onclick = () => {
+                    document.getElementById('modalPreviewCamera').style.display = 'none';
+                    btnCap.style.pointerEvents = 'auto'; 
+                };
+
+                document.getElementById('btnEnviarFotoCamera').onclick = async () => {
+                    const btnEnviar = document.getElementById('btnEnviarFotoCamera');
+                    const textoOriginalBtn = btnEnviar.innerHTML;
+                    btnEnviar.innerHTML = "⏳ Enviando...";
+                    btnEnviar.disabled = true;
+                    try {
+                        await enviarMidiaServidores(base64Data, 'foto');
+                        document.getElementById('modalPreviewCamera').style.display = 'none';
+                        fecharInterface(); 
+                        switchTab('photosFeed');
+                    } catch(e) {
+                        alert("Erro ao enviar foto: " + e.message);
+                    } finally {
+                        btnEnviar.innerHTML = textoOriginalBtn;
+                        btnEnviar.disabled = false;
+                        btnCap.style.pointerEvents = 'auto';
+                    }
+                };
+            }
+        };
+
+        function stopVideoRecording() {
+            if (isRecordingVideo && mediaRecorder && mediaRecorder.state === 'recording') {
+                isRecordingVideo = false;
+                clearInterval(recordingTimer);
+                if (videoRecordingFrameId) cancelAnimationFrame(videoRecordingFrameId);
+                const btnCap = document.getElementById('btnCapturarFinal');
+                btnCap.style.backgroundColor = '#fff';
+                btnCap.style.transform = 'scale(1)';
+                mediaRecorder.stop();
+            }
+        }
+
+        document.getElementById('btnUploadFoto').onclick = () => {
+            document.getElementById('inputUploadArquivo').click();
+        };
+
+        window.handleGalleryUpload = async (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (file.type.startsWith('video/')) {
+                const videoCheck = document.createElement('video');
+                videoCheck.preload = 'metadata';
+                videoCheck.onloadedmetadata = async function() {
+                    window.URL.revokeObjectURL(videoCheck.src);
+                    if (videoCheck.duration > 31) {
+                        alert("⚠️ O vídeo selecionado é muito longo! O limite máximo permitido é de 30 segundos.");
+                        return;
+                    }
+                    alert("⏳ Enviando vídeo da galeria...");
+                    fecharInterface();
+                    await enviarVideoServidores(file);
+                };
+                videoCheck.onerror = function() {
+                    alert("Não foi possível verificar a duração do vídeo. Tente novamente.");
+                };
+                videoCheck.src = URL.createObjectURL(file);
+                return;
+            }
+
+            if (cropper) { cropper.destroy(); cropper = null; }
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const imagem = document.getElementById('imagemParaCortar');
+                const useFrame = document.querySelector('input[name="frameMode"]:checked')?.value === 'withFrame';
+                document.getElementById('molduraEstudio').style.display = useFrame ? 'block' : 'none';
+                document.getElementById('modalEstudio').style.display = 'flex';
+                imagem.src = e.target.result;
+                imagem.onload = () => {
+                    setTimeout(async () => {
+                        try { await carregarScriptExterno(CROPPER_JS, 'Cropper'); } catch (errLib) { alert("Nao foi possivel carregar o editor de foto. Verifique a internet e tente de novo."); return; }
+                        cropper = new Cropper(imagem, {
+                            aspectRatio: 9 / 16, 
+                            viewMode: 0, 
+                            dragMode: 'move', 
+                            autoCropArea: 1, 
+                            background: false, 
+                            guides: false, 
+                            center: false, 
+                            highlight: false, 
+                            cropBoxMovable: false, 
+                            cropBoxResizable: false,
+                            ready() { 
+                                const containerData = this.cropper.getContainerData();
+                                this.cropper.setCropBoxData({ left: 0, top: 0, width: containerData.width, height: containerData.height }); 
+                            }
+                        });
+                    }, 200);
+                };
+            };
+            reader.readAsDataURL(file);
+        };
+
+        document.getElementById('btnCancelarCorte').onclick = () => {
+            document.getElementById('modalEstudio').style.display = 'none';
+            if (cropper) cropper.destroy();
+        };
+
+        // CORREÇÃO SÊNIOR DE PERFORMANCE: CANVAS OTIMIZADO 720x1280 PARA GALERIA
+        document.getElementById('btnConfirmarCorte').onclick = async () => {
+            const btn = document.getElementById('btnConfirmarCorte');
+            btn.innerHTML = "⏳ Compactando...";
+            btn.disabled = true;
+            try {
+                if (!cropper) throw new Error("A imagem ainda está carregando. Aguarde um instante e tente de novo.");
+                const useFrame = document.querySelector('input[name="frameMode"]:checked')?.value === 'withFrame';
+                
+                const canvas = cropper.getCroppedCanvas({ 
+                    width: 720, 
+                    height: 1280,
+                    fillColor: '#000',
+                    imageSmoothingEnabled: true,
+                    imageSmoothingQuality: 'medium'
+                });
+                const ctx = canvas.getContext('2d');
+                
+                const molduraEstudio = document.getElementById('molduraEstudio');
+                if (useFrame && molduraEstudio.complete && molduraEstudio.naturalWidth > 0) {
+                    ctx.drawImage(molduraEstudio, 0, 0, canvas.width, canvas.height);
+                }
+                
+                const base64 = canvas.toDataURL('image/jpeg', 0.80).split(',')[1];
+                
+                btn.innerHTML = "⏳ Enviando...";
+                await enviarMidiaServidores(base64, 'foto');
+                
+                document.getElementById('modalEstudio').style.display = 'none';
+                if (cropper) { cropper.destroy(); cropper = null; }
+                fecharInterface();
+                switchTab('photosFeed');
+            } catch(e) {
+                alert("Erro ao enviar foto da galeria: " + e.message);
+            } finally {
+                btn.innerHTML = "✅ Enviar Foto";
+                btn.disabled = false;
+            }
+        };
+
+        // GALERIA DE FOTOS — carregamento sob demanda + insercao incremental
+        let fotoObserver = null;
+
+        function carregarImagemLazy(img) {
+            const url = img.dataset.src;
+            if (!url || img.dataset.loaded === '1') return;
+            img.dataset.loaded = '1';
+            img.src = url;
+        }
+
+        function observarImagens(raiz) {
+            const imagens = raiz.querySelectorAll('img[data-src]');
+            if (!('IntersectionObserver' in window)) { imagens.forEach(carregarImagemLazy); return; }
+            if (!fotoObserver) {
+                fotoObserver = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            carregarImagemLazy(entry.target);
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { rootMargin: '500px 0px' });
+            }
+            imagens.forEach(img => fotoObserver.observe(img));
+        }
+
+        // BAIXAR: o atributo "download" e ignorado em links de outro dominio.
+        // iPhone/iPad: abre a folha de compartilhar (Salvar na galeria). Demais: baixa o arquivo.
+        window.baixarMidia = async function(url, tipo) {
+            mostrarAviso("⏳ Preparando download...", 0);
+            try {
+                const resp = await fetch(url, { mode: 'cors' });
+                if (!resp.ok) throw new Error('http ' + resp.status);
+                const blob = await resp.blob();
+                const ext = tipo === 'video' ? (/webm/i.test(blob.type) ? 'webm' : 'mp4') : 'jpg';
+                const nome = 'Instamomento_' + Date.now() + '.' + ext;
+                const arquivo = new File([blob], nome, { type: blob.type || (tipo === 'video' ? 'video/mp4' : 'image/jpeg') });
+                esconderAviso();
+                const ehIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Mac/i.test(navigator.platform));
+                if (ehIOS && navigator.canShare && navigator.canShare({ files: [arquivo] })) {
+                    try { await navigator.share({ files: [arquivo] }); return; }
+                    catch (e) { if (e && e.name === 'AbortError') return; }
+                }
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = nome;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+            } catch (e) {
+                esconderAviso();
+                window.open(url, '_blank');
+            }
+        };
+
+        function htmlCardFoto(item) {
+            return `
+                <div class="feed-card" data-card="${item.id}">
+                    <div class="media-container" style="cursor: pointer; background:#000;" onclick="abrirModal('${item.url}', '${item.id}', ${item.likes}, 'foto')">
+                       <img
+    src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+    data-src="${item.preview_url || item.url}"
+    alt="Foto"
+    width="720"
+    height="1280"
+    loading="lazy"
+    decoding="async"
+    style="width:100%; height:auto; display:block;"
+>
+                    </div>
+                    <div class="feed-actions">
+                        <div class="feed-actions-left">
+                            <button class="like-btn" onclick="toggleLike('${item.id}')">❤️ <span data-like="${item.id}">${item.likes}</span></button>
+                            <button class="comment-count-btn" onclick="abrirModal('${item.url}', '${item.id}', ${item.likes}, 'foto')">💬 <span data-comm="${item.id}">${item.comments}</span></button>
+                        </div>
+                        <a href="${item.url}" target="_blank" rel="noopener" class="btn-baixar-card" onclick="event.preventDefault(); baixarMidia('${item.url}', 'foto')">⬇️ Baixar</a>
+                    </div>
+                </div>`;
+        }
+
+        window.renderPhotos = function() {
+            const container = document.getElementById('photoGridContainer');
+            if (fotoObserver) {
+                fotoObserver.disconnect();
+                fotoObserver = null;
+            }
+
+            if(appData.photos.length === 0) {
+                container.innerHTML = "<p style='text-align:center; color:#888; padding:30px;'>Nenhuma foto enviada ainda.</p>";
+                return;
+            }
+
+            container.innerHTML = appData.photos.map(item => htmlCardFoto(item)).join('');
+            observarImagens(container);
+        };
+
+        // PRÉVIA DOS VÍDEOS — primeiro frame real do Cloudinary
+        window.criarPreviewVideoCloudinary = function(url, segundo = 0) {
+            if (!url || !url.includes('/video/upload/')) return '';
+            try {
+                const transformacao = segundo > 0
+                    ? `so_${segundo},w_480,q_auto`
+                    : 'so_0,w_480,q_auto';
+                return url
+                    .replace('/video/upload/', `/video/upload/${transformacao}/`)
+                    .replace(/\.(mp4|webm|mov|m4v)(\?.*)?$/i, '.jpg$2');
+            } catch(e) { return ''; }
+        };
+
+        window.getVideoPreviewUrl = function(item) {
+            return criarPreviewVideoCloudinary(item.url, 0) || item.preview_url;
+        };
+
+        function htmlCardVideo(item) {
+            const preview = getVideoPreviewUrl(item);
+            return `
+                <div class="feed-card" data-card="${item.id}">
+                    <div class="media-container" style="position:relative; overflow:hidden; background:#222; cursor:pointer;" onclick="abrirModal('${item.url}', '${item.id}', ${item.likes}, 'video')">
+                        <img
+                            src="${preview}"
+                            data-preview-primary="${preview}"
+                            data-preview-fallback="${criarPreviewVideoCloudinary(item.url, 0.5)}"
+                            data-preview-fallback2="${criarPreviewVideoCloudinary(item.url, 1)}"
+                            alt="Prévia do vídeo"
+                            loading="lazy"
+                            decoding="async"
+                            style="width:100%; max-height:450px; object-fit:contain; display:block; min-height:220px; background:#222;"
+                            onerror="trocarPreviewVideo(this)"
+                        >
+                        <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none;">
+                            <div style="width:68px; height:68px; border-radius:50%; background:rgba(255,255,255,.92); color:#111; display:flex; align-items:center; justify-content:center; font-size:32px; padding-left:4px; box-shadow:0 3px 15px rgba(0,0,0,.35);">▶</div>
+                        </div>
+                    </div>
+                    <div class="feed-actions">
+                        <div class="feed-actions-left">
+                            <button class="like-btn" onclick="toggleLike('${item.id}')">❤️ <span data-like="${item.id}">${item.likes}</span></button>
+                            <button class="comment-count-btn" onclick="abrirModal('${item.url}', '${item.id}', ${item.likes}, 'video')">💬 <span data-comm="${item.id}">${item.comments}</span></button>
+                        </div>
+                        <a href="${item.url}" target="_blank" rel="noopener" class="btn-baixar-card" onclick="event.preventDefault(); baixarMidia('${item.url}', 'video')">⬇️ Baixar</a>
+                    </div>
+                </div>`;
+        }
+
+        window.renderVideos = function() {
+            const container = document.getElementById('videoGridContainer');
+            if(appData.videos.length === 0) {
+                container.innerHTML = "<p style='text-align:center; color:#888; padding:30px;'>Nenhum vídeo enviado ainda.</p>";
+                return;
+            }
+            container.innerHTML = appData.videos.map(item => htmlCardVideo(item)).join('');
+        };
+
+        window.trocarPreviewVideo = function(img) {
+            const tentativa = Number(img.dataset.previewAttempt || 0);
+            const urls = [
+                img.dataset.previewPrimary,
+                img.dataset.previewFallback,
+                img.dataset.previewFallback2
+            ];
+            if (tentativa < urls.length - 1) {
+                img.dataset.previewAttempt = String(tentativa + 1);
+                setTimeout(() => { img.src = urls[tentativa + 1]; }, 700 * (tentativa + 1));
+            } else {
+                // Último fallback: deixa o cartão utilizável mesmo se o frame
+                // ainda estiver sendo processado pelo Cloudinary.
+                img.style.display = 'none';
+            }
+        };
+
+        // ADMIN: a senha nao existe mais no HTML. As regras do Firestore comparam a senha digitada
+        // com um documento privado (eventos/ID/privado/admin) que ninguem consegue ler.
+        window.excluirPostagem = async function(id) {
+            const senhaDigitada = prompt("Senha Admin:");
+            if (!senhaDigitada) return;
+            if (!navigator.onLine) { alert("Sem internet no momento. Conecte-se para excluir."); return; }
+            try {
+                const lote = writeBatch(db);
+                lote.set(doc(db, "eventos/" + EVENTO_ID + "/exclusoes", id), { chave: senhaDigitada });
+                lote.delete(doc(db, "eventos/" + EVENTO_ID + "/postagens", id));
+                await lote.commit();
+                window.fecharModal();
+            } catch (e) {
+                if (e && e.code === 'permission-denied') alert("Senha incorreta (ou as regras do Firestore ainda não foram atualizadas).");
+                else alert("Não foi possível excluir agora. Tente novamente.");
+            }
+        };
+
+        async function validarSenhaAdmin(senha) {
+            try {
+                await setDoc(doc(db, "eventos/" + EVENTO_ID + "/exclusoes", "validar"), { chave: senha });
+                return true;
+            } catch (e) { return false; }
+        }
+
+        window.abrirModal = (url, id, likes, tipo) => {
+            const mediaWrapper = document.getElementById('modalMediaWrapper');
+            if (tipo === 'video') {
+                mediaWrapper.innerHTML = `<video src="${url}" controls autoplay playsinline style="max-width:90%; max-height:42vh; object-fit:contain; border-radius:8px;"></video>`;
+            } else {
+                mediaWrapper.innerHTML = `<img src="${url}" style="max-width:90%; max-height:42vh; object-fit:contain; border-radius:8px;">`;
+            }
+
+            document.getElementById('contadorModalCurtidas').textContent = likes;
+            
+            document.getElementById('btnModalCurtir').onclick = () => {
+                updateDoc(doc(db, "eventos/" + EVENTO_ID + "/postagens", id), { curtidas: increment(1) });
+            };
+
+            document.getElementById('btnModalDeletar').onclick = () => window.excluirPostagem(id);
+
+            const btnBaixar = document.getElementById('btnModalBaixar');
+            btnBaixar.href = url;
+            btnBaixar.removeAttribute('download');
+            btnBaixar.onclick = (ev) => { ev.preventDefault(); baixarMidia(url, tipo); };
+
+            const listaComentarios = document.getElementById('listaComentariosModal');
+            listaComentarios.innerHTML = "<li class='comentario-item'>Carregando comentários...</li>";
+
+            if (unsubComentarios) unsubComentarios();
+            unsubComentarios = onSnapshot(query(collection(db, "eventos/" + EVENTO_ID + "/postagens/" + id + "/comentarios"), orderBy("data_envio", "asc")), (snapComent) => {
+                listaComentarios.innerHTML = "";
+                if(snapComent.empty) {
+                    listaComentarios.innerHTML = "<li class='comentario-item' style='color:#777;'>Nenhum comentário ainda. Seja o primeiro!</li>";
+                    return;
+                }
+                snapComent.forEach(cDoc => {
+                    const cData = cDoc.data();
+                    const li = document.createElement('li');
+                    li.className = 'comentario-item';
+                    const nomeEl = document.createElement('strong');
+                    nomeEl.style.color = 'var(--cor-destaque)';
+                    nomeEl.textContent = String(cData.nome || '') + ':';
+                    li.appendChild(nomeEl);
+                    li.appendChild(document.createTextNode(' ' + String(cData.texto || '')));
+                    listaComentarios.appendChild(li);
+                });
+                listaComentarios.scrollTop = listaComentarios.scrollHeight;
+            });
+
+            document.getElementById('btnEnviarComentarioModal').onclick = async () => {
+                const nomeInput = document.getElementById('inputNomeConvidado');
+                const textoInput = document.getElementById('inputTextoComentario');
+                const nomeVal = nomeInput.value.trim();
+                const textoVal = textoInput.value.trim();
+
+                if(!nomeVal || !textoVal) {
+                    alert("Preencha seu nome e o comentário!");
+                    return;
+                }
+
+                try { localStorage.setItem('nomeConvidado', nomeVal); } catch (e) {}
+                try {
+                    await addDoc(collection(db, "eventos/" + EVENTO_ID + "/postagens/" + id + "/comentarios"), {
+                        nome: nomeVal,
+                        texto: textoVal,
+                        data_envio: serverTimestamp()
+                    });
+                    await updateDoc(doc(db, "eventos/" + EVENTO_ID + "/postagens", id), {
+                        total_comentarios: increment(1)
+                    });
+                    textoInput.value = "";
+                } catch (e) {
+                    alert("Não foi possível enviar o comentário. Tente novamente.");
+                }
+            };
+
+            try {
+                const nomeSalvo = localStorage.getItem('nomeConvidado');
+                if (nomeSalvo) document.getElementById('inputNomeConvidado').value = nomeSalvo;
+            } catch (e) {}
+
+            document.getElementById('modalFoto').style.display = 'flex';
+        }
+
+        window.fecharModal = () => {
+            if (unsubComentarios) { unsubComentarios(); unsubComentarios = null; }
+            const wrapper = document.getElementById('modalMediaWrapper');
+            const videos = wrapper.querySelectorAll('video');
+            videos.forEach(v => {
+                v.pause();
+                v.removeAttribute('src'); 
+                v.load();
+            });
+            document.getElementById('modalFoto').style.display = 'none';
+            wrapper.innerHTML = "";
+        };
+
+        window.toggleLike = (id) => {
+            updateDoc(doc(db, "eventos/" + EVENTO_ID + "/postagens", id), { curtidas: increment(1) });
+        };
+
+        let telaoTimer = null;
+        let telaoFilter = 'todos';
+        let telaoIndex = 0;
+
+        let telaoData = { photos: [], videos: [] };
+        let unsubTelao = null;
+
+        window.openTelao = () => {
+            document.getElementById('telaoModal').style.display = 'flex';
+            telaoIndex = 0;
+            telaoData = { photos: [], videos: [] };
+            let primeira = true;
+            if (unsubTelao) unsubTelao();
+            // O telao usa as 200 midias mais recentes (economiza leituras); o ZIP le tudo separadamente
+            unsubTelao = onSnapshot(
+                query(collection(db, "eventos/" + EVENTO_ID + "/postagens"), orderBy("data_envio", "desc"), limit(200)),
+                (snap) => {
+                    telaoData = processarSnapshot(snap);
+                    if (primeira) { primeira = false; startTelaoSlideshow(); }
+                },
+                (err) => { console.error('Telao:', err); }
+            );
+        }
+
+        // CORREÇÃO SÊNIOR DE MEMÓRIA (TELÃO LIMPO SEM VAZAMENTO)
+        window.closeTelao = () => {
+            if (unsubTelao) { unsubTelao(); unsubTelao = null; }
+            const container = document.getElementById('telaoMediaContainer');
+            const videos = container.querySelectorAll('video');
+            videos.forEach(v => {
+                v.pause();
+                v.removeAttribute('src'); 
+                v.load();
+            });
+            const imgs = container.querySelectorAll('img');
+            imgs.forEach(img => {
+                if (img.src && img.src.startsWith('blob:')) {
+                    URL.revokeObjectURL(img.src);
+                }
+            });
+            document.getElementById('telaoModal').style.display = 'none';
+            if (telaoTimer) clearTimeout(telaoTimer);
+            container.innerHTML = "";
+        }
+
+        window.setTelaoFilter = (filtro, btnEl) => {
+            telaoFilter = filtro;
+            telaoIndex = 0;
+            document.querySelectorAll('.telao-filtro-btn').forEach(b => b.classList.remove('ativo'));
+            btnEl.classList.add('ativo');
+            if (telaoTimer) clearTimeout(telaoTimer);
+            startTelaoSlideshow();
+        }
+
+        window.telaoProximo = () => {
+            if (telaoTimer) clearTimeout(telaoTimer);
+            telaoIndex++;
+            startTelaoSlideshow(true);
+        }
+
+        window.telaoAnterior = () => {
+            if (telaoTimer) clearTimeout(telaoTimer);
+            telaoIndex--;
+            startTelaoSlideshow(true);
+        }
+
+        function getListaFiltrada() {
+            if (telaoFilter === 'fotos') return telaoData.photos;
+            if (telaoFilter === 'videos') return telaoData.videos;
+            return [...telaoData.photos, ...telaoData.videos];
+        }
+
+        function startTelaoSlideshow(manual = false) {
+            const container = document.getElementById('telaoMediaContainer');
+            let list = getListaFiltrada();
+            
+            if(list.length === 0) {
+                container.innerHTML = `<button class="telao-nav telao-prev" onclick="telaoAnterior()">❮</button><h3 style='color:#aaa;'>Nenhuma mídia encontrada para este filtro...</h3><button class="telao-nav telao-next" onclick="telaoProximo()">❯</button>`;
+                return;
+            }
+
+            telaoIndex = (telaoIndex + list.length) % list.length;
+            const item = list[telaoIndex];
+
+            // Pre-carrega a proxima imagem: sem tela preta entre os slides
+            const proximoItem = list[(telaoIndex + 1) % list.length];
+            if (proximoItem && proximoItem.tipo !== 'video') { const pre = new Image(); pre.src = proximoItem.url; }
+
+            if (item.tipo === 'video') {
+                container.innerHTML = `
+                    <button class="telao-nav telao-prev" onclick="telaoAnterior()">❮</button>
+                    <video src="${item.url}" autoplay controls playsinline style="max-width:100%; max-height:80vh; object-fit:contain; border-radius:8px; background:#000;"></video>
+                    <button class="telao-nav telao-next" onclick="telaoProximo()">❯</button>
+                `;
+                const vidEl = container.querySelector('video');
+                // Safari/TVs podem bloquear autoplay com som: tenta mudo; se ainda falhar, pula para o proximo
+                const tentativaPlay = vidEl.play();
+                if (tentativaPlay && tentativaPlay.catch) {
+                    tentativaPlay.catch(() => {
+                        vidEl.muted = true;
+                        const segunda = vidEl.play();
+                        if (segunda && segunda.catch) segunda.catch(() => {
+                            telaoTimer = setTimeout(() => { telaoIndex++; startTelaoSlideshow(); }, 3000);
+                        });
+                    });
+                }
+                vidEl.onended = () => {
+                    telaoIndex++;
+                    startTelaoSlideshow();
+                };
+                vidEl.onerror = () => {
+                    telaoTimer = setTimeout(() => { telaoIndex++; startTelaoSlideshow(); }, 3000);
+                };
+            } else {
+                container.innerHTML = `
+                    <button class="telao-nav telao-prev" onclick="telaoAnterior()">❮</button>
+                    <img src="${item.url}" style="max-width:100%; max-height:80vh; object-fit:contain; border-radius:8px;">
+                    <button class="telao-nav telao-next" onclick="telaoProximo()">❯</button>
+                `;
+                telaoTimer = setTimeout(() => {
+                    telaoIndex++;
+                    startTelaoSlideshow();
+                }, 5000);
+            }
+        }
+
+        window.baixarTudoZip = async function() {
+            const senhaDigitada = prompt("Digite a Senha Admin para baixar o ZIP de todas as mídias:");
+            if (!senhaDigitada) return;
+
+            if (!navigator.onLine || !(await validarSenhaAdmin(senhaDigitada))) {
+                alert("Senha incorreta ou sem conexão! Download bloqueado.");
+                return;
+            }
+
+            // O ZIP le TODAS as midias do evento (o Telao so mantem as 200 mais recentes)
+            let todasMidias = [];
+            try {
+                const snapTodas = await getDocs(query(collection(db, "eventos/" + EVENTO_ID + "/postagens"), orderBy("data_envio", "desc")));
+                const todas = processarSnapshot(snapTodas);
+                todasMidias = [...todas.photos, ...todas.videos];
+            } catch (e) {
+                alert("Não foi possível listar as mídias agora. Tente novamente.");
+                return;
+            }
+            if (todasMidias.length === 0) {
+                alert("Não há mídias para baixar no momento.");
+                return;
+            }
+
+            try { await carregarScriptExterno(JSZIP_JS, 'JSZip'); } catch (e) {
+                alert("Não foi possível carregar a biblioteca de compactação. Verifique a internet e tente de novo.");
+                return;
+            }
+
+            const btnZip = document.querySelector('.btn-baixar-tudo');
+            const textoOriginal = btnZip.innerHTML;
+            btnZip.innerHTML = "📦 Compactando (0/" + todasMidias.length + ")...";
+            btnZip.disabled = true;
+
+            const zip = new JSZip();
+            const pastaFotos = zip.folder("fotos");
+            const pastaVideos = zip.folder("videos");
+
+            let concluidas = 0;
+            let falhas = 0;
+
+            // 4 downloads ao mesmo tempo (antes era um por vez)
+            let proximo = 0;
+            const baixarUm = async () => {
+                while (proximo < todasMidias.length) {
+                    const i = proximo++;
+                    const item = todasMidias[i];
+                    try {
+                        const response = await fetch(item.url);
+                        if (!response.ok) throw new Error('http ' + response.status);
+                        const blob = await response.blob();
+                        const ext = item.tipo === 'video' ? (/webm/i.test(blob.type) ? 'webm' : 'mp4') : 'jpg';
+                        const nomeArquivo = `${item.tipo}_${i + 1}_${item.id}.${ext}`;
+                        if (item.tipo === 'video') pastaVideos.file(nomeArquivo, blob);
+                        else pastaFotos.file(nomeArquivo, blob);
+                    } catch (e) { falhas++; }
+                    concluidas++;
+                    btnZip.innerHTML = `📦 Compactando (${concluidas}/${todasMidias.length})...`;
+                }
+            };
+            await Promise.all([baixarUm(), baixarUm(), baixarUm(), baixarUm()]);
+
+            try {
+                btnZip.innerHTML = "⏳ Gerando arquivo ZIP...";
+                const content = await zip.generateAsync({ type: "blob" });
+                const url = window.URL.createObjectURL(content);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `Instamomentos_${EVENTO_ID}.zip`;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => { window.URL.revokeObjectURL(url); a.remove(); }, 4000);
+                alert(falhas > 0 ? ("⚠️ ZIP gerado, mas " + falhas + " arquivo(s) não puderam ser baixados.") : "✅ Arquivo ZIP gerado e baixado com sucesso!");
+            } catch (err) {
+                alert("Erro ao gerar arquivo ZIP: " + err.message);
+            } finally {
+                btnZip.innerHTML = textoOriginal;
+                btnZip.disabled = false;
+            }
+        };
+        
+        const btnVideoLink = document.getElementById('btnVideoLink');
+        if (btnVideoLink) {
+            btnVideoLink.onclick = () => {
+                if(LINK_VIDEO_EXTERNO) window.open(LINK_VIDEO_EXTERNO, "_blank");
+                else alert("Link externo não configurado.");
+            };
+        }
+
+    } catch(e) {
+        console.error('Falha ao iniciar o aplicativo:', e);
+        const aviso = document.createElement('div');
+        aviso.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:100000;background:#b00020;color:#fff;padding:12px;text-align:center;font-size:14px;';
+        aviso.textContent = 'Não foi possível carregar o aplicativo. Atualize a página e tente novamente.';
+        document.body.appendChild(aviso);
+    }
+</script>
+</body>
+</html>
