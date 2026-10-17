@@ -18,7 +18,7 @@
     <!-- Cropper.js e JSZip agora carregam sob demanda (estudio de foto / ZIP), para nao disputar banda com o feed -->
 
     <style>
-        :root { --cor-fundo: #121212; --cor-texto: #ffffff; --cor-destaque: #0285b1; --cor-secundaria: #8E8E8E; --card-bg: #1e1e1e; }
+        :root { --cor-fundo: #EFEBEB; --cor-texto: #000000; --cor-destaque: #0285b1; --cor-secundaria: #565555; --card-bg: #E3DFDF; --cor-borda: #CECACA; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background-color: var(--cor-fundo); color: var(--cor-texto); min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; overflow-x: hidden; }
         
@@ -32,13 +32,14 @@
         #mainAppContainer { display: flex; flex-direction: column; min-height: 100vh; min-height: 100dvh; width: 100%; }
         .event-header { width: 100%; background-color: #000; overflow: hidden; }
         .event-header img { width: 100%; height: 180px; display: block; object-fit: cover; }
-        .event-info { text-align: center; padding: 12px; background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(18,18,18,1) 100%); }
+        .event-info { text-align: center; padding: 12px; background: var(--cor-fundo); }
         .event-info h1 { font-size: 1.3rem; color: var(--cor-destaque); margin-bottom: 3px; font-weight: bold; }
-        .event-info p { font-size: 0.8rem; color: #aaa; }
+        .event-info p { font-size: 0.8rem; color: var(--cor-secundaria); }
 
-        .nav-tabs { display: flex; background-color: var(--card-bg); border-bottom: 2px solid #333; }
+        .nav-tabs { display: flex; background-color: var(--card-bg); border-bottom: 2px solid var(--cor-borda); }
         .tab-btn { flex: 1; padding: 12px 6px; background: none; border: none; color: #888; font-weight: bold; font-size: 0.8rem; cursor: pointer; text-align: center; transition: 0.3s; white-space: nowrap; }
         .tab-btn.active { color: var(--cor-destaque); border-bottom: 3px solid var(--cor-destaque); background-color: rgba(255, 51, 102, 0.05); }
+        .tab-btn.active { background-color: color-mix(in srgb, var(--cor-destaque) 8%, transparent); }
 
         .container-conteudo { padding: 15px; max-width: 600px; margin: 0 auto; width: 100%; flex: 1; }
         .section-tab { display: none; }
@@ -46,17 +47,17 @@
 
         .capture-box { background: var(--card-bg); padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         .capture-box h3 { margin-bottom: 5px; font-size: 1.1rem; }
-        .options-group { margin: 15px 0; display: flex; justify-content: center; gap: 15px; font-size: 0.9rem; color: #ccc; }
+        .options-group { margin: 15px 0; display: flex; justify-content: center; gap: 15px; font-size: 0.9rem; color: var(--cor-secundaria); }
         .btn-acao { background-color: var(--cor-destaque); color: white; border: none; padding: 12px 20px; border-radius: 30px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 10px; font-size: 0.95rem; box-shadow: 0 4px 12px rgba(255, 51, 102, 0.3); }
         .btn-secundario { background-color: #333; color: #fff; box-shadow: none; }
 
-        .feed-grid { display: flex; flex-direction: column; gap: 20px; }
-        .feed-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .media-container { position: relative; width: 100%; background: #000; display: flex; justify-content: center; align-items: center; }
-        .media-container img, .media-container video { width: 100%; max-height: 450px; display: block; object-fit: contain; }
+        .feed-grid { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .feed-card { width: 100%; max-width: 430px; background: var(--card-bg); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .media-container { position: relative; width: 100%; aspect-ratio: 9 / 16; background: #000; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        .media-container img, .media-container video { width: 100%; height: 100%; display: block; object-fit: contain; }
         .feed-actions { padding: 12px; display: flex; align-items: center; gap: 15px; justify-content: space-between; }
         .feed-actions-left { display: flex; align-items: center; gap: 15px; }
-        .like-btn, .comment-count-btn { background: none; border: none; font-size: 1.3rem; cursor: pointer; color: #fff; display: flex; align-items: center; gap: 5px; }
+        .like-btn, .comment-count-btn { background: none; border: none; font-size: 1.3rem; cursor: pointer; color: var(--cor-texto); display: flex; align-items: center; gap: 5px; }
         .btn-baixar-card { background: #333; color: #fff; border: none; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
         .btn-baixar-card:hover { background: var(--cor-destaque); }
 
@@ -153,7 +154,7 @@
             <div id="capture" class="section-tab active">
                 <div class="capture-box">
                     <h3>Compartilhe seu Momento</h3>
-                    <p style="font-size: 0.8rem; color: #aaa; margin-bottom: 10px;">Vídeos aceitam até 30s em retrato (9:16).</p>
+                    <p style="font-size: 0.8rem; color: var(--cor-secundaria); margin-bottom: 10px;">Vídeos aceitam até 30s em retrato (9:16).</p>
 
                     <div class="options-group">
                         <label><input type="radio" name="frameMode" value="withFrame" checked> Com Moldura</label>
@@ -260,7 +261,7 @@
         <button onclick="window.fecharModal()" class="btn-fechar-modal">❌ Voltar</button>
         <div class="modal-media-wrapper" id="modalMediaWrapper"></div>
         <div class="modal-acoes">
-            <button id="btnModalCurtir" class="btn-acao-modal">❤️ <span id="contadorModalCurtidas">0</span></button>
+            <button id="btnModalCurtir" class="btn-acao-modal"><span id="coracaoModal">🤍</span> <span id="contadorModalCurtidas">0</span></button>
             <a id="btnModalBaixar" class="btn-acao-modal" href="#" target="_blank" style="text-decoration:none; display:inline-flex; align-items:center;">⬇️ Baixar Mídia</a>
             <button id="btnModalDeletar" class="btn-acao-modal" style="background-color:#441111;">🗑️ Excluir</button>
         </div>
@@ -296,6 +297,7 @@
     const APPCHECK_SITE_KEY = "";
     const LIMITE_BACKUP_FOTO = 2.8 * 1024 * 1024;   // abaixo do limite do Apps Script (3 MB)
     const LIMITE_BACKUP_VIDEO = 28 * 1024 * 1024;   // abaixo do limite do Apps Script (30 MB)
+    const LIMITE_VIDEO_GALERIA = 60 * 1024 * 1024;  // maior que isso nao sobe (confira o limite do seu plano no Cloudinary)
     const LINK_VIDEO_EXTERNO = "https://crispoparte.com.br/raiodesol-rafael/";
     const MOLDURA_URL = "https://res.cloudinary.com/dh20cfdvx/image/upload/v1792066499/Filtro_365_sorrisos_b6gkuk.png";
 
@@ -1141,6 +1143,11 @@
             if (!file) return;
 
             if (file.type.startsWith('video/')) {
+                if (file.size > LIMITE_VIDEO_GALERIA) {
+                    alert("⚠️ Este vídeo é muito grande (" + Math.round(file.size / 1048576) + " MB). O limite é " + Math.round(LIMITE_VIDEO_GALERIA / 1048576) + " MB.\n\nGrave pelo botão \"Gravar Vídeo\" do app (até 30 s) ou escolha um vídeo menor.");
+                    try { event.target.value = ''; } catch (e) {}
+                    return;
+                }
                 const videoCheck = document.createElement('video');
                 videoCheck.preload = 'metadata';
                 videoCheck.onloadedmetadata = async function() {
@@ -1305,7 +1312,7 @@
     height="1280"
     loading="lazy"
     decoding="async"
-    style="width:100%; height:auto; display:block;"
+    style="width:100%; height:100%; object-fit:contain; display:block;"
 >
                     </div>
                     <div class="feed-actions">
@@ -1364,7 +1371,7 @@
                             alt="Prévia do vídeo"
                             loading="lazy"
                             decoding="async"
-                            style="width:100%; max-height:450px; object-fit:contain; display:block; min-height:220px; background:#222;"
+                            style="width:100%; height:100%; object-fit:contain; display:block; background:#222;"
                             onerror="trocarPreviewVideo(this)"
                         >
                         <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none;">
@@ -1440,11 +1447,16 @@
                 mediaWrapper.innerHTML = `<img src="${url}" style="max-width:90%; max-height:42vh; object-fit:contain; border-radius:8px;">`;
             }
 
-            document.getElementById('contadorModalCurtidas').textContent = likes;
-            
-            document.getElementById('btnModalCurtir').onclick = () => {
-                updateDoc(doc(db, "eventos/" + EVENTO_ID + "/postagens", id), { curtidas: increment(1) });
-            };
+            // contador e coracao da foto ampliada acompanham o feed (mesma curtida unica por pessoa)
+            const contadorModal = document.getElementById('contadorModalCurtidas');
+            const contadorFeed = document.querySelector('#photoGridContainer [data-like="' + id + '"], #videoGridContainer [data-like="' + id + '"]');
+            contadorModal.textContent = contadorFeed ? contadorFeed.textContent : likes;
+            contadorModal.setAttribute('data-like', id);
+            const coracaoModal = document.getElementById('coracaoModal');
+            coracaoModal.setAttribute('data-heart', id);
+            coracaoModal.textContent = jaCurtiu(id) ? '❤️' : '🤍';
+
+            document.getElementById('btnModalCurtir').onclick = () => window.toggleLike(id);
 
             document.getElementById('btnModalDeletar').onclick = () => window.excluirPostagem(id);
 
@@ -1563,7 +1575,7 @@
                 try { localStorage.setItem(CHAVE_LIKES, JSON.stringify(likesLocais)); } catch (e3) {}
                 document.querySelectorAll('[data-heart="' + id + '"]').forEach(el => { el.textContent = '🤍'; });
                 console.error('Curtir:', e);
-                mostrarAviso("Não foi possível curtir agora. Tente de novo.", 2500);
+                mostrarAviso("Não foi possível curtir agora. Tente de novo. (" + ((e && e.code) || 'erro') + ")", 3500);
             }
         };
 
