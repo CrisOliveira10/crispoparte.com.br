@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>Painel — Cris Pop Arte</title>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--rose:#b44fc8;--terra:#8a3aaa;--dark:#1a1030;--muted:#7a6090;--cream:#f8f4ff;--blush:#e8d5f5;--ok:#1a9f8a;--bad:#c0392b}
+*{box-sizing:border-box;margin:0}body{font-family:Jost,system-ui,sans-serif;background:var(--cream);color:var(--dark);font-size:15px}
+[hidden]{display:none!important}
+header{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--blush);padding:.7rem 1rem;display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+header h1{font-size:1.05rem;font-weight:600;margin-right:auto}header h1 small{display:block;font-weight:400;font-size:.72rem;color:var(--muted)}
+.btn{font:inherit;font-size:.82rem;border:1px solid var(--blush);background:#fff;color:var(--dark);padding:.5rem .9rem;border-radius:8px;cursor:pointer;text-decoration:none;display:inline-block}
+.btn:hover{border-color:var(--rose)}.btn.pri{background:var(--rose);color:#fff;border-color:var(--rose);font-weight:500}.btn.pri:hover{background:var(--terra)}
+.btn.pri.dirty{box-shadow:0 0 0 3px rgba(180,79,200,.3)}.btn.ghost{background:none}.btn:disabled{opacity:.5}
+#st{font-size:.75rem;color:var(--muted)}
+#tabs{display:flex;gap:.3rem;overflow-x:auto;padding:.7rem 1rem 0;max-width:1000px;margin:auto}
+#tabs button{font:inherit;font-size:.85rem;border:0;background:none;padding:.6rem 1rem;border-radius:10px 10px 0 0;cursor:pointer;color:var(--muted);white-space:nowrap}
+#tabs button.on{background:#fff;color:var(--rose);font-weight:600}
+main{max-width:1000px;margin:auto;padding:0 1rem 4rem}
+.card{background:#fff;border-radius:0 12px 12px 12px;padding:1.2rem;margin-bottom:1rem;box-shadow:0 1px 4px rgba(26,16,48,.06)}
+.card>h2{font-size:1rem;font-weight:600;color:var(--terra);margin-bottom:.9rem}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}.f{grid-column:1/-1;display:flex;flex-direction:column;gap:.25rem}.f.half{grid-column:auto}
+@media(max-width:640px){.grid{grid-template-columns:1fr}.f.half{grid-column:1/-1}}
+label{font-size:.78rem;font-weight:500;color:var(--muted)}small{font-size:.72rem;color:var(--muted)}
+input[type=text],input:not([type]),input[type=password],textarea,select{font:inherit;width:100%;padding:.55rem .7rem;border:1px solid #d9c9e8;border-radius:8px;background:#fff;color:var(--dark)}
+input:focus,textarea:focus,select:focus{outline:2px solid rgba(180,79,200,.35);border-color:var(--rose)}
+textarea{resize:vertical}.chk{display:flex;gap:.5rem;align-items:center;font-size:.85rem;color:var(--dark)}.chk input{width:auto}
+.media{display:flex;gap:.8rem;align-items:flex-start;border:1px dashed #d9c9e8;border-radius:10px;padding:.7rem;background:var(--cream)}
+.pv{width:110px;min-height:70px;flex:none;border-radius:8px;background:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid var(--blush)}
+.pv:empty::after{content:'sem arquivo';font-size:.7rem;color:var(--muted)}.pv img,.pv video{width:100%;max-height:150px;object-fit:cover;display:block}
+.mc{flex:1;min-width:0;display:flex;flex-direction:column;gap:.5rem}.row{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+@media(max-width:520px){.media{flex-direction:column}.pv{width:100%}}
+.list{display:flex;flex-direction:column;gap:.6rem;grid-column:1/-1}
+details.item{border:1px solid var(--blush);border-radius:10px;background:#fff}details.item[open]{border-color:var(--rose)}
+details.item>summary{cursor:pointer;padding:.6rem .8rem;display:flex;gap:.6rem;align-items:center;list-style:none;font-weight:500}
+details.item>summary::-webkit-details-marker{display:none}details.item>summary::before{content:'›';color:var(--rose);transition:.2s}details.item[open]>summary::before{transform:rotate(90deg)}
+.tt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.th{width:34px;height:34px;object-fit:cover;border-radius:6px}
+.acts{display:flex;gap:.2rem}.acts button{border:1px solid var(--blush);background:#fff;border-radius:6px;width:30px;height:28px;cursor:pointer}.acts button:hover{border-color:var(--rose)}
+details.item>.grid{padding:.2rem .8rem .9rem}.add{font:inherit;border:1px dashed var(--rose);color:var(--rose);background:none;border-radius:10px;padding:.6rem;cursor:pointer}.add:hover{background:var(--blush)}
+#login{max-width:340px;margin:12vh auto;background:#fff;padding:1.8rem;border-radius:14px;box-shadow:0 4px 24px rgba(26,16,48,.1);display:flex;flex-direction:column;gap:.8rem}
+#login h1{font-size:1.2rem;color:var(--terra)}.warn{background:#fff4e0;border:1px solid #f0c36d;padding:.6rem .8rem;border-radius:8px;font-size:.8rem}
+#toast{position:fixed;bottom:1rem;left:50%;transform:translate(-50%,40px);background:var(--dark);color:#fff;padding:.8rem 1.1rem;border-radius:10px;font-size:.85rem;opacity:0;transition:.3s;max-width:92vw;z-index:50;pointer-events:none}
+#toast.on{opacity:1;transform:translate(-50%,0)}#toast.bad{background:var(--bad)}
+.info{background:#fff;border-left:4px solid var(--rose);padding:.7rem 1rem;border-radius:8px;margin:0 0 1rem;font-size:.82rem;color:var(--muted)}
+</style></head><body>
+
+<div id="login" hidden>
+  <h1>🔐 Painel — Cris Pop Arte</h1>
+  <div class="warn" id="lw" hidden>⚠️ A senha padrão ainda está ativa. Abra o arquivo <b>api.php</b> e troque <code>trocar123</code> por uma senha sua.</div>
+  <input type="password" id="pw" placeholder="Senha" autocomplete="current-password">
+  <button class="btn pri" id="lb">Entrar</button><small id="le" style="color:var(--bad)"></small>
+</div>
+
+<div id="app" hidden>
+  <header>
+    <h1>Painel do Site<small id="mode"></small></h1><span id="st"></span>
+    <a class="btn" id="view" target="_blank">👁 Ver site</a>
+    <button class="btn" id="exp" title="Baixa uma cópia de todo o conteúdo">⬇ Baixar data.json</button>
+    <button class="btn" id="imp">⬆ Importar</button><input type="file" id="impf" accept=".json" hidden>
+    <button class="btn ghost" id="out" hidden>Sair</button>
+    <button class="btn pri" id="save">💾 Salvar e publicar</button>
+  </header>
+  <div id="tabs"></div><main id="main"></main>
+</div>
+<div id="toast"></div>
+
+<script>
+const SEED={"cfg": {"titulo_site": "Cris Pop Arte — Convites Personalizados", "logo": "imagens/logo.png", "wpp": "5571993233142", "wpp_exibir": "(71) 99323-3142", "email": "crispoparte@gmail.com", "hero_tag": "Design Digital Exclusivo", "hero_titulo": "Convites que contam a sua *história.*", "hero_desc": "Transformamos momentos especiais em experiências digitais inesquecíveis. Explore a nossa coleção de convites animados e interativos.", "hero_btn1_txt": "Ver Coleção Interativa", "hero_btn1_link": "https://crispoparte.com.br/catalogo/", "hero_btn2_txt": "Fale Conosco", "hero_btn2_link": "", "pecas_tag": "✦ Nossa Coleção", "pecas_titulo": "Peças que *encantam*", "conv_tag": "A Nossa Coleção", "conv_titulo": "Convites *Digitais*", "video_tag": "Veja como fica", "video_titulo": "Uma Retrospectiva em *movimento*", "video_src": "imagens/retrospectiva.mp4", "temas_tag": "Animação e Movimento", "temas_titulo": "Temas em *Vídeo*", "temas_desc": "Clique numa categoria para assistir à playlist diretamente aqui.", "temas_dest_titulo": "Destaques da Coleção", "temas_mb_titulo": "Temas Mais Procurados", "aval_tag": "✦ Avaliações", "aval_titulo": "O que nossas *clientes* dizem", "aval_sub": "Depoimentos reais de quem viveu a experiência", "banner_tag": "✦ Personalização Total", "banner_titulo": "Seu convite,\ndo jeito que você *sonhou*", "banner_desc": "Trabalhamos com arte exclusiva criada especialmente para você. Envie suas referências e cores favoritas — a Cris transforma em arte digital inesquecível.", "banner_btn": "Solicitar Orçamento", "banner_msg": "Olá, gostaria de solicitar um orçamento!", "banner_img": "imagens/banner.jpg", "f_tagline": "Onde cada detalhe conta uma história. Transformamos momentos especiais em experiências digitais inesquecíveis.", "f_follow": "Siga meu perfil para não perder nada!", "f_horario": "Nosso horário de atendimento é de Segunda a Sexta, exceto feriados, das 8h às 19h.", "f_copy": "© 2026 Cris Pop Arte. Todos os direitos reservados.", "nav1": "Produtos", "nav2": "Catálogo", "nav3": "Avaliações", "nav4": "Buscar Vídeo", "nav_cta_txt": "Encomendar", "nav_cta_link": "https://crispoparte.com.br/encomendar/", "r_instagram": "https://www.instagram.com/crisoliveiraconvitestop10/", "r_pinterest": "https://pin.it/5kuX7m4XX", "r_youtube": "https://www.youtube.com/@Crisoliveira-convitetop10", "r_tiktok": "https://www.tiktok.com/@crisoliveirapackpremium", "r_whatsapp": "https://wa.me/5571993233142"}, "pecas_cats": [{"slug": "animado", "label": "Animado"}, {"slug": "tradicional", "label": "Tradicional"}, {"slug": "interativo", "label": "Interativo"}, {"slug": "cinema", "label": "Cinema"}, {"slug": "livrinho", "label": "Livrinho"}, {"slug": "identidade", "label": "Identidade Visual"}, {"slug": "retrospectiva", "label": "Retrospectiva"}], "pecas": [{"cat": "animado", "badge": "Mais Pedido", "badgeTipo": "mais-pedido", "nome": "Convite\nVídeo páginas", "sub": "Modelo somente Páginas animada. Fotos extras 2,00 un.", "precos": [{"t": "Investimento: R$ 60,00", "d": "", "verde": false}], "src": "imagens/produto1.mp4", "btn": "Encomendar", "link": "", "msg": "Olá, tenho interesse no Convite Vídeo Páginas"}, {"cat": "moldura", "badge": "", "badgeTipo": "mais-pedido", "nome": "Filtro Moldura", "sub": "Modelo 1 moldura", "precos": [{"t": "Investimento: R$ 40,00", "d": "", "verde": false}], "src": "imagens/produto2.jpg", "btn": "Ver Modelo", "link": "https://crispoparte.com.br/analaura10anos/", "msg": ""}, {"cat": "interativo", "badge": "Em alta", "badgeTipo": "popular", "nome": "Convite\nVídeo Trailer", "sub": "Modelo interativo\nTela única, opcional com vídeo trailer", "precos": [{"t": "Investimento: R$ 50,00", "d": "", "verde": true}], "src": "imagens/produto3.jpg", "btn": "Ver Modelo", "link": "https://crispoparte.com.br/bianca/", "msg": ""}, {"cat": "interativo", "badge": "", "badgeTipo": "mais-pedido", "nome": "Convite\nTela estendida", "sub": "Modelo interativo tela longa", "precos": [{"t": "Investimento: R$ 70,00", "d": "Modelo interativo infantil", "verde": false}, {"t": "Investimento: R$ 120,00", "d": "Modelo interativo adulto", "verde": false}], "src": "imagens/produto4.jpg", "btn": "Ver Modelo", "link": "https://crispoparte.com.br/filippo/", "msg": ""}, {"cat": "cinema", "badge": "", "badgeTipo": "mais-pedido", "nome": "Convite Tecnológico", "sub": "Modelo Vídeo Página Animada\nModelo infantil, opcional com 2 Botões", "precos": [{"t": "Investimento: R$ 90,00", "d": "", "verde": false}], "src": "imagens/produto5.jpg", "btn": "Ver Modelo", "link": "https://crispoparte.com.br/joaquim/", "msg": ""}, {"cat": "livrinho", "badge": "", "badgeTipo": "mais-pedido", "nome": "Convite Livrinho", "sub": "Modelo interativo estilo livro", "precos": [{"t": "Investimento: R$ 90,00", "d": "", "verde": false}], "src": "imagens/produto6.jpg", "btn": "Ver Modelo", "link": "https://crispoparte.com.br/gabriel2anos/", "msg": ""}, {"cat": "identidade", "badge": "", "badgeTipo": "mais-pedido", "nome": "Identidade Visual", "sub": "Kit completo com convite + arte", "precos": [{"t": "Investimento: R$ 150,00", "d": "", "verde": false}], "src": "imagens/produto7.jpg", "btn": "Ver Modelo", "link": "https://www.canva.com/design/DAHE_1qsvao/e6D2kThlXbVcBn7HU3GHdg/view", "msg": ""}, {"cat": "identidade", "badge": "", "badgeTipo": "mais-pedido", "nome": "Logomarca", "sub": "Criação de identidade visual profissional completa para a sua marca", "precos": [{"t": "Investimento: R$ 200,00", "d": "", "verde": false}], "src": "imagens/produto8.jpg", "btn": "Encomendar", "link": "", "msg": "Olá, tenho interesse na Logomarca"}, {"cat": "animado", "badge": "Novo", "badgeTipo": "mais-pedido", "nome": "Catálogo\nEditável em pdf (com dez páginas)", "sub": "Modelo PDF (editável no canva ou PSD) ou Digital (não editável, contrato 1 ano). Página extra R$ 20,00 un.", "precos": [{"t": "Investimento: R$ 100,00", "d": "", "verde": false}], "src": "imagens/produto9.mp4", "btn": "Encomendar", "link": "", "msg": "Olá, tenho interesse no Catálogo"}, {"cat": "retrospectiva", "badge": "Em alta", "badgeTipo": "mais-pedido", "nome": "Retrospectiva\nSlides de fotos e música\npara celebrar conquistas.", "sub": "Memórias em vídeo.", "precos": [{"t": "Investimento: *R$ 99,99", "d": "", "verde": false}], "src": "imagens/produto10.mp4", "btn": "Encomendar", "link": "", "msg": "Olá, tenho interesse na Retrospectiva"}, {"cat": "mascotinho", "badge": "", "badgeTipo": "mais-pedido", "nome": "Mascote", "sub": "Transformo fotos reais em mascotes\nilustrados e inesquecíveis para o seu evento", "precos": [{"t": "Investimento: R$ 60,00", "d": "", "verde": false}], "src": "imagens/produto11.jpg", "btn": "Ver Modelo", "link": "https://www.canva.com/design/DAGqijtHfik/7v5K6RHa2OGdXt_ZYxlxbA/view?utm_content=DAGqijtHfik&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=he13ead4d63", "msg": ""}, {"cat": "interativo", "badge": "", "badgeTipo": "mais-pedido", "nome": "Convite\nCinematográfico", "sub": "Modelo 15 Anos\nBaile de Máscaras com lista convidados", "precos": [{"t": "Investimento: R$ 120,00", "d": "Modelo interativo infantil", "verde": false}, {"t": "Investimento: R$ 150,00", "d": "Modelo interativo adulto", "verde": false}], "src": "imagens/produto12.jpg", "btn": "Ver Modelo", "link": "https://crispoparte.com.br/samira/?nome=Ruan", "msg": ""}], "conv_cats": [{"label": "Save The date"}, {"label": "Tradicional"}, {"label": "Lembrete"}, {"label": "Moldura"}], "conv": [{"img": "imagens/convite1.jpg", "cat": "Save The date", "nome": "Save The date Anoversário Os Rosas", "desc": "Um pré-convite moderno para garantir a presença dos seus convidados.", "preco": "R$ 30,00", "un": "/unidade", "link": "", "msg": "Olá, tenho interesse no convite Save The date"}, {"img": "imagens/convite2.jpg", "cat": "Tradicional", "nome": "Tema Os Rosas", "desc": "Convites Inteligentes: Práticos, modernos e direto no WhatsApp dos convidados.", "preco": "R$ 30,00", "un": "/unidade", "link": "", "msg": "Olá, tenho interesse no convite Tradicional"}, {"img": "imagens/convite3.jpg", "cat": "Lembrete de Aniversário", "nome": "Tema Os Rosas", "desc": "Convite Digital: Interatividade com 2 botões (Localização e Confirmar).", "preco": "R$ 50,00", "un": "/unidade", "link": "https://crispoparte.com.br/osrosas/", "msg": "Olá, tenho interesse no convite Lembrete"}, {"img": "imagens/convite4.jpg", "cat": "Filtro Moldura", "nome": "Filtro para Celular, Criando memórias", "desc": "Uma moldura exclusiva para usar na câmera do celular durante a festa.", "preco": "R$ 40,00", "un": "/unidade", "link": "https://crispoparte.com.br/filtromelissa/", "msg": "Olá, tenho interesse no Filtro moldura"}], "destaques": [{"titulo": "Casamentos", "url": "https://www.youtube.com/embed/videoseries?list=PL6tR3NMsh7aIhxf8j0w4RtSdRhnUHtlo7", "img": "imagens/capa-casamento.jpg"}, {"titulo": "Infantis", "url": "https://www.youtube.com/embed/videoseries?list=PL6tR3NMsh7aJf7fj0ggpP5Ydi7VyZbmvF", "img": "imagens/capa-infantil.jpg"}, {"titulo": "15 Anos", "url": "https://www.youtube.com/embed/videoseries?list=PLYG0bXi7F7CQg-55T2YxVX7MA1WQCCXhd", "img": "imagens/capa-15anos.jpg"}, {"titulo": "Livrinhos", "url": "https://www.youtube.com/embed/videoseries?list=PL6tR3NMsh7aLrwK_elUCVn5WwS9sKt-ks", "img": "imagens/capa-livrinhos.jpg"}], "mais": [{"titulo": "Dinosauros", "url": "https://www.youtube.com/embed/videoseries?list=PL6tR3NMsh7aKEUD5rB8zqgwY4xQejv5VK"}, {"titulo": "Mundo Bita", "url": "https://www.youtube.com/embed/videoseries?list=PL6tR3NMsh7aIwiBX54ZFiFTzqJCJ0HDyQ"}, {"titulo": "Princesas", "url": "https://www.youtube.com/embed/videoseries?list=PL6tR3NMsh7aItY1jEV68A_bQgkwQHqfZ3"}, {"titulo": "Heróis", "url": "https://www.youtube.com/embed/videoseries?list=PL6tR3NMsh7aLz2gvFQQ39dQo9TaVqs0NJ"}, {"titulo": "Safari", "url": "https://www.youtube.com/embed/videoseries?list=PL6tR3NMsh7aLkF9doRpJdJyHBq4Tgvuy0"}, {"titulo": "Circo", "url": "https://www.youtube.com/embed/videoseries?list=PL6tR3NMsh7aJI1gypRV-0Csq500yNaRLK"}, {"titulo": "Fundo do mar", "url": "https://www.youtube.com/embed/videoseries?list=PL6tR3NMsh7aIJnNcBl5AdnhLXVgbsuz7m"}], "aval": [{"texto": "Os convites do meu casamento ficaram lindíssimos! Todos os convidados elogiaram muito. Qualidade impecável e entrega no prazo.", "autora": "Ana Clara M.", "tipo": "Casamento", "estrelas": "5"}, {"texto": "Encomendei para o chá de bebê da minha filha e superou todas as expectativas. Atendimento carinhoso e produto de altíssima qualidade.", "autora": "Juliana F.", "tipo": "Chá de Bebê", "estrelas": "5"}, {"texto": "Atenção aos detalhes incrível! Pedi personalizado para a formatura e ficou exatamente como eu imaginei. Super recomendo!", "autora": "Mariana S.", "tipo": "Formatura", "estrelas": "5"}, {"texto": "Fiz o convite de 15 anos da minha filha e ela amou! A animação ficou perfeita e todos os convidados adoraram a novidade do convite digital.", "autora": "Fernanda L.", "tipo": "15 Anos", "estrelas": "5"}, {"texto": "Rápida, criativa e super atenciosa! O convite do aniversário do meu filho ficou incrível. Com certeza farei outros pedidos.", "autora": "Camila R.", "tipo": "Aniversário Infantil", "estrelas": "5"}, {"texto": "Meu convite de casamento ficou um sonho! A equipe foi super paciente com todas as minhas alterações. Recomendo de olhos fechados!", "autora": "Beatriz M.", "tipo": "Casamento", "estrelas": "5"}], "inst": [{"t": "Quem Somos", "c": "Olá! Eu sou Cris Oliveira, designer digital desde 2014, apaixonada por transformar ideias em experiências visuais encantadoras.\n\nAo longo da minha trajetória, venho ajudando clientes a celebrar momentos especiais com criatividade e praticidade, através de convites digitais personalizados, álbuns fotográficos e soluções modernas que unem design e tecnologia.\n\nTambém compartilho meu conhecimento por meio de cursos de convites em HTML, capacitando outras pessoas a criarem seus próprios projetos com autonomia e qualidade.\n\nMeu compromisso é oferecer peças que não apenas comuniquem, mas emocionem — sempre com atenção aos detalhes, carinho em cada criação e foco na experiência de quem recebe."}, {"t": "Perguntas Frequentes", "c": "💳 **Como funciona o pagamento?**\nO pagamento é realizado à vista, garantindo o início do seu pedido de forma rápida.\n\n⏱️ **Qual é o prazo de entrega?**\nO prazo varia de 3 a 7 dias, dependendo do modelo e da demanda no momento.\n\n📲 **Como recebo meu convite?**\nVocê recebe tudo diretamente pelo WhatsApp, de forma prática e rápida, pronto para compartilhar.\n\n🔄 **Posso pedir alterações?**\nSim! Estão inclusas até 2 rodadas de alterações gratuitas para ajustes no seu convite.\n\n💰 **Existe reembolso?**\nPor se tratar de um serviço digital e personalizado, não trabalhamos com reembolso após o início da produção."}, {"t": "Termo de Compra", "c": "Ao realizar a compra, o cliente declara estar de acordo com as condições abaixo:\n\n📌 **Natureza do serviço**\nOs produtos oferecidos são digitais e personalizados, desenvolvidos de acordo com as informações fornecidas pelo cliente.\n\n💳 **Pagamento**\nO pagamento é realizado à vista, sendo necessário para o início da produção do pedido.\n\n⏱️ **Prazo de entrega**\nO prazo para entrega é de 3 a 7 dias úteis, podendo variar conforme a demanda e a complexidade do projeto.\n\n📲 **Entrega do material**\nO material final será enviado diretamente via WhatsApp, pronto para uso e compartilhamento.\n\n✏️ **Alterações**\nEstão inclusas até 2 rodadas de alterações gratuitas. Alterações adicionais poderão ser cobradas à parte.\n\n🚫 **Reembolso**\nPor se tratar de um produto digital personalizado, não realizamos reembolso após o início da produção.\n\n📝 **Responsabilidade do cliente**\nÉ responsabilidade do cliente revisar todas as informações enviadas (nomes, datas, horários, etc.). Após a aprovação final, não nos responsabilizamos por erros não informados previamente."}, {"t": "Formas de Pagamento", "c": "PIX"}]};
+const $=(s,r=document)=>r.querySelector(s);
+const h=(t,a={},...c)=>{const e=document.createElement(t);for(const k in a){if(a[k]==null)continue;k.startsWith('on')?e[k]=a[k]:k==='class'?e.className=a[k]:e.setAttribute(k,a[k])}c.flat(9).forEach(x=>{if(x!=null&&x!==false)e.append(x.nodeType?x:document.createTextNode(x))});return e};
+const isVid=s=>/^data:video|\.(mp4|webm|mov|m4v|ogv)([?#]|$)/i.test(s||'');
+let D,MODE,cur='geral',dirty=false,tt;
+function toast(m,bad){const t=$('#toast');t.textContent=m;t.className='on'+(bad?' bad':'');clearTimeout(tt);tt=setTimeout(()=>t.className='',bad?6000:4000)}
+function touch(){dirty=true;$('#save').classList.add('dirty');$('#st').textContent='● alterações não publicadas';
+  try{localStorage.setItem(MODE==='local'?'cpa_data':'cpa_draft',JSON.stringify(D))}catch(e){toast('⚠️ Sem espaço no navegador: use imagens por URL ou reduza o tamanho.',1)}}
+
+/* ---------- Upload (arquivo) ---------- */
+async function upload(file){
+  if(MODE==='server'){const fd=new FormData();fd.append('f',file);
+    const r=await fetch('api.php?action=upload',{method:'POST',body:fd});const j=await r.json().catch(()=>({}));
+    if(!j.ok)throw new Error(j.erro||'Falha no envio');return j.path}
+  if(file.type.startsWith('video/'))throw new Error('Sem servidor PHP não é possível enviar vídeo por arquivo. Cole o link (URL) do vídeo, ou copie o arquivo para a pasta imagens/ e digite o caminho.');
+  const bm=await createImageBitmap(file),s=Math.min(1,1400/Math.max(bm.width,bm.height));
+  const c=h('canvas',{width:Math.round(bm.width*s),height:Math.round(bm.height*s)});c.getContext('2d').drawImage(bm,0,0,c.width,c.height);
+  let u=c.toDataURL('image/webp',.85);return u.startsWith('data:image/webp')?u:c.toDataURL('image/png')}
+
+/* ---------- Campos ---------- */
+const PH='Cole o link (https://…) ou o caminho (imagens/foto.jpg)';
+function mediaF(o,f){
+  const kind=f.t,acc=kind==='img'?'image/*':kind==='video'?'video/*':'image/*,video/*';
+  const pv=h('div',{class:'pv'}),inp=h('input',{placeholder:PH}),info=h('small');
+  const show=()=>{pv.innerHTML='';const v=o[f.k]||'';if(!v)return;const m=h(isVid(v)?'video':'img',{src:v});if(isVid(v)){m.muted=true;m.preload='metadata';m.controls=true}pv.append(m)};
+  const set=v=>{o[f.k]=v;const d=v.startsWith('data:');inp.value=d?'':v;inp.placeholder=d?'✓ Arquivo enviado do computador':PH;show();touch()};
+  inp.oninput=()=>{o[f.k]=inp.value.trim();inp.placeholder=PH;show();touch()};
+  const fi=h('input',{type:'file',accept:acc,hidden:'',onchange:async()=>{const file=fi.files[0];if(!file)return;
+    if(kind==='img'&&!file.type.startsWith('image/')||kind==='video'&&!file.type.startsWith('video/')){toast('Este campo não aceita esse tipo de arquivo',1);fi.value='';return}
+    info.textContent='Enviando…';try{set(await upload(file));info.textContent='✓ Enviado'}catch(e){info.textContent='';toast('❌ '+e.message,1)}fi.value=''}});
+  const v=o[f.k]||'';inp.value=v.startsWith('data:')?'':v;if(v.startsWith('data:'))inp.placeholder='✓ Arquivo enviado do computador';show();
+  return h('div',{class:'media'},pv,h('div',{class:'mc'},inp,h('div',{class:'row'},h('label',{class:'btn'},'📁 Enviar arquivo',fi),h('button',{class:'btn ghost',onclick:()=>set('')},'Limpar'),info)))}
+
+function field(o,f){
+  const t=f.t||'text',w=h('div',{class:'f'+(f.w?' '+f.w:'')});
+  if(t==='chk'){const i=h('input',{type:'checkbox',onchange:()=>{o[f.k]=i.checked;touch()}});i.checked=!!o[f.k];w.append(h('label',{class:'chk'},i,f.l));return w}
+  w.append(h('label',{},f.l));
+  if(t==='img'||t==='video'||t==='media')w.append(mediaF(o,f));
+  else if(t==='list')w.append(listEd(o[f.k]||(o[f.k]=[]),f));
+  else if(t==='sel'){const s=h('select',{onchange:()=>{o[f.k]=s.value;touch()}});
+    const fill=()=>{const op=(typeof f.o==='function'?f.o():f.o).slice(),v=o[f.k]??'';if(v!==''&&!op.some(x=>x[0]===v))op.push([v,v]);s.innerHTML='';op.forEach(([a,b])=>s.append(h('option',{value:a},b)));s.value=v};
+    s.onfocus=fill;fill();w.append(s)}
+  else{const i=h(t==='area'?'textarea':'input',{rows:f.r||3,placeholder:f.p,oninput:()=>{o[f.k]=i.value;touch()}});i.value=o[f.k]??'';w.append(i)}
+  if(f.h)w.append(h('small',{},f.h));return w}
+
+function listEd(arr,sp){
+  const box=h('div',{class:'list'});
+  const draw=(open)=>{box.innerHTML='';
+    arr.forEach((it,i)=>{
+      const mv=d=>{const j=i+d;if(j<0||j>=arr.length)return;[arr[i],arr[j]]=[arr[j],arr[i]];touch();draw(j)};
+      const bt=(l,fn,ti)=>h('button',{title:ti,onclick:e=>{e.preventDefault();e.stopPropagation();fn()}},l);
+      const name=h('span',{class:'tt'},sp.title?sp.title(it,i):'Item '+(i+1));
+      const th=sp.th&&it[sp.th]&&!isVid(it[sp.th])?h('img',{class:'th',src:it[sp.th]}):null;
+      const d=h('details',{class:'item'},h('summary',{},th,name,h('span',{class:'acts'},
+        bt('↑',()=>mv(-1),'Subir'),bt('↓',()=>mv(1),'Descer'),
+        bt('⧉',()=>{arr.splice(i+1,0,JSON.parse(JSON.stringify(it)));touch();draw(i+1)},'Duplicar'),
+        bt('🗑',()=>{if(confirm('Excluir este item?')){arr.splice(i,1);touch();draw()}},'Excluir'))),
+        h('div',{class:'grid'},sp.f.map(s=>field(it,s))));
+      d.addEventListener('input',()=>name.textContent=sp.title?sp.title(it,i):'Item '+(i+1));
+      if(open===i)d.open=true;box.append(d)});
+    box.append(h('button',{class:'add',onclick:()=>{arr.push(JSON.parse(JSON.stringify(sp.add||{})));touch();draw(arr.length-1)}},'＋ '+(sp.addL||'Adicionar')))};
+  draw();return box}
+
+/* ---------- Estrutura do painel ---------- */
+const T=(k,l,o={})=>({k,l,...o});
+const clean=s=>(s||'').replace(/\n/g,' ');
+const PECA=[T('nome','Nome do produto',{t:'area',r:2,h:'Enter = quebra de linha'}),T('sub','Descrição curta',{t:'area',r:2}),
+ T('src','Imagem ou vídeo do card',{t:'media'}),
+ T('cat','Categoria (filtro)',{t:'sel',w:'half',o:()=>(D.pecas_cats||[]).map(c=>[c.slug,c.label])}),
+ T('badge','Selo (ex.: Novo, Em alta) — vazio = sem selo',{w:'half'}),
+ T('badgeTipo','Cor do selo',{t:'sel',w:'half',o:[['mais-pedido','Estilo 1'],['popular','Estilo 2']]}),
+ T('precos','Preços',{t:'list',title:p=>p.t||'Preço',addL:'Adicionar preço',add:{t:'Investimento: R$ 0,00',d:'',verde:false},
+   f:[T('t','Texto do preço',{w:'half'}),T('d','Observação abaixo (opcional)',{w:'half'}),T('verde','Destacar em verde',{t:'chk'})]}),
+ T('btn','Texto do botão',{w:'half'}),T('link','Link do botão (opcional)',{w:'half',h:'Vazio = abre o WhatsApp com a mensagem abaixo'}),
+ T('msg','Mensagem enviada no WhatsApp',{h:'Usada quando o link acima está vazio'})];
+const CONV=[T('img','Imagem do convite',{t:'img'}),T('nome','Nome'),T('desc','Descrição',{t:'area'}),
+ T('cat','Categoria (aparece sobre o nome e filtra)',{w:'half'}),T('preco','Preço (ex.: R$ 30,00)',{w:'half'}),T('un','Texto após o preço',{w:'half'}),
+ T('link','Link ao clicar na imagem (opcional)',{w:'half'}),T('msg','Mensagem enviada no WhatsApp')];
+const SEC=(h,o,f)=>({h,o,f});
+const TABS=[
+ {id:'geral',n:'⚙️ Geral e topo',b:[
+  SEC('Dados do site','cfg',[T('titulo_site','Título da aba do navegador'),T('logo','Logo (menu e topo)',{t:'img'}),
+    T('wpp','WhatsApp — só números, com 55 + DDD',{w:'half',p:'5571999999999'}),T('wpp_exibir','WhatsApp — como aparece escrito',{w:'half'}),T('email','E-mail de contato')]),
+  SEC('Menu superior','cfg',[T('nav1','Link 1',{w:'half'}),T('nav2','Link 2',{w:'half'}),T('nav3','Link 3',{w:'half'}),T('nav4','Link 4',{w:'half'}),T('nav_cta_txt','Botão do menu',{w:'half'}),T('nav_cta_link','Destino do botão',{w:'half'})]),
+  SEC('Topo da página','cfg',[T('hero_tag','Frase pequena acima do título'),T('hero_titulo','Título principal',{t:'area',r:2,h:'Use *asteriscos* para deixar a palavra em itálico colorido. Enter = quebra de linha.'}),
+    T('hero_desc','Texto de apresentação',{t:'area'}),T('hero_btn1_txt','Botão 1 — texto',{w:'half'}),T('hero_btn1_link','Botão 1 — link',{w:'half'}),
+    T('hero_btn2_txt','Botão 2 — texto',{w:'half'}),T('hero_btn2_link','Botão 2 — link (vazio = WhatsApp)',{w:'half'})])]},
+ {id:'pecas',n:'🛍 Peças',b:[
+  SEC('Títulos da seção','cfg',[T('pecas_tag','Frase pequena',{w:'half'}),T('pecas_titulo','Título',{w:'half',h:'*palavra* = itálico colorido'})]),
+  {h:'Botões de filtro (categorias)',list:'pecas_cats',sp:{title:c=>c.label||'Categoria',addL:'Nova categoria',add:{slug:'nova',label:'Nova categoria'},
+    f:[T('label','Nome que aparece no botão',{w:'half'}),T('slug','Código interno (minúsculas, sem espaço/acento)',{w:'half'})]}},
+  {h:'Produtos',list:'pecas',sp:{title:p=>clean(p.nome)||'Novo produto',th:'src',addL:'Adicionar produto',
+    add:{cat:'',nome:'Novo produto',sub:'',src:'',badge:'',badgeTipo:'mais-pedido',precos:[{t:'Investimento: R$ 0,00',d:'',verde:false}],btn:'Encomendar',link:'',msg:'Olá, tenho interesse em '},f:PECA}}]},
+ {id:'conv',n:'💌 Convites digitais',b:[
+  SEC('Títulos da seção','cfg',[T('conv_tag','Frase pequena',{w:'half'}),T('conv_titulo','Título',{w:'half'})]),
+  {h:'Botões de filtro',list:'conv_cats',sp:{title:c=>c.label,addL:'Novo filtro',add:{label:'Novo'},f:[T('label','Nome do filtro',{h:'Mostra os convites cuja categoria contém este nome'})]}},
+  {h:'Convites',list:'conv',sp:{title:p=>p.nome||'Novo convite',th:'img',addL:'Adicionar convite',add:{img:'',cat:'',nome:'Novo convite',desc:'',preco:'R$ 0,00',un:'/unidade',link:'',msg:'Olá, tenho interesse no convite '},f:CONV}}]},
+ {id:'vid',n:'🎬 Vídeos',b:[
+  SEC('Vídeo em destaque','cfg',[T('video_tag','Frase pequena',{w:'half'}),T('video_titulo','Título',{w:'half'}),T('video_src','Arquivo do vídeo',{t:'video'})]),
+  SEC('Temas em vídeo — textos','cfg',[T('temas_tag','Frase pequena',{w:'half'}),T('temas_titulo','Título',{w:'half'}),T('temas_desc','Descrição'),T('temas_dest_titulo','Título dos destaques',{w:'half'}),T('temas_mb_titulo','Título "mais procurados"',{w:'half'})]),
+  {h:'Destaques da coleção',list:'destaques',sp:{title:d=>d.titulo||'Destaque',th:'img',addL:'Adicionar destaque',add:{titulo:'Novo',url:'',img:''},
+    f:[T('titulo','Nome',{w:'half'}),T('url','Link da playlist ou vídeo do YouTube',{w:'half',h:'Cole o link do jeito que copiou do YouTube'}),T('img','Capa',{t:'img'})]}},
+  {h:'Temas mais procurados',list:'mais',sp:{title:d=>d.titulo,addL:'Adicionar tema',add:{titulo:'Novo tema',url:''},f:[T('titulo','Nome do tema',{w:'half'}),T('url','Link da playlist ou vídeo do YouTube',{w:'half'})]}}]},
+ {id:'aval',n:'⭐ Avaliações',b:[
+  SEC('Títulos da seção','cfg',[T('aval_tag','Frase pequena',{w:'half'}),T('aval_titulo','Título',{w:'half'}),T('aval_sub','Subtítulo')]),
+  {h:'Depoimentos',list:'aval',sp:{title:a=>a.autora||'Novo depoimento',addL:'Adicionar depoimento',add:{texto:'',autora:'',tipo:'',estrelas:'5'},
+    f:[T('texto','Depoimento',{t:'area'}),T('autora','Nome',{w:'half'}),T('tipo','Tipo de evento',{w:'half'}),T('estrelas','Estrelas',{t:'sel',w:'half',o:[['5','★★★★★'],['4','★★★★'],['3','★★★']]})]}}]},
+ {id:'ban',n:'📣 Banner',b:[SEC('Banner "Solicitar orçamento"','cfg',[T('banner_tag','Frase pequena'),T('banner_titulo','Título',{t:'area',r:2}),T('banner_desc','Texto',{t:'area'}),
+    T('banner_btn','Texto do botão',{w:'half'}),T('banner_msg','Mensagem do WhatsApp',{w:'half'}),T('banner_img','Imagem do banner',{t:'img'})])]},
+ {id:'rod',n:'🔻 Rodapé',b:[
+  SEC('Textos','cfg',[T('f_tagline','Frase da marca',{t:'area'}),T('f_follow','Convite para seguir'),T('f_horario','Horário de atendimento',{t:'area'}),T('f_copy','Direitos autorais')]),
+  SEC('Redes sociais (links)','cfg',[T('r_instagram','Instagram',{w:'half'}),T('r_pinterest','Pinterest',{w:'half'}),T('r_youtube','YouTube',{w:'half'}),T('r_tiktok','TikTok',{w:'half'})]),
+  {h:'Institucional (Quem somos, Perguntas, Termos…)',list:'inst',sp:{title:i=>i.t,addL:'Adicionar item',add:{t:'Novo item',c:''},
+    f:[T('t','Título',{}),T('c','Texto',{t:'area',r:10,h:'Linha em branco = novo parágrafo · **negrito** · Enter = quebra de linha'})]}}]}];
+
+function go(id){cur=id;const tab=TABS.find(t=>t.id===id);
+  $('#tabs').innerHTML='';TABS.forEach(t=>$('#tabs').append(h('button',{class:t.id===id?'on':'',onclick:()=>go(t.id)},t.n)));
+  const m=$('#main');m.innerHTML='';
+  m.append(h('div',{class:'info'},'Tudo o que você digitar aqui fica gravado. Ao terminar, clique em “💾 Salvar e publicar”.'));
+  tab.b.forEach(b=>m.append(h('section',{class:'card'},h('h2',{},b.h),b.o?h('div',{class:'grid'},b.f.map(f=>field(D[b.o],f))):listEd(D[b.list]||(D[b.list]=[]),b.sp))))}
+
+/* ---------- Salvar / carregar ---------- */
+async function save(){const b=$('#save');b.disabled=true;
+  try{if(MODE==='server'){
+      const r=await fetch('api.php?action=save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({data:D})});
+      const j=await r.json().catch(()=>({}));if(r.status===401){showLogin();return}if(!r.ok||!j.ok)throw new Error(j.erro||'Erro ao salvar');
+      localStorage.removeItem('cpa_draft');toast('✅ Publicado no site às '+j.em)}
+    else{localStorage.setItem('cpa_data',JSON.stringify(D));toast('💾 Salvo neste navegador. Para publicar: clique em “Baixar data.json” e envie o arquivo para a pasta do site.')}
+    dirty=false;b.classList.remove('dirty');$('#st').textContent='✓ tudo salvo'}
+  catch(e){toast('❌ '+e.message,1)}finally{b.disabled=false}}
+const norm=d=>{d=d&&d.cfg?d:(SEED||{cfg:{}});d.cfg=d.cfg||{};['pecas_cats','pecas','conv_cats','conv','destaques','mais','aval','inst'].forEach(k=>d[k]=d[k]||[]);return d};
+async function start(){
+  let d=null;
+  try{if(MODE==='server'){const r=await fetch('api.php?action=load',{cache:'no-store'});if(r.ok)d=await r.json()}
+      else d=JSON.parse(localStorage.getItem('cpa_data')||'null')}catch(e){}
+  if(!d||!d.cfg){try{const r=await fetch('data.json',{cache:'no-store'});if(r.ok)d=await r.json()}catch(e){}}
+  D=norm(d);
+  if(MODE==='server'){try{const dr=localStorage.getItem('cpa_draft');
+    if(dr&&dr!==JSON.stringify(D)&&confirm('Encontrei alterações que você digitou e ainda não publicou. Deseja recuperá-las?')){D=norm(JSON.parse(dr));touch()}
+    else if(dr&&dr===JSON.stringify(D))localStorage.removeItem('cpa_draft')}catch(e){}}
+  $('#login').hidden=true;$('#app').hidden=false;
+  $('#mode').textContent=MODE==='server'?'Conectado ao servidor — publica direto no site':'Modo local — salva neste navegador';
+  $('#view').href=MODE==='server'?'index.html':'index.html?preview=1';$('#out').hidden=MODE!=='server';go(cur)}
+function showLogin(warn){$('#app').hidden=true;$('#login').hidden=false;$('#lw').hidden=!warn;$('#pw').focus()}
+async function login(){const r=await fetch('api.php?action=login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({senha:$('#pw').value})});
+  if(r.ok){$('#le').textContent='';start()}else $('#le').textContent='Senha incorreta'}
+$('#lb').onclick=login;$('#pw').onkeydown=e=>e.key==='Enter'&&login();$('#save').onclick=save;
+$('#out').onclick=async()=>{await fetch('api.php?action=logout');location.reload()};
+$('#exp').onclick=()=>{const a=h('a',{href:URL.createObjectURL(new Blob([JSON.stringify(D,null,1)],{type:'application/json'})),download:'data.json'});a.click()};
+$('#imp').onclick=()=>$('#impf').click();
+$('#impf').onchange=async e=>{try{D=norm(JSON.parse(await e.target.files[0].text()));touch();go(cur);toast('Backup importado. Clique em Salvar e publicar para aplicar no site.')}catch(x){toast('Arquivo inválido',1)}e.target.value=''};
+addEventListener('beforeunload',e=>{if(dirty&&MODE==='server'){e.preventDefault();e.returnValue=''}});
+(async()=>{try{const r=await fetch('api.php?action=ping',{cache:'no-store'});const j=await r.json();if(!j.ok)throw 0;MODE='server';j.auth?start():showLogin(j.senhaPadrao)}catch(e){MODE='local';start()}})();
+</script></body></html>
