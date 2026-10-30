@@ -86,6 +86,7 @@ input:focus,textarea:focus{box-shadow:0 0 0 5px var(--b)}
 #painel-admin .ft .on{background:var(--pb2);color:var(--pb2t);border-color:var(--pb2);}
 #painel-admin .it{border-top:1px solid var(--pbd);padding:14px 0;font-size:.9rem;line-height:1.5;color:var(--pb2);}
 #painel-admin .it:first-child{border-top:none;padding-top:0;}
+#painel-admin #ls{max-height:60vh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding-right:6px;margin-top:8px;scrollbar-width:thin}
 #painel-admin .it b{font-size:0.95rem;} 
 #painel-admin .it small{display:block;color:var(--ptx);opacity:.8;white-space:pre-line;margin-top:2px;}
 #painel-admin .tg{float:right;border-radius:6px;padding:3px 10px;font-size:.75rem;font-weight:700;color:#fff;background:#059669;}
@@ -361,8 +362,10 @@ function render(){
   $("#c6").textContent = totCriancas;
   
   const q=$("#bq").value.toLowerCase();
+  const respNorm = new Set(D.map(d => norm(d.nome)));
+  const qtdPend = listaCompletaPainel.filter(n => !respNorm.has(norm(n))).length;
   $("#ft").innerHTML="";
-  [["todos","Todos"],["vao","Presentes"],["nao","Ausentes"],["pendentes","Faltam responder"],["rec","Com mensagem"]].forEach(f=>{
+  [["todos","Todos"],["vao","Presentes"],["nao","Ausentes"],["pendentes","Faltam responder ("+qtdPend+")"],["rec","Com mensagem"]].forEach(f=>{
     const b=document.createElement("button");b.type="button";b.textContent=f[1];b.className=F===f[0]?"on":"";
     b.onclick=()=>{F=f[0];render()};$("#ft").appendChild(b)
   });
