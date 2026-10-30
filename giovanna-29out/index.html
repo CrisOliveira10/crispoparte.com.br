@@ -4,7 +4,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&display=swap" rel="stylesheet">
 <style>
 /* CSS DO CONVITE */
-:root{--a:#73c4f0;--b:#FFFFFF;--n:#1579c6;--f:'Baloo 2';--bh:150px;--ls:1;--ns:0.9;--nx:-16px;--ny:-76px;--bd:#2576c3;--cc:#FFFFFF;--bb:#76c2ee;--bt:#FFFFFF;--b2:#FFFFFF;--b2t:#3073c0;--hi:#F59E0B;--sk:#ffffff;--cx:0px;--cy:-96px;--cw:90%;--co:80%}
+:root{--a:#73c4f0;--b:#FFFFFF;--n:#1579c6;--f:'Baloo 2';--bh:150px;--ls:1;--ns:0.9;--nx:-16px;--ny:-76px;--bd:#2576c3;--cc:#FFFFFF;--bb:#76c2ee;--bt:#FFFFFF;--b2:#FFFFFF;--b2t:#3073c0;--hi:#F59E0B;--sk:#ffffff;--cx:0px;--cy:0px;--cw:90%;--co:80%}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--f),Georgia,serif;color:var(--n);background:#E9EAEE;height:100vh;height:100dvh;overflow:hidden}
 .stage{position:relative;transform:translateZ(0);width:min(100vw,calc(100vh*9/16));width:min(100vw,calc(100dvh*9/16));height:100vh;height:100dvh;margin:0 auto;overflow:hidden;background:#F2F3F5}
@@ -268,7 +268,6 @@ async function enviarDados(){
       const n = S.nomesAcomp[i];
       const id = S.idadesAcomp[i];
       if(n) {
-        // Envia as idades na string e faz um cálculo inicial baseado no limite do gerador
         const isK = id && parseInt(id) <= parseInt(C.kidLimit || 11); 
         if(isK) kids++;
         acFormatado.push(`${i+1}. ${n}${id ? ` — ${id} anos${isK ? ' (criança)' : ''}` : ''}`);
@@ -284,7 +283,7 @@ async function enviarDados(){
     nome: S.nome,
     presenca: vai ? 'SIM' : 'NÃO',
     total: total,
-    adultos: adultos, // Enviado inicialmente, mas o painel agora recalcula vivo
+    adultos: adultos,
     criancas: kids,
     acompanhantes: acFormatado.length ? acFormatado.join('\n') : 'Nenhum',
     mensagem: S.recado || ''
@@ -304,7 +303,7 @@ function lock(o){$$(".bl").forEach(b=>b.disabled=!!o)}
 function confete(){if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;for(let i=0;i<70;i++){const c=document.createElement("i");c.className="cf";c.style.cssText="left:"+Math.random()*100+"vw;background:"+C.colors[i%4]+";animation-duration:"+(2.2+Math.random()*2)+"s;animation-delay:"+Math.random()*.6+"s;border-radius:"+(Math.random()>.5?"50%":"2px");$(".stage").appendChild(c);setTimeout(()=>c.remove(),5000)}}
 
 /* ================== LÓGICA DO PAINEL ================== */
-let sn="", D=[], F="todos";
+let sn="", D=[], F="todos", listaCompletaPainel=[];
 
 const demo=[{enviadoEm:new Date().toISOString(),nome:"Convidado 1",presenca:"SIM",total:3,adultos:2,criancas:1,acompanhantes:"1. Acompanhante A — 5 anos (criança)\n2. Acompanhante B",mensagem:"Mensagem de exemplo"},{enviadoEm:new Date().toISOString(),nome:"Convidado 2",presenca:"NÃO",total:0,adultos:0,criancas:0,acompanhantes:"Nenhum",mensagem:""}];
 
@@ -315,11 +314,26 @@ $("#togglePw").onclick = () => {
 };
 
 const post=async o=>(await fetch(C.url.trim(),{method:"POST",body:JSON.stringify(Object.assign({senha:sn},o))})).json();
-async function carregar(){$("#er").textContent="";if(C.preview){D=demo;return true}
-try{const j=await post({acao:"painel", evento: C.title});if(!j.ok){$("#er").textContent=j.erro==="senha"?"Senha incorreta.":"Não foi possível carregar.";return false}D=j.rows;return true}catch(e){$("#er").textContent="Sem conexão com a planilha.";return false}}
+async function carregar(){
+  $("#er").textContent="";
+  if(C.preview){D=demo; listaCompletaPainel=["Convidado 1","Convidado 2","Convidado Pendente"]; return true}
+  try{
+    const j=await post({acao:"painel", evento: C.title});
+    if(!j.ok){$("#er").textContent=j.erro==="senha"?"Senha incorreta.":"Não foi possível carregar.";return false}
+    D=j.rows;
+    if(j.lista) listaCompletaPainel = j.lista;
+    else {
+      try{
+        const r=await fetch(C.url.trim()+"?lista=1");
+        const lj=await r.json();
+        if(lj.ok && lj.lista) listaCompletaPainel = lj.lista;
+      }catch(e){listaCompletaPainel=[];}
+    }
+    return true
+  }catch(e){$("#er").textContent="Sem conexão com a planilha.";return false}
+}
 
 function render(){
-  // Lê a idade da caixinha ao vivo
   const limit = parseInt($("#kidAge").value) || 0;
   const vao = D.filter(d => d.presenca === "SIM");
   
@@ -327,8 +341,6 @@ function render(){
   
   vao.forEach(d => {
     totTotal += Number(d.total) || 0;
-    
-    // Recalcula crianças varrendo as idades no texto de acompanhantes
     const ac = d.acompanhantes || '';
     let criancasEncontradas = 0;
     const regex = /—\s*(\d+)\s*anos/g;
@@ -350,16 +362,31 @@ function render(){
   
   const q=$("#bq").value.toLowerCase();
   $("#ft").innerHTML="";
-  [["todos","Todos"],["vao","Presentes"],["nao","Ausentes"],["rec","Com mensagem"]].forEach(f=>{
+  [["todos","Todos"],["vao","Presentes"],["nao","Ausentes"],["pendentes","Faltam responder"],["rec","Com mensagem"]].forEach(f=>{
     const b=document.createElement("button");b.type="button";b.textContent=f[1];b.className=F===f[0]?"on":"";
     b.onclick=()=>{F=f[0];render()};$("#ft").appendChild(b)
   });
   
-  const L = D.filter(d => (F==="todos"||(F==="vao"&&d.presenca==="SIM")||(F==="nao"&&d.presenca!=="SIM")||(F==="rec"&&d.mensagem))&&String(d.nome).toLowerCase().includes(q));
+  let L = [];
+  if(F === "pendentes") {
+    const respondidosNorm = new Set(D.map(d => norm(d.nome)));
+    const pendentesNomes = listaCompletaPainel.filter(n => !respondidosNorm.has(norm(n)));
+    L = pendentesNomes.map(nome => ({nome: nome, presenca: "PENDENTE", enviadoEm: null, mensagem: "", acompanhantes: "", total: 0}));
+  } else {
+    L = D.filter(d => (F==="todos"||(F==="vao"&&d.presenca==="SIM")||(F==="nao"&&d.presenca!=="SIM")||(F==="rec"&&d.mensagem))&&String(d.nome).toLowerCase().includes(q));
+  }
+
+  if(F === "pendentes" && q) {
+    L = L.filter(d => String(d.nome).toLowerCase().includes(q));
+  }
+  
   $("#ls").innerHTML = L.map(d => {
+    if(F === "pendentes") {
+      return '<div class="it"><span class="tg n" style="background:#D97706">Pendente</span><b>'+esc(d.nome)+'</b><small>Ainda não respondeu ao convite</small></div>';
+    }
     const v = d.presenca === "SIM";
     return '<div class="it"><span class="tg'+(v?'':' n')+'">'+(v?'Presente':'Ausente')+'</span><b>'+esc(d.nome)+'</b>'+(d.total > 1 ? '<small>Acompanhantes:\n'+esc(d.acompanhantes)+'</small>':'')+(d.mensagem?'<small>“'+esc(d.mensagem)+'”</small>':'')+'<small>'+new Date(d.enviadoEm).toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"})+'</small></div>';
-  }).join("")||'<p class="sub">Nenhuma resposta ainda.</p>';
+  }).join("")||'<p class="sub">Nenhum registro encontrado.</p>';
 }
 
 $("#kidAge").addEventListener("input", render);
@@ -380,7 +407,7 @@ $("#at").onclick=async()=>{if(await carregar())render()};$("#bq").oninput=render
 
 $("#na").onclick=async()=>{const v=$("#nn").value.trim().replace(/\s+/g," "),m=$("#nm");if(v.length<3){m.textContent="Escreva o nome completo.";return}
 $("#na").disabled=true;m.textContent="Salvando…";
-try{const j=C.preview?{ok:true}:await post({acao:"addlista",nome:v});m.textContent=j.ok?(j.repetido?"Esse nome já está na lista.":"Nome incluído na lista."):"Não foi possível incluir.";if(j.ok&&!j.repetido)$("#nn").value=""}catch(e){m.textContent="Sem conexão com a planilha."}
+try{const j=C.preview?{ok:true}:await post({acao:"addlista",nome:v});m.textContent=j.ok?(j.repetido?"Esse nome já está na lista.":"Nome incluído na lista."):"Não foi possível incluir.";if(j.ok&&!j.repetido){$("#nn").value=""; await carregar(); render();}}catch(e){m.textContent="Sem conexão com a planilha."}
 $("#na").disabled=false};
 $("#cs").onclick=()=>{
   const q=v=>'"'+String(v==null?"":v).replace(/"/g,'""')+'"';
