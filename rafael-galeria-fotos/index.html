@@ -18,7 +18,7 @@
     <!-- Cropper.js e JSZip agora carregam sob demanda (estudio de foto / ZIP), para nao disputar banda com o feed -->
 
     <style>
-        :root { --cor-fundo: #EFEBEB; --cor-texto: #000000; --cor-destaque: #0285b1; --cor-secundaria: #565555; --card-bg: #E3DFDF; --cor-borda: #CECACA; }
+        :root { --cor-fundo: #EFEBEB; --cor-texto: #555555; --cor-destaque: #0285b1; --cor-secundaria: #8C8B8B; --card-bg: #E7E4E4; --cor-borda: #D9D6D6; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background-color: var(--cor-fundo); color: var(--cor-texto); min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; overflow-x: hidden; }
         
@@ -297,7 +297,8 @@
     const APPCHECK_SITE_KEY = "";
     const LIMITE_BACKUP_FOTO = 2.8 * 1024 * 1024;   // abaixo do limite do Apps Script (3 MB)
     const LIMITE_BACKUP_VIDEO = 28 * 1024 * 1024;   // abaixo do limite do Apps Script (30 MB)
-    const LIMITE_VIDEO_GALERIA = 60 * 1024 * 1024;  // maior que isso nao sobe (confira o limite do seu plano no Cloudinary)
+    const LIMITE_VIDEO_GALERIA = 20 * 1024 * 1024;  // video da galeria acima disso nao sobe (gravado pelo app = ~3-4 MB; 20 MB = ~15 s em 1080p)
+    const FRAME_CAPA_VIDEO = 1;                     // segundo do video usado como capa (1 = um pouco depois do inicio, para ver quem esta no video)
     const LINK_VIDEO_EXTERNO = "https://crispoparte.com.br/raiodesol-rafael/";
     const MOLDURA_URL = "https://res.cloudinary.com/dh20cfdvx/image/upload/v1792066499/Filtro_365_sorrisos_b6gkuk.png";
 
@@ -812,7 +813,7 @@
         }
 
         // FEED EM TEMPO REAL: so as postagens mais recentes (economiza leituras e memoria)
-        let limiteFeed = 40;
+        let limiteFeed = 20;
         let unsubFeed = null;
         let primeiraCargaFeed = true;
 
@@ -841,7 +842,7 @@
                 }
             );
         }
-        window.carregarMais = () => { limiteFeed += 40; iniciarFeed(); };
+        window.carregarMais = () => { limiteFeed += 20; iniciarFeed(); };
         // espera o App Check (no maximo 4 s) para o primeiro pedido ja sair com o token
         Promise.race([appCheckPronto, new Promise(r => setTimeout(r, 4000))]).then(() => iniciarFeed());
 
@@ -1011,7 +1012,7 @@
             }
             esconderAviso();
 
-            const previewUrl = criarPreviewVideoCloudinary(videoUrl);
+            const previewUrl = criarPreviewVideoCloudinary(videoUrl, FRAME_CAPA_VIDEO);
 
             await addDoc(collection(db, "eventos/" + EVENTO_ID + "/postagens"), {
                 url_imagem: videoUrl,
@@ -1341,7 +1342,7 @@
             observarImagens(container);
         };
 
-        // PRÉVIA DOS VÍDEOS — primeiro frame real do Cloudinary
+        // PRÉVIA DOS VÍDEOS — frame um pouco à frente (FRAME_CAPA_VIDEO); se falhar, tenta 0,5 s e o 1º frame
         window.criarPreviewVideoCloudinary = function(url, segundo = 0) {
             if (!url || !url.includes('/video/upload/')) return '';
             try {
@@ -1355,7 +1356,7 @@
         };
 
         window.getVideoPreviewUrl = function(item) {
-            return criarPreviewVideoCloudinary(item.url, 0) || item.preview_url;
+            return criarPreviewVideoCloudinary(item.url, FRAME_CAPA_VIDEO) || item.preview_url;
         };
 
         function htmlCardVideo(item) {
@@ -1367,7 +1368,7 @@
                             src="${preview}"
                             data-preview-primary="${preview}"
                             data-preview-fallback="${criarPreviewVideoCloudinary(item.url, 0.5)}"
-                            data-preview-fallback2="${criarPreviewVideoCloudinary(item.url, 1)}"
+                            data-preview-fallback2="${criarPreviewVideoCloudinary(item.url, 0)}"
                             alt="Prévia do vídeo"
                             loading="lazy"
                             decoding="async"
@@ -1398,19 +1399,23 @@
         };
 
         window.trocarPreviewVideo = function(img) {
+            // A capa e gerada pelo Cloudinary na primeira vez que alguem a pede; pode demorar alguns segundos.
+            // Tenta de novo, alternando o frame, por ate ~15 s antes de desistir.
+            const urls = [img.dataset.previewPrimary, img.dataset.previewFallback, img.dataset.previewFallback2].filter(Boolean);
             const tentativa = Number(img.dataset.previewAttempt || 0);
-            const urls = [
-                img.dataset.previewPrimary,
-                img.dataset.previewFallback,
-                img.dataset.previewFallback2
-            ];
-            if (tentativa < urls.length - 1) {
+            const ESPERAS = [800, 1600, 2400, 4000, 6000];
+            if (urls.length && tentativa < ESPERAS.length) {
                 img.dataset.previewAttempt = String(tentativa + 1);
-                setTimeout(() => { img.src = urls[tentativa + 1]; }, 700 * (tentativa + 1));
+                const base = urls[(tentativa + 1) % urls.length];
+                const proxima = (tentativa + 1 < urls.length) ? base : base + (base.includes('?') ? '&' : '?') + 'r=' + (tentativa + 1);
+                setTimeout(() => { img.src = proxima; }, ESPERAS[tentativa]);
             } else {
-                // Último fallback: deixa o cartão utilizável mesmo se o frame
-                // ainda estiver sendo processado pelo Cloudinary.
+                // Nao veio: deixa o cartao utilizavel, com um aviso no lugar da capa.
                 img.style.display = 'none';
+                const caixa = img.parentElement;
+                if (caixa && !caixa.querySelector('.sem-capa')) {
+                    caixa.insertAdjacentHTML('beforeend', '<div class="sem-capa" style="position:absolute; left:0; right:0; bottom:14px; text-align:center; color:#bbb; font-size:0.8rem; pointer-events:none;">Toque para assistir</div>');
+                }
             }
         };
 
