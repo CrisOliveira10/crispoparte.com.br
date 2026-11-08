@@ -7,10 +7,11 @@
 <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.min.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-body { background: #e9e9e9; font-family: Arial, Helvetica, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; height: 100vh; height: 100dvh; overflow: hidden; padding: 0 0 env(safe-area-inset-bottom, 0px) 0; }
+html, body { width: 100%; height: 100%; }
+body { background: #111; font-family: Arial, Helvetica, sans-serif; position: fixed; inset: 0; height: 100vh; height: 100dvh; overflow: hidden; margin: 0; padding: 0; }
 
 /* CONTAINER INTELIGENTE ADAPTÁVEL À TELA DO APARELHO */
-#zoom-container { width: calc(100vw - 16px); height: calc((100vw - 16px) * 1.775); max-height: calc(100dvh - 70px); flex: none; display: flex; align-items: center; justify-content: center; overflow: hidden; touch-action: none; position: relative; cursor: grab; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.18); }
+#zoom-container { position: absolute; left: 0; top: 0; width: 100vw; height: 100dvh; display: flex; align-items: center; justify-content: center; overflow: hidden; touch-action: none; cursor: grab; background: #fff; }
 #zoom-container:active { cursor: grabbing; }
 
 #book { width: 100%; height: 100%; transform-origin: center center; }
@@ -18,9 +19,9 @@ body { background: #e9e9e9; font-family: Arial, Helvetica, sans-serif; display: 
 .page img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; user-select: none; -webkit-user-drag: none; }
 .page video { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
 
-.controls { display: flex; align-items: center; justify-content: center; gap: 48px; z-index: 10; flex: none; height: 34px; }
-.controls button { border: none; background: transparent; width: 64px; height: 34px; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0.75; transition: opacity 0.15s, transform 0.15s; touch-action: manipulation; }
-.controls button svg { width: 34px; height: 18px; stroke: #4a4a4a; stroke-width: 1.3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.controls { position: fixed; left: 0; right: 0; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); display: flex; align-items: center; justify-content: center; gap: 56px; z-index: 30; height: 40px; pointer-events: none; }
+.controls button { pointer-events: auto; border: none; background: rgba(0,0,0,0.28); border-radius: 20px; backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); width: 58px; height: 36px; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; opacity: 0.8; transition: opacity 0.15s, transform 0.15s; touch-action: manipulation; }
+.controls button svg { width: 34px; height: 18px; stroke: #ffffff; stroke-width: 1.6; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .controls button.off { opacity: 0.2; pointer-events: none; }
 .controls button:active { opacity: 1; transform: scale(0.88); }
 
@@ -158,18 +159,24 @@ const containerEl = document.getElementById("zoom-container");
 function fitStage() {
   const vv = window.visualViewport;
   const vh = Math.floor(vv ? vv.height : window.innerHeight);
-  const vw = document.documentElement.clientWidth || window.innerWidth;
+  const vw = Math.floor(document.documentElement.clientWidth || window.innerWidth);
   document.body.style.height = vh + 'px';
-  const safeB = parseFloat(getComputedStyle(document.body).paddingBottom) || 0;
-  const footerH = 34 + 8;
-  const aw = vw - 16;
-  const ah = vh - footerH - safeB - 16;
-  let w = Math.floor(Math.min(aw, ah / PAGE_RATIO, 640));
-  if (w < 200) w = 200;
-  const h = Math.floor(w * PAGE_RATIO);
+  // palco 9:16 que COBRE a tela inteira (sem bordas); em telas muito largas (desktop) usa encaixe sem cortar
+  const fitW = Math.min(vw, vh / PAGE_RATIO);
+  const coverW = Math.max(vw, vh / PAGE_RATIO);
+  let w = (coverW / fitW <= 1.3) ? coverW : fitW;
+  w = Math.ceil(w);
+  const h = Math.ceil(w * PAGE_RATIO);
+  const left = Math.round((vw - w) / 2);
+  const top = Math.round((vh - h) / 2);
   containerEl.style.width = w + 'px';
   containerEl.style.height = h + 'px';
+  containerEl.style.left = left + 'px';
+  containerEl.style.top = top + 'px';
   containerEl.style.maxHeight = 'none';
+  // mantém a dobra de canto no canto visível da tela
+  const curl = document.getElementById('page-curl');
+  if (curl) { curl.style.right = Math.max(0, -left) + 'px'; curl.style.bottom = Math.max(0, -top) + 'px'; }
   return { w: w, h: h };
 }
 const stage = fitStage();
@@ -196,6 +203,67 @@ window.addEventListener('resize', refitStage);
 window.addEventListener('orientationchange', () => { setTimeout(refitStage, 250); });
 if (window.visualViewport) window.visualViewport.addEventListener('resize', refitStage);
 pageFlip.loadFromHTML(document.querySelectorAll(".page"));
+
+// VIRADA PELO CANTO: ao puxar o canto até a ponta da seta, a página conclui a virada sozinha
+(function () {
+  const ctrl = pageFlip.getFlipController();
+  const origStop = ctrl.stopMove.bind(ctrl);
+  let autoDone = false;
+
+  // distância (em px) que o dedo precisa percorrer a partir da borda = distância da borda até a ponta da seta
+  function pullNeeded(back, pw) {
+    let need = pw * 0.30;
+    try {
+      const c = containerEl.getBoundingClientRect();
+      const btn = document.getElementById(back ? 'prev' : 'next');
+      const r = (btn.querySelector('svg') || btn).getBoundingClientRect();
+      const d = back ? (r.left - c.left) : (c.right - r.right);
+      if (d > 20) need = d;
+    } catch (e) {}
+    return Math.min(Math.max(need, pw * 0.15), pw * 0.6);
+  }
+
+  function limite() {
+    const calc = ctrl.calc;
+    if (!calc) return null;
+    const rect = ctrl.getBoundsRect();
+    const pw = rect.pageWidth;
+    return { calc: calc, rect: rect, pw: pw, x: pw - pullNeeded(calc.getDirection() === 1, pw) };
+  }
+
+  // ao soltar: completa se passou do ponto da seta (antes era preciso cruzar a página inteira)
+  ctrl.stopMove = function () {
+    try {
+      const L = limite();
+      if (!L) return;
+      const pos = L.calc.getPosition();
+      const y = L.calc.getCorner() === 'bottom' ? L.rect.height : 0;
+      if (pos.x <= L.x) ctrl.animateFlippingTo(pos, { x: -L.pw, y: y }, true);
+      else ctrl.animateFlippingTo(pos, { x: L.pw, y: y }, false);
+    } catch (e) { origStop(); }
+  };
+
+  // durante o arraste: ao alcançar a ponta da seta, conclui na hora (sem precisar soltar)
+  function aoArrastar() {
+    if (autoDone || pageFlip.getState() !== 'user_fold' || !pageFlip.isUserTouch) return;
+    try {
+      const L = limite();
+      if (!L) return;
+      if (L.calc.getPosition().x <= L.x) {
+        autoDone = true;
+        pageFlip.isUserTouch = false;
+        ctrl.stopMove();
+      }
+    } catch (e) {}
+  }
+  function reset() { autoDone = false; }
+  window.addEventListener('touchmove', aoArrastar, { passive: true });
+  window.addEventListener('mousemove', aoArrastar);
+  window.addEventListener('touchstart', reset, { passive: true });
+  window.addEventListener('mousedown', reset);
+  window.addEventListener('touchend', function () { setTimeout(reset, 50); }, { passive: true });
+  window.addEventListener('mouseup', function () { setTimeout(reset, 50); });
+})();
 
 document.getElementById("next").onclick = () => { if (scale === 1) pageFlip.flipNext("bottom"); };
 document.getElementById("prev").onclick = () => { if (scale === 1) pageFlip.flipPrev("bottom"); };
@@ -353,7 +421,8 @@ container.addEventListener('touchend', e => {
     const t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
     const rect = containerEl.getBoundingClientRect();
     const corner = Math.min(120, rect.width * 0.26);
-    const inCorner = t.clientX > rect.right - corner && t.clientY > rect.bottom - corner;
+    const visR = Math.min(rect.right, window.innerWidth), visB = Math.min(rect.bottom, window.innerHeight);
+    const inCorner = t.clientX > visR - corner && t.clientY > visB - corner;
     const swipe = Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3;
     const tap = Math.abs(dx) < 10 && Math.abs(dy) < 10 && inCorner;
     if (!swipe && !tap) return;
